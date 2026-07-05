@@ -1,7 +1,9 @@
+import Router from "./router/Router";
+
 function App() {
   return (
     <div>
-      <h1>SWYP Frontend</h1>
+      <Router />
     </div>
   );
 }
