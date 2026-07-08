@@ -1,0 +1,45 @@
+    .container {
+    min-height: calc(100vh - 180px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 80px;
+    }
+
+    .textArea {
+    width: 100%;
+    max-width: 520px;
+    text-align: left;
+    }
+
+    .title {
+    margin: 0;
+    color: #F9FAFB;
+    }
+
+    .description {
+    margin-top: 16px;
+    align-items: center;
+    text-align: center;
+    color: #878EA1;
+    }
+
+    .logoBox {
+    width: 140px;
+    height: 140px;
+    margin: 120px auto 0;
+    opacity: 0.3;
+    background: var(--600, #676D82);
+    }
+
+    .nextButton {
+    width: 100%;
+    max-width: 620px;
+    height: 52px;
+    margin: auto auto 0;
+    border: none;
+    border-radius: 8px;
+    background-color: #FFFFFF;
+    color: #111017;
+    cursor: pointer;
+    }

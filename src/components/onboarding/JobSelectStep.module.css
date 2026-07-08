@@ -1,0 +1,92 @@
+    .container {
+    min-height: calc(100vh - 180px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 80px;
+    }
+
+    .textArea {
+    text-align: center;
+    margin-bottom: 64px;
+    }
+
+    .title {
+    margin: 0;
+    color: var(--white);
+    }
+
+    .description {
+    margin-top: 16px;
+    color: var(--gray-500);
+    }
+
+    .jobList {
+    width: 100%;
+    max-width: 540px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    }
+
+    .jobItem {
+    width: 100%;
+    height: 60px;
+    padding: 0 18px;
+
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    border: none;
+    border-radius: 8px;
+    background-color: var(--gray-800);
+    color: var(--gray-400);
+
+    cursor: pointer;
+    text-align: left;
+    }
+
+    .jobItem:hover {
+    background-color: var(--gray-700);
+    }
+
+    .selected {
+    background-color: var(--gray-700);
+    color: var(--white);
+    }
+
+    .iconBox {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    background-color: var(--gray-900);
+    }
+
+    .jobText {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    }
+
+    .nextButton {
+    width: 100%;
+    max-width: 570px;
+    height: 52px;
+
+    margin-top: 90px;
+
+    border: none;
+    border-radius: 8px;
+
+    background-color: var(--gray-200);
+    color: var(--black);
+
+    cursor: pointer;
+    }
+
+    .nextButton:disabled {
+    background-color: var(--gray-800);
+    color: var(--gray-500);
+    cursor: not-allowed;
+    }
