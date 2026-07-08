@@ -34,27 +34,57 @@ const Onboarding = () => {
         }));
     }
     const totalSteps = 7;
-    
-    const steps = [
-        <WelcomeStep onNext={nextStep} currentStep={step} totalSteps={totalSteps} />,
-        <JobSelectStep data={onboardingData} onChange={updateOnboardingData} onNext={nextStep} />,
-        <CardBasicStep data={onboardingData} onChange={updateOnboardingData} onNext={nextStep} />,
-        <InterestStep data={onboardingData} onChange={updateOnboardingData} onNext={nextStep} />,
-        <StrengthStep data={onboardingData} onChange={updateOnboardingData} onNext={nextStep} />,
-        <LoadingStep onComplete={nextStep} />,
-        <CompleteStep data={onboardingData} />,
+
+        const steps = [
+    <WelcomeStep
+        onNext={nextStep}
+        currentStep={step}
+        totalSteps={totalSteps}
+    />,
+
+    <JobSelectStep
+        data={onboardingData}
+        onChange={updateOnboardingData}
+        onNext={nextStep}
+        onBack={prevStep}
+        currentStep={step}
+        totalSteps={totalSteps}
+    />,
+
+    <CardBasicStep
+        data={onboardingData}
+        onChange={updateOnboardingData}
+        onNext={nextStep}
+        onBack={prevStep}
+        currentStep={step}
+        totalSteps={totalSteps}
+    />,
+
+    <InterestStep
+        data={onboardingData}
+        onChange={updateOnboardingData}
+        onNext={nextStep}
+        onBack={prevStep}
+        currentStep={step}
+        totalSteps={totalSteps}
+    />,
+
+    <StrengthStep
+        data={onboardingData}
+        onChange={updateOnboardingData}
+        onNext={nextStep}
+        onBack={prevStep}
+        currentStep={step}
+        totalSteps={totalSteps}
+    />,
+
+    <LoadingStep onComplete={nextStep} />,
+
+    <CompleteStep data={onboardingData} />,
     ];
 
     return (
         <div>
-            {step > 0 && step < steps.length - 1 && (
-                <button type="button" onClick={prevStep}> 뒤로 </button>
-            )}
-
-            <div>
-                {step + 1} / {steps.length}
-            </div>
-
             {steps[step]}
         </div>
     );
