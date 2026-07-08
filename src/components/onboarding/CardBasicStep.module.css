@@ -1,0 +1,123 @@
+    .container {
+    min-height: calc(100vh - 180px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 56px;
+    }
+
+    .textArea {
+    text-align: center;
+    margin-bottom: 40px;
+    }
+
+    .title {
+    margin: 0;
+    color: var(--white);
+    }
+
+    .description {
+    margin-top: 12px;
+    color: var(--gray-500);
+    }
+
+    .profileImageBox {
+    position: relative;
+    margin-bottom: 32px;
+    }
+
+    .profileCircle {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background-color: var(--gray-600);
+    }
+
+    .editButton {
+    position: absolute;
+    right: -2px;
+    bottom: -2px;
+
+    width: 22px;
+    height: 22px;
+    border: none;
+    border-radius: 50%;
+
+    background-color: var(--gray-700);
+    color: var(--white);
+    cursor: pointer;
+    }
+
+    .form {
+    width: 100%;
+    max-width: 560px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    }
+
+    .field {
+    width: 100%;
+    }
+
+    .label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--gray-400);
+    }
+
+    .affiliationRow {
+    display: flex;
+    gap: 8px;
+    }
+
+    .select {
+    width: 96px;
+    height: 44px;
+    border: none;
+    border-radius: 6px;
+    padding: 0 12px;
+    background-color: var(--gray-800);
+    color: var(--white);
+    }
+
+    .input {
+    width: 100%;
+    height: 44px;
+    border: none;
+    border-radius: 6px;
+    padding: 0 14px;
+    background-color: var(--gray-800);
+    color: var(--white);
+    outline: none;
+    }
+
+    .input::placeholder {
+    color: var(--gray-500);
+    }
+
+    .addButton {
+    height: 36px;
+    padding: 0 14px;
+    border: 1px solid var(--gray-500);
+    border-radius: 6px;
+    background-color: transparent;
+    color: var(--white);
+    cursor: pointer;
+    }
+
+    .nextButton {
+    width: 100%;
+    max-width: 560px;
+    height: 52px;
+
+    margin-top: 48px;
+
+    border: none;
+    border-radius: 8px;
+
+    background-color: var(--gray-800);
+    color: var(--gray-500);
+
+    cursor: pointer;
+    }
