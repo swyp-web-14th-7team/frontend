@@ -1,0 +1,32 @@
+    .field {
+    width: 100%;
+    }
+
+    .label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--gray-400);
+    }
+
+    .addButton {
+    height: 36px;
+    padding: 0 14px;
+    border: 1px solid var(--gray-500);
+    border-radius: 6px;
+    background-color: transparent;
+    color: var(--white);
+    cursor: pointer;
+    }
+
+    .selectedTagArea {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    }
+
+    .tag {
+    padding: 6px 12px;
+    border-radius: 999px;
+    background-color: var(--gray-700);
+    color: var(--white);
+    }

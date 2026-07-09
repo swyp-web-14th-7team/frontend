@@ -1,0 +1,24 @@
+    .container {
+    min-height: calc(100vh - 180px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    }
+
+    .loadingBox {
+    width: 160px;
+    height: 160px;
+    background-color: var(--gray-900);
+    margin-bottom: 24px;
+    }
+
+    .title {
+    color: var(--white);
+    margin: 0;
+    }
+
+    .description {
+    margin-top: 8px;
+    color: var(--gray-400);
+    }
