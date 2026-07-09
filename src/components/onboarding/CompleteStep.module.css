@@ -1,0 +1,127 @@
+    .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    padding: 48px 24px 40px;
+    }
+
+    .textArea {
+    text-align: center;
+    margin-bottom: 32px;
+    }
+
+    .title {
+    color: #ffffff;
+    margin-bottom: 8px;
+    }
+
+    .description {
+    color: #9ca3af;
+    line-height: 1.5;
+    }
+
+    .card {
+    width: 280px;
+    padding: 16px;
+
+    background: #4b5167;
+    border-radius: 12px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    }
+
+    .job {
+    color: #d1d5db;
+    }
+
+    .profileRow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    }
+
+    .avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #8a91a7;
+    }
+
+    .name {
+    color: white;
+    }
+
+    .affiliation {
+    color: #d1d5db;
+    margin-top: 4px;
+    }
+
+    .tagList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    }
+
+    .tag {
+    padding: 4px 10px;
+
+    border-radius: 16px;
+
+    background: #2d3143;
+    color: white;
+
+    font-size: 12px;
+    }
+
+    .introduction {
+    color: #f3f4f6;
+    line-height: 1.5;
+
+    min-height: 56px;
+    }
+
+    .strengthBox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 10px;
+
+    border-radius: 8px;
+
+    background: #3d4258;
+    }
+
+    .strengthIcon {
+    width: 24px;
+    height: 24px;
+
+    border-radius: 4px;
+
+    }
+
+    .strengthText {
+    color: white;
+    }
+
+    .nextButton {
+    width: 360px;
+    height: 48px;
+
+    margin-top: 36px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: white;
+    color: #111827;
+
+    cursor: pointer;
+    }
+
+    .nextButton:hover {
+    opacity: 0.9;
+    }

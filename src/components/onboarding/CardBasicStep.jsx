@@ -1,89 +1,191 @@
-import OnboardingLayout from "../common/OnboardingLayout";
-import styles from "./CardBasicStep.module.css";
+    import { useState } from "react";
 
-const CardBasicStep = ({data, onChange, onNext, onBack, currentStep, totalSteps,}) => {
+    import OnboardingLayout from "../common/OnboardingLayout";
+    import CommonCardForm from "./CommonCardForm";
+    import DeveloperCardForm from "./DeveloperCardForm";
+    import GeneralCardForm from "./GeneralCardForm";
+    import TagSelectModal from "./TagSelectModal";
+    import StrengthTypeModal from "./StrengthTypeModal";
+    import styles from "./CardBasicStep.module.css";
+
+    const techStackOptions = [
+    { id: 1, name: "Javascript" },
+    { id: 2, name: "Typescript" },
+    { id: 3, name: "React" },
+    { id: 4, name: "Next.js" },
+    { id: 5, name: "Spring" },
+    { id: 6, name: "Python" },
+    ];
+
+    const interestOptions = [
+    { id: 1, name: "AI" },
+    { id: 2, name: "자동화 효율화" },
+    { id: 3, name: "이커머스" },
+    { id: 4, name: "엔터테인먼트" },
+    { id: 5, name: "독서" },
+    ];
+
+    const CardBasicStep = ({
+    data,
+    onChange,
+    onNext,
+    onBack,
+    currentStep,
+    totalSteps,
+    }) => {
+    const [modalType, setModalType] = useState(null);
+
     const handleChange = (key, value) => {
         onChange({
-            [key]: value,
+        [key]: value,
         });
     };
 
-    return <div>
+    const isDeveloper = data.job === "frontend" || data.job === "backend";
+    const isFormValid =
+        data.affiliation.trim() !== "" &&
+        data.introduction.trim() !== "" &&
+        data.strength &&
+        (
+            isDeveloper
+            ? data.techStacks.length > 0
+            : data.interests.length > 0
+        );
+
+    return (
         <OnboardingLayout
-            showBackButton={true}
-            onBack={onBack}
-            currentStep={currentStep}
-            totalSteps={totalSteps}>
+        showBackButton={true}
+        onBack={onBack}
+        currentStep={currentStep}
+        totalSteps={totalSteps}
+        >
+        <section className={styles.container}>
+            <div className={styles.textArea}>
+            <h1 className={`headline1 ${styles.title}`}>
+                카드에 들어갈 정보를 알려주세요
+            </h1>
+            <p className={`caption1 ${styles.description}`}>
+                나를 소개하기 위해 기본적인 정보를 작성해보세요
+            </p>
+            </div>
 
-                <section className={styles.container}>
-                    <div className={styles.textArea}>
-                        <h1 className={`heading ${styles.title}`}>
-                            카드에 들어갈 정보를 알려주세요
-                        </h1>
-                        <p className={`body2 ${styles.dexcription}`}>
-                            나를 소개하기 위해 기본적인 정보를 작성해보세요</p>
-                    </div>
+            <div className={styles.profileImageBox}>
+            <div className={styles.profileCircle} />
+            <button type="button" className={styles.editButton}>
+                ✎
+            </button>
+            </div>
 
-                    <div className={styles.profileImageBox}>
-                        <div className={styles.profileCircle}/>
-                        <button type="button" className={styles.editButton}>
-                            </button>
-                        </div>
+            <div className={styles.form}>
+            <CommonCardForm data={data} handleChange={handleChange} />
 
-                        <div className={styles.form}>
-                            <div className={styles.field}>
-                                <label className={`caption1 ${styles.label}`}>현 소속</label>
+            {isDeveloper ? (
+                <DeveloperCardForm
+                data={data}
+                onOpenStackModal={() => setModalType("techStacks")}
+                />
+            ) : (
+                <GeneralCardForm
+                data={data}
+                onOpenInterestModal={() => setModalType("interests")}
+                />
+            )}
 
-                                <div className={styles.affiliationRow}>
-                                    <select
-                                    className={styles.select}
-                                    value={data.affiliationType}
-                                    onChange={(e) => 
-                                        handleChange("affiliationType", e.target.value)
-                                    }
-                                    >
-                                        <option value="직장인">직장인</option>
-                                        <option value="학생">학생</option>
-                                        <option value="프리랜서">프리랜서</option>
-                                        <option value="없음"></option>
-                                    </select>
+            <div className={styles.field}>
+                <label className={`caption1 ${styles.label}`}>
+                저는 이런 사람이에요
+                </label>
 
-                                    <input
-                                    className={styles.input}
-                                    value={data.affiiation}
-                                    onChange={(e) => handleChange("affiliation", e.target.value)}
-                                    placeholder="텍스트를 입력하세요"/>
-                                </div>
-                            </div>
+                {data.strength ? (
+            <button
+                type="button"
+                className={styles.selectedStrength}
+                onClick={() => setModalType("strength")}
+                >
+                <img
+                src={data.strength.icon}
+                alt={data.strength.title}
+                className={styles.strengthIcon}
+                />
 
-                            <div className={styles.field}>
-                                <label className={`caption1 ${styles.label}`}>관심분야</label>
+                <div className={styles.strengthText}>
+                <span className={`caption1 ${styles.strengthTitle}`}>
+                {data.strength.title}
+                </span>
+                </div>
+            </button>
+                ) : (
+                <button
+                    type="button"
+                    className={styles.addButton}
+                    onClick={() => setModalType("strength")}
+                >
+                    + 선택하기
+                </button>
+                )}
+            </div>
 
-                                <button type="button" className={styles.addButton}>
-                                    +추가하기
-                                </button>
-                            </div>
+            <div className={styles.field}>
+                <label className={`caption1 ${styles.label}`}>한 줄 소개</label>
+                <input
+                className={styles.input}
+                value={data.introduction || ""}
+                onChange={(e) => handleChange("introduction", e.target.value)}
+                placeholder="성격, 역량 등을 작성해주세요"
+                />
+            </div>
+            </div>
 
-                            <div className={styles.field}>
-                                <label className={`caption1 ${styles.label}`}>한 줄 소개</label>
+            <button
+            type="button"
+            onClick={onNext}
+            disabled={!isFormValid}
+            className={`body1 ${
+                isFormValid
+                ? styles.nextButtonActive
+                : styles.nextButton
+            }`}
+            >
+            만들기
+            </button>
+        </section>
 
-                                <input 
-                                className={styles.input}
-                                value={data.introduction || ""}
-                                onChange={(e) => handleChange("introduction", e.target.value)}
-                                placeholder="성격, 역량 등을 작성해주세요"/>
-                            </div>
-                        </div>
+        {modalType === "techStacks" && (
+            <TagSelectModal
+            title="나의 스킬"
+            description="먼저 선택된 3개가 카드에 노출돼요"
+            options={techStackOptions}
+            selectedItems={data.techStacks || []}
+            maxCount={10}
+            onClose={() => setModalType(null)}
+            onConfirm={(selected) => handleChange("techStacks", selected)}
+            />
+        )}
 
-                        <button 
-                        type="button"
-                        onClick={onNext}
-                        className={`body1 ${styles.nextButton}`}>
-                        만들기
-                        </button>
-                </section>
-            </OnboardingLayout>
-    </div>;
-};
+        {modalType === "interests" && (
+            <TagSelectModal
+            title="나의 관심 분야"
+            description="먼저 선택된 3개가 카드에 노출돼요"
+            options={interestOptions}
+            selectedItems={data.interests || []}
+            maxCount={10}
+            onClose={() => setModalType(null)}
+            onConfirm={(selected) => handleChange("interests", selected)}
+            />
+        )}
 
-export default CardBasicStep;
+        {modalType === "strength" && (
+            <StrengthTypeModal
+            selectedItem={data.strength}
+            onClose={() => setModalType(null)}
+            onConfirm={(selected) => {
+                handleChange("strength", selected);
+                setModalType(null);
+            }}
+            />
+        )}
+        </OnboardingLayout>
+    );
+    };
+
+    export default CardBasicStep;   

@@ -1,0 +1,140 @@
+    .overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(17, 16, 23, 0.72);
+    backdrop-filter: blur(8px);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    z-index: 1000;
+    }
+
+    .modal {
+    position: relative;
+    width: 520px;
+    padding: 24px;
+    border-radius: 8px;
+    background-color: var(--gray-900);
+    color: var(--white);
+    }
+
+    .closeButton {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+
+    border: none;
+    background: transparent;
+    color: var(--white);
+
+    font-size: 24px;
+    cursor: pointer;
+    }
+
+    .title {
+    margin: 0;
+    color: var(--white);
+    }
+
+    .description {
+    margin-top: 8px;
+    color: var(--gray-400);
+    }
+
+    .optionGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+
+    margin-top: 24px;
+    }
+
+    .optionButton {
+    height: 52px;
+    padding: 0 16px;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    border: none;
+    border-radius: 6px;
+
+    background-color: var(--gray-800);
+    color: var(--gray-300);
+
+    cursor: pointer;
+    }
+
+    .optionButton.selected {
+    background-color: var(--gray-700);
+    color: var(--white);
+    }
+
+    .iconBox {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    background-color: var(--gray-500);
+    flex-shrink: 0;
+    }
+
+    .optionTitle {
+    color: inherit;
+    }
+
+    .previewBox {
+    margin-top: 12px;
+    padding: 16px;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    border-radius: 6px;
+    background-color: var(--gray-700);
+    }
+
+    .previewIcon {
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    background-color: var(--gray-300);
+    flex-shrink: 0;
+    }
+
+    .previewTitle {
+    margin: 0;
+    color: var(--white);
+    }
+
+    .previewDescription {
+    margin-top: 4px;
+    color: var(--gray-300);
+    }
+
+    .confirmButton {
+    display: block;
+
+    width: 96px;
+    height: 44px;
+
+    margin-top: 20px;
+    margin-left: auto;
+
+    border: none;
+    border-radius: 6px;
+
+    background-color: var(--gray-200);
+    color: var(--black);
+
+    cursor: pointer;
+    }
+
+    .confirmButton:disabled {
+    background-color: var(--gray-800);
+    color: var(--gray-500);
+    cursor: not-allowed;
+    }
