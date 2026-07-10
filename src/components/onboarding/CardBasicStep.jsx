@@ -125,15 +125,19 @@
                 )}
             </div>
 
-            <div className={styles.field}>
-                <label className={`caption1 ${styles.label}`}>한 줄 소개</label>
-                <input
-                className={styles.input}
-                value={data.introduction || ""}
-                onChange={(e) => handleChange("introduction", e.target.value)}
-                placeholder="성격, 역량 등을 작성해주세요"
-                />
-            </div>
+            <textarea
+            className={styles.textarea}
+            value={data.introduction || ""}
+            maxLength={250}
+            onChange={(e) =>
+                handleChange("introduction", e.target.value)
+            }
+            placeholder="성격, 역량 등을 작성해주세요"
+            />
+
+            <p className={styles.count}>
+            {(data.introduction || "").length}/250
+            </p>
             </div>
 
             <button

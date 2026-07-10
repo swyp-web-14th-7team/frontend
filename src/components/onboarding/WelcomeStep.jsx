@@ -3,11 +3,12 @@ import styles from "./WelcomeStep.module.css";
 
     const WelcomeStep = ({ onNext, currentStep, totalSteps }) => {
     return (
-        <OnboardingLayout
-        showBackButton={false}
-        currentStep={currentStep}
-        totalSteps={totalSteps}
-        >
+    <OnboardingLayout
+    showBackButton={false}
+    showProgress={false}
+    currentStep={currentStep}
+    totalSteps={totalSteps}
+    >
         <section className={styles.container}>
             <div className={styles.textArea}>
             <h1 className={`title2 ${styles.title}`}>
