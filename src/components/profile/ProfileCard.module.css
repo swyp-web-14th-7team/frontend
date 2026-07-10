@@ -41,12 +41,16 @@
     text-overflow: ellipsis;
     }
 
-    .tagList {
-    width: 100%;
+    .tagList{
+        display:flex;
+        flex-wrap:wrap;
 
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+        gap:8px;
+
+        margin-top:18px;
+        margin-bottom:18px;
+
+        width:100%;
     }
 
     .tag {
@@ -94,6 +98,8 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+
+    
     }
 
     /* =========================
@@ -244,17 +250,18 @@
     margin-top: 18px;
     }
 
-    .introductionBox {
-    width: 100%;
-    min-height: 88px;
+    .introductionBox{
+        width:100%;
 
-    margin-top: 10px;
-    padding: 14px;
+        margin-top:0;
 
-    border-radius: 12px;
-    background-color: rgba(255, 255, 255, 0.08);
+        padding:14px;
 
-    box-sizing: border-box;
+        border-radius:12px;
+
+        background:#7B8095;
+
+        box-sizing:border-box;
     }
 
     .introductionLabel {
@@ -272,18 +279,23 @@
     font-size: 14px;
     line-height: 150%;
 
-    word-break: keep-all;
-    overflow-wrap: anywhere;
+    /* 박스 높이 */
+    height: 63px; /* 14px × 1.5 × 3줄 ≈ 63px */
 
+    /* 말줄임 처리 */
     display: -webkit-box;
-    overflow: hidden;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 3;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    word-break: break-word;
     }
 
     .completeStrengthBox {
     width: 100%;
-    margin-top: auto;
+    margin-top: 15px;
     padding: 12px;
 
     display: flex;
