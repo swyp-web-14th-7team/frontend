@@ -1,57 +1,50 @@
-import ProgressBar from "./ProgressBar";
-import styles from "./OnboardingLayout.module.css";
+    import Header from "./Header";
+    import ProgressBar from "./ProgressBar";
 
-import logo from "../../assets/images/nodi-logo-white.svg";
+    import styles from "./OnboardingLayout.module.css";
 
-
-const OnboardingLayout = ({
+    const OnboardingLayout = ({
     children,
-    showBackButton = true,
+    showBackButton,
+    showProgress = true,
     onBack,
     currentStep,
     totalSteps,
-}) => {
+    }) => {
     return (
-    <div className={styles.page}>
+        <div className={styles.page}>
         <div className={styles.inner}>
 
-        <div className={styles.logoContainer}>
-        <img
-        src={logo}
-        alt="Nodi"
-        className={styles.logo}
-        />
-        </div>
-        
-        <div className={styles.divider} />
+            <Header />
 
-
-        <div className={styles.header}>
+            <div className={styles.header}>
             {showBackButton ? (
-            <button
+                <button
                 type="button"
                 onClick={onBack}
                 className={styles.backButton}
-            >
+                >
                 &lt;
-            </button>
+                </button>
             ) : (
-            <div className={styles.backPlaceholder} />
+                <div className={styles.backPlaceholder} />
             )}
 
-            <ProgressBar
-            currentStep={currentStep}
-            totalSteps={totalSteps}
-            />
-        </div>
+            {showProgress && (
+                <ProgressBar
+                currentStep={currentStep}
+                totalSteps={totalSteps}
+                />
+            )}
+            </div>
 
-        <main className={styles.content}>
+            <main className={styles.content}>
             {children}
-        </main>
+            </main>
 
         </div>
-    </div>
+        </div>
     );
-};
+    };
 
-export default OnboardingLayout;
+    export default OnboardingLayout; 
