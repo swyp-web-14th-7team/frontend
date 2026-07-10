@@ -38,4 +38,9 @@
     color: var(--gray-500);
     }
 
-    
+    .count {
+    margin-top: 6px;
+    text-align: right;
+    color: #9CA3AF;
+    font-size: 12px;
+    }

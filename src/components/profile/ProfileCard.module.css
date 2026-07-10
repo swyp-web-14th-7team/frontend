@@ -1,0 +1,465 @@
+    /* =========================
+    공통 스타일
+    ========================= */
+
+    .horizontalCard,
+    .completeCard,
+    .detailCard {
+    box-sizing: border-box;
+    overflow: hidden;
+    color: #ffffff;
+    }
+
+    .job {
+    width: 100%;
+    margin: 0;
+
+    color: #f5f6f8;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 150%;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    }
+
+    .profileInfo {
+    min-width: 0;
+    flex: 1;
+    }
+
+    .affiliation {
+    margin: 4px 0 0;
+
+    color: #d5d8e0;
+    font-size: 12px;
+    line-height: 150%;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    }
+
+    .tagList {
+    width: 100%;
+
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    }
+
+    .tag {
+    max-width: 100px;
+    padding: 6px 10px;
+
+    border-radius: 20px;
+    background-color: #555b71;
+    color: #ffffff;
+
+    font-size: 12px;
+    line-height: 150%;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    }
+
+    .strengthIcon,
+    .strengthIconPlaceholder {
+    width: 28px;
+    height: 28px;
+
+    flex-shrink: 0;
+    }
+
+    .strengthIcon {
+    display: block;
+    object-fit: contain;
+    }
+
+    .strengthIconPlaceholder {
+    border-radius: 4px;
+    background-color: #313648;
+    }
+
+    .strengthText {
+    min-width: 0;
+
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 150%;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    }
+
+    /* =========================
+    가로형 카드
+    ========================= */
+
+    .horizontalCard {
+    width: 302px;
+    min-height: 164px;
+    padding: 14px;
+
+    border-radius: 8px;
+    background-color: #202335;
+    }
+
+    .horizontalMain {
+    width: 100%;
+    margin-top: 18px;
+    }
+
+    .horizontalProfile {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    }
+
+    .avatar,
+    .avatarPlaceholder {
+    width: 48px;
+    height: 48px;
+
+    border-radius: 50%;
+    flex-shrink: 0;
+    }
+
+    .avatar {
+    display: block;
+    object-fit: cover;
+    }
+
+    .avatarPlaceholder {
+    background-color: #878ea1;
+    }
+
+    .nameRow {
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    }
+
+    .name {
+    min-width: 0;
+
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 140%;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    }
+
+    .affiliationInline {
+    min-width: 0;
+
+    color: #d5d8e0;
+    font-size: 11px;
+    line-height: 150%;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    }
+
+    .horizontalCard .strengthRow {
+    margin-top: 6px;
+    }
+
+    .horizontalCard .tagList {
+    margin-top: 18px;
+    flex-wrap: nowrap;
+    overflow: hidden;
+    }
+
+    /* =========================
+    온보딩 완료 카드
+    ========================= */
+
+    .completeCard {
+    width: 282px;
+    min-height: 400px;
+    padding: 20px;
+
+    display: flex;
+    flex-direction: column;
+
+    border-radius: 16px;
+    background-color: #676d82;
+    }
+
+    .completeProfileRow {
+    width: 100%;
+    margin-top: 52px;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    }
+
+    .completeAvatar,
+    .completeAvatarPlaceholder {
+    width: 60px;
+    height: 60px;
+
+    border-radius: 50%;
+    flex-shrink: 0;
+    }
+
+    .completeAvatar {
+    display: block;
+    object-fit: cover;
+    }
+
+    .completeAvatarPlaceholder {
+    background-color: #959cb3;
+    }
+
+    .completeName {
+    display: block;
+
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 140%;
+    letter-spacing: -0.24px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    }
+
+    .completeCard .tagList {
+    margin-top: 18px;
+    }
+
+    .introductionBox {
+    width: 100%;
+    min-height: 88px;
+
+    margin-top: 10px;
+    padding: 14px;
+
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 0.08);
+
+    box-sizing: border-box;
+    }
+
+    .introductionLabel {
+    margin: 0 0 8px;
+
+    color: #d5d8e0;
+    font-size: 11px;
+    line-height: 150%;
+    }
+
+    .introductionText {
+    margin: 0;
+
+    color: #ffffff;
+    font-size: 14px;
+    line-height: 150%;
+
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    }
+
+    .completeStrengthBox {
+    width: 100%;
+    margin-top: auto;
+    padding: 12px;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 0.08);
+
+    box-sizing: border-box;
+    }
+
+    .strengthInfo {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    }
+
+    .strengthDescription {
+    min-width: 0;
+
+    color: #d5d8e0;
+    font-size: 12px;
+    line-height: 150%;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    }
+
+    /* =========================
+    상세형 카드
+    ========================= */
+
+    .detailCard {
+    width: 238px;
+    min-height: 338px;
+    padding: 16px;
+
+    display: flex;
+    flex-direction: column;
+
+    border-radius: 10px;
+    background-color: #676d82;
+    }
+
+    .detailProfileRow {
+    width: 100%;
+    margin-top: 70px;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    }
+
+    .detailAvatar,
+    .detailAvatarPlaceholder {
+    width: 52px;
+    height: 52px;
+
+    border-radius: 50%;
+    flex-shrink: 0;
+    }
+
+    .detailAvatar {
+    display: block;
+    object-fit: cover;
+    }
+
+    .detailAvatarPlaceholder {
+    background-color: #878ea1;
+    }
+
+    .detailName {
+    display: block;
+
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 140%;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    }
+
+    .detailCard .tagList {
+    margin-top: 16px;
+    flex-wrap: nowrap;
+    overflow: hidden;
+    }
+
+    .experienceSection {
+    width: 100%;
+    margin-top: 20px;
+    }
+
+    .sectionLabel {
+    margin: 0 0 8px;
+
+    color: #d5d8e0;
+    font-size: 11px;
+    line-height: 150%;
+    }
+
+    .experienceBox {
+    width: 100%;
+    padding: 10px;
+
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+
+    border-radius: 6px;
+    background-color: #565c72;
+
+    box-sizing: border-box;
+    }
+
+    .experienceTitle {
+    flex-shrink: 0;
+
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: underline;
+    }
+
+    .experienceDescription {
+    min-width: 0;
+    margin: 0;
+
+    color: #ffffff;
+    font-size: 10px;
+    line-height: 150%;
+
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    }
+
+    /* =========================
+    공통 강점 영역
+    ========================= */
+
+    .strengthRow {
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    }
+
+    .detailCard > .strengthRow {
+    margin-top: auto;
+    padding-top: 16px;
+    }
+
+    /* =========================
+    모바일 대응
+    ========================= */
+
+    @media (max-width: 768px) {
+    .horizontalCard {
+        width: 100%;
+        max-width: 360px;
+    }
+
+    .completeCard {
+        width: min(100%, 282px);
+    }
+
+    .detailCard {
+        width: min(100%, 238px);
+    }
+    }

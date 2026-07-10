@@ -20,12 +20,17 @@
             <input
             className={styles.input}
             value={data.affiliation}
+            maxLength={20}
             onChange={(e) => handleChange("affiliation", e.target.value)}
             placeholder="텍스트를 입력하세요"
             />
-        </div>
-        </div>
-    );
-    };
+
+            <p className={styles.count}>
+            {(data.affiliation || "").length}/20
+            </p>
+                    </div>
+                    </div>
+                );
+                };
 
     export default CommonCardForm;
