@@ -1,4 +1,4 @@
-    import { useState } from "react";
+    import { useMemo, useState } from "react";
     import styles from "./TagSelectModal.module.css";
 
     const TagSelectModal = ({
@@ -6,104 +6,138 @@
     description,
     options,
     selectedItems,
-    maxCount = 10,
+    maxCount,
     onClose,
     onConfirm,
     }) => {
-    const [keyword, setKeyword] = useState("");
-    const [tempSelected, setTempSelected] = useState(selectedItems || []);
-
-    const filteredOptions = options.filter((option) =>
-        option.name.toLowerCase().includes(keyword.toLowerCase())
+    const [searchValue, setSearchValue] = useState("");
+    const [temporarySelected, setTemporarySelected] = useState(
+        selectedItems || []
     );
 
-    const isSelected = (item) =>
-        tempSelected.some((selected) => selected.id === item.id);
+    const filteredOptions = useMemo(() => {
+        const keyword = searchValue.trim().toLowerCase();
 
-    const handleToggle = (item) => {
-        if (isSelected(item)) {
-        setTempSelected((prev) =>
-            prev.filter((selected) => selected.id !== item.id)
+        if (!keyword) {
+        return options;
+        }
+
+        return options.filter((option) =>
+        option.name.toLowerCase().includes(keyword)
+        );
+    }, [options, searchValue]);
+
+    const isSelected = (optionId) =>
+        temporarySelected.some((item) => item.id === optionId);
+
+    const handleToggle = (option) => {
+        if (isSelected(option.id)) {
+        setTemporarySelected((prev) =>
+            prev.filter((item) => item.id !== option.id)
         );
         return;
         }
 
-        if (tempSelected.length >= maxCount) return;
+        if (temporarySelected.length >= maxCount) {
+        return;
+        }
 
-        setTempSelected((prev) => [...prev, item]);
+        setTemporarySelected((prev) => [...prev, option]);
     };
 
     const handleConfirm = () => {
-        onConfirm(tempSelected);
+        onConfirm(temporarySelected);
         onClose();
     };
 
     return (
-        <div className={styles.overlay}>
-        <div className={styles.modal}>
-            <button type="button" className={styles.closeButton} onClick={onClose}>
-            ×
-            </button>
+        <div className={styles.overlay} onClick={onClose}>
+        <section
+            className={styles.bottomSheet}
+            onClick={(event) => event.stopPropagation()}
+        >
+            <div className={styles.content}>
+            <div className={styles.header}>
+                <h2 className={styles.title}>{title}</h2>
 
-            <h2 className={`body1 ${styles.title}`}>{title}</h2>
-            <p className={`caption1 ${styles.description}`}>{description}</p>
+                <button
+                type="button"
+                onClick={onClose}
+                className={styles.closeButton}
+                aria-label="닫기"
+                >
+                ×
+                </button>
+            </div>
 
-            <input
-            className={styles.searchInput}
-            value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
-            placeholder="찾으시는 항목이 있나요?"
-            />
+            <p className={styles.description}>{description}</p>
 
-            <div className={styles.optionList}>
-            {filteredOptions.map((option) => {
-                const selected = isSelected(option);
+            <div className={styles.searchBox}>
+                <input
+                type="search"
+                value={searchValue}
+                onChange={(event) => setSearchValue(event.target.value)}
+                placeholder="찾으시는 분야가 있나요?"
+                className={styles.searchInput}
+                />
+
+                <span className={styles.searchIcon}>⌕</span>
+            </div>
+
+            <div className={styles.tagList}>
+                {filteredOptions.map((option) => {
+                const selected = isSelected(option.id);
 
                 return (
-                <button
+                    <button
                     key={option.id}
                     type="button"
                     onClick={() => handleToggle(option)}
                     className={`${styles.tagButton} ${
-                    selected ? styles.selected : ""
+                        selected ? styles.selectedTagButton : ""
                     }`}
-                >
+                    >
                     {option.name}
-                    {selected && <span className={styles.removeIcon}> ×</span>}
-                </button>
+                    {selected && <span className={styles.removeIcon}>×</span>}
+                    </button>
                 );
-            })}
+                })}
+            </div>
             </div>
 
-            <div className={styles.divider} />
-
-            <div className={styles.selectedHeader}>
-            <span className="caption1">
-                {tempSelected.length}/{maxCount}
-            </span>
-            </div>
+            <div className={styles.footer}>
+            <p className={styles.selectedCount}>
+                {temporarySelected.length}/{maxCount}
+            </p>
 
             <div className={styles.selectedList}>
-            {tempSelected.map((item) => (
+                {temporarySelected.map((item) => (
                 <button
-                key={item.id}
-                type="button"
-                onClick={() => handleToggle(item)}
-                className={styles.selectedTag}
+                    key={item.id}
+                    type="button"
+                    onClick={() => handleToggle(item)}
+                    className={styles.selectedItem}
                 >
-                {item.name} ×
+                    {item.name}
+                    <span>×</span>
                 </button>
-            ))}
+                ))}
             </div>
 
             <button
             type="button"
-            className={`body1 ${styles.confirmButton}`}
             onClick={handleConfirm}
+            disabled={temporarySelected.length === 0}
+            className={`${styles.confirmButton} ${
+                temporarySelected.length > 0
+                ? styles.confirmButtonActive
+                : ""
+            }`}
             >
             등록
             </button>
-        </div>
+            </div>
+        </section>
         </div>
     );
     };

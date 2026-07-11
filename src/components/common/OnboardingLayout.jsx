@@ -1,50 +1,63 @@
-    import Header from "./Header";
-    import ProgressBar from "./ProgressBar";
-
     import styles from "./OnboardingLayout.module.css";
 
     const OnboardingLayout = ({
     children,
-    showBackButton,
+    showBackButton = true,
     showProgress = true,
     onBack,
-    currentStep,
-    totalSteps,
+    currentStep = 1,
+    totalSteps = 1,
     }) => {
+    const progressPercent =
+    totalSteps > 0
+        ? Math.min(((currentStep + 1) / totalSteps) * 100, 100)
+        : 0;
+
     return (
-        <div className={styles.page}>
+        <main className={styles.page}>
         <div className={styles.inner}>
-
-            <Header />
-
-            <div className={styles.header}>
-            {showBackButton ? (
+            {(showBackButton || showProgress) && (
+            <header
+                className={`${styles.header} ${
+                !showBackButton && showProgress
+                    ? styles.headerWithoutBack
+                    : ""
+                }`}
+            >
+                {showBackButton && (
                 <button
-                type="button"
-                onClick={onBack}
-                className={styles.backButton}
+                    type="button"
+                    onClick={onBack}
+                    className={styles.backButton}
+                    aria-label="이전 단계로 이동"
                 >
-                &lt;
+                    ‹
                 </button>
-            ) : (
-                <div className={styles.backPlaceholder} />
+                )}
+
+                {showProgress && (
+                <div
+                    className={styles.progressTrack}
+                    role="progressbar"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                    aria-valuenow={Math.round(progressPercent)}
+                >
+                    <div
+                    className={styles.progressValue}
+                    style={{
+                        width: `${progressPercent}%`,
+                    }}
+                    />
+                </div>
+                )}
+            </header>
             )}
 
-            {showProgress && (
-                <ProgressBar
-                currentStep={currentStep}
-                totalSteps={totalSteps}
-                />
-            )}
-            </div>
-
-            <main className={styles.content}>
-            {children}
-            </main>
-
+            <div className={styles.content}>{children}</div>
         </div>
-        </div>
+        </main>
     );
     };
 
-    export default OnboardingLayout; 
+    export default OnboardingLayout;

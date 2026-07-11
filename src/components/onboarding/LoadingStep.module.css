@@ -1,24 +1,58 @@
     .container {
+    width: 100%;
     min-height: calc(100vh - 180px);
+
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+
+    box-sizing: border-box;
     }
 
     .loadingBox {
     width: 160px;
     height: 160px;
-    background-color: var(--gray-900);
     margin-bottom: 24px;
+
+    background-color: var(--gray-900);
     }
 
     .title {
-    color: var(--white);
     margin: 0;
+    color: var(--white);
+    text-align: center;
     }
 
     .description {
-    margin-top: 8px;
+    margin: 8px 0 0;
     color: var(--gray-400);
+    text-align: center;
+    }
+
+    /* 모바일 390px 기준 */
+    @media (max-width: 768px) {
+    .container {
+        flex: 1;
+        min-height: calc(100dvh - 40px);
+
+        padding: 24px 16px;
+    }
+
+    .loadingBox {
+        width: 128px;
+        height: 128px;
+        margin-bottom: 20px;
+    }
+
+    .title {
+        font-size: 18px;
+        line-height: 1.5;
+    }
+
+    .description {
+        margin-top: 6px;
+        font-size: 14px;
+        line-height: 1.5;
+    }
     }
