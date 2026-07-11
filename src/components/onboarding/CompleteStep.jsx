@@ -2,6 +2,7 @@
 
     import OnboardingLayout from "../common/OnboardingLayout";
     import CompleteProfileCard from "../profile/CompleteProfileCard";
+
     import styles from "./CompleteStep.module.css";
 
     const CompleteStep = ({
@@ -12,13 +13,13 @@
     const navigate = useNavigate();
 
     const handleViewProfile = () => {
-        navigate("/mypage");
+        navigate("/explore");
     };
 
     return (
         <OnboardingLayout
         showBackButton={false}
-        showProgress={false}
+        showProgress={true}
         currentStep={currentStep}
         totalSteps={totalSteps}
         >
@@ -29,15 +30,19 @@
             </h1>
 
             <p className={`caption1 ${styles.description}`}>
-                기본 카드는 프로필과 팀원 목록에서 사용할 수 있어요
+                기본 카드는 전체보기 탭에 등록돼요
+                <br />
+                새로운 인맥을 찾고 프로필 카드를 교환해보세요!
             </p>
             </div>
 
+            <div className={styles.cardArea}>
             <CompleteProfileCard
-            data={data}
-            name="홍길동"
-            profileImage={data.profileImage}
+                data={data}
+                name="홍길동"
+                profileImage={data.profileImage}
             />
+            </div>
 
             <button
             type="button"

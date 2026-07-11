@@ -9,12 +9,15 @@
     }
 
     .addButton {
+    width: fit-content;
     height: 36px;
     padding: 0 14px;
+
     border: 1px solid var(--gray-500);
     border-radius: 6px;
     background-color: transparent;
     color: var(--white);
+
     cursor: pointer;
     }
 
@@ -22,11 +25,40 @@
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
+    margin-top: 12px;
     }
 
     .tag {
+    min-height: 32px;
     padding: 6px 12px;
+
+    display: inline-flex;
+    align-items: center;
+
     border-radius: 999px;
-    background: var(--300, #D0D4DD);
-    color: var(--800, #32374C);
+    background-color: var(--300, #d0d4dd);
+    color: var(--800, #32374c);
+    }
+
+    /* 390px 모바일 */
+    @media (max-width: 768px) {
+    .label {
+        margin-bottom: 8px;
+    }
+
+    .addButton {
+        height: 38px;
+        padding: 0 14px;
+        font-size: 13px;
+    }
+
+    .selectedTagArea {
+        gap: 6px;
+        margin-top: 10px;
+    }
+
+    .tag {
+        min-height: 30px;
+        padding: 5px 10px;
+    }
     }

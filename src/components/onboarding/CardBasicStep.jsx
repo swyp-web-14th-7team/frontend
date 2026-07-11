@@ -6,6 +6,7 @@
     import GeneralCardForm from "./GeneralCardForm";
     import TagSelectModal from "./TagSelectModal";
     import StrengthTypeModal from "./StrengthTypeModal";
+
     import styles from "./CardBasicStep.module.css";
 
     const techStackOptions = [
@@ -41,20 +42,21 @@
         });
     };
 
-    const isDeveloper = data.job === "frontend" || data.job === "backend";
+    const isDeveloper =
+        data.job === "frontend" || data.job === "backend";
+
     const isFormValid =
-        data.affiliation.trim() !== "" &&
-        data.introduction.trim() !== "" &&
-        data.strength &&
-        (
-            isDeveloper
-            ? data.techStacks.length > 0
-            : data.interests.length > 0
-        );
+        (data.affiliation || "").trim() !== "" &&
+        (data.introduction || "").trim() !== "" &&
+        Boolean(data.strength) &&
+        (isDeveloper
+        ? (data.techStacks || []).length > 0
+        : (data.interests || []).length > 0);
 
     return (
         <OnboardingLayout
         showBackButton={true}
+        showProgress={true}
         onBack={onBack}
         currentStep={currentStep}
         totalSteps={totalSteps}
@@ -62,8 +64,11 @@
         <section className={styles.container}>
             <div className={styles.textArea}>
             <h1 className={`headline1 ${styles.title}`}>
-                카드에 들어갈 정보를 알려주세요
+                카드에 들어갈 정보를
+                <br className={styles.mobileBr} />
+                알려주세요
             </h1>
+
             <p className={`caption1 ${styles.description}`}>
                 나를 소개하기 위해 기본적인 정보를 작성해보세요
             </p>
@@ -71,23 +76,35 @@
 
             <div className={styles.profileImageBox}>
             <div className={styles.profileCircle} />
-            <button type="button" className={styles.editButton}>
+
+            <button
+                type="button"
+                className={styles.editButton}
+                aria-label="프로필 이미지 수정"
+            >
                 ✎
             </button>
             </div>
 
             <div className={styles.form}>
-            <CommonCardForm data={data} handleChange={handleChange} />
+            <CommonCardForm
+                data={data}
+                handleChange={handleChange}
+            />
 
             {isDeveloper ? (
                 <DeveloperCardForm
                 data={data}
-                onOpenStackModal={() => setModalType("techStacks")}
+                onOpenStackModal={() =>
+                    setModalType("techStacks")
+                }
                 />
             ) : (
                 <GeneralCardForm
                 data={data}
-                onOpenInterestModal={() => setModalType("interests")}
+                onOpenInterestModal={() =>
+                    setModalType("interests")
+                }
                 />
             )}
 
@@ -97,23 +114,25 @@
                 </label>
 
                 {data.strength ? (
-            <button
-                type="button"
-                className={styles.selectedStrength}
-                onClick={() => setModalType("strength")}
+                <button
+                    type="button"
+                    className={styles.selectedStrength}
+                    onClick={() => setModalType("strength")}
                 >
-                <img
-                src={data.strength.icon}
-                alt={data.strength.title}
-                className={styles.strengthIcon}
-                />
+                    <img
+                    src={data.strength.icon}
+                    alt=""
+                    className={styles.strengthIcon}
+                    />
 
-                <div className={styles.strengthText}>
-                <span className={`caption1 ${styles.strengthTitle}`}>
-                {data.strength.title}
-                </span>
-                </div>
-            </button>
+                    <span className={styles.strengthText}>
+                    <span
+                        className={`caption1 ${styles.strengthTitle}`}
+                    >
+                        {data.strength.title}
+                    </span>
+                    </span>
+                </button>
                 ) : (
                 <button
                     type="button"
@@ -125,19 +144,24 @@
                 )}
             </div>
 
-            <textarea
-            className={styles.textarea}
-            value={data.introduction || ""}
-            maxLength={250}
-            onChange={(e) =>
-                handleChange("introduction", e.target.value)
-            }
-            placeholder="성격, 역량 등을 작성해주세요"
-            />
+            <div className={styles.introductionField}>
+                <textarea
+                className={styles.textarea}
+                value={data.introduction || ""}
+                maxLength={250}
+                onChange={(event) =>
+                    handleChange(
+                    "introduction",
+                    event.target.value
+                    )
+                }
+                placeholder="성격, 역량 등을 작성해주세요"
+                />
 
-            <p className={styles.count}>
-            {(data.introduction || "").length}/250
-            </p>
+                <p className={styles.count}>
+                {(data.introduction || "").length}/250
+                </p>
+            </div>
             </div>
 
             <button
@@ -162,7 +186,10 @@
             selectedItems={data.techStacks || []}
             maxCount={10}
             onClose={() => setModalType(null)}
-            onConfirm={(selected) => handleChange("techStacks", selected)}
+            onConfirm={(selected) => {
+                handleChange("techStacks", selected);
+                setModalType(null);
+            }}
             />
         )}
 
@@ -174,7 +201,10 @@
             selectedItems={data.interests || []}
             maxCount={10}
             onClose={() => setModalType(null)}
-            onConfirm={(selected) => handleChange("interests", selected)}
+            onConfirm={(selected) => {
+                handleChange("interests", selected);
+                setModalType(null);
+            }}
             />
         )}
 
@@ -192,4 +222,4 @@
     );
     };
 
-    export default CardBasicStep;   
+    export default CardBasicStep;

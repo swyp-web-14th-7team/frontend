@@ -1,48 +1,135 @@
-.page {
+    .page {
     min-height: 100vh;
+    min-height: 100dvh;
+
     background-color: #111017;
     color: #ffffff;
-    box-sizing: border-box;
-}
 
-.inner {
+    box-sizing: border-box;
+    }
+
+    .inner {
     width: 100%;
     max-width: 1440px;
+
     min-height: 100vh;
+    min-height: 100dvh;
+
     margin: 0 auto;
     padding: 16px 96px;
-    box-sizing: border-box;
-}
 
-.header {
+    display: flex;
+    flex-direction: column;
+
+    box-sizing: border-box;
+    }
+
+    .header {
+    width: 100%;
+    margin-top: 8px;
+
     display: flex;
     align-items: center;
     gap: 18px;
-    width: 100%;
-    margin-top: 8px;
-}
 
-.backButton {
+    box-sizing: border-box;
+    }
+
+    .backButton {
     width: 32px;
     height: 32px;
+    padding: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
     border: none;
-    background: transparent;
+    background-color: transparent;
     color: #ffffff;
+
     font-size: 28px;
+    line-height: 1;
+
     cursor: pointer;
-}
+    }
 
-.backPlaceholder {
-    width: 32px;
-    height: 32px;
-}
+    .progressTrack {
+    flex: 1;
+    min-width: 0;
+    height: 4px;
 
-.content {
+    overflow: hidden;
+
+    border-radius: 999px;
+    background-color: var(--gray-800, #32374c);
+    }
+
+    .progressValue {
+    height: 100%;
+
+    border-radius: inherit;
+    background-color: var(--gray-400, #9ca3af);
+
+    transition: width 0.3s ease;
+    }
+
+    /* 뒤로가기 버튼이 없는 완료 화면 */
+    .headerWithoutBack {
+    gap: 0;
+    }
+
+    .headerWithoutBack .progressTrack {
     width: 100%;
-    min-height: calc(100vh - 140px);
+    flex: none;
+    }
+
+    .content {
+    width: 100%;
+    flex: 1;
+
     display: flex;
     flex-direction: column;
-}
 
+    box-sizing: border-box;
+    }
 
+    /* 모바일 */
+    @media (max-width: 768px) {
+    .inner {
+        max-width: 390px;
+        padding: 16px 16px 24px;
+    }
 
+    .header {
+        margin-top: 0;
+        gap: 12px;
+    }
+
+    .backButton {
+        width: 24px;
+        height: 24px;
+
+        font-size: 24px;
+    }
+
+    .progressTrack {
+        height: 4px;
+    }
+
+    .headerWithoutBack {
+        width: 100%;
+        gap: 0;
+    }
+
+    .headerWithoutBack .progressTrack {
+        width: 100%;
+    }
+
+    .content {
+        flex: 1;
+        min-height: 0;
+    }
+    }

@@ -6,6 +6,7 @@
     import decisionIcon from "../../assets/images/결정가.svg";
     import organizeIcon from "../../assets/images/정리구조화.svg";
     import etcIcon from "../../assets/images/무언가.svg";
+
     import styles from "./StrengthTypeModal.module.css";
 
     const strengthOptions = [
@@ -52,79 +53,115 @@
     onClose,
     onConfirm,
     }) => {
-    const [tempSelected, setTempSelected] = useState(selectedItem || null);
+    const [tempSelected, setTempSelected] = useState(
+        selectedItem || null
+    );
 
     const handleConfirm = () => {
-        if (!tempSelected) return;
+        if (!tempSelected) {
+        return;
+        }
+
         onConfirm(tempSelected);
     };
 
     return (
-        <div className={styles.overlay}>
-        <div className={styles.modal}>
-            <button
-            type="button"
-            className={styles.closeButton}
-            onClick={onClose}
-            >
-            ×
-            </button>
+        <div
+        className={styles.overlay}
+        onClick={onClose}
+        >
+        <section
+            className={styles.modal}
+            onClick={(event) => event.stopPropagation()}
+        >
+            <div className={styles.content}>
+            <div className={styles.header}>
+                <div>
+                <h2 className={`body1 ${styles.title}`}>
+                    나의 소통 타입
+                </h2>
 
-            <h2 className={`body1 ${styles.title}`}>나의 소통 타입</h2>
-            <p className={`caption1 ${styles.description}`}>
-            어떤 타입에 가장 가까운지 선택하면 다른 사람들이 OO님을 파악하기 쉬울 거예요
-            </p>
+                <p className={`caption1 ${styles.description}`}>
+                    어떤 타입에 가장 가까운지 선택하면
+                    다른 사람들이 OO님을 파악하기 쉬울 거예요
+                </p>
+                </div>
+
+                <button
+                type="button"
+                className={styles.closeButton}
+                onClick={onClose}
+                aria-label="닫기"
+                >
+                ×
+                </button>
+            </div>
 
             <div className={styles.optionGrid}>
-            {strengthOptions.map((option) => {
-                const isSelected = tempSelected?.id === option.id;
+                {strengthOptions.map((option) => {
+                const isSelected =
+                    tempSelected?.id === option.id;
 
                 return (
-                <button
+                    <button
                     key={option.id}
                     type="button"
                     onClick={() => setTempSelected(option)}
+                    aria-pressed={isSelected}
                     className={`${styles.optionButton} ${
-                    isSelected ? styles.selected : ""
+                        isSelected ? styles.selected : ""
                     }`}
-                >
+                    >
                     <img
-                    src={option.icon}
-                    alt={option.title}
-                    className={styles.icon}
+                        src={option.icon}
+                        alt=""
+                        className={styles.icon}
                     />
-                    <span className={`caption1 ${styles.optionTitle}`}>
-                    {option.title}
+
+                    <span
+                        className={`caption1 ${styles.optionTitle}`}
+                    >
+                        {option.title}
                     </span>
-                </button>
+                    </button>
                 );
-            })}
+                })}
             </div>
 
             {tempSelected && (
-            <div className={styles.previewBox}>
-                <span className={styles.previewIcon}></span>
+                <div className={styles.previewBox}>
+                <img
+                    src={tempSelected.icon}
+                    alt=""
+                    className={styles.previewIcon}
+                />
 
-                <div>
-                <p className={`body1 ${styles.previewTitle}`}>
+                <div className={styles.previewText}>
+                    <p className={`body1 ${styles.previewTitle}`}>
                     {tempSelected.title}
-                </p>
-                <p className={`caption1 ${styles.previewDescription}`}>
-                    {tempSelected.description}
-                </p>
-                </div>
-            </div>
-            )}
+                    </p>
 
+                    <p
+                    className={`caption1 ${styles.previewDescription}`}
+                    >
+                    {tempSelected.description}
+                    </p>
+                </div>
+                </div>
+            )}
+            </div>
+
+            <div className={styles.footer}>
             <button
-            type="button"
-            className={`body1 ${styles.confirmButton}`}
-            onClick={handleConfirm}
-            disabled={!tempSelected}
+                type="button"
+                className={`${styles.confirmButton}`}
+                onClick={handleConfirm}
+                disabled={!tempSelected}
             >
-            등록
+                등록
             </button>
-        </div>
+            </div>
+        </section>
         </div>
     );
     };

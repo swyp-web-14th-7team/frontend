@@ -43,6 +43,7 @@
     return (
         <OnboardingLayout
         showBackButton={true}
+        showProgress={true}
         onBack={onBack}
         currentStep={currentStep}
         totalSteps={totalSteps}
@@ -64,12 +65,13 @@
 
                 return (
                 <button
-                    key={job.id}
-                    type="button"
-                    onClick={() => handleSelectJob(job.id)}
-                    className={`${styles.jobItem} ${
+                key={job.id}
+                type="button"
+                onClick={() => handleSelectJob(job.id)}
+                aria-pressed={isSelected}
+                className={`${styles.jobItem} ${
                     isSelected ? styles.selected : ""
-                    }`}
+                }`}
                 >
                     <span className={styles.iconBox}></span>
 

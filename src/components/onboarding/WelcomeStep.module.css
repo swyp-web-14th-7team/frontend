@@ -1,9 +1,11 @@
     .container {
+    width: 100%;
     min-height: calc(100vh - 180px);
     display: flex;
     flex-direction: column;
     align-items: center;
     padding-top: 80px;
+    box-sizing: border-box;
     }
 
     .textArea {
@@ -14,15 +16,19 @@
 
     .title {
     margin: 0;
-    color: #F9FAFB;
-    weight:600px;
+    color: #f9fafb;
+    font-weight: 600;
+    text-align: left;
+    }
+
+    .mobileBr {
+    display: none;
     }
 
     .description {
-    margin-top: 16px;
-    align-items: center;
+    margin: 16px 0 0;
+    color: #878ea1;
     text-align: center;
-    color: #878EA1;
     }
 
     .logoBox {
@@ -30,7 +36,7 @@
     height: 140px;
     margin: 120px auto 0;
     opacity: 0.3;
-    background: var(--600, #676D82);
+    background: #676d82;
     }
 
     .nextButton {
@@ -40,7 +46,56 @@
     margin: auto auto 0;
     border: none;
     border-radius: 8px;
-    background-color: #FFFFFF;
+    background-color: #ffffff;
     color: #111017;
     cursor: pointer;
+    }
+
+    /* 모바일: 390px 시안 기준 */
+    @media (max-width: 768px) {
+    .container {
+        min-height: calc(100dvh - 40px);
+        align-items: stretch;
+        padding-top: 88px;
+        padding-bottom: 0;
+    }
+
+    .textArea {
+        width: 100%;
+        max-width: none;
+        text-align: center;
+    }
+
+    .mobileBr {
+        display: block;
+    }
+
+    .title {
+        font-size: 24px;
+        line-height: 1.45;
+        text-align: center;
+    }
+
+    .description {
+        margin-top: 16px;
+        font-size: 16px;
+        line-height: 1.6;
+        text-align: center;
+    }
+
+    .logoBox {
+        width: 252px;
+        height: 252px;
+        margin: 76px auto 0;
+    }
+
+    .nextButton {
+        width: 100%;
+        max-width: none;
+        height: 56px;
+        margin-top: auto;
+        border-radius: 8px;
+        font-size: 16px;
+        flex-shrink: 0;
+    }
     }
