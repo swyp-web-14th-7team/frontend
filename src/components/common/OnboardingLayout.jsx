@@ -1,3 +1,4 @@
+    import Header from "./Header";
     import styles from "./OnboardingLayout.module.css";
 
     const OnboardingLayout = ({
@@ -9,12 +10,16 @@
     totalSteps = 1,
     }) => {
     const progressPercent =
-    totalSteps > 0
+        totalSteps > 0
         ? Math.min(((currentStep + 1) / totalSteps) * 100, 100)
         : 0;
 
     return (
         <main className={styles.page}>
+        <div className={styles.desktopHeader}>
+            <Header />
+        </div>
+
         <div className={styles.inner}>
             {(showBackButton || showProgress) && (
             <header
@@ -54,7 +59,9 @@
             </header>
             )}
 
-            <div className={styles.content}>{children}</div>
+            <div className={styles.content}>
+            {children}
+            </div>
         </div>
         </main>
     );

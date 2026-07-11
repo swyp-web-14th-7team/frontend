@@ -8,6 +8,10 @@
     box-sizing: border-box;
     }
 
+    .desktopHeader {
+    display: block;
+    }
+
     .inner {
     width: 100%;
     max-width: 1440px;
@@ -96,8 +100,11 @@
     box-sizing: border-box;
     }
 
-    /* 모바일 */
     @media (max-width: 768px) {
+    .desktopHeader {
+        display: none;
+    }
+
     .inner {
         max-width: 390px;
         padding: 16px 16px 24px;
@@ -111,7 +118,6 @@
     .backButton {
         width: 24px;
         height: 24px;
-
         font-size: 24px;
     }
 
