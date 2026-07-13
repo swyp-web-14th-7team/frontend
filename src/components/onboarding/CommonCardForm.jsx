@@ -1,36 +1,47 @@
+    import Dropdown from "../common/Dropdown/Dropdown";
     import styles from "./CommonCardForm.module.css";
+
+    const affiliationOptions = [
+    "직장인",
+    "재학생",
+    "휴학생",
+    "취준생",
+    ];
 
     const CommonCardForm = ({ data, handleChange }) => {
     return (
         <div className={styles.field}>
-        <label className={`caption1 ${styles.label}`}>현 소속</label>
+        <label className={`caption1 ${styles.label}`}>
+            현 소속
+        </label>
 
         <div className={styles.affiliationRow}>
-            <select
-            className={styles.select}
-            value={data.affiliationType}
-            onChange={(e) => handleChange("affiliationType", e.target.value)}
-            >
-            <option value="직장인">직장인</option>
-            <option value="재학생">재학생</option>
-            <option value="휴학생">휴학생</option>
-            <option value="취준생">취준생</option>
-            </select>
+            <div className={styles.dropdownWrapper}>
+            <Dropdown
+                value={data.affiliationType}
+                options={affiliationOptions}
+                onChange={(value) =>
+                handleChange("affiliationType", value)
+                }
+            />
+            </div>
 
             <input
             className={styles.input}
             value={data.affiliation}
             maxLength={20}
-            onChange={(e) => handleChange("affiliation", e.target.value)}
+            onChange={(event) =>
+                handleChange("affiliation", event.target.value)
+            }
             placeholder="텍스트를 입력하세요"
             />
 
             <p className={styles.count}>
             {(data.affiliation || "").length}/20
             </p>
-                    </div>
-                    </div>
-                );
-                };
+        </div>
+        </div>
+    );
+    };
 
     export default CommonCardForm;
