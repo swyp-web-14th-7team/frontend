@@ -1,0 +1,22 @@
+    .main {
+    min-height: calc(100vh - 64px);
+    padding: 48px 80px;
+    background-color: #11111a;
+    color: #ffffff;
+    box-sizing: border-box;
+    }
+
+    .hero {
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+    }
+
+    .title {
+    margin: 0 0 20px;
+
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.4;
+    }

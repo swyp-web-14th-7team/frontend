@@ -1,5 +1,6 @@
     import { useMemo, useState } from "react";
     import styles from "./TagSelectModal.module.css";
+    import searchIcon from "../../assets/icons/icon_search.svg";
 
     const TagSelectModal = ({
     title,
@@ -81,7 +82,11 @@
                 className={styles.searchInput}
                 />
 
-                <span className={styles.searchIcon}>⌕</span>
+                <img
+                src={searchIcon}
+                alt=""
+                className={styles.searchIcon}
+                />
             </div>
 
             <div className={styles.tagList}>

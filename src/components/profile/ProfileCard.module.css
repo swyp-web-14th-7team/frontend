@@ -324,6 +324,20 @@
     text-overflow: ellipsis;
     }
 
+    .cardButton {
+    width: 100%;
+    padding: 0;
+
+    border: 0;
+    background: transparent;
+
+    color: inherit;
+    font: inherit;
+    text-align: left;
+
+    cursor: pointer;
+    }
+
     /* =========================
     상세형 카드
     ========================= */
