@@ -1,0 +1,296 @@
+    .overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 24px;
+
+    background-color: rgb(0 0 0 / 60%);
+    box-sizing: border-box;
+    }
+
+    .modal {
+    width: min(100%, 520px);
+    max-height: calc(100vh - 48px);
+    padding: 24px;
+
+    border: 1px solid #454a5f;
+    border-radius: 16px;
+
+    background-color: #2d3144;
+    color: #ffffff;
+
+    box-sizing: border-box;
+    overflow-y: auto;
+    }
+
+    .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    }
+
+    .title {
+    margin: 0;
+
+    font-size: 20px;
+    font-weight: 700;
+    }
+
+    .closeButton {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+
+    border: 0;
+    background: transparent;
+    color: #ffffff;
+
+    font-family: inherit;
+    font-size: 24px;
+    line-height: 1;
+
+    cursor: pointer;
+    }
+
+    .searchBox {
+    width: 100%;
+    height: 44px;
+    margin-top: 32px;   
+    padding: 0 14px;
+
+    display: flex;
+    align-items: center;
+
+    border: 1px solid #555b71;
+    border-radius: 8px;
+    background-color: #202335;
+
+    box-sizing: border-box;
+    }
+
+    .searchInput {
+    flex: 1;
+
+    border: 0;
+    outline: 0;
+    background: transparent;
+
+    color: #ffffff;
+    font-size: 14px;
+    font-family: inherit;
+    }
+
+    .searchIcon {
+    width: 18px;
+    height: 18px;
+
+    margin-left: 10px;   /* 오른쪽 여백 */
+    margin-right: 0;      /* 기존 값 제거 */
+
+    flex-shrink: 0;
+    }
+
+    .searchInput::placeholder {
+    color: #8f94a8;
+    }
+
+    .searchInput::-webkit-search-cancel-button {
+    display: none;
+    }
+
+    .optionArea {
+    margin-top: 24px;
+    }
+
+    .optionSection + .optionSection {
+    margin-top: 24px;
+    }
+
+    .sectionHeader {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    margin-bottom: 12px;
+    }
+
+    .sectionTitle {
+    flex-shrink: 0;
+
+    color: #b9becf;
+    font-size: 13px;
+    font-weight: 600;
+    }
+
+    .sectionLine {
+    height: 1px;
+    flex: 1;
+
+    background-color: #4f5569;
+    }
+
+    .optionList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    }
+
+    .itemButton {
+    min-height: 36px;
+    padding: 0 14px;
+
+    border: 1px solid #555b71;
+    border-radius: 999px;
+
+    background-color: #202335;
+    color: #ffffff;
+
+    font-family: inherit;
+    font-size: 13px;
+
+    cursor: pointer;
+    }
+
+    .itemButton:hover {
+    border-color: #7a8098;
+    background-color: #353a50;
+    }
+
+    .selectedItem {
+    border-color: #d8edff;
+    background-color: #d8edff;
+    color: #111017;
+    }
+
+    .emptyMessage {
+    width: 100%;
+    margin: 8px 0;
+
+    color: #8f94a8;
+    font-size: 13px;
+    }
+
+    .selectedArea {
+    margin-top: 28px;
+    padding-top: 20px;
+
+    border-top: 1px solid #4f5569;
+    }
+
+    .selectedLabel {
+    margin: 0 0 12px;
+
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    }
+
+    .selectedList {
+    min-height: 36px;
+
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    }
+
+    .selectedTag {
+    min-height: 34px;
+    padding: 0 12px;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    border: 0;
+    border-radius: 999px;
+
+    background-color: #555b71;
+    color: #ffffff;
+
+    font-family: inherit;
+    font-size: 13px;
+
+    cursor: pointer;
+    }
+
+    .removeIcon {
+    font-size: 16px;
+    line-height: 1;
+    }
+
+    .selectedEmpty {
+    margin: 0;
+
+    color: #8f94a8;
+    font-size: 13px;
+    }
+
+    .footer {
+    margin-top: 28px;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    }
+
+    .resetButton,
+    .applyButton {
+    height: 44px;
+
+    border-radius: 8px;
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+    }
+
+    .resetButton {
+    border: 1px solid #62677b;
+    background-color: transparent;
+    color: #ffffff;
+    }
+
+    .resetButton:hover {
+    background-color: #3a3f54;
+    }
+
+    .applyButton {
+    border: 0;
+    background-color: #d8edff;
+    color: #111017;
+    }
+
+    .applyButton:hover {
+    opacity: 0.9;
+    }
+
+    @media (max-width: 600px) {
+    .overlay {
+        align-items: flex-end;
+        padding: 0;
+    }
+
+    .modal {
+        width: 100%;
+        max-height: 90vh;
+        padding: 20px;
+
+        border-radius: 16px 16px 0 0;
+    }
+
+    .footer {
+        position: sticky;
+        bottom: -20px;
+
+        padding: 16px 0 20px;
+
+        background-color: #2d3144;
+    }
+    }
