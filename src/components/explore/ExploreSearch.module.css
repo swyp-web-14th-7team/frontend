@@ -2,6 +2,7 @@
     width: 100%;
     }
 
+    /* 검색 입력 + 현 소속 + 스킬 필터 전체 영역 */
     .searchBox {
     width: 100%;
     min-height: 56px;
@@ -20,6 +21,7 @@
     width: 20px;
     height: 20px;
     margin-right: 12px;
+
     flex-shrink: 0;
     }
 
@@ -50,32 +52,54 @@
     display: flex;
     align-items: center;
     gap: 8px;
+
+    flex-shrink: 0;
     }
 
+    /* 현 소속 드롭다운 */
+    .affiliationDropdown {
+    width: 108px;
+    flex-shrink: 0;
+    }
+
+    /* 스킬·툴 버튼 */
     .filterButton {
-    min-width: 92px;
+    width: 132px;
     height: 40px;
-    padding: 0 14px;
+    padding: 0 12px;
 
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 8px;
+    gap: 6px;
 
-    border: 1px solid #666b7e;
-    border-radius: 7px;
+    border: 1px solid #62677b;
+    border-radius: 8px;
 
-    background-color: #505469;
-    color: #f5f5f7;
+    background-color: #4e5368;
+    color: #ffffff;
 
     font-family: inherit;
     font-size: 13px;
 
     cursor: pointer;
+    box-sizing: border-box;
     }
 
     .filterButton:hover {
-    background-color: #5d6278;
+    border-color: #83899e;
+    }
+
+    /* Swift 외 14처럼 긴 텍스트 말줄임 */
+    .filterText {
+    min-width: 0;
+    flex: 1;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    text-align: left;
     }
 
     .arrow {
@@ -85,24 +109,67 @@
     flex-shrink: 0;
     }
 
-    .sortButton {
-    margin-top: 14px;
-    padding: 0;
+    .sortArea {
+    width: 100%;
+    margin-top: 12px;
 
     display: flex;
-    align-items: center;
+    justify-content: flex-start;
+    }
+
+    .sortDropdown {
+    width: fit-content;
+    flex-shrink: 0;
+    }
+
+    
+    .sortDropdown > button {
+    width: auto;
+    height: 36px;
+    padding: 0;
+
+    justify-content: flex-start;
     gap: 6px;
 
     border: 0;
-    background: transparent;
+    background-color: transparent;
 
     color: #a9adbc;
-    font-family: inherit;
-    font-size: 13px;
-
-    cursor: pointer;
     }
 
-    .sortButton:hover {
+    .sortDropdown > button:hover {
     color: #ffffff;
+    }
+
+    /* 열리는 메뉴 너비는 충분히 유지 */
+    .sortDropdown > ul {
+    width: 150px;
+    }
+
+    /* 모바일은 추후 전용 카드/검색 UI 적용 전 임시 대응 */
+    @media (max-width: 768px) {
+    .searchBox {
+        align-items: flex-start;
+        flex-wrap: wrap;
+        padding: 14px;
+    }
+
+    .searchIcon {
+        margin-top: 10px;
+    }
+
+    .searchInput {
+        height: 40px;
+    }
+
+    .filterArea {
+        width: 100%;
+        margin-top: 12px;
+        margin-left: 0;
+    }
+
+    .affiliationDropdown,
+    .filterButton {
+        width: calc(50% - 4px);
+    }
     }

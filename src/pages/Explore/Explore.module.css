@@ -1,8 +1,10 @@
     .main {
     min-height: calc(100vh - 64px);
-    padding: 48px 80px;
-    background-color: #11111a;
+    padding: 48px 80px 80px;
+
+    background-color: #111017;
     color: #ffffff;
+
     box-sizing: border-box;
     }
 
@@ -19,4 +21,132 @@
     font-size: 24px;
     font-weight: 700;
     line-height: 1.4;
+    }
+
+    .exploreSection {
+    width: 100%;
+    max-width: 1280px;
+    margin: 56px auto 0;
+    }
+
+    .tabList {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+
+    border-bottom: 1px solid #303344;
+    }
+
+    .tabButton {
+    position: relative;
+
+    padding: 0 0 14px;
+
+    border: 0;
+    background: transparent;
+
+    color: #777b8e;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+
+    cursor: pointer;
+    }
+
+    .tabButton:hover {
+    color: #ffffff;
+    }
+
+    .activeTab {
+    color: #ffffff;
+    font-weight: 600;
+    }
+
+    .activeTab::after {
+    position: absolute;
+    right: 0;
+    bottom: -1px;
+    left: 0;
+
+    height: 2px;
+
+    background-color: #ffffff;
+
+    content: "";
+    }
+
+    .cardArea {
+    position: relative;
+    }
+
+    .maskGradient {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    z-index: 1;
+    height: 65%;
+
+    background: linear-gradient(
+        to bottom,
+        rgb(17 16 23 / 0%),
+        rgb(17 16 23 / 88%) 55%,
+        #111017 100%
+    );
+
+    pointer-events: none;
+    }
+
+    .loginGuide {
+    position: absolute;
+    right: 0;
+    bottom: 56px;
+    left: 0;
+
+    z-index: 2;
+
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+
+    text-align: center;
+    }
+
+    .loginGuideTitle {
+    margin: 0;
+
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.4;
+    }
+
+    .loginGuideDescription {
+    margin: 16px 0 24px;
+
+    color: #9ca0b2;
+    font-size: 14px;
+    line-height: 1.6;
+    }
+
+    .startButton {
+    width: 220px;
+    height: 44px;
+
+    border: 0;
+    border-radius: 6px;
+
+    background-color: #cceaff;
+    color: #111017;
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+    }
+
+    .startButton:hover {
+    opacity: 0.9;
     }
