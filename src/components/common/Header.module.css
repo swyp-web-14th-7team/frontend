@@ -19,6 +19,18 @@
     text-decoration: none;
     }
 
+        .logoButton {
+    padding: 0;
+
+    display: flex;
+    align-items: center;
+
+    border: 0;
+    background: transparent;
+
+    cursor: pointer;
+    }
+
     .logo {
     display: block;
     width: auto;
@@ -34,21 +46,43 @@
     }
 
     .navItem {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
     color: #8f92a3;
     font-size: 14px;
     font-weight: 500;
     text-decoration: none;
+    }
 
-    transition: color 0.2s ease;
+    .navIcon {
+    width: 20px;
+    height: 20px;
+
+    flex-shrink: 0;
+    object-fit: contain;
+
+    opacity: 0.45;
+
+    transition: opacity 0.2s ease;
     }
 
     .navItem:hover {
     color: #ffffff;
     }
 
+    .navItem:hover .navIcon {
+    opacity: 0.8;
+    }
+
     .activeNav {
     color: #ffffff;
     font-weight: 600;
+    }
+
+    .activeNav .navIcon {
+    opacity: 1;
     }
 
     .rightMenu {

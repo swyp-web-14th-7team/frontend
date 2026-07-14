@@ -1,22 +1,39 @@
-    import { NavLink } from "react-router-dom";
+    import { NavLink, useNavigate } from "react-router-dom";
 
     import styles from "./Header.module.css";
 
     import logo from "../../assets/images/nodi-logo-white.svg";
+
+    import exploreNavIcon from "../../assets/icons/icon_explore.svg";
+    import libraryNavIcon from "../../assets/icons/icon_library.svg";
+    import mypageNavIcon from "../../assets/icons/icon_mypage.svg";
+
     import bookmarkIcon from "../../assets/icons/북마크.svg";
     import bellIcon from "../../assets/icons/알림.svg";
     import settingIcon from "../../assets/icons/설정.svg";
 
     const Header = ({ showNav = false }) => {
+    const navigate = useNavigate();
+
+    const handleLogoClick = () => {
+        navigate("/explore");
+        window.location.reload();
+    };
+
     return (
         <header className={styles.header}>
-        <NavLink to="/explore" className={styles.logoLink}>
+        <button
+            type="button"
+            className={styles.logoButton}
+            onClick={handleLogoClick}
+            aria-label="Nodi 홈으로 이동"
+        >
             <img
             src={logo}
             alt="Nodi"
             className={styles.logo}
             />
-        </NavLink>
+        </button>
 
         {showNav && (
             <nav className={styles.nav}>
@@ -28,18 +45,12 @@
                 }`
                 }
             >
-                탐색
-            </NavLink>
-
-            <NavLink
-                to="/profile"
-                className={({ isActive }) =>
-                `${styles.navItem} ${
-                    isActive ? styles.activeNav : ""
-                }`
-                }
-            >
-                내 프로필
+                <img
+                src={exploreNavIcon}
+                alt=""
+                className={styles.navIcon}
+                />
+                <span>탐색</span>
             </NavLink>
 
             <NavLink
@@ -50,7 +61,28 @@
                 }`
                 }
             >
-                보관함
+                <img
+                src={libraryNavIcon}
+                alt=""
+                className={styles.navIcon}
+                />
+                <span>보관함</span>
+            </NavLink>
+
+            <NavLink
+                to="/profile"
+                className={({ isActive }) =>
+                `${styles.navItem} ${
+                    isActive ? styles.activeNav : ""
+                }`
+                }
+            >
+                <img
+                src={mypageNavIcon}
+                alt=""
+                className={styles.navIcon}
+                />
+                <span>내 프로필</span>
             </NavLink>
             </nav>
         )}

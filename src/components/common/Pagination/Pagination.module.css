@@ -1,0 +1,41 @@
+    .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+
+    margin-top: 48px;
+    }
+
+    .pageButton,
+    .arrowButton {
+    min-width: 28px;
+    height: 28px;
+    padding: 0;
+
+    border: 0;
+    border-radius: 6px;
+
+    background: transparent;
+    color: #74788b;
+
+    font-family: inherit;
+    font-size: 14px;
+
+    cursor: pointer;
+    }
+
+    .pageButton:hover,
+    .arrowButton:hover:not(:disabled) {
+    color: #ffffff;
+    }
+
+    .active {
+    background-color: #34394e;
+    color: #ffffff;
+    }
+
+    .arrowButton:disabled {
+    opacity: 0.35;
+    cursor: default;
+    }

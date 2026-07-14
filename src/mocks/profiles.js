@@ -21,85 +21,162 @@
     },
     ];
 
-    const profiles = [
+    const baseProfiles = [
     {
         id: 1,
+        createdAt: "2026-07-01T09:00:00",
+
         name: "이유진",
         job: "planner",
+
         affiliationType: "재학생",
-        affiliation: "oo대학교",
+        affiliation: "성균관대학교",
+
         profileImage: null,
+
         techStacks: [],
+
         interests: [
-        { id: 1, name: "기획" },
-        { id: 2, name: "AI" },
-        { id: 3, name: "UX" },
+        { id: "interest-1", name: "서비스 기획" },
+        { id: "interest-2", name: "AI" },
+        { id: "interest-3", name: "UX" },
         ],
-        representativeExperience: "oo 서비스 PM",
+
+        tools: [
+        { id: "tool-1", name: "Notion" },
+        { id: "tool-2", name: "Jira" },
+        { id: "tool-3", name: "Figma" },
+        ],
+
+        representativeExperience:
+        "교내 창업 프로젝트 PM",
+
         strength: strengthTypes[0],
     },
 
     {
         id: 2,
+        createdAt: "2026-07-04T14:30:00",
+
         name: "박지민",
         job: "frontend",
+
         affiliationType: "직장인",
         affiliation: "네이버",
+
         profileImage: null,
+
         techStacks: [
-        { id: 1, name: "React" },
-        { id: 2, name: "TypeScript" },
-        { id: 3, name: "Next.js" },
+        { id: "skill-1", name: "React" },
+        { id: "skill-2", name: "TypeScript" },
+        { id: "skill-3", name: "Next.js" },
         ],
+
         interests: [],
-        representativeExperience: "사내 디자인 시스템 구축",
+
+        tools: [
+        { id: "tool-4", name: "Git" },
+        { id: "tool-5", name: "GitHub" },
+        { id: "tool-6", name: "Slack" },
+        ],
+
+        representativeExperience:
+        "사내 디자인 시스템 구축",
+
         strength: strengthTypes[1],
     },
 
     {
         id: 3,
+        createdAt: "2026-07-08T10:15:00",
+
         name: "이수현",
         job: "backend",
+
         affiliationType: "직장인",
         affiliation: "카카오",
+
         profileImage: null,
+
         techStacks: [
-        { id: 1, name: "Spring" },
-        { id: 2, name: "Java" },
-        { id: 3, name: "MySQL" },
+        { id: "skill-4", name: "Spring" },
+        { id: "skill-5", name: "Java" },
+        { id: "skill-6", name: "MySQL" },
         ],
+
         interests: [],
-        representativeExperience: "대용량 API 서버 개발",
+
+        tools: [
+        { id: "tool-7", name: "Git" },
+        { id: "tool-8", name: "GitHub" },
+        { id: "tool-9", name: "Jira" },
+        ],
+
+        representativeExperience:
+        "대용량 API 서버 개발",
+
         strength: strengthTypes[2],
     },
 
     {
         id: 4,
+        createdAt: "2026-07-12T18:00:00",
+
         name: "최민서",
         job: "designer",
+
         affiliationType: "프리랜서",
-        affiliation: "UI/UX",
+        affiliation: "UI/UX 디자이너",
+
         profileImage: null,
+
         techStacks: [],
+
         interests: [
-        { id: 1, name: "Figma" },
-        { id: 2, name: "UX" },
-        { id: 3, name: "브랜딩" },
+        { id: "interest-4", name: "브랜딩" },
+        { id: "interest-5", name: "UX" },
+        { id: "interest-6", name: "UI 디자인" },
         ],
-        representativeExperience: "핀테크 앱 리디자인",
+
+        tools: [
+        { id: "tool-10", name: "Figma" },
+        { id: "tool-11", name: "Photoshop" },
+        { id: "tool-12", name: "Illustrator" },
+        ],
+
+        representativeExperience:
+        "핀테크 앱 리디자인",
+
         strength: strengthTypes[3],
     },
     ];
 
-    const extraProfiles = Array.from({ length: 12 }, (_, index) => {
-    const base = profiles[index % profiles.length];
+    const profiles = Array.from(
+    { length: 16 },
+    (_, index) => {
+        const base =
+        baseProfiles[index % baseProfiles.length];
 
-    return {
+        return {
         ...base,
-        id: index + 5,
-        name: `${base.name}${index + 1}`,
-        representativeExperience: `${base.representativeExperience} ${index + 1}`,
-    };
-    });
 
-    export default [...profiles, ...extraProfiles];
+        id: index + 1,
+
+        name: `${base.name}${index + 1}`,
+
+        representativeExperience:
+            `${base.representativeExperience} ${index + 1}`,
+
+        createdAt: new Date(
+            2026,
+            6,
+            index + 1,
+            9 + (index % 8),
+            0,
+            0,
+        ).toISOString(),
+        };
+    },
+    );
+
+    export default profiles;

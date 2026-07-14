@@ -21,8 +21,11 @@
         type="button"
         className={styles.cardButton}
         onClick={() => onClick?.(profile.id)}
+        aria-label={`${profile.name} 프로필 상세 보기`}
         >
-        <article className={styles.completeCard}>
+        <article
+            className={`${styles.completeCard} ${styles.exploreCard}`}
+        >
             <p className={styles.job}>
             {JOB_LABELS[profile.job] || "직군 미선택"}
             </p>
@@ -37,6 +40,7 @@
             ) : (
                 <div
                 className={styles.completeAvatarPlaceholder}
+                aria-hidden="true"
                 />
             )}
 
@@ -89,6 +93,7 @@
                 ) : (
                 <span
                     className={styles.strengthIconPlaceholder}
+                    aria-hidden="true"
                 />
                 )}
 
