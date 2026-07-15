@@ -8,7 +8,7 @@
     import libraryNavIcon from "../../assets/icons/icon_library.svg";
     import mypageNavIcon from "../../assets/icons/icon_mypage.svg";
 
-    import bookmarkIcon from "../../assets/icons/북마크.svg";
+    import scrapIcon from "../../assets/icons/icon_scrap.svg";
     import bellIcon from "../../assets/icons/알림.svg";
     import settingIcon from "../../assets/icons/설정.svg";
 
@@ -36,55 +36,55 @@
         </button>
 
         {showNav && (
-            <nav className={styles.nav}>
+        <nav className={styles.nav}>
             <NavLink
-                to="/explore"
-                className={({ isActive }) =>
+            to="/profile"
+            className={({ isActive }) =>
                 `${styles.navItem} ${
-                    isActive ? styles.activeNav : ""
+                isActive ? styles.activeNav : ""
                 }`
-                }
+            }
             >
-                <img
-                src={exploreNavIcon}
-                alt=""
-                className={styles.navIcon}
-                />
-                <span>탐색</span>
-            </NavLink>
-
-            <NavLink
-                to="/saved"
-                className={({ isActive }) =>
-                `${styles.navItem} ${
-                    isActive ? styles.activeNav : ""
-                }`
-                }
-            >
-                <img
-                src={libraryNavIcon}
-                alt=""
-                className={styles.navIcon}
-                />
-                <span>보관함</span>
-            </NavLink>
-
-            <NavLink
-                to="/profile"
-                className={({ isActive }) =>
-                `${styles.navItem} ${
-                    isActive ? styles.activeNav : ""
-                }`
-                }
-            >
-                <img
+            <img
                 src={mypageNavIcon}
                 alt=""
                 className={styles.navIcon}
-                />
-                <span>내 프로필</span>
+            />
+            <span>내 프로필</span>
             </NavLink>
-            </nav>
+
+            <NavLink
+            to="/explore"
+            className={({ isActive }) =>
+                `${styles.navItem} ${
+                isActive ? styles.activeNav : ""
+                }`
+            }
+            >
+            <img
+                src={exploreNavIcon}
+                alt=""
+                className={styles.navIcon}
+            />
+            <span>탐색</span>
+            </NavLink>
+
+            <NavLink
+            to="/saved"
+            className={({ isActive }) =>
+                `${styles.navItem} ${
+                isActive ? styles.activeNav : ""
+                }`
+            }
+            >
+            <img
+                src={libraryNavIcon}
+                alt=""
+                className={styles.navIcon}
+            />
+            <span>보관함</span>
+            </NavLink>
+        </nav>
         )}
 
         <nav className={styles.rightMenu}>
@@ -94,7 +94,7 @@
             aria-label="찜"
             >
             <img
-                src={bookmarkIcon}
+                src={scrapIcon}
                 alt=""
                 className={styles.icon}
             />

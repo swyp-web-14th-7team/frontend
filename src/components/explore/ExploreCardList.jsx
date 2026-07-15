@@ -1,6 +1,8 @@
     import { useMemo } from "react";
 
     import ExploreProfileCard from "../profile/ExploreProfileCard";
+    import MobileProfileCard from "./MobileProfileCard";
+
     import profiles from "../../mocks/profiles";
 
     import styles from "./ExploreCardList.module.css";
@@ -17,7 +19,6 @@
         "서비스 기획",
         "pm",
         "product manager",
-        "프로덕트매니저",
         "프로덕트 매니저",
     ],
 
@@ -64,6 +65,9 @@
     }) => {
     const handleCardClick = (id) => {
         console.log("클릭한 프로필 ID:", id);
+
+        // 로그인 전이면 로그인 모달
+        // 로그인 후이면 상세 프로필 페이지로 이동
     };
 
     const filteredProfiles = useMemo(() => {
@@ -114,7 +118,6 @@
             !affiliation ||
             profile.affiliationType === affiliation;
 
-        // 선택한 스킬·툴 중 하나라도 프로필에 있으면 표시
         const matchesTags =
             selectedTagNames.length === 0 ||
             selectedTagNames.some((tagName) =>
@@ -182,15 +185,27 @@
     }
 
     return (
-        <section className={styles.cardGrid}>
-        {visibleProfiles.map((profile) => (
+        <>
+        <section className={styles.desktopGrid}>
+            {visibleProfiles.map((profile) => (
             <ExploreProfileCard
-            key={profile.id}
-            profile={profile}
-            onClick={handleCardClick}
+                key={profile.id}
+                profile={profile}
+                onClick={handleCardClick}
             />
-        ))}
+            ))}
         </section>
+
+        <section className={styles.mobileList}>
+            {visibleProfiles.map((profile) => (
+            <MobileProfileCard
+                key={profile.id}
+                profile={profile}
+                onClick={handleCardClick}
+            />
+            ))}
+        </section>
+        </>
     );
     };
 

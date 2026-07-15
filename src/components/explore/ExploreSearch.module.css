@@ -146,30 +146,107 @@
     width: 150px;
     }
 
-    /* 모바일은 추후 전용 카드/검색 UI 적용 전 임시 대응 */
     @media (max-width: 768px) {
+    .container {
+        width: 100%;
+    }
+
     .searchBox {
-        align-items: flex-start;
+        min-height: auto;
+        padding: 0;
+
+        display: flex;
         flex-wrap: wrap;
-        padding: 14px;
+
+        background-color: transparent;
     }
 
-    .searchIcon {
-        margin-top: 10px;
+    /* 기본 모바일 화면에서는 큰 검색창 숨김 */
+    .searchBox > .searchIcon,
+    .searchBox > .searchInput {
+        display: none;
     }
 
-    .searchInput {
-        height: 40px;
+    /* 검색 아이콘 클릭 후 검색창 표시 */
+    .mobileSearchOpen {
+        gap: 12px;
+    }
+
+    .mobileSearchOpen > .searchIcon {
+        display: block;
+
+        order: 2;
+        width: 20px;
+        height: 20px;
+        margin: 0 14px 0 -42px;
+
+        position: relative;
+        z-index: 1;
+    }
+
+    .mobileSearchOpen > .searchInput {
+        order: 1;
+
+        width: 100%;
+        height: 48px;
+        padding: 0 48px 0 16px;
+
+        display: block;
+        flex: 0 0 100%;
+
+        border-radius: 8px;
+        background-color: #34394f;
+
+        box-sizing: border-box;
     }
 
     .filterArea {
-        width: 100%;
-        margin-top: 12px;
-        margin-left: 0;
+        order: 3;
+
+        width: auto;
+        margin: 0;
+
+        display: flex;
+        gap: 8px;
     }
 
-    .affiliationDropdown,
+    .affiliationDropdown {
+        width: 90px;
+    }
+
     .filterButton {
-        width: calc(50% - 4px);
+        width: auto;
+        min-width: 82px;
+    }
+
+    /* 최근 등록순 오른쪽 배치 */
+    .sortArea {
+        width: 100%;
+        margin-top: -40px;
+
+        display: flex;
+        justify-content: flex-end;
+
+        pointer-events: none;
+    }
+
+    .sortDropdown {
+        width: fit-content;
+
+        pointer-events: auto;
+    }
+
+    .sortDropdown > button {
+        width: auto;
+
+        justify-content: flex-start;
+        gap: 6px;
+    }
+
+    .sortDropdown > ul {
+        right: 0;
+        left: auto;
+
+        width: 142px;
     }
     }

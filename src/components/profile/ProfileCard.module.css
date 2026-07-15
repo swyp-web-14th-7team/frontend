@@ -322,13 +322,14 @@
     text-overflow: ellipsis;
     }
 
+
+
     /* =========================
-    탐색 카드
+    탐색 프로필 카드
     ========================= */
 
     .cardButton {
     width: 100%;
-    height: 100%;
     padding: 0;
 
     display: block;
@@ -345,24 +346,223 @@
 
     .exploreCard {
     width: 100%;
-    height: 100%;
+    min-height: 400px;
+    padding: 16px 20px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 80px;
+
+    border-radius: 12px;
+    background-color: #676d82;
+    color: #ffffff;
 
     box-sizing: border-box;
-
-    transition:
-        transform 0.2s ease,
-        background-color 0.2s ease;
+    overflow: hidden;
     }
 
-    .cardButton:hover .exploreCard {
-    transform: translateY(-4px);
-    background-color: #70768c;
+    .exploreJob {
+    width: 100%;
+    margin: 0;
+
+    color: #d5d8e0;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 150%;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     }
 
-    .cardButton:focus-visible {
-    border-radius: 16px;
-    outline: 2px solid #ffffff;
-    outline-offset: 3px;
+    .exploreCardContent {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    }
+
+    .exploreProfileRow {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    }
+
+    .exploreAvatar,
+    .exploreAvatarPlaceholder {
+    width: 60px;
+    height: 60px;
+
+    border-radius: 50%;
+    flex-shrink: 0;
+    }
+
+    .exploreAvatar {
+    display: block;
+    object-fit: cover;
+    }
+
+    .exploreAvatarPlaceholder {
+    background-color: #aab4ec;
+    }
+
+    .exploreProfileInfo {
+    min-width: 0;
+    flex: 1;
+    }
+
+    .exploreName {
+    display: block;
+
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 140%;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    }
+
+    .exploreAffiliation {
+    margin: 4px 0 0;
+
+    color: #d5d8e0;
+    font-size: 12px;
+    line-height: 150%;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    }
+
+    .exploreTagList {
+    width: 100%;
+    margin-top: 16px;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    overflow: hidden;
+    }
+
+    .exploreTag {
+    max-width: 110px;
+    min-height: 36px;
+    padding: 0 12px;
+
+    display: inline-flex;
+    align-items: center;
+
+    border-radius: 9px;
+    background-color: #3d435a;
+    color: #ffffff;
+
+    font-size: 13px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    box-sizing: border-box;
+    flex-shrink: 0;
+    }
+
+    .exploreExperienceBox {
+    width: 100%;
+    min-height: 88px;
+    margin-top: 20px;
+    padding: 14px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    border-radius: 12px;
+    background-color: #596077;
+
+    box-sizing: border-box;
+    }
+
+    .exploreExperienceTitle {
+    margin: 0;
+
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 150%;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    }
+
+    .exploreExperienceDescription {
+    margin: 0;
+
+    color: #d5d8e0;
+    font-size: 12px;
+    line-height: 18px;
+
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: keep-all;
+    }
+
+    .exploreStrengthBox {
+    width: fit-content;
+    max-width: 100%;
+    min-height: 48px;
+    margin-top: 20px;
+    padding: 8px 14px;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    border-radius: 10px;
+    background-color: #3d435a;
+
+    box-sizing: border-box;
+    }
+
+    .exploreStrengthIcon,
+    .exploreStrengthPlaceholder {
+    width: 28px;
+    height: 28px;
+
+    flex-shrink: 0;
+    }
+
+    .exploreStrengthIcon {
+    display: block;
+    object-fit: contain;
+    }
+
+    .exploreStrengthPlaceholder {
+    display: block;
+    background-color: #242a41;
+    }
+
+    .exploreStrengthText {
+    min-width: 0;
+
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 150%;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     }
 
     /* =========================

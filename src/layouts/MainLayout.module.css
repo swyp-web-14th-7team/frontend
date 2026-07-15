@@ -1,0 +1,13 @@
+    .desktopHeader {
+    display: block;
+    }
+
+    .exploreDesktopHeader {
+    display: block;
+    }
+
+    @media (max-width: 768px) {
+    .exploreDesktopHeader {
+        display: none;
+    }
+    }
