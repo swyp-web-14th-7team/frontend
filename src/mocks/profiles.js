@@ -48,8 +48,10 @@
         { id: "tool-3", name: "Figma" },
         ],
 
-        representativeExperience:
-        "교내 창업 프로젝트 PM",
+        representativeExperience: "교내 창업 프로젝트 PM",
+
+        representativeExperienceDescription:
+        "사용자 리서치부터 기능 정의와 일정 관리까지 프로젝트 전반을 기획했습니다.",
 
         strength: strengthTypes[0],
     },
@@ -80,8 +82,10 @@
         { id: "tool-6", name: "Slack" },
         ],
 
-        representativeExperience:
-        "사내 디자인 시스템 구축",
+        representativeExperience: "사내 디자인 시스템 구축",
+
+        representativeExperienceDescription:
+        "React와 TypeScript 기반의 공통 컴포넌트를 개발하고 문서화했습니다.",
 
         strength: strengthTypes[1],
     },
@@ -112,8 +116,10 @@
         { id: "tool-9", name: "Jira" },
         ],
 
-        representativeExperience:
-        "대용량 API 서버 개발",
+        representativeExperience: "대용량 API 서버 개발",
+
+        representativeExperienceDescription:
+        "대규모 요청을 안정적으로 처리하도록 API와 데이터베이스 구조를 개선했습니다.",
 
         strength: strengthTypes[2],
     },
@@ -144,8 +150,10 @@
         { id: "tool-12", name: "Illustrator" },
         ],
 
-        representativeExperience:
-        "핀테크 앱 리디자인",
+        representativeExperience: "핀테크 앱 리디자인",
+
+        representativeExperienceDescription:
+        "사용자 흐름을 개선하고 디자인 시스템을 적용해 주요 화면을 리디자인했습니다.",
 
         strength: strengthTypes[3],
     },
@@ -166,6 +174,9 @@
 
         representativeExperience:
             `${base.representativeExperience} ${index + 1}`,
+
+        representativeExperienceDescription:
+            base.representativeExperienceDescription,
 
         createdAt: new Date(
             2026,

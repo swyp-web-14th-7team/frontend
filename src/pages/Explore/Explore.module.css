@@ -150,3 +150,91 @@
     .startButton:hover {
     opacity: 0.9;
     }
+    
+    .mobileOnly {
+    display: none;
+    }
+
+    @media (max-width: 768px) {
+    .mobileOnly {
+        display: block;
+    }
+
+    .main {
+        padding: 0 20px 120px;
+    }
+
+    .hero {
+        margin-top: 24px;
+    }
+
+    .title {
+        display: none;
+    }
+
+    .mobileTitleRow {
+        width: 100%;
+        margin-bottom: 28px;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .mobileTitle {
+        margin: 0;
+
+        color: #ffffff;
+        font-size: 20px;
+        font-weight: 700;
+        line-height: 140%;
+    }
+
+    .mobileSearchButton {
+        width: 32px;
+        height: 32px;
+        padding: 0;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border: 0;
+        background: transparent;
+
+        cursor: pointer;
+    }
+
+    .mobileSearchIcon {
+        width: 24px;
+        height: 24px;
+    }
+
+    .exploreSection {
+        margin-top: 28px;
+    }
+
+    .tabList {
+        width: calc(100% + 40px);
+        margin-left: -20px;
+        padding: 0 20px;
+
+        display: flex;
+        gap: 28px;
+
+        overflow-x: auto;
+
+        border-bottom: 1px solid #34384b;
+
+        box-sizing: border-box;
+        scrollbar-width: none;
+    }
+
+    .tabList::-webkit-scrollbar {
+        display: none;
+    }
+
+    .tabButton {
+        flex-shrink: 0;
+    }
+    }

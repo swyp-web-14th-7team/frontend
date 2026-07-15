@@ -23,95 +23,88 @@
         onClick={() => onClick?.(profile.id)}
         aria-label={`${profile.name} 프로필 상세 보기`}
         >
-        <article
-            className={`${styles.completeCard} ${styles.exploreCard}`}
-        >
-            <p className={styles.job}>
+        <article className={styles.exploreCard}>
+            <p className={styles.exploreJob}>
             {JOB_LABELS[profile.job] || "직군 미선택"}
             </p>
 
-            <div className={styles.completeProfileRow}>
-            {profile.profileImage ? (
+            <div className={styles.exploreCardContent}>
+            <div className={styles.exploreProfileRow}>
+                {profile.profileImage ? (
                 <img
-                src={profile.profileImage}
-                alt={`${profile.name} 프로필`}
-                className={styles.completeAvatar}
-                />
-            ) : (
-                <div
-                className={styles.completeAvatarPlaceholder}
-                aria-hidden="true"
-                />
-            )}
-
-            <div className={styles.profileInfo}>
-                <strong className={styles.completeName}>
-                {profile.name}
-                </strong>
-
-                <p className={styles.affiliation}>
-                {[
-                    profile.affiliationType,
-                    profile.affiliation,
-                ]
-                    .filter(Boolean)
-                    .join(" · ")}
-                </p>
-            </div>
-            </div>
-
-            <div className={styles.tagList}>
-            {tags.slice(0, 3).map((tag) => (
-                <span
-                key={tag.id}
-                className={styles.tag}
-                >
-                {tag.name}
-                </span>
-            ))}
-            </div>
-
-            <div className={styles.introductionBox}>
-            <p className={styles.introductionLabel}>
-                대표 경험
-            </p>
-
-            <p className={styles.introductionText}>
-                {profile.representativeExperience ||
-                "대표 경험이 없습니다."}
-            </p>
-            </div>
-
-            {profile.strength && (
-            <div className={styles.completeStrengthBox}>
-                {profile.strength.icon ? (
-                <img
-                    src={profile.strength.icon}
-                    alt=""
-                    className={styles.strengthIcon}
+                    src={profile.profileImage}
+                    alt={`${profile.name} 프로필`}
+                    className={styles.exploreAvatar}
                 />
                 ) : (
-                <span
-                    className={styles.strengthIconPlaceholder}
+                <div
+                    className={styles.exploreAvatarPlaceholder}
                     aria-hidden="true"
                 />
                 )}
 
-                <div className={styles.strengthInfo}>
-                <span className={styles.strengthText}>
-                    {profile.strength.title}
-                </span>
+                <div className={styles.exploreProfileInfo}>
+                <strong className={styles.exploreName}>
+                    {profile.name}
+                </strong>
 
-                {profile.strength.description && (
-                    <span
-                    className={styles.strengthDescription}
-                    >
-                    {profile.strength.description}
-                    </span>
-                )}
+                <p className={styles.exploreAffiliation}>
+                    {[
+                    profile.affiliationType,
+                    profile.affiliation,
+                    ]
+                    .filter(Boolean)
+                    .join(" | ")}
+                </p>
                 </div>
             </div>
+
+            <div className={styles.exploreTagList}>
+                {tags.slice(0, 3).map((tag) => (
+                <span
+                    key={tag.id}
+                    className={styles.exploreTag}
+                >
+                    {tag.name}
+                </span>
+                ))}
+            </div>
+
+            <div className={styles.exploreExperienceBox}>
+                <p className={styles.exploreExperienceTitle}>
+                {profile.representativeExperience ||
+                    "대표 경험이 없습니다."}
+                </p>
+
+                <p className={styles.exploreExperienceDescription}>
+                {profile.representativeExperienceDescription ||
+                    "프로젝트에서 맡은 역할과 주요 경험을 소개합니다."}
+                </p>
+            </div>
+
+            {profile.strength && (
+                <div className={styles.exploreStrengthBox}>
+                {profile.strength.icon ? (
+                    <img
+                    src={profile.strength.icon}
+                    alt=""
+                    className={styles.exploreStrengthIcon}
+                    />
+                ) : (
+                    <span
+                    className={
+                        styles.exploreStrengthPlaceholder
+                    }
+                    aria-hidden="true"
+                    />
+                )}
+
+                <span className={styles.exploreStrengthText}>
+                    {profile.strength.title}
+                </span>
+                </div>
             )}
+            </div>
         </article>
         </button>
     );
