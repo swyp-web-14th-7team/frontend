@@ -8,9 +8,10 @@
     justify-content: center;
 
     padding: 24px;
-    box-sizing: border-box;
 
     background-color: rgba(0, 0, 0, 0.55);
+
+    box-sizing: border-box;
     }
 
     .bottomSheet {
@@ -30,9 +31,11 @@
     }
 
     .content {
-    flex: 1;
     min-height: 0;
+    flex: 1;
+
     padding: 28px 24px 24px;
+
     overflow-y: auto;
     }
 
@@ -44,7 +47,11 @@
 
     .title {
     margin: 0;
+
     color: var(--white);
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 140%;
     }
 
     .closeButton {
@@ -52,18 +59,24 @@
     height: 32px;
     padding: 0;
 
-    border: none;
+    border: 0;
     background-color: transparent;
     color: var(--white);
 
+    font-family: inherit;
     font-size: 30px;
+    font-weight: 300;
     line-height: 1;
+
     cursor: pointer;
     }
 
     .description {
     margin: 12px 0 24px;
+
     color: var(--gray-500);
+    font-size: 14px;
+    line-height: 150%;
     }
 
     .searchBox {
@@ -77,35 +90,63 @@
 
     border-radius: 8px;
     background-color: var(--gray-700);
+
     box-sizing: border-box;
     }
 
     .searchInput {
-    flex: 1;
     min-width: 0;
+    flex: 1;
 
-    border: none;
-    outline: none;
+    border: 0;
+    outline: 0;
     background-color: transparent;
 
     color: var(--white);
+    font-family: inherit;
+    font-size: 14px;
     }
 
     .searchInput::placeholder {
     color: var(--gray-500);
     }
 
+    .searchInput::-webkit-search-cancel-button {
+    display: none;
+    }
+
     .searchIcon {
     width: 18px;
     height: 18px;
+
     flex-shrink: 0;
+    }
+
+    /* =========================
+    섹션 영역
+    ========================= */
+
+    .sectionArea {
+    margin-top: 28px;
+    }
+
+    .tagSection + .tagSection {
+    margin-top: 32px;
+    }
+
+    .sectionTitle {
+    margin: 0 0 14px;
+
+    color: var(--gray-400);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 150%;
     }
 
     .tagList {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin-top: 28px;
     }
 
     .tagButton {
@@ -116,13 +157,25 @@
     align-items: center;
     gap: 8px;
 
-    border: none;
+    border: 0;
     border-radius: 8px;
 
     background-color: var(--gray-700);
     color: var(--gray-300);
 
+    font-family: inherit;
+    font-size: 13px;
+
     cursor: pointer;
+    }
+
+    .tagButton:hover {
+    background-color: var(--gray-600);
+    }
+
+    .tagButton:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
     }
 
     .selectedTagButton {
@@ -130,24 +183,67 @@
     color: var(--gray-900);
     }
 
+    .selectedTagButton:hover {
+    background-color: var(--gray-200);
+    }
+
     .removeIcon {
     font-size: 20px;
     line-height: 1;
     }
 
+    .emptyMessage {
+    margin: 32px 0;
+
+    color: var(--gray-500);
+    font-size: 14px;
+    text-align: center;
+    }
+
+    /* =========================
+    선택 영역
+    ========================= */
+
     .footer {
+    padding: 16px 22px 24px;
+
     display: flex;
     flex-direction: column;
-    padding: 16px 22px 24px;
+
     border-top: 1px solid var(--gray-700);
+    background-color: var(--gray-900);
+
+    flex-shrink: 0;
+    }
+
+    .selectedHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 12px;
+    }
+
+    .selectedLabel,
+    .selectedCount {
+    margin: 0;
+
+    font-size: 13px;
+    line-height: 150%;
+    }
+
+    .selectedLabel {
+    color: var(--white);
+    font-weight: 600;
     }
 
     .selectedCount {
-    margin: 0 0 12px;
-    color: var(--gray-300);
+    color: var(--gray-400);
     }
 
     .selectedList {
+    min-height: 40px;
+
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
@@ -161,31 +257,72 @@
     align-items: center;
     gap: 8px;
 
-    border: none;
+    border: 0;
     border-radius: 8px;
 
     background-color: var(--gray-200);
     color: var(--gray-900);
 
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+
     cursor: pointer;
+    }
+
+    .selectedEmpty {
+    margin: 0;
+
+    color: var(--gray-500);
+    font-size: 13px;
+    line-height: 40px;
+    }
+
+    /* =========================
+    하단 버튼
+    ========================= */
+
+    .buttonArea {
+    margin-top: 20px;
+
+    display: grid;
+    grid-template-columns: 110px minmax(0, 1fr);
+    gap: 10px;
+    }
+
+    .resetButton,
+    .confirmButton {
+    height: 48px;
+
+    border: 0;
+    border-radius: 8px;
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+    }
+
+    .resetButton {
+    background-color: var(--gray-200);
+    color: var(--gray-900);
     }
 
     .confirmButton {
-    align-self: flex-end;
-    width: 96px;
-    height: 44px;
-    border: none;
-    border-radius: 6px;
-    background-color: #ffffff;
-    color: #111017;
-    cursor: pointer;
+    background-color: #aed9fa;
+    color: #20263a;
     }
 
-    .confirmButton:disabled {
-    background-color: var(--gray-800);
-    color: var(--gray-500);
-    cursor: not-allowed;
+    .resetButton:hover,
+    .confirmButton:hover {
+    opacity: 0.9;
     }
+
+    /* =========================
+    모바일
+    ========================= */
+
     @media (max-width: 768px) {
     .overlay {
         align-items: flex-end;
@@ -214,22 +351,22 @@
 
     .title {
         font-size: 22px;
-        line-height: 1.4;
     }
 
     .description {
         margin: 14px 0 24px;
-        font-size: 14px;
-        line-height: 1.5;
     }
 
     .searchBox {
         height: 52px;
     }
 
-    .tagList {
-        gap: 8px;
+    .sectionArea {
         margin-top: 28px;
+    }
+
+    .tagSection + .tagSection {
+        margin-top: 30px;
     }
 
     .tagButton {
@@ -238,11 +375,13 @@
     }
 
     .footer {
-        padding: 16px 22px 24px;
+        padding: 16px 22px
+        calc(24px + env(safe-area-inset-bottom));
     }
 
     .selectedList {
         flex-wrap: nowrap;
+
         overflow-x: auto;
         overflow-y: hidden;
 
@@ -254,18 +393,16 @@
     }
 
     .selectedItem {
-        flex-shrink: 0;
         min-height: 42px;
+        flex-shrink: 0;
     }
 
+    .buttonArea {
+        grid-template-columns: 128px minmax(0, 1fr);
+    }
+
+    .resetButton,
     .confirmButton {
-        width: 88px;
-        height: 44px;
-
-        border-radius: 8px;
+        height: 52px;
     }
-
-    .searchInput::-webkit-search-cancel-button {
-    display: none;
-}
-}
+    }

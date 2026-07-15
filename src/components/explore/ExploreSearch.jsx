@@ -27,6 +27,7 @@ const ExploreSearch = ({
   affiliation,
   selectedTags,
   sort,
+  isMobileSearchOpen = false,
   onKeywordChange,
   onAffiliationChange,
   onTagsChange,
@@ -51,7 +52,13 @@ const ExploreSearch = ({
 
   return (
     <div className={styles.container}>
-      <div className={styles.searchBox}>
+      <div
+        className={`${styles.searchBox} ${
+          isMobileSearchOpen
+            ? styles.mobileSearchOpen
+            : ""
+        }`}
+      >
         <img
           src={searchIcon}
           alt=""
