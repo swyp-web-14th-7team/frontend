@@ -708,18 +708,6 @@
         width: min(100%, 282px);
     }
 
-    /*
-    탐색 데스크톱 카드를 모바일에서도 임시로 확인할 경우
-    부모 너비를 채우도록 설정.
-
-    추후 모바일 전용 카드 컴포넌트를 만들고
-    데스크톱 카드를 숨기면 이 규칙은 제거.
-    */
-    .completeCard.exploreCard {
-        width: 100%;
-        max-width: none;
-    }
-
     .detailCard {
         width: min(100%, 238px);
     }
