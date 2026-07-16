@@ -6,6 +6,8 @@
     import MobileExploreHeader from "../../components/explore/MobileExploreHeader";
     import BottomNavigation from "../../components/common/BottomNavigation/BottomNavigation";
 
+    import { isLoggedIn } from "../../utils/auth";
+
     import styles from "./Explore.module.css";
 
     import searchIcon from "../../assets/icons/icon_search.svg";
@@ -36,14 +38,16 @@
     const [sort, setSort] =
         useState("최근 등록순");
 
-    const [isMobileSearchOpen, setIsMobileSearchOpen] =
-        useState(false);
+    const [
+        isMobileSearchOpen,
+        setIsMobileSearchOpen,
+    ] = useState(false);
 
-    // 로그인 기능 연결 전 임시값
-    const isLoggedIn = false;
+    const isUserLoggedIn = isLoggedIn();
 
     const isRestrictedTab =
-        !isLoggedIn && activeTab !== "전체보기";
+        !isUserLoggedIn &&
+        activeTab !== "전체보기";
 
     const handleTabClick = (tab) => {
         setActiveTab(tab);
@@ -60,7 +64,7 @@
     };
 
     const handleStartClick = () => {
-        console.log("로그인 모달 열기");
+        window.location.href = "/login";
     };
 
     const handleMobileSearchClose = () => {
@@ -92,7 +96,9 @@
 
                     <button
                     type="button"
-                    className={styles.mobileSearchButton}
+                    className={
+                        styles.mobileSearchButton
+                    }
                     onClick={() =>
                         setIsMobileSearchOpen(true)
                     }
@@ -101,7 +107,9 @@
                     <img
                         src={searchIcon}
                         alt=""
-                        className={styles.mobileSearchIcon}
+                        className={
+                        styles.mobileSearchIcon
+                        }
                     />
                     </button>
                 </div>
@@ -113,7 +121,9 @@
                 affiliation={affiliation}
                 selectedTags={selectedTags}
                 sort={sort}
-                isMobileSearchOpen={isMobileSearchOpen}
+                isMobileSearchOpen={
+                isMobileSearchOpen
+                }
                 onKeywordChange={(value) => {
                 setKeyword(value);
                 setCurrentPage(1);
@@ -141,7 +151,8 @@
                 aria-label="탐색 카테고리"
                 >
                 {TABS.map((tab) => {
-                    const isActive = activeTab === tab;
+                    const isActive =
+                    activeTab === tab;
 
                     return (
                     <button
@@ -149,7 +160,9 @@
                         type="button"
                         role="tab"
                         aria-selected={isActive}
-                        className={`${styles.tabButton} ${
+                        className={`${
+                        styles.tabButton
+                        } ${
                         isActive
                             ? styles.activeTab
                             : ""
@@ -167,6 +180,7 @@
                 <div className={styles.cardArea}>
                 <ExploreCardList
                     currentPage={currentPage}
+                    activeTab={activeTab}
                     keyword={keyword}
                     affiliation={affiliation}
                     selectedTags={selectedTags}
@@ -188,7 +202,9 @@
                         aria-hidden="true"
                     />
 
-                    <div className={styles.loginGuide}>
+                    <div
+                        className={styles.loginGuide}
+                    >
                         <h2
                         className={
                             styles.loginGuideTitle
@@ -212,7 +228,9 @@
 
                         <button
                         type="button"
-                        className={styles.startButton}
+                        className={
+                            styles.startButton
+                        }
                         onClick={handleStartClick}
                         >
                         시작하기
