@@ -58,6 +58,7 @@
 
     const ExploreCardList = ({
     currentPage = 1,
+    activeTab = "전체보기",
     keyword = "",
     affiliation = "",
     selectedTags = [],
@@ -124,10 +125,16 @@
             profileTagNames.includes(tagName),
             );
 
+        // ⭐ 추가
+        const matchesTab =
+            activeTab === "전체보기" ||
+            (profile.purposes || []).includes(activeTab);
+
         return (
             matchesKeyword &&
             matchesAffiliation &&
-            matchesTags
+            matchesTags &&
+            matchesTab
         );
         });
 
@@ -162,6 +169,7 @@
 
         return sortedProfiles;
     }, [
+        activeTab,
         keyword,
         affiliation,
         selectedTags,
