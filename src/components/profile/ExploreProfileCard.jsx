@@ -92,9 +92,7 @@
                     />
                 ) : (
                     <span
-                    className={
-                        styles.exploreStrengthPlaceholder
-                    }
+                    className={styles.exploreStrengthPlaceholder}
                     aria-hidden="true"
                     />
                 )}
