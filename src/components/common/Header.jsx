@@ -1,8 +1,12 @@
-    import { NavLink, useNavigate } from "react-router-dom";
+    import {
+    NavLink,
+    useNavigate,
+    useLocation,
+    } from "react-router-dom";
 
     import styles from "./Header.module.css";
 
-    import logo from "../../assets/images/nodi-logo-white.svg";
+    import logo from "../../assets/icons/Logo.svg";
 
     import exploreNavIcon from "../../assets/icons/icon_explore.svg";
     import libraryNavIcon from "../../assets/icons/icon_library.svg";
@@ -14,6 +18,16 @@
 
     const Header = ({ showNav = false }) => {
     const navigate = useNavigate();
+    const location = useLocation();
+
+    /*
+    * 탐색 페이지와
+    * 프로필 캐러셀 상세페이지 모두
+    * 탐색 메뉴 활성화
+    */
+    const isExploreActive =
+        location.pathname === "/explore" ||
+        location.pathname.startsWith("/profile-carousel/");
 
     const handleLogoClick = () => {
         navigate("/explore");
@@ -36,55 +50,55 @@
         </button>
 
         {showNav && (
-        <nav className={styles.nav}>
+            <nav className={styles.nav}>
             <NavLink
-            to="/profile"
-            className={({ isActive }) =>
+                to="/profile"
+                className={({ isActive }) =>
                 `${styles.navItem} ${
-                isActive ? styles.activeNav : ""
+                    isActive ? styles.activeNav : ""
                 }`
-            }
+                }
             >
-            <img
+                <img
                 src={mypageNavIcon}
                 alt=""
                 className={styles.navIcon}
-            />
-            <span>내 프로필</span>
+                />
+                <span>내 프로필</span>
             </NavLink>
 
             <NavLink
-            to="/explore"
-            className={({ isActive }) =>
+                to="/explore"
+                className={() =>
                 `${styles.navItem} ${
-                isActive ? styles.activeNav : ""
+                    isExploreActive ? styles.activeNav : ""
                 }`
-            }
+                }
             >
-            <img
+                <img
                 src={exploreNavIcon}
                 alt=""
                 className={styles.navIcon}
-            />
-            <span>탐색</span>
+                />
+                <span>탐색</span>
             </NavLink>
 
             <NavLink
-            to="/saved"
-            className={({ isActive }) =>
+                to="/saved"
+                className={({ isActive }) =>
                 `${styles.navItem} ${
-                isActive ? styles.activeNav : ""
+                    isActive ? styles.activeNav : ""
                 }`
-            }
+                }
             >
-            <img
+                <img
                 src={libraryNavIcon}
                 alt=""
                 className={styles.navIcon}
-            />
-            <span>보관함</span>
+                />
+                <span>보관함</span>
             </NavLink>
-        </nav>
+            </nav>
         )}
 
         <nav className={styles.rightMenu}>
