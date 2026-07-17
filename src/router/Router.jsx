@@ -1,7 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import AuthCallback from "../pages/Auth/AuthCallback";
-import Login from "../pages/Login/Login";
 import Onboarding from "../pages/Onboarding/Onboarding";
 import Explore from "../pages/Explore/Explore";
 import ProfileCarouselPage from "../pages/ProfileCarousel/ProfileCarouselPage";
@@ -13,7 +12,6 @@ function Router() {
     return (
         <BrowserRouter>
             <Routes>
-                <Route path="/login" element={<Login />} />
 
                 <Route
                     path="/auth/google/callback"
