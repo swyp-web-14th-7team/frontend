@@ -1,4 +1,5 @@
     import { useMemo } from "react";
+    import { useNavigate } from "react-router-dom";
 
     import ExploreProfileCard from "../profile/ExploreProfileCard";
     import MobileProfileCard from "./MobileProfileCard";
@@ -64,16 +65,32 @@
     selectedTags = [],
     sort = "최근 등록순",
     }) => {
-    const handleCardClick = (id) => {
-        console.log("클릭한 프로필 ID:", id);
+    const navigate = useNavigate();
 
-        // 로그인 전이면 로그인 모달
-        // 로그인 후이면 상세 프로필 페이지로 이동
+    const handleCardClick = (id) => {
+        /*
+        * 현재 보고 있는 목적 탭 정보를 URL에 같이 전달한다.
+        *
+        * 예:
+        * /profile-carousel/1?purpose=커피챗
+        * /profile-carousel/5?purpose=팀 찾기
+        *
+        * 전체보기에서 클릭한 경우에는 목적 필터 없이 이동한다.
+        */
+        if (activeTab === "전체보기") {
+        navigate(`/profile-carousel/${id}`);
+        return;
+        }
+
+        navigate(
+        `/profile-carousel/${id}?purpose=${encodeURIComponent(activeTab)}`,
+        );
     };
 
     const filteredProfiles = useMemo(() => {
-        const normalizedKeyword =
-        keyword.trim().toLowerCase();
+        const normalizedKeyword = keyword
+        .trim()
+        .toLowerCase();
 
         const selectedTagNames = selectedTags.map((tag) =>
         tag.name.trim().toLowerCase(),
@@ -93,10 +110,11 @@
         const jobKeywords =
             JOB_SEARCH_KEYWORDS[profile.job] || [];
 
-        const matchesJob = jobKeywords.some((jobKeyword) =>
+        const matchesJob = jobKeywords.some(
+            (jobKeyword) =>
             jobKeyword
-            .toLowerCase()
-            .includes(normalizedKeyword),
+                .toLowerCase()
+                .includes(normalizedKeyword),
         );
 
         const matchesKeyword =
@@ -125,7 +143,6 @@
             profileTagNames.includes(tagName),
             );
 
-        // ⭐ 추가
         const matchesTab =
             activeTab === "전체보기" ||
             (profile.purposes || []).includes(activeTab);
