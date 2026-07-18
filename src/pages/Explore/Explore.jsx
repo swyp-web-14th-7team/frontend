@@ -68,145 +68,149 @@ const Explore = () => {
         !isUserLoggedIn &&
         activeTab !== "전체보기";
 
-    /* =========================
-       탭 변경
-    ========================= */
+        /* =========================
+        탭 변경
+        ========================= */
 
-    const handleTabClick = (tab) => {
-        setActiveTab(tab);
-        setCurrentPage(1);
-    };
+        const handleTabClick = (tab) => {
+            /*
+            * 로그인하지 않아도
+            * 모든 탭을 눌러볼 수 있다.
+            */
+            setActiveTab(tab);
+            setCurrentPage(1);
+        };
 
-    /* =========================
-       페이지 변경
-    ========================= */
+        /* =========================
+        페이지 변경
+        ========================= */
 
-    const handlePageChange = (page) => {
-        setCurrentPage(page);
+        const handlePageChange = (page) => {
+            setCurrentPage(page);
 
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth",
-        });
-    };
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth",
+            });
+        };
 
-    /* =========================
-       로그인 모달 열기
-    ========================= */
+        /* =========================
+        로그인 모달 열기
+        ========================= */
 
-    const handleStartClick = () => {
-        setIsLoginModalOpen(true);
-    };
+        const handleStartClick = () => {
+            setIsLoginModalOpen(true);
+        };
 
-    /* =========================
-       로그인 모달 닫기
-    ========================= */
+        /* =========================
+        로그인 모달 닫기
+        ========================= */
 
-    const handleLoginModalClose = () => {
-        setIsLoginModalOpen(false);
-    };
+        const handleLoginModalClose = () => {
+            setIsLoginModalOpen(false);
+        };
 
-    /* =========================
-       모바일 검색 열기
-    ========================= */
+        /* =========================
+        모바일 검색 열기
+        ========================= */
 
-    const handleMobileSearchOpen = () => {
-        setActiveTab("전체보기");
-        setCurrentPage(1);
-        setKeyword("");
-        setIsMobileSearchOpen(true);
-    };
+        const handleMobileSearchOpen = () => {
+            setActiveTab("전체보기");
+            setCurrentPage(1);
+            setKeyword("");
+            setIsMobileSearchOpen(true);
+        };
 
-    /* =========================
-       모바일 검색 닫기
-    ========================= */
+        /* =========================
+        모바일 검색 닫기
+        ========================= */
 
-    const handleMobileSearchClose = () => {
-        setIsMobileSearchOpen(false);
-        setKeyword("");
-        setCurrentPage(1);
-    };
+        const handleMobileSearchClose = () => {
+            setIsMobileSearchOpen(false);
+            setKeyword("");
+            setCurrentPage(1);
+        };
 
-    /* =========================
-       모바일 로고 클릭 초기화
-    ========================= */
+        /* =========================
+        모바일 로고 클릭 초기화
+        ========================= */
 
-    const handleMobileLogoClick = () => {
-        setActiveTab("전체보기");
-        setCurrentPage(1);
-        setKeyword("");
-        setAffiliation("");
-        setSelectedTags([]);
-        setSort("최근 등록순");
-        setIsMobileSearchOpen(false);
-        setIsLoginModalOpen(false);
+        const handleMobileLogoClick = () => {
+            setActiveTab("전체보기");
+            setCurrentPage(1);
+            setKeyword("");
+            setAffiliation("");
+            setSelectedTags([]);
+            setSort("최근 등록순");
+            setIsMobileSearchOpen(false);
+            setIsLoginModalOpen(false);
 
-        window.scrollTo({
-            top: 0,
-            behavior: "auto",
-        });
-    };
+            window.scrollTo({
+                top: 0,
+                behavior: "auto",
+            });
+        };
 
-    return (
-        <>
-            {/* 모바일 전용 헤더 */}
+        return (
+            <>
+                {/* 모바일 전용 헤더 */}
 
-            <div className={styles.mobileOnly}>
-                <MobileExploreHeader
-                    isSearchOpen={isMobileSearchOpen}
-                    onSearchClose={
-                        handleMobileSearchClose
-                    }
-                    onLogoClick={
-                        handleMobileLogoClick
-                    }
-                />
-            </div>
+                <div className={styles.mobileOnly}>
+                    <MobileExploreHeader
+                        isSearchOpen={isMobileSearchOpen}
+                        onSearchClose={
+                            handleMobileSearchClose
+                        }
+                        onLogoClick={
+                            handleMobileLogoClick
+                        }
+                    />
+                </div>
 
-            <main className={styles.main}>
-                {/* 검색 및 제목 영역 */}
+                <main className={styles.main}>
+                    {/* 검색 및 제목 영역 */}
 
-                <section className={styles.hero}>
-                    <h1 className={styles.title}>
-                        나와 맞는 사람 찾기
-                    </h1>
+                    <section className={styles.hero}>
+                        <h1 className={styles.title}>
+                            나와 맞는 사람 찾기
+                        </h1>
 
-                    <div className={styles.mobileOnly}>
-                        {!isMobileSearchOpen && (
-                            <div
-                                className={
-                                    styles.mobileTitleRow
-                                }
-                            >
-                                <h1
+                        <div className={styles.mobileOnly}>
+                            {!isMobileSearchOpen && (
+                                <div
                                     className={
-                                        styles.mobileTitle
+                                        styles.mobileTitleRow
                                     }
                                 >
-                                    둘러보기
-                                </h1>
-
-                                <button
-                                    type="button"
-                                    className={
-                                        styles.mobileSearchButton
-                                    }
-                                    onClick={
-                                        handleMobileSearchOpen
-                                    }
-                                    aria-label="검색창 열기"
-                                >
-                                    <img
-                                        src={searchIcon}
-                                        alt=""
+                                    <h1
                                         className={
-                                            styles.mobileSearchIcon
+                                            styles.mobileTitle
                                         }
-                                    />
-                                </button>
-                            </div>
-                        )}
-                    </div>
+                                    >
+                                        둘러보기
+                                    </h1>
+
+                                    <button
+                                        type="button"
+                                        className={
+                                            styles.mobileSearchButton
+                                        }
+                                        onClick={
+                                            handleMobileSearchOpen
+                                        }
+                                        aria-label="검색창 열기"
+                                    >
+                                        <img
+                                            src={searchIcon}
+                                            alt=""
+                                            className={
+                                                styles.mobileSearchIcon
+                                            }
+                                        />
+                                    </button>
+                                </div>
+                            )}
+                        </div>
 
                     <ExploreSearch
                         keyword={keyword}

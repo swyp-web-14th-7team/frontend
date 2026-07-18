@@ -20,19 +20,11 @@ import scrapIcon from "../../assets/icons/icon_archived.svg";
 
 import styles from "./ProfileCarouselPage.module.css";
 
-/* =========================
-   목적별 헤더 문구
-========================= */
-
 const PURPOSE_HEADER_TEXT = {
     "팀 빌딩": "팀을 찾고 있어요",
     커피챗: "커피챗 나눠요",
     "교류/네트워킹": "새로운 만남을 찾아요",
 };
-
-/* =========================
-   캐러셀 왼쪽 화살표
-========================= */
 
 const ChevronLeftIcon = () => {
     return (
@@ -54,10 +46,6 @@ const ChevronLeftIcon = () => {
     );
 };
 
-/* =========================
-   캐러셀 오른쪽 화살표
-========================= */
-
 const ChevronRightIcon = () => {
     return (
         <svg
@@ -77,10 +65,6 @@ const ChevronRightIcon = () => {
         </svg>
     );
 };
-
-/* =========================
-   페이지 이전 아이콘
-========================= */
 
 const BackIcon = () => {
     return (
@@ -210,17 +194,11 @@ const ProfileCarouselPage = () => {
             ? dragProgress
             : indicatorProgress;
 
-    /* =========================
-       이전 화면 이동
-    ========================= */
 
     const handleBackClick = () => {
         navigate(-1);
     };
 
-    /* =========================
-       프로필 상세보기
-    ========================= */
 
     const handleProfileClick = (
         clickedProfileId,
@@ -243,25 +221,16 @@ const ProfileCarouselPage = () => {
         );
     };
 
-    /* =========================
-       이전 카드 이동
-    ========================= */
 
     const handlePrevSlide = () => {
         swiperRef.current?.slidePrev();
     };
 
-    /* =========================
-       다음 카드 이동
-    ========================= */
 
     const handleNextSlide = () => {
         swiperRef.current?.slideNext();
     };
 
-    /* =========================
-       스크랩 토글
-    ========================= */
 
     const handleScrapClick = () => {
         if (!activeProfile) {
@@ -291,9 +260,6 @@ const ProfileCarouselPage = () => {
         );
     };
 
-    /* =========================
-       포인터 위치를 진행률로 변환
-    ========================= */
 
     const getProgressFromPointer = (
         event,
@@ -313,10 +279,6 @@ const ProfileCarouselPage = () => {
             Math.min(1, rawProgress),
         );
     };
-
-    /* =========================
-       진행률에 따라 캐러셀 이동
-    ========================= */
 
     const moveCarouselByProgress = (
         progress,
@@ -338,10 +300,6 @@ const ProfileCarouselPage = () => {
 
         setActiveIndex(swiper.activeIndex);
     };
-
-    /* =========================
-       인디케이터 드래그 시작
-    ========================= */
 
     const handleIndicatorPointerDown = (
         event,
@@ -374,9 +332,6 @@ const ProfileCarouselPage = () => {
         moveCarouselByProgress(progress);
     };
 
-    /* =========================
-       인디케이터 드래그 중
-    ========================= */
 
     const handleIndicatorPointerMove = (
         event,
@@ -402,9 +357,6 @@ const ProfileCarouselPage = () => {
         moveCarouselByProgress(progress);
     };
 
-    /* =========================
-       인디케이터 드래그 종료
-    ========================= */
 
     const finishIndicatorDrag = (
         event,
@@ -456,10 +408,6 @@ const ProfileCarouselPage = () => {
             );
         }
     };
-
-    /* =========================
-       인디케이터 키보드 이동
-    ========================= */
 
     const handleIndicatorKeyDown = (
         event,

@@ -14,7 +14,6 @@ function Router() {
     return (
         <BrowserRouter>
             <Routes>
-                {/* OAuth 콜백 */}
                 <Route
                     path="/auth/google/callback"
                     element={<AuthCallback provider="google" />}
