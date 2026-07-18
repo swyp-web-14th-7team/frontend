@@ -2,33 +2,18 @@
 
     import HorizontalProfileCard from "../../components/profile/HorizontalProfileCard";
     import ExploreProfileCard from "../../components/profile/ExploreProfileCard";
-    import MobileScrap from "../../pages/Scrap/MobileScrap";
-
-    import profiles from "../../mocks/profiles";
+    import MobileScrap from "./MobileScrap";
 
     import styles from "./Scrap.module.css";
 
     const CARD_SCROLL_DISTANCE = 222;
 
-    const INITIAL_DRAWERS = [
-    {
-        id: 1,
-        name: "보류함 2",
-        profiles: profiles.slice(0, 8),
-    },
-    {
-        id: 2,
-        name: "팀원후보",
-        profiles: profiles.slice(8, 16),
-    },
-    ];
-
-    const Scrap = () => {
+    const Scrap = ({
+    drawers,
+    setDrawers,
+    }) => {
     const [hoveredProfile, setHoveredProfile] =
         useState(null);
-
-    const [drawers, setDrawers] =
-        useState(INITIAL_DRAWERS);
 
     const [isManaging, setIsManaging] =
         useState(false);

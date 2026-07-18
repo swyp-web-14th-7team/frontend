@@ -50,6 +50,19 @@
     cursor: pointer;
     }
 
+    .iconButton:hover,
+    .backButton:hover {
+    opacity: 0.75;
+    }
+
+    .iconButton:focus-visible,
+    .backButton:focus-visible,
+    .logoLink:focus-visible {
+    border-radius: 4px;
+    outline: 2px solid #b9dfff;
+    outline-offset: 3px;
+    }
+
     .icon,
     .backIcon {
     display: block;
@@ -63,6 +76,7 @@
     position: absolute;
     top: 0;
     right: 1px;
+    z-index: 1;
 
     width: 5px;
     height: 5px;
