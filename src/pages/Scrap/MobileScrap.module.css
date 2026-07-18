@@ -1,0 +1,496 @@
+    .page {
+    display: none;
+    }
+
+    @media (max-width: 768px) {
+    .page {
+        width: 100%;
+        min-height: 100vh;
+        padding: 20px 0 40px;
+
+        display: block;
+
+        background-color: #0e0e15;
+        color: #ffffff;
+
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+
+    /* =========================
+        상단
+    ========================= */
+
+    .topBar {
+        height: 44px;
+        padding: 0 20px;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .topIconButton,
+    .moreButton,
+    .doneButton {
+        padding: 0;
+
+        border: 0;
+        background: transparent;
+        color: #ffffff;
+
+        cursor: pointer;
+    }
+
+    .topIconButton {
+        font-size: 34px;
+        font-weight: 300;
+        line-height: 1;
+    }
+
+    .doneButton {
+        color: #b9dfff;
+
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .menuWrapper {
+        position: relative;
+
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+    }
+
+    .moreButton {
+        width: 40px;
+        height: 40px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: 3px;
+        line-height: 1;
+    }
+
+    .overviewHeader {
+        padding: 28px 20px 24px;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .overviewHeader h1 {
+        margin: 0;
+
+        font-size: 20px;
+        font-weight: 700;
+    }
+
+    .overviewHeader > button {
+        padding: 0;
+
+        border: 0;
+        background: transparent;
+        color: #ffffff;
+
+        font-size: 28px;
+        cursor: pointer;
+    }
+
+    /* =========================
+        서랍 목록
+    ========================= */
+
+    .drawerList {
+        display: flex;
+        flex-direction: column;
+        gap: 28px;
+    }
+
+    .drawerHeader {
+        width: 100%;
+        padding: 0 20px 12px;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        border: 0;
+        background: transparent;
+        color: #ffffff;
+
+        cursor: pointer;
+    }
+
+    .drawerHeader strong {
+        font-size: 15px;
+    }
+
+    .drawerHeader span {
+        color: #aeb3c2;
+        font-size: 12px;
+    }
+
+    /* =========================
+        겹쳐진 작은 카드
+    ========================= */
+
+    .smallCardStack {
+        position: relative;
+
+        width: 100%;
+        height: 247px;
+        padding: 0 20px;
+
+        overflow: hidden;
+        cursor: pointer;
+
+        box-sizing: border-box;
+    }
+
+    .smallCardItem {
+        position: absolute;
+        top: 0;
+
+        width: 210px;
+        min-width: 210px;
+        height: 247px;
+        padding: 0;
+
+        border: 0;
+        border-radius: 8px;
+        background: transparent;
+
+        cursor: pointer;
+        overflow: hidden;
+
+        transition: transform 0.2s ease;
+    }
+
+    .smallCardItem > article {
+        width: 210px;
+        height: 247px;
+    }
+
+    .smallCardItem::after {
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+
+        border-radius: 8px;
+        background-color: rgba(17, 16, 23, 0);
+
+        pointer-events: none;
+        content: "";
+    }
+
+    .smallCardItem:nth-child(1)::after {
+        background-color: rgba(17, 16, 23, 0);
+    }
+
+    .smallCardItem:nth-child(2)::after {
+        background-color: rgba(17, 16, 23, 0.2);
+    }
+
+    .smallCardItem:nth-child(3)::after {
+        background-color: rgba(17, 16, 23, 0.4);
+    }
+
+    .smallCardItem:nth-child(4)::after {
+        background-color: rgba(17, 16, 23, 0.6);
+    }
+
+    .smallCardStack:hover .smallCardItem {
+        transform: translateX(2px);
+    }
+
+    /* =========================
+        서랍 상세
+    ========================= */
+
+    .detail {
+        padding-top: 28px;
+    }
+
+    .detailHeader {
+        padding: 0 20px;
+    }
+
+    .detailTitle {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .detailTitle h1 {
+        margin: 0;
+
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    .detailHeader p {
+        margin: 8px 0 0;
+
+        color: #aeb3c2;
+        font-size: 12px;
+    }
+
+    .renameButton {
+        width: 22px;
+        height: 22px;
+        padding: 0;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        border: 0;
+        background: transparent;
+        color: #ffffff;
+
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    /* =========================
+        큰 카드 캐러셀
+    ========================= */
+
+    .profileCarousel {
+        width: 100%;
+        margin-top: 72px;
+        padding: 0 calc((100vw - 282px) / 2);
+
+        display: flex;
+        gap: 16px;
+
+        overflow-x: auto;
+
+        box-sizing: border-box;
+        scrollbar-width: none;
+        scroll-snap-type: x mandatory;
+    }
+
+    .profileCarousel::-webkit-scrollbar {
+        display: none;
+    }
+
+    .exploreCardItem {
+        min-width: 282px;
+
+        border: 1px solid transparent;
+        border-radius: 12px;
+
+        box-sizing: border-box;
+        scroll-snap-align: center;
+    }
+
+    .selectedCard {
+        border-color: #b8d9f5;
+
+        box-shadow:
+        inset 0 0 8px rgba(184, 217, 245, 0.4),
+        0 0 5px rgba(184, 217, 245, 0.4);
+    }
+
+    /* =========================
+        점 세 개 메뉴
+    ========================= */
+
+    .menu {
+        position: absolute;
+        top: 40px;
+        right: 0;
+        z-index: 20;
+
+        width: 110px;
+        padding: 8px 0;
+
+        border: 1px solid #596077;
+        border-radius: 8px;
+        background-color: #363b51;
+
+        box-sizing: border-box;
+    }
+
+    .menu button {
+        width: 100%;
+        padding: 10px 14px;
+
+        border: 0;
+        background: transparent;
+        color: #ffffff;
+
+        font-size: 13px;
+        text-align: left;
+
+        cursor: pointer;
+    }
+
+    .menu button:hover {
+        background-color: rgba(255, 255, 255, 0.06);
+    }
+
+    .menu .menuDelete {
+        color: #ff4d5e;
+    }
+
+    /* =========================
+        삭제 버튼
+    ========================= */
+
+    .trashButton {
+        position: fixed;
+        left: 50%;
+        bottom: 48px;
+        z-index: 20;
+
+        width: 46px;
+        height: 46px;
+        padding: 0;
+
+        border: 1px solid #ffffff;
+        border-radius: 50%;
+        background-color: #0e0e15;
+        color: #ffffff;
+
+        font-size: 20px;
+
+        cursor: pointer;
+        transform: translateX(-50%);
+    }
+
+    .trashButton:disabled {
+        color: #777d91;
+        border-color: #777d91;
+
+        cursor: not-allowed;
+    }
+
+    .emptyText {
+        margin: 32px 20px;
+
+        color: #777d91;
+        font-size: 13px;
+    }
+
+    /* =========================
+        바텀시트
+    ========================= */
+
+    .sheetBackdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 1000;
+
+        display: flex;
+        align-items: flex-end;
+
+        background-color: rgba(0, 0, 0, 0.65);
+        backdrop-filter: blur(5px);
+    }
+
+    .bottomSheet {
+        width: 100%;
+        padding: 28px 20px 26px;
+
+        border-radius: 16px 16px 0 0;
+        background-color: #222435;
+
+        box-sizing: border-box;
+    }
+
+    .sheetHeader {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        margin-bottom: 28px;
+    }
+
+    .sheetHeader h2 {
+        margin: 0;
+
+        font-size: 18px;
+    }
+
+    .sheetHeader button {
+        padding: 0;
+
+        border: 0;
+        background: transparent;
+        color: #ffffff;
+
+        font-size: 24px;
+
+        cursor: pointer;
+    }
+
+    .inputHeader {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        margin-bottom: 8px;
+    }
+
+    .inputHeader label,
+    .inputHeader span {
+        color: #9da3b6;
+        font-size: 12px;
+    }
+
+    .bottomSheet input {
+        width: 100%;
+        height: 44px;
+        padding: 0 14px;
+
+        border: 1px solid transparent;
+        border-radius: 6px;
+        outline: none;
+
+        background-color: #34394f;
+        color: #ffffff;
+
+        box-sizing: border-box;
+    }
+
+    .bottomSheet input::placeholder {
+        color: #73798d;
+    }
+
+    .bottomSheet input:focus {
+        border-color: #9fcaf2;
+    }
+
+    .submitButton {
+        width: 100%;
+        height: 48px;
+        margin-top: 64px;
+
+        border: 0;
+        border-radius: 6px;
+
+        background-color: #afd8f8;
+        color: #171925;
+
+        font-size: 14px;
+        font-weight: 700;
+
+        cursor: pointer;
+    }
+
+    .submitButton:disabled {
+        background-color: #596077;
+        color: #9298aa;
+
+        cursor: not-allowed;
+    }
+    }
