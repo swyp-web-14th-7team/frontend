@@ -593,8 +593,7 @@
 
     @media (max-width: 768px) {
     .container {
-        min-height:
-        calc(100vh - 64px);
+        min-height: 100vh;
     }
 
     .pageHeader {
@@ -606,7 +605,6 @@
 
     .backButton {
         gap: 8px;
-
         font-size: 16px;
     }
 
@@ -629,75 +627,32 @@
 
     .slide > button {
         opacity: 0.14;
-
         filter: blur(2px);
-
         transform: scale(0.82);
     }
 
-    .slide:global(.swiper-slide-prev)
-        > button,
-    .slide:global(.swiper-slide-next)
-        > button {
+    .slide:global(.swiper-slide-prev) > button,
+    .slide:global(.swiper-slide-next) > button {
         opacity: 0.45;
-
         filter: blur(0.8px);
     }
 
-    .slide:global(.swiper-slide-prev)
-        > button {
+    .slide:global(.swiper-slide-prev) > button {
         transform:
         translateX(-6px)
         scale(0.9);
     }
 
-    .slide:global(.swiper-slide-next)
-        > button {
+    .slide:global(.swiper-slide-next) > button {
         transform:
         translateX(6px)
         scale(0.9);
     }
 
-    .slide:global(.swiper-slide-active)
-        > button {
+    .slide:global(.swiper-slide-active) > button {
         opacity: 1;
-
         filter: blur(0);
-
         transform: scale(1);
-    }
-
-    /*
-    * 모바일에서는 hover가 없으므로
-    * 사용할 수 있는 화살표를 항상 표시한다.
-    */
-
-    .arrowButton:not(:disabled) {
-        opacity: 1;
-        visibility: visible;
-        pointer-events: auto;
-
-        transform:
-        translateY(-50%)
-        scale(1);
-    }
-
-    .arrowButton {
-        width: 40px;
-        height: 40px;
-    }
-
-    .arrowButton svg {
-        width: 22px;
-        height: 22px;
-    }
-
-    .leftArrow {
-        left: 12px;
-    }
-
-    .rightArrow {
-        right: 12px;
     }
 
     .actionArea {
@@ -708,9 +663,7 @@
     .scrapButton {
         min-width: 104px;
         height: 40px;
-
         padding: 0 17px;
-
         font-size: 13px;
     }
 
@@ -719,18 +672,9 @@
         height: 18px;
     }
 
+    /* 모바일에서는 인디케이터 숨김 */
     .indicatorContainer {
-        padding-bottom: 24px;
-    }
-
-    .indicator {
-        width: 64%;
-    }
-
-    .indicatorThumb {
-        left: calc(
-        var(--indicator-progress) *
-            (100% - 20px)
-        );
+        display: none;
     }
     }
+    

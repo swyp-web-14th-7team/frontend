@@ -55,6 +55,12 @@ const Explore = () => {
     const isUserLoggedIn = isLoggedIn();
 
     /*
+     * 실제 검색어가 입력됐는지 확인
+     */
+    const hasSearchKeyword =
+        keyword.trim().length > 0;
+
+    /*
      * 로그인하지 않은 사용자가
      * 전체보기 이외의 탭을 보고 있는지 확인
      */
@@ -67,10 +73,6 @@ const Explore = () => {
     ========================= */
 
     const handleTabClick = (tab) => {
-        /*
-         * 로그인하지 않아도
-         * 모든 탭을 눌러볼 수 있다.
-         */
         setActiveTab(tab);
         setCurrentPage(1);
     };
@@ -105,12 +107,44 @@ const Explore = () => {
     };
 
     /* =========================
+       모바일 검색 열기
+    ========================= */
+
+    const handleMobileSearchOpen = () => {
+        setActiveTab("전체보기");
+        setCurrentPage(1);
+        setKeyword("");
+        setIsMobileSearchOpen(true);
+    };
+
+    /* =========================
        모바일 검색 닫기
     ========================= */
 
     const handleMobileSearchClose = () => {
         setIsMobileSearchOpen(false);
         setKeyword("");
+        setCurrentPage(1);
+    };
+
+    /* =========================
+       모바일 로고 클릭 초기화
+    ========================= */
+
+    const handleMobileLogoClick = () => {
+        setActiveTab("전체보기");
+        setCurrentPage(1);
+        setKeyword("");
+        setAffiliation("");
+        setSelectedTags([]);
+        setSort("최근 등록순");
+        setIsMobileSearchOpen(false);
+        setIsLoginModalOpen(false);
+
+        window.scrollTo({
+            top: 0,
+            behavior: "auto",
+        });
     };
 
     return (
@@ -122,6 +156,9 @@ const Explore = () => {
                     isSearchOpen={isMobileSearchOpen}
                     onSearchClose={
                         handleMobileSearchClose
+                    }
+                    onLogoClick={
+                        handleMobileLogoClick
                     }
                 />
             </div>
@@ -154,10 +191,8 @@ const Explore = () => {
                                     className={
                                         styles.mobileSearchButton
                                     }
-                                    onClick={() =>
-                                        setIsMobileSearchOpen(
-                                            true,
-                                        )
+                                    onClick={
+                                        handleMobileSearchOpen
                                     }
                                     aria-label="검색창 열기"
                                 >
@@ -200,60 +235,76 @@ const Explore = () => {
                     />
                 </section>
 
-                {!isMobileSearchOpen && (
+                {/*
+                 * 검색창이 닫혀 있을 때는 기존 탐색 화면 표시
+                 *
+                 * 검색창이 열려 있을 때는
+                 * 검색어가 입력된 경우에만 카드 영역 표시
+                 */}
+
+                {(!isMobileSearchOpen ||
+                    hasSearchKeyword) && (
                     <section
                         className={
                             styles.exploreSection
                         }
                     >
-                        {/* 탐색 탭 */}
+                        {/* 검색 중에는 탐색 탭 숨김 */}
 
-                        <div
-                            className={styles.tabList}
-                            role="tablist"
-                            aria-label="탐색 카테고리"
-                        >
-                            {TABS.map((tab) => {
-                                const isActive =
-                                    activeTab === tab;
+                        {!isMobileSearchOpen && (
+                            <div
+                                className={
+                                    styles.tabList
+                                }
+                                role="tablist"
+                                aria-label="탐색 카테고리"
+                            >
+                                {TABS.map((tab) => {
+                                    const isActive =
+                                        activeTab === tab;
 
-                                return (
-                                    <button
-                                        key={tab}
-                                        type="button"
-                                        role="tab"
-                                        aria-selected={
-                                            isActive
-                                        }
-                                        className={`${
-                                            styles.tabButton
-                                        } ${
-                                            isActive
-                                                ? styles.activeTab
-                                                : ""
-                                        }`}
-                                        onClick={() =>
-                                            handleTabClick(
-                                                tab,
-                                            )
-                                        }
-                                    >
-                                        {tab}
-                                    </button>
-                                );
-                            })}
-                        </div>
+                                    return (
+                                        <button
+                                            key={tab}
+                                            type="button"
+                                            role="tab"
+                                            aria-selected={
+                                                isActive
+                                            }
+                                            className={`${
+                                                styles.tabButton
+                                            } ${
+                                                isActive
+                                                    ? styles.activeTab
+                                                    : ""
+                                            }`}
+                                            onClick={() =>
+                                                handleTabClick(
+                                                    tab,
+                                                )
+                                            }
+                                        >
+                                            {tab}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        )}
 
                         {/* 프로필 카드 영역 */}
 
                         <div
-                            className={styles.cardArea}
+                            className={
+                                styles.cardArea
+                            }
                         >
                             <ExploreCardList
                                 currentPage={
                                     currentPage
                                 }
-                                activeTab={activeTab}
+                                activeTab={
+                                    activeTab
+                                }
                                 keyword={keyword}
                                 affiliation={
                                     affiliation
@@ -268,85 +319,87 @@ const Explore = () => {
                             />
 
                             {/*
-                             * 전체보기 또는 로그인 상태에서는
-                             * 페이지네이션을 표시한다.
+                             * 검색 중에는 페이지네이션 숨김
                              */}
 
-                            {!isRestrictedTab && (
-                                <Pagination
-                                    currentPage={
-                                        currentPage
-                                    }
-                                    totalPages={9}
-                                    onChange={
-                                        handlePageChange
-                                    }
-                                />
-                            )}
+                            {!isRestrictedTab &&
+                                !isMobileSearchOpen && (
+                                    <Pagination
+                                        currentPage={
+                                            currentPage
+                                        }
+                                        totalPages={9}
+                                        onChange={
+                                            handlePageChange
+                                        }
+                                    />
+                                )}
 
                             {/*
-                             * 로그인하지 않은 사용자가
-                             * 전체보기 이외의 탭을 보는 경우
-                             * 로그인 유도 영역을 표시한다.
+                             * 로그인하지 않은 사용자의
+                             * 제한된 탭 로그인 유도 영역
                              */}
 
-                            {isRestrictedTab && (
-                                <>
-                                    <div
-                                        className={
-                                            styles.maskGradient
-                                        }
-                                        aria-hidden="true"
-                                    />
-
-                                    <div
-                                        className={
-                                            styles.loginGuide
-                                        }
-                                    >
-                                        <h2
+                            {isRestrictedTab &&
+                                !isMobileSearchOpen && (
+                                    <>
+                                        <div
                                             className={
-                                                styles.loginGuideTitle
+                                                styles.maskGradient
+                                            }
+                                            aria-hidden="true"
+                                        />
+
+                                        <div
+                                            className={
+                                                styles.loginGuide
                                             }
                                         >
-                                            로그인하고 더
-                                            편리하게
-                                            <br />
-                                            프로필을
-                                            탐색하세요
-                                        </h2>
+                                            <h2
+                                                className={
+                                                    styles.loginGuideTitle
+                                                }
+                                            >
+                                                로그인하고 더
+                                                편리하게
+                                                <br />
+                                                프로필을
+                                                탐색하세요
+                                            </h2>
 
-                                        <p
-                                            className={
-                                                styles.loginGuideDescription
-                                            }
-                                        >
-                                            나를 소개하는
-                                            가장 쉬운 방법,
-                                            <br />
-                                            Nodi와 함께
-                                            새로운 연결을
-                                            시작해요.
-                                        </p>
+                                            <p
+                                                className={
+                                                    styles.loginGuideDescription
+                                                }
+                                            >
+                                                나를 소개하는
+                                                가장 쉬운 방법,
+                                                <br />
+                                                Nodi와 함께
+                                                새로운 연결을
+                                                시작해요.
+                                            </p>
 
-                                        <button
-                                            type="button"
-                                            className={
-                                                styles.startButton
-                                            }
-                                            onClick={
-                                                handleStartClick
-                                            }
-                                        >
-                                            시작하기
-                                        </button>
-                                    </div>
-                                </>
-                            )}
+                                            <button
+                                                type="button"
+                                                className={
+                                                    styles.startButton
+                                                }
+                                                onClick={
+                                                    handleStartClick
+                                                }
+                                            >
+                                                시작하기
+                                            </button>
+                                        </div>
+                                    </>
+                                )}
                         </div>
                     </section>
                 )}
             </main>
+
+            {/* 모바일 검색 중에는 하단 내비게이션 숨김 */}
 
             {!isMobileSearchOpen && (
                 <div className={styles.mobileOnly}>
