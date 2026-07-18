@@ -7,7 +7,10 @@
     backend: "Backend Developer",
     };
 
-    const ExploreProfileCard = ({ profile, onClick }) => {
+    const ExploreProfileCard = ({
+    profile = {},
+    onClick,
+    }) => {
     const isDeveloper =
         profile.job === "frontend" ||
         profile.job === "backend";
@@ -16,12 +19,24 @@
         ? profile.techStacks || []
         : profile.interests || [];
 
+    const handleClick = () => {
+        if (!profile.id) {
+        return;
+        }
+
+        onClick?.(profile.id);
+    };
+
     return (
         <button
         type="button"
         className={styles.cardButton}
-        onClick={() => onClick?.(profile.id)}
-        aria-label={`${profile.name} 프로필 상세 보기`}
+        onClick={handleClick}
+        aria-label={
+            profile.name
+            ? `${profile.name} 프로필 상세 보기`
+            : "프로필 상세 보기"
+        }
         >
         <article className={styles.exploreCard}>
             <p className={styles.exploreJob}>
@@ -33,7 +48,7 @@
                 {profile.profileImage ? (
                 <img
                     src={profile.profileImage}
-                    alt={`${profile.name} 프로필`}
+                    alt={`${profile.name || "사용자"} 프로필`}
                     className={styles.exploreAvatar}
                 />
                 ) : (
@@ -45,7 +60,7 @@
 
                 <div className={styles.exploreProfileInfo}>
                 <strong className={styles.exploreName}>
-                    {profile.name}
+                    {profile.name || "이름 없음"}
                 </strong>
 
                 <p className={styles.exploreAffiliation}>
@@ -54,7 +69,7 @@
                     profile.affiliation,
                     ]
                     .filter(Boolean)
-                    .join(" | ")}
+                    .join(" | ") || "소속 정보 없음"}
                 </p>
                 </div>
             </div>
@@ -76,7 +91,11 @@
                     "대표 경험이 없습니다."}
                 </p>
 
-                <p className={styles.exploreExperienceDescription}>
+                <p
+                className={
+                    styles.exploreExperienceDescription
+                }
+                >
                 {profile.representativeExperienceDescription ||
                     "프로젝트에서 맡은 역할과 주요 경험을 소개합니다."}
                 </p>
@@ -92,12 +111,16 @@
                     />
                 ) : (
                     <span
-                    className={styles.exploreStrengthPlaceholder}
+                    className={
+                        styles.exploreStrengthPlaceholder
+                    }
                     aria-hidden="true"
                     />
                 )}
 
-                <span className={styles.exploreStrengthText}>
+                <span
+                    className={styles.exploreStrengthText}
+                >
                     {profile.strength.title}
                 </span>
                 </div>

@@ -104,17 +104,40 @@
     ========================= */
 
     .horizontalCard {
-    width: 302px;
-    min-height: 164px;
-    padding: 14px;
+    width: 210px;
+    min-height: 247px;
+    padding: 12px 16px 16px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 40px;
 
     border-radius: 8px;
-    background-color: #202335;
+    background-color: #222435;
+
+    box-sizing: border-box;
+    overflow: hidden;
+    color: #ffffff;
+    }
+
+    .horizontalCard .job {
+    width: 100%;
+    margin: 0;
+
+    color: #b8bdcf;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 18px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     }
 
     .horizontalMain {
     width: 100%;
-    margin-top: 18px;
+    margin: 0;
     }
 
     .horizontalProfile {
@@ -122,7 +145,7 @@
 
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     }
 
     .avatar,
@@ -140,36 +163,36 @@
     }
 
     .avatarPlaceholder {
-    background-color: #878ea1;
+    background-color: #aab4ec;
     }
 
-    .nameRow {
+    .profileInfo {
     min-width: 0;
-
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    flex: 1;
     }
 
     .name {
+    display: block;
     min-width: 0;
 
     color: #ffffff;
     font-size: 18px;
     font-weight: 600;
-    line-height: 140%;
+    line-height: 25px;
 
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     }
 
-    .affiliationInline {
-    min-width: 0;
+    .horizontalAffiliation {
+    width: 100%;
+    margin: 0;
 
     color: #d5d8e0;
-    font-size: 11px;
-    line-height: 150%;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 18px;
 
     white-space: nowrap;
     overflow: hidden;
@@ -177,13 +200,73 @@
     }
 
     .horizontalCard .strengthRow {
-    margin-top: 6px;
+    min-width: 0;
+    margin-top: 16px;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    }
+
+    .horizontalCard .strengthIcon,
+    .horizontalCard .strengthIconPlaceholder {
+    width: 24px;
+    height: 24px;
+
+    flex-shrink: 0;
+    }
+
+    .horizontalCard .strengthIcon {
+    display: block;
+    object-fit: contain;
+    }
+
+    .horizontalCard .strengthIconPlaceholder {
+    border-radius: 2px;
+    background-color: #313648;
+    }
+
+    .horizontalCard .strengthText {
+    min-width: 0;
+
+    color: #d5d8e0;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 21px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     }
 
     .horizontalCard .tagList {
-    margin-top: 18px;
+    width: 100%;
+    margin: 32px 0 0;
+
+    display: flex;
     flex-wrap: nowrap;
+    align-items: center;
+    gap: 4px;
+
     overflow: hidden;
+    }
+
+    .horizontalCard .tag {
+    max-width: 92px;
+    padding: 6px 10px;
+
+    border-radius: 8px;
+    background-color: #3d435a;
+    color: #dfe2eb;
+
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 18px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-shrink: 1;
     }
 
     /* =========================
@@ -451,25 +534,29 @@
     }
 
     .exploreTag {
+    min-width: 0;
     max-width: 110px;
     min-height: 36px;
     padding: 0 12px;
 
     display: inline-flex;
     align-items: center;
+    justify-content: center;
 
     border-radius: 9px;
     background-color: #3d435a;
     color: #ffffff;
 
     font-size: 13px;
+    text-align: center;
 
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 
     box-sizing: border-box;
-    flex-shrink: 0;
+
+    flex: 0 1 auto;
     }
 
     .exploreExperienceBox {
