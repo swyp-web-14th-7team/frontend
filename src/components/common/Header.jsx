@@ -13,6 +13,7 @@
     import mypageNavIcon from "../../assets/icons/icon_mypage.svg";
 
     import scrapIcon from "../../assets/icons/icon_scrap.svg";
+    import scrapActiveIcon from "../../assets/icons/icon_scrap_active.svg";
     import bellIcon from "../../assets/icons/알림.svg";
     import settingIcon from "../../assets/icons/설정.svg";
 
@@ -102,17 +103,19 @@
         )}
 
         <nav className={styles.rightMenu}>
-            <button
-            type="button"
+            <NavLink
+            to="/scrap"
             className={styles.iconButton}
-            aria-label="찜"
+            aria-label="스크랩"
             >
-            <img
-                src={scrapIcon}
+            {({ isActive }) => (
+                <img
+                src={isActive ? scrapActiveIcon : scrapIcon}
                 alt=""
                 className={styles.icon}
-            />
-            </button>
+                />
+            )}
+            </NavLink>
 
             <button
             type="button"

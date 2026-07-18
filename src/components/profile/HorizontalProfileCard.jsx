@@ -8,7 +8,7 @@
     };
 
     const HorizontalProfileCard = ({
-    data,
+    data = {},
     name = "홍길동",
     profileImage,
     }) => {
@@ -18,6 +18,13 @@
     const tags = isDeveloper
         ? data.techStacks || []
         : data.interests || [];
+
+    const affiliationText = [
+        data.affiliationType,
+        data.affiliation,
+    ]
+        .filter(Boolean)
+        .join(" | ");
 
     return (
         <article className={styles.horizontalCard}>
@@ -38,38 +45,36 @@
             )}
 
             <div className={styles.profileInfo}>
-                <div className={styles.nameRow}>
                 <strong className={styles.name}>{name}</strong>
 
-                <span className={styles.affiliationInline}>
-                    {[data.affiliationType, data.affiliation]
-                    .filter(Boolean)
-                    .join(" · ")}
-                </span>
-                </div>
-
-                {data.strength && (
-                <div className={styles.strengthRow}>
-                    {data.strength.icon ? (
-                    <img
-                        src={data.strength.icon}
-                        alt=""
-                        className={styles.strengthIcon}
-                    />
-                    ) : (
-                    <span className={styles.strengthIconPlaceholder} />
-                    )}
-
-                    <span className={styles.strengthText}>
-                    {data.strength.title}
-                    </span>
-                </div>
+                {affiliationText && (
+                <p className={styles.horizontalAffiliation}>
+                    {affiliationText}
+                </p>
                 )}
             </div>
             </div>
 
+            {data.strength && (
+            <div className={styles.strengthRow}>
+                {data.strength.icon ? (
+                <img
+                    src={data.strength.icon}
+                    alt=""
+                    className={styles.strengthIcon}
+                />
+                ) : (
+                <span className={styles.strengthIconPlaceholder} />
+                )}
+
+                <span className={styles.strengthText}>
+                {data.strength.title}
+                </span>
+            </div>
+            )}
+
             <div className={styles.tagList}>
-            {tags.slice(0, 4).map((tag) => (
+            {tags.slice(0, 3).map((tag) => (
                 <span key={tag.id} className={styles.tag}>
                 {tag.name}
                 </span>
