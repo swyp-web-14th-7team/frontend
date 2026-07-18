@@ -104,6 +104,7 @@
 
     border: 0;
     background: transparent;
+    text-decoration: none;
 
     cursor: pointer;
     }
@@ -117,4 +118,20 @@
 
     .iconButton:hover {
     opacity: 0.7;
+    }
+
+    .activeIconButton {
+    opacity: 1;
+    }
+
+    .activeIconButton .icon {
+    filter:
+        brightness(0)
+        saturate(100%)
+        invert(74%)
+        sepia(22%)
+        saturate(842%)
+        hue-rotate(190deg)
+        brightness(101%)
+        contrast(95%);
     }
