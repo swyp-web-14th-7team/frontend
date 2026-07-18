@@ -9,6 +9,10 @@
     box-sizing: border-box;
     }
 
+    /* =========================
+    상단
+    ========================= */
+
     .header {
     display: flex;
     align-items: center;
@@ -36,6 +40,7 @@
 
     font-size: 14px;
     font-weight: 600;
+
     cursor: pointer;
     }
 
@@ -43,7 +48,9 @@
     background-color: #474d66;
     }
 
-    /* 관리 모드 상단 버튼 */
+    /* =========================
+    관리 모드 상단 버튼
+    ========================= */
 
     .manageActions {
     display: flex;
@@ -62,12 +69,13 @@
 
     font-size: 14px;
     font-weight: 600;
+
     cursor: pointer;
     }
 
     .deleteSelectedButton:disabled {
-    color: #777d91;
     background-color: #2b2f42;
+    color: #777d91;
 
     cursor: not-allowed;
     }
@@ -85,10 +93,13 @@
 
     font-size: 14px;
     font-weight: 600;
+
     cursor: pointer;
     }
 
-    /* 본문 */
+    /* =========================
+    본문
+    ========================= */
 
     .content {
     display: flex;
@@ -138,34 +149,115 @@
     font-size: 12px;
     }
 
+    /* 서랍 이름 수정 */
+
     .editNameButton {
+    width: 22px;
+    height: 22px;
     padding: 0;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 
     border: 0;
     background: transparent;
     color: #ffffff;
 
     font-size: 16px;
+    line-height: 1;
+
     cursor: pointer;
     }
 
-    .deleteGuide {
-    color: #ff4d5e !important;
-
-    font-size: 13px !important;
-    font-weight: 600;
+    .editNameButton:hover {
+    color: #b9dfff;
     }
 
-    /* 카드 슬라이더 */
+    /* 서랍 삭제 */
+
+    .deleteDrawerButton {
+    padding: 6px 0;
+
+    border: 0;
+    background: transparent;
+    color: #ff4d5e;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+    }
+
+    .deleteDrawerButton:hover {
+    color: #ff7a87;
+    text-decoration: underline;
+    }
+
+    /* =========================
+    카드 슬라이더
+    ========================= */
 
     .cardSlider {
     position: relative;
+    isolation: isolate;
 
     width: 876px;
     max-width: 100%;
     }
 
+    /* 좌우 그라디언트 */
+
+    .cardSlider::before,
+    .cardSlider::after {
+    position: absolute;
+    top: 8px;
+    bottom: 8px;
+    z-index: 1;
+
+    width: 80px;
+
+    opacity: 0;
+    pointer-events: none;
+
+    content: "";
+
+    transition: opacity 0.2s ease;
+    }
+
+    .cardSlider::before {
+    left: 0;
+
+    background: linear-gradient(
+        90deg,
+        rgba(14, 14, 21, 0.98) 0%,
+        rgba(14, 14, 21, 0.72) 45%,
+        rgba(14, 14, 21, 0) 100%
+    );
+    }
+
+    .cardSlider::after {
+    right: 0;
+
+    background: linear-gradient(
+        270deg,
+        rgba(14, 14, 21, 0.98) 0%,
+        rgba(14, 14, 21, 0.72) 45%,
+        rgba(14, 14, 21, 0) 100%
+    );
+    }
+
+    /* 슬라이더 hover 시 그라디언트 표시 */
+
+    .cardSlider:hover::before,
+    .cardSlider:hover::after {
+    opacity: 1;
+    }
+
     .cardList {
+    position: relative;
+    z-index: 0;
+
     width: 100%;
     padding: 8px 0;
 
@@ -201,6 +293,7 @@
     text-align: left;
 
     cursor: pointer;
+
     box-sizing: border-box;
     scroll-snap-align: start;
     }
@@ -222,7 +315,7 @@
     outline: none;
     }
 
-    /* 일반 모드 hover */
+    /* 일반 모드 카드 hover */
 
     .cardItem:hover > article,
     .cardItem:focus-visible > article {
@@ -246,15 +339,17 @@
         0 0 2px rgba(184, 217, 245, 0.45);
     }
 
-    /* 좌우 이동 버튼 */
+    /* =========================
+    좌우 이동 버튼
+    ========================= */
 
     .slideButton {
     position: absolute;
     top: 50%;
     z-index: 2;
 
-    width: 32px;
-    height: 32px;
+    width: 40px;
+    height: 40px;
     padding: 0;
 
     display: flex;
@@ -263,29 +358,55 @@
 
     border: 0;
     border-radius: 50%;
-    background-color: #171925;
+    background-color: rgba(14, 14, 21, 0.96);
     color: #ffffff;
 
-    font-size: 24px;
+    font-size: 30px;
+    font-weight: 300;
     line-height: 1;
 
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
     cursor: pointer;
+
     transform: translateY(-50%);
+
+    transition:
+        opacity 0.2s ease,
+        visibility 0.2s ease,
+        background-color 0.2s ease,
+        transform 0.2s ease;
     }
 
-    .slideButton:hover {
-    background-color: #363b51;
+    /* 슬라이더 hover 시 화살표 표시 */
+
+    .cardSlider:hover .slideButton {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
     }
 
     .previousButton {
-    left: -16px;
+    left: 12px;
     }
 
     .nextButton {
-    right: -16px;
+    right: 12px;
     }
 
-    /* 오른쪽 탐색 프로필 카드 */
+    .slideButton:hover {
+    background-color: #242736;
+
+    transform:
+        translateY(-50%)
+        scale(1.06);
+    }
+
+    /* =========================
+    오른쪽 탐색 프로필 카드
+    ========================= */
 
     .preview {
     width: 282px;
@@ -308,7 +429,9 @@
     text-align: center;
     }
 
-    /* 빈 서랍 */
+    /* =========================
+    빈 서랍
+    ========================= */
 
     .emptyDrawer {
     width: 876px;
@@ -325,10 +448,13 @@
     color: #777d91;
 
     font-size: 14px;
+
     box-sizing: border-box;
     }
 
-    /* 새 스크랩 서랍 버튼 */
+    /* =========================
+    새 스크랩 서랍 버튼
+    ========================= */
 
     .createDrawerButton {
     width: fit-content;
@@ -353,7 +479,9 @@
     background-color: #474d66;
     }
 
-    /* 서랍 생성 모달 */
+    /* =========================
+    모달
+    ========================= */
 
     .modalBackdrop {
     position: fixed;
@@ -476,54 +604,9 @@
     cursor: not-allowed;
     }
 
-        .drawerTitle {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    }
-
-    .editNameButton {
-    width: 22px;
-    height: 22px;
-    padding: 0;
-
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    border: 0;
-    background: transparent;
-    color: #ffffff;
-
-    font-size: 16px;
-    line-height: 1;
-
-    cursor: pointer;
-    }
-
-    .editNameButton:hover {
-    color: #b9dfff;
-    }
-
-    .deleteDrawerButton {
-    padding: 6px 0;
-
-    border: 0;
-    background: transparent;
-    color: #ff4d5e;
-
-    font-size: 13px;
-    font-weight: 600;
-
-    cursor: pointer;
-    }
-
-    .deleteDrawerButton:hover {
-    color: #ff7a87;
-    text-decoration: underline;
-    }
-
-    /* 태블릿 */
+    /* =========================
+    태블릿
+    ========================= */
 
     @media (max-width: 1200px) {
     .page {
@@ -539,7 +622,9 @@
     }
     }
 
-    /* 모바일 */
+    /* =========================
+    모바일
+    ========================= */
 
     @media (max-width: 768px) {
     .page {
@@ -579,11 +664,11 @@
     }
 
     .previousButton {
-        left: -10px;
+        left: 10px;
     }
 
     .nextButton {
-        right: -10px;
+        right: 10px;
     }
 
     .cardItem,
@@ -598,5 +683,13 @@
 
     .submitButton {
         margin-top: 48px;
+    }
+
+    /* 모바일은 직접 스와이프하므로 화살표와 그라디언트 숨김 */
+
+    .cardSlider::before,
+    .cardSlider::after,
+    .slideButton {
+        display: none;
     }
     }
