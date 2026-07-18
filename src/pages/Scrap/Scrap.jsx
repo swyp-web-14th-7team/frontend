@@ -2,6 +2,7 @@
 
     import HorizontalProfileCard from "../../components/profile/HorizontalProfileCard";
     import ExploreProfileCard from "../../components/profile/ExploreProfileCard";
+    import MobileScrap from "../../pages/Scrap/MobileScrap";
 
     import profiles from "../../mocks/profiles";
 
@@ -254,397 +255,408 @@
     };
 
     return (
+        <>
+        {/* 데스크톱 스크랩 화면 */}
+
         <main className={styles.page}>
-        <div className={styles.header}>
+            <div className={styles.header}>
             <h1>스크랩</h1>
 
             {isManaging ? (
-            <div className={styles.manageActions}>
+                <div className={styles.manageActions}>
                 <button
-                type="button"
-                className={
+                    type="button"
+                    className={
                     styles.deleteSelectedButton
-                }
-                onClick={
+                    }
+                    onClick={
                     handleDeleteSelectedProfiles
-                }
-                disabled={
+                    }
+                    disabled={
                     selectedProfiles.length === 0
-                }
+                    }
                 >
-                {selectedProfiles.length}개 삭제
+                    {selectedProfiles.length}개 삭제
                 </button>
 
                 <button
-                type="button"
-                className={styles.doneButton}
-                onClick={handleFinishManaging}
+                    type="button"
+                    className={styles.doneButton}
+                    onClick={handleFinishManaging}
                 >
-                완료
+                    완료
                 </button>
-            </div>
+                </div>
             ) : (
-            <button
+                <button
                 type="button"
                 className={styles.manageButton}
                 onClick={handleStartManaging}
-            >
-                관리하기
-            </button>
-            )}
-        </div>
-
-        <div className={styles.content}>
-            <div className={styles.drawerList}>
-            {drawers.map((drawer) => (
-                <section
-                key={drawer.id}
-                className={styles.drawer}
                 >
-                <div
-                    className={styles.drawerHeader}
+                관리하기
+                </button>
+            )}
+            </div>
+
+            <div className={styles.content}>
+            <div className={styles.drawerList}>
+                {drawers.map((drawer) => (
+                <section
+                    key={drawer.id}
+                    className={styles.drawer}
                 >
                     <div
-                    className={styles.drawerTitle}
+                    className={styles.drawerHeader}
                     >
-                    <h2>{drawer.name}</h2>
+                    <div
+                        className={styles.drawerTitle}
+                    >
+                        <h2>{drawer.name}</h2>
 
-                    {isManaging ? (
+                        {isManaging ? (
                         <button
-                        type="button"
-                        className={
+                            type="button"
+                            className={
                             styles.editNameButton
-                        }
-                        onClick={() =>
+                            }
+                            onClick={() =>
                             handleOpenEditDrawer(
-                            drawer,
+                                drawer,
                             )
-                        }
-                        aria-label={`${drawer.name} 이름 수정`}
+                            }
+                            aria-label={`${drawer.name} 이름 수정`}
                         >
-                        ✎
+                            ✎
                         </button>
-                    ) : (
+                        ) : (
                         <span>
-                        저장된 사람{" "}
-                        {drawer.profiles.length}명
+                            저장된 사람{" "}
+                            {drawer.profiles.length}명
                         </span>
-                    )}
+                        )}
                     </div>
 
                     {isManaging && (
-                    <button
+                        <button
                         type="button"
                         className={
-                        styles.deleteDrawerButton
+                            styles.deleteDrawerButton
                         }
                         onClick={() =>
-                        handleDeleteDrawer(drawer)
+                            handleDeleteDrawer(drawer)
                         }
-                    >
+                        >
                         서랍 삭제
-                    </button>
+                        </button>
                     )}
-                </div>
+                    </div>
 
-                {drawer.profiles.length > 0 ? (
+                    {drawer.profiles.length > 0 ? (
                     <div
-                    className={styles.cardSlider}
+                        className={styles.cardSlider}
                     >
-                    <button
+                        <button
                         type="button"
                         className={`${styles.slideButton} ${styles.previousButton}`}
                         onClick={() =>
-                        handlePrevious(drawer.id)
+                            handlePrevious(drawer.id)
                         }
                         aria-label={`${drawer.name} 이전 프로필 보기`}
-                    >
+                        >
                         ‹
-                    </button>
+                        </button>
 
-                    <div
+                        <div
                         ref={(element) => {
-                        cardListRefs.current[
+                            cardListRefs.current[
                             drawer.id
-                        ] = element;
+                            ] = element;
                         }}
                         className={styles.cardList}
-                    >
+                        >
                         {drawer.profiles.map(
-                        (profile) => {
+                            (profile) => {
                             const selected =
-                            isProfileSelected(
+                                isProfileSelected(
                                 drawer.id,
                                 profile.id,
-                            );
+                                );
 
                             return (
-                            <button
+                                <button
                                 key={profile.id}
                                 type="button"
                                 className={`${
-                                styles.cardItem
+                                    styles.cardItem
                                 } ${
-                                selected
+                                    selected
                                     ? styles.selectedCard
                                     : ""
                                 }`}
                                 onClick={() =>
-                                handleSelectProfile(
+                                    handleSelectProfile(
                                     drawer.id,
                                     profile,
-                                )
+                                    )
                                 }
                                 onMouseEnter={() =>
-                                setHoveredProfile(
+                                    setHoveredProfile(
                                     profile,
-                                )
+                                    )
                                 }
                                 onMouseLeave={() =>
-                                setHoveredProfile(
+                                    setHoveredProfile(
                                     null,
-                                )
+                                    )
                                 }
                                 onFocus={() =>
-                                setHoveredProfile(
+                                    setHoveredProfile(
                                     profile,
-                                )
+                                    )
                                 }
                                 onBlur={() =>
-                                setHoveredProfile(
+                                    setHoveredProfile(
                                     null,
-                                )
+                                    )
                                 }
                                 aria-pressed={
-                                isManaging
+                                    isManaging
                                     ? selected
                                     : undefined
                                 }
-                            >
+                                >
                                 <HorizontalProfileCard
-                                data={profile}
-                                name={profile.name}
-                                profileImage={
+                                    data={profile}
+                                    name={profile.name}
+                                    profileImage={
                                     profile.profileImage
-                                }
+                                    }
                                 />
-                            </button>
+                                </button>
                             );
-                        },
+                            },
                         )}
-                    </div>
+                        </div>
 
-                    <button
+                        <button
                         type="button"
                         className={`${styles.slideButton} ${styles.nextButton}`}
                         onClick={() =>
-                        handleNext(drawer.id)
+                            handleNext(drawer.id)
                         }
                         aria-label={`${drawer.name} 다음 프로필 보기`}
-                    >
+                        >
                         ›
-                    </button>
+                        </button>
                     </div>
-                ) : (
+                    ) : (
                     <div
-                    className={styles.emptyDrawer}
+                        className={styles.emptyDrawer}
                     >
-                    아직 저장된 프로필이
-                    없습니다.
+                        아직 저장된 프로필이
+                        없습니다.
                     </div>
-                )}
+                    )}
                 </section>
-            ))}
+                ))}
 
-            {!isManaging && (
+                {!isManaging && (
                 <button
-                type="button"
-                className={
+                    type="button"
+                    className={
                     styles.createDrawerButton
-                }
-                onClick={handleOpenCreateModal}
+                    }
+                    onClick={handleOpenCreateModal}
                 >
-                <span aria-hidden="true">＋</span>
-                새 스크랩 서랍 만들기
+                    <span aria-hidden="true">＋</span>
+                    새 스크랩 서랍 만들기
                 </button>
-            )}
+                )}
             </div>
 
             <aside className={styles.preview}>
-            {hoveredProfile ? (
+                {hoveredProfile ? (
                 <ExploreProfileCard
-                profile={hoveredProfile}
+                    profile={hoveredProfile}
                 />
-            ) : (
+                ) : (
                 <p
-                className={styles.previewGuide}
+                    className={styles.previewGuide}
                 >
-                카드에 커서를 올려보세요.
+                    카드에 커서를 올려보세요.
                 </p>
-            )}
+                )}
             </aside>
-        </div>
+            </div>
 
-        {/* 새 서랍 만들기 모달 */}
+            {/* 데스크톱 새 서랍 만들기 모달 */}
 
-        {isCreateModalOpen && (
+            {isCreateModalOpen && (
             <div
-            className={styles.modalBackdrop}
-            onMouseDown={
+                className={styles.modalBackdrop}
+                onMouseDown={
                 handleCloseCreateModal
-            }
+                }
             >
-            <section
+                <section
                 className={styles.modal}
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="create-drawer-title"
                 onMouseDown={(event) =>
-                event.stopPropagation()
+                    event.stopPropagation()
                 }
-            >
-                <div
-                className={styles.modalHeader}
                 >
-                <h2 id="create-drawer-title">
+                <div
+                    className={styles.modalHeader}
+                >
+                    <h2 id="create-drawer-title">
                     서랍 만들기
-                </h2>
+                    </h2>
 
-                <button
+                    <button
                     type="button"
                     className={styles.closeButton}
                     onClick={
-                    handleCloseCreateModal
+                        handleCloseCreateModal
                     }
                     aria-label="서랍 생성 모달 닫기"
-                >
+                    >
                     ×
-                </button>
+                    </button>
                 </div>
 
                 <form
-                onSubmit={handleCreateDrawer}
+                    onSubmit={handleCreateDrawer}
                 >
-                <div
+                    <div
                     className={styles.inputHeader}
-                >
+                    >
                     <label htmlFor="drawer-name">
-                    서랍 이름
+                        서랍 이름
                     </label>
 
                     <span>
-                    {drawerName.length}/20
+                        {drawerName.length}/20
                     </span>
-                </div>
+                    </div>
 
-                <input
+                    <input
                     id="drawer-name"
                     type="text"
                     value={drawerName}
                     onChange={(event) =>
-                    setDrawerName(
+                        setDrawerName(
                         event.target.value,
-                    )
+                        )
                     }
                     maxLength={20}
                     placeholder="스크랩 목적, 분류 등을 작성해보세요"
                     autoFocus
-                />
+                    />
 
-                <button
+                    <button
                     type="submit"
                     className={styles.submitButton}
                     disabled={!drawerName.trim()}
-                >
+                    >
                     만들기
-                </button>
+                    </button>
                 </form>
-            </section>
+                </section>
             </div>
-        )}
+            )}
 
-        {/* 서랍 이름 수정 모달 */}
+            {/* 데스크톱 서랍 이름 수정 모달 */}
 
-        {editingDrawerId !== null && (
+            {editingDrawerId !== null && (
             <div
-            className={styles.modalBackdrop}
-            onMouseDown={
+                className={styles.modalBackdrop}
+                onMouseDown={
                 handleCloseEditDrawer
-            }
+                }
             >
-            <section
+                <section
                 className={styles.modal}
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="edit-drawer-title"
                 onMouseDown={(event) =>
-                event.stopPropagation()
+                    event.stopPropagation()
                 }
-            >
-                <div
-                className={styles.modalHeader}
                 >
-                <h2 id="edit-drawer-title">
+                <div
+                    className={styles.modalHeader}
+                >
+                    <h2 id="edit-drawer-title">
                     서랍 이름 수정
-                </h2>
+                    </h2>
 
-                <button
+                    <button
                     type="button"
                     className={styles.closeButton}
                     onClick={
-                    handleCloseEditDrawer
+                        handleCloseEditDrawer
                     }
                     aria-label="이름 수정 모달 닫기"
-                >
+                    >
                     ×
-                </button>
+                    </button>
                 </div>
 
                 <form
-                onSubmit={
+                    onSubmit={
                     handleUpdateDrawerName
-                }
+                    }
                 >
-                <div
+                    <div
                     className={styles.inputHeader}
-                >
+                    >
                     <label htmlFor="edit-drawer-name">
-                    서랍 이름
+                        서랍 이름
                     </label>
 
                     <span>
-                    {editingDrawerName.length}/20
+                        {editingDrawerName.length}/20
                     </span>
-                </div>
+                    </div>
 
-                <input
+                    <input
                     id="edit-drawer-name"
                     type="text"
                     value={editingDrawerName}
                     onChange={(event) =>
-                    setEditingDrawerName(
+                        setEditingDrawerName(
                         event.target.value,
-                    )
+                        )
                     }
                     maxLength={20}
                     placeholder="서랍 이름을 입력해 주세요"
                     autoFocus
-                />
+                    />
 
-                <button
+                    <button
                     type="submit"
                     className={styles.submitButton}
                     disabled={
-                    !editingDrawerName.trim()
+                        !editingDrawerName.trim()
                     }
-                >
+                    >
                     수정하기
-                </button>
+                    </button>
                 </form>
-            </section>
+                </section>
             </div>
-        )}
+            )}
         </main>
+
+        {/* 모바일 스크랩 화면 */}
+
+        <MobileScrap
+            drawers={drawers}
+            setDrawers={setDrawers}
+        />
+        </>
     );
     };
 
