@@ -57,9 +57,6 @@ const JOB_SEARCH_KEYWORDS = {
     ],
 };
 
-/* =========================
-   클릭 제한 카드 래퍼
-========================= */
 
 const RestrictedCardWrapper = ({
     isRestricted,
@@ -142,9 +139,6 @@ const ExploreCardList = ({
             hasSearchKeyword
         );
 
-    /* =========================
-       카드 클릭
-    ========================= */
 
     const handleCardClick = (id) => {
         /*
@@ -185,10 +179,6 @@ const ExploreCardList = ({
             )}`,
         );
     };
-
-    /* =========================
-       프로필 필터링 및 정렬
-    ========================= */
 
     const filteredProfiles = useMemo(() => {
         const normalizedKeyword =
@@ -337,9 +327,6 @@ const ExploreCardList = ({
         sort,
     ]);
 
-    /* =========================
-       페이지에 표시할 프로필
-    ========================= */
 
     const startIndex =
         (currentPage - 1) *

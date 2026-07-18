@@ -14,15 +14,21 @@ function App() {
         element={<Navigate to="/explore" replace />}
       />
 
+      {/* 공통 헤더를 사용하는 화면 */}
       <Route element={<MainLayout />}>
-        <Route path="/explore" element={<Explore />} />
-
         <Route
-          path="/profile-carousel/:profileId"
-          element={<ProfileCarouselPage />}
+          path="/explore"
+          element={<Explore />}
         />
       </Route>
 
+      {/* 헤더 없이 전체 화면으로 사용하는 캐러셀 */}
+      <Route
+        path="/profile-carousel/:profileId"
+        element={<ProfileCarouselPage />}
+      />
+
+      {/* 온보딩 */}
       <Route
         path="/onboarding"
         element={<Onboarding />}

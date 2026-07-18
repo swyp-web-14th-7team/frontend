@@ -237,4 +237,48 @@
     .tabButton {
         flex-shrink: 0;
     }
+
+    .cardArea {
+        position: relative;
     }
+
+    .loginGuide {
+        position: absolute;
+        right: 0;
+        bottom: 140px;
+        left: 0;
+
+        z-index: 500;
+
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+
+        text-align: center;
+
+        pointer-events: auto;
+    }
+
+    .startButton {
+        position: relative;
+        z-index: 501;
+
+        width: 220px;
+        height: 44px;
+
+        border: 0;
+        border-radius: 6px;
+
+        background-color: #cceaff;
+        color: #111017;
+
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 600;
+
+        cursor: pointer;
+        pointer-events: auto;
+    }
+}
+
+
