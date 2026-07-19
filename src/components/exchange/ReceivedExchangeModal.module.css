@@ -1,0 +1,353 @@
+.backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1300;
+
+    padding: 16px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: rgba(14, 14, 21, 0.78);
+    backdrop-filter: blur(7px);
+
+    box-sizing: border-box;
+}
+
+.modal {
+    width: 620px;
+    max-width: 100%;
+    height: 700px;
+    max-height: calc(100vh - 32px);
+    padding: 28px 20px 20px;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+
+    border-radius: 10px;
+    background-color: #222435;
+    color: #ffffff;
+
+    box-sizing: border-box;
+}
+
+.modalHeader {
+    padding: 0 8px;
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+
+    flex-shrink: 0;
+}
+
+.modalHeader h2 {
+    margin: 0;
+
+    color: #ffffff;
+
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.modalHeader p {
+    margin: 10px 0 0;
+
+    color: #8f96aa;
+
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.closeButton {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+
+    flex-shrink: 0;
+
+    border: 0;
+    background: transparent;
+    color: #ffffff;
+
+    font-size: 30px;
+    line-height: 1;
+
+    cursor: pointer;
+}
+
+.closeButton:hover {
+    color: #b9dfff;
+}
+
+.content {
+    min-height: 0;
+    margin-top: 16px;
+
+    flex: 1;
+
+    overflow: hidden;
+}
+
+.swipeContent {
+    touch-action: none;
+    user-select: none;
+    cursor: grab;
+}
+
+.swipeContent:active {
+    cursor: grabbing;
+}
+
+/* 받은 카드 화면 */
+
+.cardView {
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    animation:
+        cardViewEnter
+        0.22s ease;
+}
+
+.receivedCard {
+    width: 282px;
+
+    flex-shrink: 0;
+    overflow: hidden;
+
+    border-radius: 12px;
+}
+
+.receivedCard > button,
+.receivedCard article {
+    width: 100%;
+}
+
+.swipeGuide {
+    position: relative;
+    z-index: 5;
+
+    margin-top: 16px;
+    padding: 10px 18px;
+
+    flex-shrink: 0;
+
+    border: 0;
+    border-radius: 20px;
+
+    background-color: #363b51;
+    color: #dce0eb;
+
+    font-size: 12px;
+
+    cursor: pointer;
+}
+
+.swipeGuide:hover {
+    background-color: #474d66;
+    color: #ffffff;
+}
+
+/* 쪽지 화면 */
+
+.messageView {
+    height: 100%;
+
+    animation:
+        messageViewEnter
+        0.22s ease;
+}
+
+.sender {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.sender img,
+.avatarPlaceholder {
+    width: 52px;
+    height: 52px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.avatarPlaceholder {
+    background-color: #aeb8eb;
+}
+
+.sender > div {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.sender strong {
+    color: #ffffff;
+
+    font-size: 16px;
+}
+
+.sender span {
+    overflow: hidden;
+
+    color: #aeb3c2;
+
+    font-size: 12px;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.message {
+    margin: 26px 0 0;
+    padding: 16px;
+
+    border-radius: 6px;
+    background-color: #363b51;
+    color: #ffffff;
+
+    font-size: 13px;
+    line-height: 1.7;
+
+    white-space: pre-line;
+}
+
+.backToCard {
+    position: relative;
+    z-index: 5;
+
+    display: block;
+
+    margin: 18px auto 0;
+    padding: 8px 14px;
+
+    border: 0;
+    border-radius: 18px;
+
+    background-color: #363b51;
+    color: #dce0eb;
+
+    cursor: pointer;
+}
+
+.backToCard:hover {
+    background-color: #474d66;
+    color: #ffffff;
+}
+
+/* 하단 버튼 */
+
+.actions {
+    margin-top: 16px;
+
+    flex-shrink: 0;
+
+    display: grid;
+    grid-template-columns:
+        110px
+        minmax(0, 1fr);
+    gap: 10px;
+}
+
+.primaryButton,
+.secondaryButton {
+    height: 52px;
+
+    border: 0;
+    border-radius: 7px;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+.primaryButton {
+    background-color: #afd8f8;
+    color: #171925;
+}
+
+.primaryButton:hover {
+    background-color: #c4e4fc;
+}
+
+.secondaryButton {
+    background-color: #f1f4f8;
+    color: #171925;
+}
+
+.secondaryButton:hover {
+    background-color: #ffffff;
+}
+
+.primaryButton:disabled {
+    background-color: #596077;
+    color: #9298aa;
+
+    cursor: not-allowed;
+}
+
+/* 화면 전환 애니메이션 */
+
+@keyframes cardViewEnter {
+    from {
+        opacity: 0;
+        transform: translateY(-24px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes messageViewEnter {
+    from {
+        opacity: 0;
+        transform: translateY(24px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 모바일 */
+
+@media (max-width: 768px) {
+    .backdrop {
+        padding: 0;
+
+        align-items: flex-end;
+    }
+
+    .modal {
+        width: 100%;
+        height: 90vh;
+        max-height: 90vh;
+        padding: 24px 16px 32px;
+
+        border-radius: 16px 16px 0 0;
+    }
+
+    .actions {
+        grid-template-columns:
+            90px
+            minmax(0, 1fr);
+    }
+}

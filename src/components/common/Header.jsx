@@ -1,8 +1,14 @@
+import { useState } from "react";
 import {
     NavLink,
     useLocation,
     useNavigate,
 } from "react-router-dom";
+
+import NotificationPanel from "./NotificationPanel/NotificationPanel";
+import ReceivedExchangeModal from "../exchange/ReceivedExchangeModal";
+
+import exchangeRequestMocks from "../../mocks/exchangeRequests";
 
 import styles from "./Header.module.css";
 
@@ -21,16 +27,21 @@ const Header = ({ showNav = false }) => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    /*
-     * 탐색 메뉴가 활성화되는 화면
-     *
-     * /explore
-     * /profile-carousel/:profileId
-     * /profile/:profileId
-     *
-     * /profile만 있는 경우는 내 프로필 화면이므로
-     * 탐색 메뉴에 포함하지 않는다.
-     */
+    const [
+        exchangeRequests,
+        setExchangeRequests,
+    ] = useState(exchangeRequestMocks);
+
+    const [
+        isNotificationOpen,
+        setIsNotificationOpen,
+    ] = useState(false);
+
+    const [
+        selectedRequest,
+        setSelectedRequest,
+    ] = useState(null);
+
     const isExploreActive =
         location.pathname === "/explore" ||
         location.pathname.startsWith(
@@ -43,145 +54,330 @@ const Header = ({ showNav = false }) => {
     const isScrapActive =
         location.pathname === "/scrap";
 
+    const hasUnreadNotification =
+        exchangeRequests.some(
+            (request) =>
+                request.status ===
+                    "pending" &&
+                !request.isRead,
+        );
+
     const handleLogoClick = () => {
         navigate("/explore");
     };
 
+    const handleNotificationToggle =
+        () => {
+            setIsNotificationOpen(
+                (previous) => !previous,
+            );
+        };
+
+    const handleRequestClick = (
+        request,
+    ) => {
+        setExchangeRequests(
+            (currentRequests) =>
+                currentRequests.map(
+                    (item) =>
+                        item.id ===
+                        request.id
+                            ? {
+                                  ...item,
+                                  isRead: true,
+                              }
+                            : item,
+                ),
+        );
+
+        setSelectedRequest({
+            ...request,
+            isRead: true,
+        });
+
+        setIsNotificationOpen(false);
+    };
+
+    const handleRejectRequest = (
+        requestId,
+    ) => {
+        setExchangeRequests(
+            (currentRequests) =>
+                currentRequests.map(
+                    (request) =>
+                        request.id ===
+                        requestId
+                            ? {
+                                  ...request,
+                                  status: "rejected",
+                                  isRead: true,
+                              }
+                            : request,
+                ),
+        );
+
+        setSelectedRequest(null);
+
+        window.alert(
+            "카드 교환 요청을 거절했습니다.",
+        );
+    };
+
+    const handleAcceptRequest = (
+        exchangeData,
+    ) => {
+        setExchangeRequests(
+            (currentRequests) =>
+                currentRequests.map(
+                    (request) =>
+                        request.id ===
+                        exchangeData.requestId
+                            ? {
+                                  ...request,
+                                  status: "accepted",
+                                  isRead: true,
+                                  responseCardId:
+                                      exchangeData
+                                          .responseCardId,
+                              }
+                            : request,
+                ),
+        );
+
+        setSelectedRequest(null);
+
+        console.log(
+            "카드 교환 완료:",
+            exchangeData,
+        );
+
+        window.alert(
+            "카드 교환이 완료되었습니다.",
+        );
+    };
+
     return (
-        <header className={styles.header}>
-            <button
-                type="button"
-                className={styles.logoButton}
-                onClick={handleLogoClick}
-                aria-label="Nodi 홈으로 이동"
+        <>
+            <header
+                className={styles.header}
             >
-                <img
-                    src={logo}
-                    alt="Nodi"
-                    className={styles.logo}
-                />
-            </button>
+                <button
+                    type="button"
+                    className={
+                        styles.logoButton
+                    }
+                    onClick={
+                        handleLogoClick
+                    }
+                    aria-label="Nodi 홈으로 이동"
+                >
+                    <img
+                        src={logo}
+                        alt="Nodi"
+                        className={
+                            styles.logo
+                        }
+                    />
+                </button>
 
-            {showNav && (
+                {showNav && (
+                    <nav
+                        className={styles.nav}
+                    >
+                        <NavLink
+                            to="/profile"
+                            end
+                            className={({
+                                isActive,
+                            }) =>
+                                `${styles.navItem} ${
+                                    isActive
+                                        ? styles.activeNav
+                                        : ""
+                                }`
+                            }
+                        >
+                            <img
+                                src={
+                                    mypageNavIcon
+                                }
+                                alt=""
+                                className={
+                                    styles.navIcon
+                                }
+                            />
+
+                            <span>
+                                내 프로필
+                            </span>
+                        </NavLink>
+
+                        <NavLink
+                            to="/explore"
+                            className={() =>
+                                `${styles.navItem} ${
+                                    isExploreActive
+                                        ? styles.activeNav
+                                        : ""
+                                }`
+                            }
+                        >
+                            <img
+                                src={
+                                    exploreNavIcon
+                                }
+                                alt=""
+                                className={
+                                    styles.navIcon
+                                }
+                            />
+
+                            <span>탐색</span>
+                        </NavLink>
+
+                        <NavLink
+                            to="/saved"
+                            className={({
+                                isActive,
+                            }) =>
+                                `${styles.navItem} ${
+                                    isActive
+                                        ? styles.activeNav
+                                        : ""
+                                }`
+                            }
+                        >
+                            <img
+                                src={
+                                    libraryNavIcon
+                                }
+                                alt=""
+                                className={
+                                    styles.navIcon
+                                }
+                            />
+
+                            <span>
+                                보관함
+                            </span>
+                        </NavLink>
+                    </nav>
+                )}
+
                 <nav
-                    className={styles.nav}
-                    aria-label="주요 메뉴"
+                    className={
+                        styles.rightMenu
+                    }
                 >
                     <NavLink
-                        to="/profile"
-                        end
-                        className={({
-                            isActive,
-                        }) =>
-                            `${styles.navItem} ${
-                                isActive
-                                    ? styles.activeNav
-                                    : ""
-                            }`
+                        to="/scrap"
+                        className={
+                            styles.iconButton
                         }
+                        aria-label="스크랩"
                     >
                         <img
-                            src={mypageNavIcon}
+                            src={
+                                isScrapActive
+                                    ? scrapActiveIcon
+                                    : scrapIcon
+                            }
                             alt=""
                             className={
-                                styles.navIcon
+                                styles.icon
                             }
                         />
-
-                        <span>내 프로필</span>
                     </NavLink>
 
-                    <NavLink
-                        to="/explore"
-                        className={() =>
-                            `${styles.navItem} ${
-                                isExploreActive
-                                    ? styles.activeNav
-                                    : ""
-                            }`
+                    <div
+                        className={
+                            styles.notificationWrapper
                         }
                     >
-                        <img
-                            src={exploreNavIcon}
-                            alt=""
+                        <button
+                            type="button"
                             className={
-                                styles.navIcon
+                                styles.iconButton
                             }
-                        />
+                            onClick={
+                                handleNotificationToggle
+                            }
+                            aria-label="알림"
+                            aria-expanded={
+                                isNotificationOpen
+                            }
+                        >
+                            {hasUnreadNotification && (
+                                <span
+                                    className={
+                                        styles.notificationDot
+                                    }
+                                />
+                            )}
 
-                        <span>탐색</span>
-                    </NavLink>
+                            <img
+                                src={bellIcon}
+                                alt=""
+                                className={
+                                    styles.icon
+                                }
+                            />
+                        </button>
 
-                    <NavLink
-                        to="/saved"
-                        className={({
-                            isActive,
-                        }) =>
-                            `${styles.navItem} ${
-                                isActive
-                                    ? styles.activeNav
-                                    : ""
-                            }`
+                        {isNotificationOpen && (
+                            <NotificationPanel
+                                requests={
+                                    exchangeRequests
+                                }
+                                onRequestClick={
+                                    handleRequestClick
+                                }
+                                onClose={() =>
+                                    setIsNotificationOpen(
+                                        false,
+                                    )
+                                }
+                            />
+                        )}
+                    </div>
+
+                    <button
+                        type="button"
+                        className={
+                            styles.iconButton
                         }
+                        aria-label="설정"
                     >
                         <img
-                            src={libraryNavIcon}
+                            src={settingIcon}
                             alt=""
                             className={
-                                styles.navIcon
+                                styles.icon
                             }
                         />
-
-                        <span>보관함</span>
-                    </NavLink>
+                    </button>
                 </nav>
+            </header>
+
+            {selectedRequest && (
+                <ReceivedExchangeModal
+                    request={
+                        selectedRequest
+                    }
+                    onClose={() =>
+                        setSelectedRequest(
+                            null,
+                        )
+                    }
+                    onReject={
+                        handleRejectRequest
+                    }
+                    onAccept={
+                        handleAcceptRequest
+                    }
+                />
             )}
-
-            <nav
-                className={styles.rightMenu}
-                aria-label="사용자 메뉴"
-            >
-                <NavLink
-                    to="/scrap"
-                    className={styles.iconButton}
-                    aria-label="스크랩"
-                >
-                    <img
-                        src={
-                            isScrapActive
-                                ? scrapActiveIcon
-                                : scrapIcon
-                        }
-                        alt=""
-                        className={styles.icon}
-                    />
-                </NavLink>
-
-                <button
-                    type="button"
-                    className={styles.iconButton}
-                    aria-label="알림"
-                >
-                    <img
-                        src={bellIcon}
-                        alt=""
-                        className={styles.icon}
-                    />
-                </button>
-
-                <button
-                    type="button"
-                    className={styles.iconButton}
-                    aria-label="설정"
-                >
-                    <img
-                        src={settingIcon}
-                        alt=""
-                        className={styles.icon}
-                    />
-                </button>
-            </nav>
-        </header>
+        </>
     );
 };
 
