@@ -1,0 +1,144 @@
+.dismissLayer {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+
+    padding: 0;
+
+    border: 0;
+    background: transparent;
+}
+
+.panel {
+    position: absolute;
+    top: 42px;
+    right: 0;
+    z-index: 100;
+
+    width: 360px;
+    max-height: 480px;
+    padding: 20px;
+
+    overflow-y: auto;
+
+    border: 1px solid #4b516b;
+    border-radius: 8px;
+    background-color: #222435;
+    color: #ffffff;
+
+    box-shadow:
+        0 12px 32px
+        rgba(0, 0, 0, 0.35);
+
+    box-sizing: border-box;
+}
+
+.group + .group {
+    margin-top: 28px;
+}
+
+.group h2 {
+    margin: 0 0 12px;
+
+    color: #9298aa;
+
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.item {
+    width: 100%;
+    min-height: 68px;
+    padding: 10px;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+    color: #ffffff;
+
+    text-align: left;
+    cursor: pointer;
+}
+
+.item:hover {
+    background-color: #363b51;
+}
+
+.unreadItem {
+    background-color: #363b51;
+}
+
+.avatar,
+.avatarPlaceholder {
+    width: 44px;
+    height: 44px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.avatarPlaceholder {
+    background-color: #aeb8eb;
+}
+
+.itemText {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.itemText strong,
+.itemText > span {
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.itemText strong {
+    color: #ffffff;
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.itemText > span {
+    color: #aeb3c2;
+
+    font-size: 12px;
+}
+
+.empty {
+    padding: 48px 0;
+
+    color: #777d91;
+
+    font-size: 13px;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .panel {
+        position: fixed;
+        top: 72px;
+        right: 12px;
+        left: 12px;
+
+        width: auto;
+        max-height: calc(100vh - 96px);
+    }
+}
