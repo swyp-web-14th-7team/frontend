@@ -15,11 +15,6 @@
     box-sizing: border-box;
 }
 
-/*
- * 카드 선택 단계와 쪽지 작성 단계에서
- * 동일한 크기를 유지하는 모달
- */
-
 .modal {
     width: 620px;
     max-width: 100%;
@@ -39,8 +34,6 @@
     box-sizing: border-box;
 }
 
-/* 상단 제목 */
-
 .modalHeader {
     padding: 0 8px;
 
@@ -50,10 +43,6 @@
     gap: 20px;
 
     flex-shrink: 0;
-}
-
-.headerText {
-    min-width: 0;
 }
 
 .modalHeader h2 {
@@ -72,7 +61,6 @@
     color: #8f96aa;
 
     font-size: 13px;
-    line-height: 1.5;
 }
 
 .closeButton {
@@ -80,286 +68,40 @@
     height: 32px;
     padding: 0;
 
-    flex-shrink: 0;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
     border: 0;
     background: transparent;
     color: #ffffff;
 
     font-size: 30px;
-    font-weight: 300;
     line-height: 1;
 
     cursor: pointer;
 }
 
-.closeButton:hover {
-    color: #b9dfff;
-}
-
-/* 카드 선택 단계 */
-
-.selectionStep {
-    min-height: 0;
-    flex: 1;
-
-    display: flex;
-    flex-direction: column;
-}
-
-.cardCarousel {
-    width: 100%;
-    height: 470px;
-    min-height: 470px;
-    margin-top: 16px;
-    padding:
-        0
-        calc((100% - 282px) / 2)
-        12px;
-
-    flex: none;
-
-    display: flex;
-    align-items: flex-start;
-    gap: 32px;
-
-    overflow-x: auto;
-    overflow-y: visible;
-
-    scroll-behavior: smooth;
-    scroll-snap-type: x mandatory;
-    scroll-padding-inline:
-        calc((100% - 282px) / 2);
-    overscroll-behavior-x: contain;
-    scrollbar-width: none;
-
-    box-sizing: border-box;
-}
-
-.cardCarousel::-webkit-scrollbar {
-    display: none;
-}
-
-.cardOption {
-    width: 282px;
-    min-width: 282px;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    overflow: visible;
-
-    scroll-snap-align: center;
-}
-
-.cardWrapper {
-    width: 282px;
-
-    flex-shrink: 0;
-    overflow: hidden;
-
-    border: 0;
-    border-radius: 12px;
-
-    transition:
-        opacity 0.2s ease,
-        filter 0.2s ease;
-
-    box-sizing: border-box;
-}
-
-.cardWrapper > button {
-    width: 100%;
-}
-
-.cardWrapper article {
-    width: 100%;
-}
-
-.selectedCard {
-    opacity: 1;
-    filter: none;
-}
-
-.unselectedCard {
-    opacity: 0.34;
-    filter: saturate(0.75);
-}
-
-.unselectedCard:hover,
-.unselectedCard:focus-within {
-    opacity: 0.58;
-}
-
-/* 공개·비공개·기본 배지 */
-
-.cardMeta {
-    min-height: 28px;
-    margin-top: 12px;
-
-    flex-shrink: 0;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-}
-
-.visibilityBadge,
-.defaultBadge {
-    min-width: 40px;
-    height: 28px;
-    padding: 0 10px;
-
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 6px;
-
-    font-size: 12px;
-    font-weight: 600;
-
-    box-sizing: border-box;
-}
-
-.publicBadge {
-    background-color: #afd8f8;
-    color: #222435;
-}
-
-.privateBadge {
-    background-color: #4b516b;
-    color: #ffffff;
-}
-
-.defaultBadge {
-    background-color: #303347;
-    color: #ffffff;
-}
-
-/* 페이지 점 */
-
-.pagination {
-    min-height: 10px;
-    margin: 6px 0 14px;
-
-    flex-shrink: 0;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-}
-
-.paginationDot {
-    width: 8px;
-    height: 8px;
-    padding: 0;
-
-    border: 0;
-    border-radius: 50%;
-
-    background-color: #555b70;
-
-    cursor: pointer;
-}
-
-.paginationDot:hover {
-    background-color: #7c849d;
-}
-
-.activeDot {
-    width: 10px;
-    height: 10px;
-
-    background-color: #afd8f8;
-}
-
-/* 카드 선택 단계 하단 버튼 */
-
-.nextButton {
-    width: 100%;
-    height: 52px;
-    margin-top: auto;
-
-    flex-shrink: 0;
-
-    border: 0;
-    border-radius: 7px;
-
-    background-color: #afd8f8;
-    color: #171925;
-
-    font-size: 15px;
-    font-weight: 700;
-
-    cursor: pointer;
-}
-
-.nextButton:hover {
-    background-color: #c4e4fc;
-}
-
-.nextButton:disabled {
-    background-color: #596077;
-    color: #9298aa;
-
-    cursor: not-allowed;
-}
-
-/* 보낼 수 있는 카드가 없는 경우 */
-
-.emptyCards {
-    width: calc(100% - 16px);
-    min-height: 470px;
-    margin: 16px auto 0;
-
-    flex: 1;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border: 1px dashed #4b516b;
-    border-radius: 8px;
-
-    box-sizing: border-box;
-}
-
-.emptyCards p {
-    margin: 0;
-
-    color: #888ea2;
-
-    font-size: 14px;
-}
-
-/* 쪽지 작성 단계 */
-
+.selectionStep,
 .messageStep {
     min-height: 0;
-    padding: 0 8px;
 
     flex: 1;
 
     display: flex;
     flex-direction: column;
+}
+
+.selectionStep {
+    margin-top: 16px;
+}
+
+.messageStep {
+    padding: 0 8px;
 }
 
 .messageSection {
-    width: 100%;
     margin-top: 42px;
 }
 
 .messageLabel {
     display: flex;
-    align-items: center;
     justify-content: space-between;
 
     margin-bottom: 8px;
@@ -375,10 +117,8 @@
 .messageSection textarea {
     width: 100%;
     height: 130px;
-    min-height: 130px;
     padding: 14px;
 
-    display: block;
     resize: none;
 
     border: 1px solid transparent;
@@ -395,21 +135,16 @@
     box-sizing: border-box;
 }
 
-.messageSection textarea::placeholder {
-    color: #777d91;
-}
-
 .messageSection textarea:focus {
     border-color: #afd8f8;
 }
 
-/* 쪽지 작성 단계 하단 버튼 */
+.messageSection textarea::placeholder {
+    color: #777d91;
+}
 
-.messageActions {
-    width: 100%;
+.actions {
     margin-top: auto;
-
-    flex-shrink: 0;
 
     display: grid;
     grid-template-columns:
@@ -418,9 +153,11 @@
     gap: 10px;
 }
 
-.previousButton,
-.sendButton {
+.primaryButton,
+.secondaryButton {
     height: 52px;
+
+    flex-shrink: 0;
 
     border: 0;
     border-radius: 7px;
@@ -431,27 +168,33 @@
     cursor: pointer;
 }
 
-.previousButton {
-    background-color: #f1f4f8;
-    color: #171925;
-}
-
-.previousButton:hover {
-    background-color: #ffffff;
-}
-
-.sendButton {
+.primaryButton {
     width: 100%;
+    margin-top: auto;
 
     background-color: #afd8f8;
     color: #171925;
 }
 
-.sendButton:hover {
+.primaryButton:hover {
     background-color: #c4e4fc;
 }
 
-/* 태블릿 */
+.primaryButton:disabled {
+    background-color: #596077;
+    color: #9298aa;
+
+    cursor: not-allowed;
+}
+
+.secondaryButton {
+    background-color: #f1f4f8;
+    color: #171925;
+}
+
+.actions .primaryButton {
+    margin-top: 0;
+}
 
 @media (max-width: 768px) {
     .backdrop {
@@ -469,107 +212,9 @@
         border-radius: 16px 16px 0 0;
     }
 
-    .modalHeader {
-        padding: 0 4px;
-    }
-
-    .modalHeader h2 {
-        font-size: 18px;
-    }
-
-    .modalHeader p {
-        font-size: 12px;
-    }
-
-    .cardCarousel {
-        width: 100%;
-        height: 430px;
-        min-height: 430px;
-        margin-top: 16px;
-        padding:
-            0
-            calc((100% - 242px) / 2)
-            12px;
-
-        gap: 24px;
-
-        overflow-x: auto;
-        overflow-y: visible;
-
-        scroll-padding-inline:
-            calc((100% - 242px) / 2);
-    }
-
-    .cardOption,
-    .cardWrapper {
-        width: 242px;
-        min-width: 242px;
-    }
-
-    .cardMeta {
-        margin-top: 10px;
-    }
-
-    .visibilityBadge,
-    .defaultBadge {
-        height: 26px;
-        padding: 0 9px;
-
-        font-size: 11px;
-    }
-
-    .pagination {
-        margin: 6px 0 14px;
-    }
-
-    .messageStep {
-        padding: 0 4px;
-    }
-
-    .messageSection {
-        margin-top: 34px;
-    }
-
-    .messageActions {
+    .actions {
         grid-template-columns:
             90px
             minmax(0, 1fr);
-    }
-}
-
-/* 작은 모바일 */
-
-@media (max-width: 420px) {
-    .modal {
-        height: 90vh;
-        max-height: 90vh;
-        padding: 22px 14px 28px;
-    }
-
-    .cardCarousel {
-        height: 410px;
-        min-height: 410px;
-        margin-top: 14px;
-        padding:
-            0
-            calc((100% - 226px) / 2)
-            12px;
-
-        gap: 20px;
-
-        scroll-padding-inline:
-            calc((100% - 226px) / 2);
-    }
-
-    .cardOption,
-    .cardWrapper {
-        width: 226px;
-        min-width: 226px;
-    }
-
-    .previousButton,
-    .sendButton,
-    .nextButton {
-        height: 48px;
     }
 }

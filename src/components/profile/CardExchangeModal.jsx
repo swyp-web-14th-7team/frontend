@@ -1,10 +1,9 @@
 import {
     useEffect,
-    useRef,
     useState,
 } from "react";
 
-import ExploreProfileCard from "./ExploreProfileCard";
+import MyCardSelector from "../exchange/MyCardSelector";
 
 import styles from "./CardExchangeModal.module.css";
 
@@ -22,19 +21,16 @@ const CardExchangeModal = ({
         selectedCardId,
         setSelectedCardId,
     ] = useState(
-        cards.length > 0
-            ? cards[0].id
-            : null,
+        cards[0]?.id || null,
     );
 
     const [message, setMessage] =
         useState("");
 
-    const cardRefs = useRef({});
-
     const selectedCard = cards.find(
         (card) =>
-            card.id === selectedCardId,
+            card.id ===
+            selectedCardId,
     );
 
     useEffect(() => {
@@ -56,45 +52,6 @@ const CardExchangeModal = ({
             );
         };
     }, [onClose]);
-
-    const scrollCardToCenter = (
-        cardId,
-    ) => {
-        cardRefs.current[
-            cardId
-        ]?.scrollIntoView({
-            behavior: "smooth",
-            block: "nearest",
-            inline: "center",
-        });
-    };
-
-    const handleSelectCard = (
-        cardId,
-    ) => {
-        setSelectedCardId(cardId);
-        scrollCardToCenter(cardId);
-    };
-
-    const handleMoveToMessage = () => {
-        if (!selectedCard) {
-            return;
-        }
-
-        setStep(2);
-    };
-
-    const handlePrevious = () => {
-        setStep(1);
-
-        window.requestAnimationFrame(() => {
-            if (selectedCardId !== null) {
-                scrollCardToCenter(
-                    selectedCardId,
-                );
-            }
-        });
-    };
 
     const handleSend = () => {
         if (!selectedCard) {
@@ -140,11 +97,7 @@ const CardExchangeModal = ({
                         styles.modalHeader
                     }
                 >
-                    <div
-                        className={
-                            styles.headerText
-                        }
-                    >
+                    <div>
                         <h2 id="exchange-modal-title">
                             교환 요청을
                             보낼까요?
@@ -175,151 +128,23 @@ const CardExchangeModal = ({
                             styles.selectionStep
                         }
                     >
-                        {cards.length > 0 ? (
-                            <div
-                                className={
-                                    styles.cardCarousel
-                                }
-                            >
-                                {cards.map(
-                                    (card) => {
-                                        const isSelected =
-                                            selectedCardId ===
-                                            card.id;
-
-                                        const isPublic =
-                                            card.visibility ===
-                                            "public";
-
-                                        return (
-                                            <div
-                                                key={
-                                                    card.id
-                                                }
-                                                ref={(
-                                                    element,
-                                                ) => {
-                                                    cardRefs.current[
-                                                        card.id
-                                                    ] =
-                                                        element;
-                                                }}
-                                                className={
-                                                    styles.cardOption
-                                                }
-                                            >
-                                                <div
-                                                    className={`${styles.cardWrapper} ${
-                                                        isSelected
-                                                            ? styles.selectedCard
-                                                            : styles.unselectedCard
-                                                    }`}
-                                                >
-                                                    <ExploreProfileCard
-                                                        profile={
-                                                            card
-                                                        }
-                                                        onClick={() =>
-                                                            handleSelectCard(
-                                                                card.id,
-                                                            )
-                                                        }
-                                                    />
-                                                </div>
-
-                                                <div
-                                                    className={
-                                                        styles.cardMeta
-                                                    }
-                                                >
-                                                    <span
-                                                        className={`${styles.visibilityBadge} ${
-                                                            isPublic
-                                                                ? styles.publicBadge
-                                                                : styles.privateBadge
-                                                        }`}
-                                                    >
-                                                        {isPublic
-                                                            ? "공개"
-                                                            : "비공개"}
-                                                    </span>
-
-                                                    {card.isDefault && (
-                                                        <span
-                                                            className={
-                                                                styles.defaultBadge
-                                                            }
-                                                        >
-                                                            기본
-                                                        </span>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        );
-                                    },
-                                )}
-                            </div>
-                        ) : (
-                            <div
-                                className={
-                                    styles.emptyCards
-                                }
-                            >
-                                <p>
-                                    보낼 수 있는
-                                    프로필 카드가
-                                    없습니다.
-                                </p>
-                            </div>
-                        )}
-
-                        <div
-                            className={
-                                styles.pagination
+                        <MyCardSelector
+                            cards={cards}
+                            selectedCardId={
+                                selectedCardId
                             }
-                            aria-label="카드 선택"
-                        >
-                            {cards.map(
-                                (card) => {
-                                    const isActive =
-                                        selectedCardId ===
-                                        card.id;
-
-                                    return (
-                                        <button
-                                            key={
-                                                card.id
-                                            }
-                                            type="button"
-                                            className={`${styles.paginationDot} ${
-                                                isActive
-                                                    ? styles.activeDot
-                                                    : ""
-                                            }`}
-                                            onClick={() =>
-                                                handleSelectCard(
-                                                    card.id,
-                                                )
-                                            }
-                                            aria-label={`${card.cardName || "프로필 카드"} 선택`}
-                                            aria-current={
-                                                isActive
-                                                    ? "true"
-                                                    : undefined
-                                            }
-                                        />
-                                    );
-                                },
-                            )}
-                        </div>
+                            onSelect={
+                                setSelectedCardId
+                            }
+                        />
 
                         <button
                             type="button"
                             className={
-                                styles.nextButton
+                                styles.primaryButton
                             }
-                            onClick={
-                                handleMoveToMessage
+                            onClick={() =>
+                                setStep(2)
                             }
                             disabled={
                                 !selectedCard
@@ -377,16 +202,16 @@ const CardExchangeModal = ({
 
                         <div
                             className={
-                                styles.messageActions
+                                styles.actions
                             }
                         >
                             <button
                                 type="button"
                                 className={
-                                    styles.previousButton
+                                    styles.secondaryButton
                                 }
-                                onClick={
-                                    handlePrevious
+                                onClick={() =>
+                                    setStep(1)
                                 }
                             >
                                 이전
@@ -395,7 +220,7 @@ const CardExchangeModal = ({
                             <button
                                 type="button"
                                 className={
-                                    styles.sendButton
+                                    styles.primaryButton
                                 }
                                 onClick={
                                     handleSend

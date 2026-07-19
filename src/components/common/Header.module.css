@@ -135,3 +135,24 @@
         brightness(101%)
         contrast(95%);
     }
+
+    .notificationWrapper {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.notificationDot {
+    position: absolute;
+    top: 0;
+    right: 1px;
+    z-index: 2;
+
+    width: 5px;
+    height: 5px;
+
+    border-radius: 50%;
+    background-color: #ff4d5e;
+}
