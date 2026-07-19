@@ -10,6 +10,7 @@ import MainLayout from "./layouts/MainLayout";
 import Explore from "./pages/Explore/Explore";
 import Onboarding from "./pages/Onboarding/Onboarding";
 import ProfileCarouselPage from "./pages/ProfileCarousel/ProfileCarouselPage";
+import ProfileDetail from "./pages/Profile/ProfileDetail";
 import Scrap from "./pages/Scrap/Scrap";
 
 import profiles from "./mocks/profiles";
@@ -43,7 +44,6 @@ function App() {
         }
       />
 
-      {/* 공통 헤더를 사용하는 화면 */}
       <Route element={<MainLayout />}>
         <Route
           path="/explore"
@@ -59,9 +59,18 @@ function App() {
             />
           }
         />
+
+        <Route
+          path="/profile/:profileId"
+          element={
+            <ProfileDetail
+              drawers={scrapDrawers}
+              setDrawers={setScrapDrawers}
+            />
+          }
+        />
       </Route>
 
-      {/* 헤더 없이 전체 화면으로 사용하는 캐러셀 */}
       <Route
         path="/profile-carousel/:profileId"
         element={
@@ -72,7 +81,6 @@ function App() {
         }
       />
 
-      {/* 온보딩 */}
       <Route
         path="/onboarding"
         element={<Onboarding />}
