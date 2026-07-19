@@ -12,6 +12,7 @@ import Onboarding from "./pages/Onboarding/Onboarding";
 import ProfileCarouselPage from "./pages/ProfileCarousel/ProfileCarouselPage";
 import ProfileDetail from "./pages/Profile/ProfileDetail";
 import Scrap from "./pages/Scrap/Scrap";
+import Saved from "./pages/Saved/Saved";
 
 import profiles from "./mocks/profiles";
 
@@ -58,6 +59,11 @@ function App() {
               setDrawers={setScrapDrawers}
             />
           }
+        />
+
+        <Route
+          path="/saved"
+          element={<Saved />}
         />
 
         <Route
