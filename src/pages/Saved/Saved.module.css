@@ -1,0 +1,527 @@
+.page {
+    width: 100%;
+    min-height: calc(100vh - 64px);
+    padding: 56px 80px 80px;
+
+    background-color: #0e0e15;
+    color: #ffffff;
+
+    box-sizing: border-box;
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.title {
+    margin: 0 0 48px;
+
+    color: #ffffff;
+
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+.filterArea {
+    min-height: 72px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+
+    border-bottom: 1px solid #32374c;
+}
+
+.filterLeft {
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.filterSymbol {
+    margin-right: 4px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #ffffff;
+
+    font-size: 22px;
+    line-height: 1;
+
+    transform: rotate(180deg);
+}
+
+.jobFilters {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.filterButton,
+.dropdownButton {
+    height: 38px;
+    padding: 0 14px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    border: 1px solid transparent;
+    border-radius: 7px;
+
+    background-color: #363b51;
+    color: #d8dce7;
+
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+.filterButton:hover,
+.dropdownButton:hover {
+    background-color: #474d66;
+}
+
+.selectedFilter {
+    border-color: #d6e9f8;
+
+    background-color: #dceeff;
+    color: #242839;
+}
+
+.divider {
+    width: 1px;
+    height: 28px;
+    margin: 0 6px;
+
+    flex-shrink: 0;
+
+    background-color: #596077;
+}
+
+.selectWrapper,
+.sortWrapper {
+    position: relative;
+
+    display: inline-flex;
+    align-items: center;
+}
+
+.selectWrapper select,
+.sortWrapper select {
+    height: 38px;
+    padding: 0 34px 0 14px;
+
+    border: 1px solid transparent;
+    border-radius: 7px;
+    outline: none;
+
+    appearance: none;
+    -webkit-appearance: none;
+
+    background-color: #363b51;
+    color: #d8dce7;
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+.selectWrapper select:hover,
+.sortWrapper select:hover {
+    background-color: #474d66;
+}
+
+.selectWrapper select:focus,
+.sortWrapper select:focus {
+    border-color: #9fcaf2;
+}
+
+.selectArrow {
+    position: absolute;
+    right: 12px;
+
+    display: block;
+    width: 12px;
+    height: 12px;
+
+    object-fit: contain;
+
+    pointer-events: none;
+}
+
+.sortWrapper {
+    flex-shrink: 0;
+}
+
+.sortWrapper select {
+    min-width: 128px;
+
+    border: 0;
+    background-color: transparent;
+}
+
+.sortWrapper select:hover {
+    background-color: #222435;
+}
+
+.dropdownIcon {
+    display: block;
+    width: 12px;
+    height: 12px;
+
+    flex-shrink: 0;
+    object-fit: contain;
+
+    transition: transform 0.2s ease;
+}
+
+.openDropdownIcon {
+    transform: rotate(180deg);
+}
+
+.appliedDropdown {
+    max-width: 220px;
+
+    border-color: #8fa7c4;
+
+    background-color: #363b51;
+    color: #ffffff;
+}
+
+.filterSummary {
+    display: block;
+    max-width: 180px;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.interestFilter {
+    position: relative;
+}
+
+.interestPopover {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    z-index: 30;
+
+    width: 340px;
+    padding: 20px;
+
+    border: 1px solid #42485f;
+    border-radius: 8px;
+
+    background-color: #222435;
+
+    box-shadow: 0 16px 40px
+        rgba(0, 0, 0, 0.35);
+
+    box-sizing: border-box;
+}
+
+.popoverHeader {
+    margin-bottom: 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.popoverHeader strong {
+    font-size: 16px;
+}
+
+.popoverHeader button {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+
+    border: 0;
+    background: transparent;
+    color: #ffffff;
+
+    font-size: 24px;
+    line-height: 1;
+
+    cursor: pointer;
+}
+
+.interestList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.interestItem {
+    min-height: 34px;
+    padding: 0 12px;
+
+    border: 1px solid transparent;
+    border-radius: 6px;
+
+    background-color: #363b51;
+    color: #d8dce7;
+
+    font-size: 12px;
+
+    cursor: pointer;
+}
+
+.interestItem:hover {
+    background-color: #474d66;
+}
+
+.selectedInterest {
+    border-color: #d6e9f8;
+
+    background-color: #dceeff;
+    color: #242839;
+}
+
+.emptyInterest {
+    margin: 24px 0;
+
+    color: #8f96aa;
+
+    font-size: 13px;
+    text-align: center;
+}
+
+.popoverActions {
+    margin-top: 24px;
+
+    display: grid;
+    grid-template-columns:
+        90px
+        minmax(0, 1fr);
+    gap: 8px;
+}
+
+.resetButton,
+.applyButton {
+    height: 42px;
+
+    border: 0;
+    border-radius: 6px;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.resetButton {
+    background-color: #f0f3f7;
+    color: #242839;
+}
+
+.applyButton {
+    background-color: #afd8f8;
+    color: #171925;
+}
+
+.resultHeader {
+    min-height: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    color: #9da3b6;
+
+    font-size: 13px;
+}
+
+.cardGrid {
+    display: grid;
+    grid-template-columns: repeat(
+        4,
+        minmax(0, 282px)
+    );
+    justify-content: space-between;
+    gap: 32px 20px;
+}
+
+.cardGrid > button,
+.cardGrid > button > article {
+    width: 282px;
+    max-width: 100%;
+}
+
+.emptyResult {
+    min-height: 320px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 8px;
+
+    color: #8f96aa;
+    text-align: center;
+}
+
+.emptyResult strong {
+    color: #d8dce7;
+
+    font-size: 16px;
+}
+
+.emptyResult p {
+    margin: 0;
+
+    font-size: 13px;
+}
+
+@media (max-width: 1320px) {
+    .page {
+        padding-right: 40px;
+        padding-left: 40px;
+    }
+
+    .filterArea {
+        align-items: flex-start;
+    }
+
+    .filterLeft {
+        flex-wrap: wrap;
+    }
+
+    .cardGrid {
+        grid-template-columns: repeat(
+            3,
+            minmax(0, 282px)
+        );
+        justify-content: center;
+    }
+}
+
+@media (max-width: 960px) {
+    .cardGrid {
+        grid-template-columns: repeat(
+            2,
+            minmax(0, 282px)
+        );
+    }
+}
+
+@media (max-width: 768px) {
+    .page {
+        min-height: 100vh;
+        padding: 32px 20px 100px;
+    }
+
+    .title {
+        margin-bottom: 32px;
+
+        font-size: 22px;
+    }
+
+    .filterArea {
+        display: block;
+    }
+
+    .filterLeft {
+        width: 100%;
+
+        flex-wrap: wrap;
+    }
+
+    .filterSymbol,
+    .divider {
+        display: none;
+    }
+
+    .jobFilters {
+        width: 100%;
+
+        display: grid;
+        grid-template-columns: repeat(
+            2,
+            minmax(0, 1fr)
+        );
+    }
+
+    .filterButton {
+        width: 100%;
+    }
+
+    .selectWrapper,
+    .dropdownButton,
+    .interestFilter {
+        flex: 1;
+    }
+
+    .selectWrapper select,
+    .dropdownButton {
+        width: 100%;
+    }
+
+    .sortWrapper {
+        width: 100%;
+        margin-top: 12px;
+
+        justify-content: flex-end;
+    }
+
+    .interestPopover {
+        position: fixed;
+        top: auto;
+        right: 16px;
+        bottom: 90px;
+        left: 16px;
+
+        width: auto;
+    }
+
+    .cardGrid {
+        grid-template-columns: minmax(
+            0,
+            282px
+        );
+        justify-content: center;
+    }
+
+    .cardGrid > button,
+    .cardGrid > button > article {
+        width: 282px;
+    }
+}
+
+@media (max-width: 360px) {
+    .page {
+        padding-right: 16px;
+        padding-left: 16px;
+    }
+
+    .cardGrid {
+        grid-template-columns: minmax(
+            0,
+            1fr
+        );
+    }
+
+    .cardGrid > button,
+    .cardGrid > button > article {
+        width: 100%;
+    }
+}
