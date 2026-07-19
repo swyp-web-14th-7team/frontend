@@ -15,7 +15,10 @@ import {
     MdLanguage,
 } from "react-icons/md";
 
+import CardExchangeModal from "../../components/profile/CardExchangeModal";
+
 import profiles from "../../mocks/profiles";
+import myProfileCards from "../../mocks/myProfileCards";
 
 import styles from "./ProfileDetail.module.css";
 
@@ -42,17 +45,14 @@ const ProfileDetail = ({
     const { profileId } = useParams();
     const navigate = useNavigate();
 
+    /* 스크랩 모달 */
+
     const [isScrapOpen, setIsScrapOpen] =
         useState(false);
 
     const [
         selectedDrawerIds,
         setSelectedDrawerIds,
-    ] = useState([]);
-
-    const [
-        expandedExperienceIds,
-        setExpandedExperienceIds,
     ] = useState([]);
 
     const [
@@ -64,6 +64,20 @@ const ProfileDetail = ({
         newDrawerName,
         setNewDrawerName,
     ] = useState("");
+
+    /* 경험 상세 */
+
+    const [
+        expandedExperienceIds,
+        setExpandedExperienceIds,
+    ] = useState([]);
+
+    /* 카드 교환 요청 모달 */
+
+    const [
+        isExchangeModalOpen,
+        setIsExchangeModalOpen,
+    ] = useState(false);
 
     const profile = useMemo(
         () =>
@@ -112,6 +126,34 @@ const ProfileDetail = ({
         profile.introduction ||
         profile.description ||
         "안녕하세요. 다양한 사람들과 경험을 나누고 새로운 프로젝트를 함께 만들어가고 싶습니다.";
+
+    /* 경험 펼치기 */
+
+    const handleExperienceToggle = (
+        experienceId,
+    ) => {
+        setExpandedExperienceIds(
+            (currentIds) => {
+                if (
+                    currentIds.includes(
+                        experienceId,
+                    )
+                ) {
+                    return currentIds.filter(
+                        (id) =>
+                            id !== experienceId,
+                    );
+                }
+
+                return [
+                    ...currentIds,
+                    experienceId,
+                ];
+            },
+        );
+    };
+
+    /* 스크랩 관련 */
 
     const isProfileInDrawer = (
         drawer,
@@ -282,9 +324,7 @@ const ProfileDetail = ({
                                 ...drawer,
                                 profiles:
                                     drawer.profiles.filter(
-                                        (
-                                            item,
-                                        ) =>
+                                        (item) =>
                                             String(
                                                 item.id,
                                             ) !==
@@ -303,39 +343,54 @@ const ProfileDetail = ({
         handleCloseScrap();
     };
 
-    const handleExperienceToggle = (
-        experienceId,
-    ) => {
-        setExpandedExperienceIds(
-            (currentIds) => {
-                if (
-                    currentIds.includes(
-                        experienceId,
-                    )
-                ) {
-                    return currentIds.filter(
-                        (id) =>
-                            id !==
-                            experienceId,
-                    );
-                }
+    /* 카드 교환 관련 */
 
-                return [
-                    ...currentIds,
-                    experienceId,
-                ];
-            },
+    const handleOpenExchangeModal = () => {
+        setIsExchangeModalOpen(true);
+    };
+
+    const handleCloseExchangeModal = () => {
+        setIsExchangeModalOpen(false);
+    };
+
+    const handleSendExchange = (
+        requestData,
+    ) => {
+        /*
+         * API 연결 후에는 여기서 요청
+         *
+         * requestData:
+         * {
+         *   receiverId,
+         *   cardId,
+         *   message
+         * }
+         */
+
+        console.log(
+            "카드 교환 요청:",
+            requestData,
+        );
+
+        setIsExchangeModalOpen(false);
+
+        window.alert(
+            `${profile.name}님에게 카드 교환 요청을 보냈습니다.`,
         );
     };
 
     return (
         <main className={styles.page}>
+            {/* 그라디언트 상단 배경 */}
+
             <div
                 className={styles.hero}
                 aria-hidden="true"
             />
 
             <div className={styles.layout}>
+                {/* 왼쪽 요약 카드 */}
+
                 <aside
                     className={
                         styles.summaryCard
@@ -459,11 +514,16 @@ const ProfileDetail = ({
                             className={
                                 styles.exchangeButton
                             }
+                            onClick={
+                                handleOpenExchangeModal
+                            }
                         >
                             카드 교환 요청
                         </button>
                     </div>
                 </aside>
+
+                {/* 오른쪽 상세 정보 */}
 
                 <article
                     className={
@@ -596,6 +656,8 @@ const ProfileDetail = ({
                         )}
                     </section>
 
+                    {/* 링크 */}
+
                     <section
                         className={
                             styles.section
@@ -656,6 +718,7 @@ const ProfileDetail = ({
                                                 className={
                                                     styles.linkItem
                                                 }
+                                                aria-label={`${link.label} 링크 열기`}
                                             >
                                                 <span
                                                     className={
@@ -695,6 +758,8 @@ const ProfileDetail = ({
                             </p>
                         )}
                     </section>
+
+                    {/* 경험 */}
 
                     <section
                         className={
@@ -775,9 +840,8 @@ const ProfileDetail = ({
                                                                 styles.experienceTitle
                                                             }
                                                         >
-                                                            {
-                                                                experience.title
-                                                            }
+                                                            {experience.title ||
+                                                                "프로젝트 경험"}
                                                         </strong>
                                                     </div>
 
@@ -786,9 +850,8 @@ const ProfileDetail = ({
                                                             styles.experienceSummary
                                                         }
                                                     >
-                                                        {
-                                                            experience.summary
-                                                        }
+                                                        {experience.summary ||
+                                                            "프로젝트에서 맡은 역할과 주요 경험을 소개합니다."}
                                                     </p>
 
                                                     <span
@@ -814,9 +877,8 @@ const ProfileDetail = ({
                                                                 styles.experienceDescription
                                                             }
                                                         >
-                                                            {
-                                                                experience.description
-                                                            }
+                                                            {experience.description ||
+                                                                "등록된 상세 내용이 없습니다."}
                                                         </p>
 
                                                         {experience.url && (
@@ -830,8 +892,10 @@ const ProfileDetail = ({
                                                                     styles.experienceLink
                                                                 }
                                                             >
-                                                                {experience.linkLabel ||
-                                                                    "관련 링크 보기"}
+                                                                <span>
+                                                                    {experience.linkLabel ||
+                                                                        "관련 링크 보기"}
+                                                                </span>
 
                                                                 <span
                                                                     aria-hidden="true"
@@ -860,6 +924,8 @@ const ProfileDetail = ({
                     </section>
                 </article>
             </div>
+
+            {/* 스크랩 모달 */}
 
             {isScrapOpen && (
                 <div
@@ -1093,6 +1159,21 @@ const ProfileDetail = ({
                         </button>
                     </section>
                 </div>
+            )}
+
+            {/* 카드 교환 요청 모달 */}
+
+            {isExchangeModalOpen && (
+                <CardExchangeModal
+                    cards={myProfileCards}
+                    receiver={profile}
+                    onClose={
+                        handleCloseExchangeModal
+                    }
+                    onSend={
+                        handleSendExchange
+                    }
+                />
             )}
         </main>
     );
