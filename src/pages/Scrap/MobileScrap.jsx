@@ -313,9 +313,17 @@
                             )
                             }
                         >
-                            <ExploreProfileCard
+                        <ExploreProfileCard
                             profile={profile}
-                            />
+                            onClick={(profileId) => {
+                                if (isEditing) {
+                                    handleSelectProfile(profileId);
+                                    return;
+                                }
+
+                                navigate(`/profile/${profileId}`);
+                            }}
+                        />
                         </div>
                         );
                     },
