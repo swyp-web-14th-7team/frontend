@@ -1,26 +1,47 @@
 import OnboardingLayout from "../common/OnboardingLayout";
 
-import {
-    JOB_OPTIONS,
-} from "../../constants/profileOptions";
-
 import styles from "./JobSelectStep.module.css";
 
 const JobSelectStep = ({
     data,
+    jobOptions = [],
+    isLoading = false,
+    isCreating = false,
+    errorMessage = "",
     onChange,
     onNext,
     onBack,
     currentStep,
     totalSteps,
 }) => {
-    const selectedJob = data.job;
+    const selectedJob =
+        data.job;
 
     const handleSelectJob = (
-        jobId,
+        job,
     ) => {
+        /*
+         * 이미 기본 카드가 만들어졌다면
+         * 다른 직군으로 변경하지 않는다.
+         */
+        if (
+            data.profileCardId &&
+            selectedJob !== job.id
+        ) {
+            return;
+        }
+
         onChange({
-            job: jobId,
+            job: job.id,
+
+            jobTypeId:
+                job.jobTypeId,
+
+            techStacks: [],
+
+            interests: [],
+
+            strength: null,
         });
     };
 
@@ -57,73 +78,119 @@ const JobSelectStep = ({
                     </p>
                 </div>
 
-                <div
-                    className={
-                        styles.jobList
-                    }
-                >
-                    {JOB_OPTIONS.map(
-                        (job) => {
-                            const isSelected =
-                                selectedJob ===
-                                job.id;
+                {isLoading && (
+                    <p>
+                        직군을 불러오는
+                        중입니다.
+                    </p>
+                )}
 
-                            return (
-                                <button
-                                    key={
-                                        job.id
-                                    }
-                                    type="button"
-                                    onClick={() =>
-                                        handleSelectJob(
-                                            job.id,
-                                        )
-                                    }
-                                    aria-pressed={
-                                        isSelected
-                                    }
-                                    className={`${styles.jobItem} ${
-                                        isSelected
-                                            ? styles.selected
-                                            : ""
-                                    }`}
-                                >
-                                    <span
-                                        className={
-                                            styles.iconBox
-                                        }
-                                    />
+                {!isLoading &&
+                    errorMessage && (
+                        <p
+                            style={{
+                                color:
+                                    "#e5484d",
 
-                                    <span
-                                        className={
-                                            styles.jobText
-                                        }
-                                    >
-                                        <strong className="body1">
-                                            {
-                                                job.name
-                                            }
-                                        </strong>
-
-                                        <span className="caption1">
-                                            {
-                                                job.label
-                                            }
-                                        </span>
-                                    </span>
-                                </button>
-                            );
-                        },
+                                textAlign:
+                                    "center",
+                            }}
+                        >
+                            {
+                                errorMessage
+                            }
+                        </p>
                     )}
-                </div>
+
+                {!isLoading &&
+                    !errorMessage && (
+                        <div
+                            className={
+                                styles.jobList
+                            }
+                        >
+                            {jobOptions.map(
+                                (job) => {
+                                    const isSelected =
+                                        selectedJob ===
+                                        job.id;
+
+                                    const isDisabled =
+                                        Boolean(
+                                            data.profileCardId,
+                                        ) &&
+                                        !isSelected;
+
+                                    return (
+                                        <button
+                                            key={
+                                                job.id
+                                            }
+                                            type="button"
+                                            onClick={() =>
+                                                handleSelectJob(
+                                                    job,
+                                                )
+                                            }
+                                            disabled={
+                                                isDisabled ||
+                                                isCreating
+                                            }
+                                            aria-pressed={
+                                                isSelected
+                                            }
+                                            className={`${styles.jobItem} ${
+                                                isSelected
+                                                    ? styles.selected
+                                                    : ""
+                                            }`}
+                                        >
+                                            <span
+                                                className={
+                                                    styles.iconBox
+                                                }
+                                            />
+
+                                            <span
+                                                className={
+                                                    styles.jobText
+                                                }
+                                            >
+                                                <strong className="body1">
+                                                    {
+                                                        job.name
+                                                    }
+                                                </strong>
+
+                                                <span className="caption1">
+                                                    {
+                                                        job.label
+                                                    }
+                                                </span>
+                                            </span>
+                                        </button>
+                                    );
+                                },
+                            )}
+                        </div>
+                    )}
 
                 <button
                     type="button"
                     onClick={onNext}
-                    disabled={!selectedJob}
+                    disabled={
+                        !selectedJob ||
+                        isLoading ||
+                        isCreating ||
+                        Boolean(
+                            errorMessage,
+                        )
+                    }
                     className={`body1 ${styles.nextButton}`}
                 >
-                    다음
+                    {isCreating
+                        ? "생성 중..."
+                        : "다음"}
                 </button>
             </section>
         </OnboardingLayout>

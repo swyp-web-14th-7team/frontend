@@ -1,12 +1,16 @@
-import { useState } from "react";
 import {
-  Navigate,
-  Route,
-  Routes,
+    useState,
+} from "react";
+
+import {
+    Navigate,
+    Route,
+    Routes,
 } from "react-router-dom";
 
 import MainLayout from "./layouts/MainLayout";
 
+import AuthCallback from "./pages/Auth/AuthCallback";
 import Explore from "./pages/Explore/Explore";
 import Onboarding from "./pages/Onboarding/Onboarding";
 import ProfileCarouselPage from "./pages/ProfileCarousel/ProfileCarouselPage";
@@ -17,82 +21,156 @@ import Saved from "./pages/Saved/Saved";
 import profiles from "./mocks/profiles";
 
 const INITIAL_SCRAP_DRAWERS = [
-  {
-    id: 1,
-    name: "보류함 2",
-    profiles: profiles.slice(0, 8),
-  },
-  {
-    id: 2,
-    name: "팀원후보",
-    profiles: profiles.slice(8, 16),
-  },
+    {
+        id: 1,
+        name: "보류함 2",
+        profiles: profiles.slice(
+            0,
+            8,
+        ),
+    },
+    {
+        id: 2,
+        name: "팀원후보",
+        profiles: profiles.slice(
+            8,
+            16,
+        ),
+    },
 ];
 
 function App() {
-  const [scrapDrawers, setScrapDrawers] =
-    useState(INITIAL_SCRAP_DRAWERS);
+    const [
+        scrapDrawers,
+        setScrapDrawers,
+    ] = useState(
+        INITIAL_SCRAP_DRAWERS,
+    );
 
-  return (
-    <Routes>
-      <Route
-        path="/"
-        element={
-          <Navigate
-            to="/explore"
-            replace
-          />
-        }
-      />
-
-      <Route element={<MainLayout />}>
-        <Route
-          path="/explore"
-          element={<Explore />}
-        />
-
-        <Route
-          path="/scrap"
-          element={
-            <Scrap
-              drawers={scrapDrawers}
-              setDrawers={setScrapDrawers}
+    return (
+        <Routes>
+            <Route
+                path="/"
+                element={
+                    <Navigate
+                        to="/explore"
+                        replace
+                    />
+                }
             />
-          }
-        />
 
-        <Route
-          path="/saved"
-          element={<Saved />}
-        />
-
-        <Route
-          path="/profile/:profileId"
-          element={
-            <ProfileDetail
-              drawers={scrapDrawers}
-              setDrawers={setScrapDrawers}
+            {/*
+             * 소셜 로그인 콜백
+             */}
+            <Route
+                path="/auth/google/callback"
+                element={
+                    <AuthCallback
+                        provider="google"
+                    />
+                }
             />
-          }
-        />
-      </Route>
 
-      <Route
-        path="/profile-carousel/:profileId"
-        element={
-          <ProfileCarouselPage
-            drawers={scrapDrawers}
-            setDrawers={setScrapDrawers}
-          />
-        }
-      />
+            <Route
+                path="/auth/kakao/callback"
+                element={
+                    <AuthCallback
+                        provider="kakao"
+                    />
+                }
+            />
 
-      <Route
-        path="/onboarding"
-        element={<Onboarding />}
-      />
-    </Routes>
-  );
+            <Route
+                path="/auth/naver/callback"
+                element={
+                    <AuthCallback
+                        provider="naver"
+                    />
+                }
+            />
+
+            {/*
+             * 공통 헤더와 레이아웃을
+             * 사용하는 화면
+             */}
+            <Route
+                element={
+                    <MainLayout />
+                }
+            >
+                <Route
+                    path="/explore"
+                    element={
+                        <Explore />
+                    }
+                />
+
+                <Route
+                    path="/scrap"
+                    element={
+                        <Scrap
+                            drawers={
+                                scrapDrawers
+                            }
+                            setDrawers={
+                                setScrapDrawers
+                            }
+                        />
+                    }
+                />
+
+                <Route
+                    path="/saved"
+                    element={
+                        <Saved />
+                    }
+                />
+
+                <Route
+                    path="/profile/:profileId"
+                    element={
+                        <ProfileDetail
+                            drawers={
+                                scrapDrawers
+                            }
+                            setDrawers={
+                                setScrapDrawers
+                            }
+                        />
+                    }
+                />
+            </Route>
+
+            {/*
+             * 프로필 캐러셀은
+             * 공통 레이아웃을 사용하지 않음
+             */}
+            <Route
+                path="/profile-carousel/:profileId"
+                element={
+                    <ProfileCarouselPage
+                        drawers={
+                            scrapDrawers
+                        }
+                        setDrawers={
+                            setScrapDrawers
+                        }
+                    />
+                }
+            />
+
+            {/*
+             * 온보딩은 공통 헤더를
+             * 사용하지 않음
+             */}
+            <Route
+                path="/onboarding"
+                element={
+                    <Onboarding />
+                }
+            />
+        </Routes>
+    );
 }
 
 export default App;

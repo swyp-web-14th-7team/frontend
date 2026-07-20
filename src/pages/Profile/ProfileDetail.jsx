@@ -1,4 +1,7 @@
-import { useMemo, useState } from "react";
+import {
+    useState,
+} from "react";
+
 import {
     useNavigate,
     useParams,
@@ -17,7 +20,7 @@ import {
 
 import CardExchangeModal from "../../components/profile/CardExchangeModal";
 
-import profiles from "../../mocks/profiles";
+import usePublicProfile from "../../hooks/usePublicProfile";
 import myProfileCards from "../../mocks/myProfileCards";
 
 import styles from "./ProfileDetail.module.css";
@@ -79,15 +82,53 @@ const ProfileDetail = ({
         setIsExchangeModalOpen,
     ] = useState(false);
 
-    const profile = useMemo(
-        () =>
-            profiles.find(
-                (item) =>
-                    String(item.id) ===
-                    String(profileId),
-            ),
-        [profileId],
+    const {
+        profile,
+        isLoading,
+        errorMessage,
+    } = usePublicProfile(
+        profileId,
     );
+
+    if (isLoading) {
+    return (
+        <main
+            className={
+                styles.notFound
+            }
+        >
+            <p>
+                프로필을 불러오는
+                중입니다.
+            </p>
+        </main>
+    );
+}
+
+if (errorMessage) {
+    return (
+        <main
+            className={
+                styles.notFound
+            }
+        >
+            <p>
+                {errorMessage}
+            </p>
+
+            <button
+                type="button"
+                onClick={() =>
+                    navigate(
+                        "/explore",
+                    )
+                }
+            >
+                탐색으로 돌아가기
+            </button>
+        </main>
+    );
+}
 
     if (!profile) {
         return (
