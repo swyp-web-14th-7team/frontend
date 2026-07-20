@@ -15,7 +15,7 @@
     import LoginModal from "../../components/common/LoginModal/LoginModal";
     import ExploreProfileCard from "../../components/profile/ExploreProfileCard";
 
-    import profiles from "../../mocks/profiles";
+import usePublicProfiles from "../../hooks/usePublicProfiles";
 
     import scrapIcon from "../../assets/icons/icon_archived.svg";
 
@@ -91,6 +91,12 @@
     const { profileId } = useParams();
     const [searchParams] = useSearchParams();
 
+    const {
+    profiles,
+    isLoading,
+    errorMessage,
+} = usePublicProfiles();
+
     const swiperRef = useRef(null);
     const isDraggingRef = useRef(false);
     const dragProgressRef = useRef(null);
@@ -100,13 +106,12 @@
     const headerText =
         PURPOSE_HEADER_TEXT[purpose] ?? "";
 
-    const carouselProfiles = purpose
-        ? profiles.filter((profile) =>
-            (profile.purposes || []).includes(
-            purpose,
-            ),
-        )
-        : profiles;
+    /*
+    * 목적 탭 API 데이터가 완성될 때까지
+    * 전체 공개 프로필을 표시한다.
+    */
+    const carouselProfiles =
+        profiles;
 
     const selectedIndex =
         carouselProfiles.findIndex(
@@ -539,6 +544,81 @@
         setActiveIndex(nextIndex);
     };
 
+    if (isLoading) {
+    return (
+        <main
+            className={
+                styles.container
+            }
+        >
+            <div
+                className={
+                    styles.pageHeader
+                }
+            >
+                <button
+                    type="button"
+                    className={
+                        styles.backButton
+                    }
+                    onClick={
+                        handleBackClick
+                    }
+                    aria-label="이전 화면으로 돌아가기"
+                >
+                    <BackIcon />
+                </button>
+            </div>
+
+            <p
+                className={
+                    styles.emptyMessage
+                }
+            >
+                프로필을 불러오는
+                중입니다.
+            </p>
+        </main>
+    );
+}
+
+if (errorMessage) {
+    return (
+        <main
+            className={
+                styles.container
+            }
+        >
+            <div
+                className={
+                    styles.pageHeader
+                }
+            >
+                <button
+                    type="button"
+                    className={
+                        styles.backButton
+                    }
+                    onClick={
+                        handleBackClick
+                    }
+                    aria-label="이전 화면으로 돌아가기"
+                >
+                    <BackIcon />
+                </button>
+            </div>
+
+            <p
+                className={
+                    styles.emptyMessage
+                }
+            >
+                {errorMessage}
+            </p>
+        </main>
+    );
+}
+
     if (carouselProfiles.length === 0) {
         return (
         <main className={styles.container}>
@@ -606,7 +686,17 @@
                 slideToClickedSlide
                 watchSlidesProgress
                 onSwiper={(swiper) => {
-                    swiperRef.current = swiper;
+                    swiperRef.current =
+                        swiper;
+
+                    swiper.slideTo(
+                        initialSlide,
+                        0,
+                    );
+
+                    setActiveIndex(
+                        initialSlide,
+                    );
                 }}
                 onSlideChange={(swiper) => {
                     if (
