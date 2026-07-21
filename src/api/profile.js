@@ -2,8 +2,6 @@ import {
     apiRequest,
 } from "./apiClient";
 
-
-
 export const getPublicProfileCards =
     async ({
         page = 1,
@@ -24,21 +22,35 @@ export const getPublicProfileCards =
                 order,
             });
 
-        if (purposeId) {
+        if (
+            purposeId !== undefined &&
+            purposeId !== null &&
+            purposeId !== ""
+        ) {
             params.append(
                 "purposeId",
                 String(purposeId),
             );
         }
 
-        if (jobTypeId) {
+        if (
+            jobTypeId !== undefined &&
+            jobTypeId !== null &&
+            jobTypeId !== ""
+        ) {
             params.append(
                 "jobTypeId",
                 String(jobTypeId),
             );
         }
 
-        if (affiliationStatusId) {
+        if (
+            affiliationStatusId !==
+                undefined &&
+            affiliationStatusId !==
+                null &&
+            affiliationStatusId !== ""
+        ) {
             params.append(
                 "affiliationStatusId",
                 String(
@@ -67,6 +79,12 @@ export const getPublicProfileCard =
         profileId,
         { signal } = {},
     ) => {
+        if (!profileId) {
+            throw new Error(
+                "프로필 카드 ID가 필요합니다.",
+            );
+        }
+
         return apiRequest(
             `/public/profile-cards/${profileId}`,
             {
@@ -104,6 +122,12 @@ export const getMyProfileCard =
         profileId,
         { signal } = {},
     ) => {
+        if (!profileId) {
+            throw new Error(
+                "프로필 카드 ID가 필요합니다.",
+            );
+        }
+
         return apiRequest(
             `/profile-cards/${profileId}`,
             {
@@ -112,11 +136,31 @@ export const getMyProfileCard =
         );
     };
 
+/*
+ * 실제 카드는 온보딩 마지막
+ * '만들기' 버튼을 눌렀을 때만 생성한다.
+ *
+ * 닉네임과 연락처는 백엔드가
+ * 기본 카드에서 복사한다.
+ *
+ * 프론트에서는 사용자가 선택한
+ * 직군과 목적만 전달한다.
+ */
 export const createProfileCard =
     async ({
         jobTypeId,
         purposeId,
     }) => {
+        if (
+            jobTypeId === undefined ||
+            jobTypeId === null ||
+            jobTypeId === ""
+        ) {
+            throw new Error(
+                "직군을 선택해주세요.",
+            );
+        }
+
         const requestBody = {
             jobTypeId:
                 Number(jobTypeId),
@@ -124,7 +168,8 @@ export const createProfileCard =
 
         if (
             purposeId !== undefined &&
-            purposeId !== null
+            purposeId !== null &&
+            purposeId !== ""
         ) {
             requestBody.purposeId =
                 Number(purposeId);
@@ -147,6 +192,12 @@ export const updateProfileCard =
         profileId,
         profileData,
     ) => {
+        if (!profileId) {
+            throw new Error(
+                "수정할 프로필 카드 ID가 필요합니다.",
+            );
+        }
+
         return apiRequest(
             `/profile-cards/${profileId}`,
             {
@@ -161,10 +212,17 @@ export const updateProfileCard =
 
 /*
  * 기본 카드는 삭제할 수 없다.
- * 기본 카드 삭제 시 백엔드에서 400을 반환한다.
+ * 기본 카드 삭제 시 백엔드에서
+ * 오류를 반환할 수 있다.
  */
 export const deleteProfileCard =
     async (profileId) => {
+        if (!profileId) {
+            throw new Error(
+                "삭제할 프로필 카드 ID가 필요합니다.",
+            );
+        }
+
         return apiRequest(
             `/profile-cards/${profileId}`,
             {

@@ -14,35 +14,43 @@ const JobSelectStep = ({
     currentStep,
     totalSteps,
 }) => {
-    const selectedJob =
-        data.job;
+    const selectedJobOption =
+        jobOptions.find(
+            (jobOption) =>
+                jobOption.id ===
+                data.job,
+        ) || null;
 
     const handleSelectJob = (
-        job,
+        jobOption,
     ) => {
-        /*
-         * 이미 기본 카드가 만들어졌다면
-         * 다른 직군으로 변경하지 않는다.
-         */
-        if (
-            data.profileCardId &&
-            selectedJob !== job.id
-        ) {
+        if (isCreating) {
             return;
         }
 
         onChange({
-            job: job.id,
-
+            job: jobOption.id,
             jobTypeId:
-                job.jobTypeId,
-
+                jobOption.jobTypeId,
             techStacks: [],
-
             interests: [],
-
             strength: null,
         });
+    };
+
+    const handleNext = () => {
+        if (
+            !selectedJobOption ||
+            isLoading ||
+            isCreating ||
+            errorMessage
+        ) {
+            return;
+        }
+
+        onNext(
+            selectedJobOption,
+        );
     };
 
     return (
@@ -88,17 +96,11 @@ const JobSelectStep = ({
                 {!isLoading &&
                     errorMessage && (
                         <p
-                            style={{
-                                color:
-                                    "#e5484d",
-
-                                textAlign:
-                                    "center",
-                            }}
-                        >
-                            {
-                                errorMessage
+                            className={
+                                styles.errorMessage
                             }
+                        >
+                            {errorMessage}
                         </p>
                     )}
 
@@ -110,30 +112,25 @@ const JobSelectStep = ({
                             }
                         >
                             {jobOptions.map(
-                                (job) => {
+                                (
+                                    jobOption,
+                                ) => {
                                     const isSelected =
-                                        selectedJob ===
-                                        job.id;
-
-                                    const isDisabled =
-                                        Boolean(
-                                            data.profileCardId,
-                                        ) &&
-                                        !isSelected;
+                                        data.job ===
+                                        jobOption.id;
 
                                     return (
                                         <button
                                             key={
-                                                job.id
+                                                jobOption.jobTypeId
                                             }
                                             type="button"
                                             onClick={() =>
                                                 handleSelectJob(
-                                                    job,
+                                                    jobOption,
                                                 )
                                             }
                                             disabled={
-                                                isDisabled ||
                                                 isCreating
                                             }
                                             aria-pressed={
@@ -158,13 +155,13 @@ const JobSelectStep = ({
                                             >
                                                 <strong className="body1">
                                                     {
-                                                        job.name
+                                                        jobOption.name
                                                     }
                                                 </strong>
 
                                                 <span className="caption1">
                                                     {
-                                                        job.label
+                                                        jobOption.label
                                                     }
                                                 </span>
                                             </span>
@@ -177,9 +174,9 @@ const JobSelectStep = ({
 
                 <button
                     type="button"
-                    onClick={onNext}
+                    onClick={handleNext}
                     disabled={
-                        !selectedJob ||
+                        !selectedJobOption ||
                         isLoading ||
                         isCreating ||
                         Boolean(

@@ -3,11 +3,10 @@ import {
     useState,
 } from "react";
 
-import CardBasicStep from "../../components/onboarding/CardBasicStep";
-import CompleteStep from "../../components/onboarding/CompleteStep";
-import JobSelectStep from "../../components/onboarding/JobSelectStep";
-import LoadingStep from "../../components/onboarding/LoadingStep";
-import WelcomeStep from "../../components/onboarding/WelcomeStep";
+import {
+    useNavigate,
+    useSearchParams,
+} from "react-router-dom";
 
 import {
     createProfileCard,
@@ -19,11 +18,32 @@ import {
     getInterests,
     getJobTypes,
     getPersonalities,
+    getPurposes,
     getSkills,
 } from "../../api/options";
 
+import {
+    createDraftId,
+    getOnboardingDraft,
+    removeOnboardingDraft,
+    saveOnboardingDraft,
+} from "../../utils/onboardingDraft";
+
+import CardBasicStep from "../../components/onboarding/CardBasicStep";
+import CompleteStep from "../../components/onboarding/CompleteStep";
+import JobSelectStep from "../../components/onboarding/JobSelectStep";
+import LoadingStep from "../../components/onboarding/LoadingStep";
+import PurposeSelectStep from "../../components/onboarding/PurposeSelectStep";
+import WelcomeStep from "../../components/onboarding/WelcomeStep";
+
 const JOB_UI_MAP = {
     PM: {
+        id: "planner",
+        name: "Planner",
+        label: "기획자",
+    },
+
+    기획자: {
         id: "planner",
         name: "Planner",
         label: "기획자",
@@ -37,64 +57,133 @@ const JOB_UI_MAP = {
 
     "프론트 개발자": {
         id: "frontend",
+
         name:
             "Frontend Developer",
+
+        label:
+            "프론트엔드 개발자",
+    },
+
+    "프론트엔드 개발자": {
+        id: "frontend",
+
+        name:
+            "Frontend Developer",
+
         label:
             "프론트엔드 개발자",
     },
 
     "백엔드 개발자": {
         id: "backend",
+
         name:
             "Backend Developer",
+
         label:
             "백엔드 개발자",
     },
 };
 
-const getItems = (data) => {
-    return Array.isArray(
-        data?.items,
-    )
-        ? data.items
-        : [];
+const getItems = (
+    response,
+) => {
+    if (Array.isArray(response)) {
+        return response;
+    }
+
+    if (
+        Array.isArray(
+            response?.items,
+        )
+    ) {
+        return response.items;
+    }
+
+    return [];
+};
+
+const INITIAL_ONBOARDING_DATA = {
+    purposeId: null,
+    purposeName: "",
+
+    job: "",
+    jobTypeId: null,
+    jobLabel: "",
+
+    affiliationType: "",
+    affiliationStatusId: null,
+    affiliation: "",
+
+    introduction: "",
+
+    interests: [],
+    techStacks: [],
+
+    strength: null,
+
+    profileImageUrl: "",
+    profileImagePreview: "",
+
+    profileCardId: null,
+    createdProfile: null,
 };
 
 const Onboarding = () => {
-    const [step, setStep] =
-        useState(0);
+    const navigate =
+        useNavigate();
+
+    const [
+        searchParams,
+    ] = useSearchParams();
+
+    const mode =
+        searchParams.get(
+            "mode",
+        );
+
+    const queryDraftId =
+        searchParams.get(
+            "draftId",
+        );
+
+    const isCardCreationFlow =
+        mode === "create" ||
+        mode === "resume";
+
+    const [draftId] =
+        useState(
+            () =>
+                queryDraftId ||
+                createDraftId(),
+        );
+
+    const [
+        step,
+        setStep,
+    ] = useState(0);
 
     const [
         onboardingData,
         setOnboardingData,
-    ] = useState({
-        job: "",
-        jobTypeId: null,
-
-        affiliationType: "",
-        affiliationStatusId: null,
-        affiliation: "",
-
-        introduction: "",
-
-        interests: [],
-        techStacks: [],
-
-        strength: null,
-
-        profileCardId: null,
-        createdProfile: null,
-    });
+    ] = useState(
+        INITIAL_ONBOARDING_DATA,
+    );
 
     const [
         optionData,
         setOptionData,
     ] = useState({
         jobOptions: [],
-        affiliationStatuses: [],
+
+        affiliationStatuses:
+            [],
+
         skills: [],
         interests: [],
         personalities: [],
+        purposes: [],
     });
 
     const [
@@ -127,8 +216,22 @@ const Onboarding = () => {
         setSubmitError,
     ] = useState("");
 
+    const [
+        hasLoadedDraft,
+        setHasLoadedDraft,
+    ] = useState(false);
+
+    const [
+        loadedSkillJobTypeId,
+        setLoadedSkillJobTypeId,
+    ] = useState(null);
+
     const totalSteps = 5;
 
+    /*
+     * 직군, 소속 상태, 관심 분야,
+     * 성향, 목적 목록을 불러온다.
+     */
     useEffect(() => {
         const controller =
             new AbortController();
@@ -143,35 +246,53 @@ const Onboarding = () => {
                     setOptionError("");
 
                     const [
-                        jobTypeData,
-                        affiliationData,
-                        interestData,
-                        personalityData,
-                    ] = await Promise.all([
-                        getJobTypes({
-                            signal:
-                                controller.signal,
-                        }),
+                        jobTypeResult,
+                        affiliationResult,
+                        interestResult,
+                        personalityResult,
+                        purposeResult,
+                    ] =
+                        await Promise.all(
+                            [
+                                getJobTypes({
+                                    signal:
+                                        controller
+                                            .signal,
+                                }),
 
-                        getAffiliationStatuses({
-                            signal:
-                                controller.signal,
-                        }),
+                                getAffiliationStatuses(
+                                    {
+                                        signal:
+                                            controller
+                                                .signal,
+                                    },
+                                ),
 
-                        getInterests({
-                            signal:
-                                controller.signal,
-                        }),
+                                getInterests({
+                                    signal:
+                                        controller
+                                            .signal,
+                                }),
 
-                        getPersonalities({
-                            signal:
-                                controller.signal,
-                        }),
-                    ]);
+                                getPersonalities(
+                                    {
+                                        signal:
+                                            controller
+                                                .signal,
+                                    },
+                                ),
+
+                                getPurposes({
+                                    signal:
+                                        controller
+                                            .signal,
+                                }),
+                            ],
+                        );
 
                     const jobOptions =
                         getItems(
-                            jobTypeData,
+                            jobTypeResult,
                         )
                             .map(
                                 (
@@ -214,17 +335,22 @@ const Onboarding = () => {
 
                             affiliationStatuses:
                                 getItems(
-                                    affiliationData,
+                                    affiliationResult,
                                 ),
 
                             interests:
                                 getItems(
-                                    interestData,
+                                    interestResult,
                                 ),
 
                             personalities:
                                 getItems(
-                                    personalityData,
+                                    personalityResult,
+                                ),
+
+                            purposes:
+                                getItems(
+                                    purposeResult,
                                 ),
                         }),
                     );
@@ -242,7 +368,8 @@ const Onboarding = () => {
                     );
 
                     setOptionError(
-                        "선택 항목을 불러오지 못했습니다.",
+                        error.message ||
+                            "선택 항목을 불러오지 못했습니다.",
                     );
                 } finally {
                     if (
@@ -264,13 +391,226 @@ const Onboarding = () => {
         };
     }, []);
 
+    /*
+     * localStorage에 저장된
+     * 임시저장 내용을 불러온다.
+     */
+    useEffect(() => {
+        if (
+            isOptionLoading ||
+            hasLoadedDraft
+        ) {
+            return undefined;
+        }
+
+        let isMounted = true;
+
+        const loadSavedDraft =
+            async () => {
+                await Promise.resolve();
+
+                if (!isMounted) {
+                    return;
+                }
+
+                const savedDraft =
+                    getOnboardingDraft(
+                        draftId,
+                    );
+
+                if (savedDraft) {
+                    setOnboardingData(
+                        (
+                            previousData,
+                        ) => ({
+                            ...previousData,
+
+                            ...savedDraft.data,
+
+                            profileCardId:
+                                null,
+
+                            createdProfile:
+                                null,
+                        }),
+                    );
+
+                    const savedStep =
+                        Number.isInteger(
+                            savedDraft.step,
+                        )
+                            ? savedDraft.step
+                            : 0;
+
+                    setStep(
+                        Math.min(
+                            Math.max(
+                                savedStep,
+                                0,
+                            ),
+                            2,
+                        ),
+                    );
+                }
+
+                setHasLoadedDraft(
+                    true,
+                );
+            };
+
+        loadSavedDraft();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [
+        draftId,
+        isOptionLoading,
+        hasLoadedDraft,
+    ]);
+
+    /*
+     * 목적, 직군, 기본 정보 작성 중
+     * localStorage에 자동 저장한다.
+     */
+    useEffect(() => {
+        if (
+            !hasLoadedDraft ||
+            step >= 3
+        ) {
+            return;
+        }
+
+        /*
+         * 새 카드 목적 선택 전에는
+         * 빈 임시저장을 생성하지 않는다.
+         */
+        if (
+            isCardCreationFlow &&
+            step === 0 &&
+            !onboardingData.purposeId
+        ) {
+            return;
+        }
+
+        /*
+         * 최초 가입 Welcome 화면에서는
+         * 빈 임시저장을 생성하지 않는다.
+         */
+        if (
+            !isCardCreationFlow &&
+            step === 0
+        ) {
+            return;
+        }
+
+        saveOnboardingDraft({
+            id: draftId,
+            step,
+            data: onboardingData,
+        });
+    }, [
+        draftId,
+        step,
+        onboardingData,
+        hasLoadedDraft,
+        isCardCreationFlow,
+    ]);
+
+    /*
+     * 개발자 임시저장을 불러왔을 때
+     * 해당 직군 스킬 목록을 다시 조회한다.
+     */
+    useEffect(() => {
+        const isDeveloper =
+            onboardingData.job ===
+                "frontend" ||
+            onboardingData.job ===
+                "backend";
+
+        const alreadyLoaded =
+            String(
+                loadedSkillJobTypeId,
+            ) ===
+            String(
+                onboardingData
+                    .jobTypeId,
+            );
+
+        if (
+            !hasLoadedDraft ||
+            !isDeveloper ||
+            !onboardingData
+                .jobTypeId ||
+            alreadyLoaded
+        ) {
+            return undefined;
+        }
+
+        const controller =
+            new AbortController();
+
+        const loadSkills =
+            async () => {
+                try {
+                    const skillResult =
+                        await getSkills({
+                            jobTypeId:
+                                onboardingData
+                                    .jobTypeId,
+
+                            signal:
+                                controller
+                                    .signal,
+                        });
+
+                    setOptionData(
+                        (
+                            previousData,
+                        ) => ({
+                            ...previousData,
+
+                            skills:
+                                getItems(
+                                    skillResult,
+                                ),
+                        }),
+                    );
+
+                    setLoadedSkillJobTypeId(
+                        onboardingData
+                            .jobTypeId,
+                    );
+                } catch (error) {
+                    if (
+                        error.name !==
+                        "AbortError"
+                    ) {
+                        setOptionError(
+                            error.message ||
+                                "스킬을 불러오지 못했습니다.",
+                        );
+                    }
+                }
+            };
+
+        loadSkills();
+
+        return () => {
+            controller.abort();
+        };
+    }, [
+        hasLoadedDraft,
+        onboardingData.job,
+        onboardingData.jobTypeId,
+        loadedSkillJobTypeId,
+    ]);
+
     const nextStep = () => {
         setStep(
             (previousStep) =>
                 Math.min(
-                    previousStep +
-                        1,
-
+                    previousStep + 1,
                     totalSteps - 1,
                 ),
         );
@@ -280,9 +620,7 @@ const Onboarding = () => {
         setStep(
             (previousStep) =>
                 Math.max(
-                    previousStep -
-                        1,
-
+                    previousStep - 1,
                     0,
                 ),
         );
@@ -300,17 +638,27 @@ const Onboarding = () => {
     };
 
     /*
-     * 직군 선택 후 다음 버튼
+     * 직군 선택 후 다음
      *
-     * 1. 기본 카드 생성
-     * 2. 선택 직군의 스킬 조회
-     * 3. 다음 온보딩 단계로 이동
+     * 이 단계에서는 서버 카드를
+     * 생성하지 않는다.
      */
     const handleJobNext =
-        async () => {
-            if (
-                !onboardingData.jobTypeId
-            ) {
+        async (
+            selectedJobOption,
+        ) => {
+            const selectedJob =
+                selectedJobOption ||
+                optionData.jobOptions.find(
+                    (jobOption) =>
+                        jobOption.id ===
+                        onboardingData.job,
+                );
+
+            const selectedJobTypeId =
+                selectedJob?.jobTypeId;
+
+            if (!selectedJobTypeId) {
                 setBasicCardError(
                     "직군을 선택해주세요.",
                 );
@@ -325,49 +673,29 @@ const Onboarding = () => {
 
                 setBasicCardError("");
 
-                let profileCardId =
-                    onboardingData.profileCardId;
+                const isDeveloper =
+                    selectedJob.id ===
+                        "frontend" ||
+                    selectedJob.id ===
+                        "backend";
 
-                const requests = [
-                    getSkills({
-                        jobTypeId:
-                            onboardingData
-                                .jobTypeId,
-                    }),
-                ];
+                let skillItems = [];
 
-                if (!profileCardId) {
-                    requests.push(
-                        createProfileCard({
+                if (isDeveloper) {
+                    const skillResult =
+                        await getSkills({
                             jobTypeId:
-                                onboardingData
-                                    .jobTypeId,
-                        }),
-                    );
-                }
+                                selectedJobTypeId,
+                        });
 
-                const results =
-                    await Promise.all(
-                        requests,
-                    );
-
-                const skillData =
-                    results[0];
-
-                if (!profileCardId) {
-                    const createdCard =
-                        results[1];
-
-                    profileCardId =
-                        createdCard?.id;
-
-                    if (
-                        !profileCardId
-                    ) {
-                        throw new Error(
-                            "생성된 프로필 카드 ID를 받지 못했습니다.",
+                    skillItems =
+                        getItems(
+                            skillResult,
                         );
-                    }
+
+                    setLoadedSkillJobTypeId(
+                        selectedJobTypeId,
+                    );
                 }
 
                 setOptionData(
@@ -377,26 +705,41 @@ const Onboarding = () => {
                         ...previousData,
 
                         skills:
-                            getItems(
-                                skillData,
-                            ),
+                            skillItems,
                     }),
                 );
 
                 updateOnboardingData({
-                    profileCardId,
+                    job:
+                        selectedJob.id,
+
+                    jobTypeId:
+                        selectedJobTypeId,
+
+                    jobLabel:
+                        selectedJob.label,
+
+                    techStacks: [],
+
+                    interests: [],
+
+                    strength: null,
+
+                    profileCardId: null,
+
+                    createdProfile: null,
                 });
 
                 nextStep();
             } catch (error) {
                 console.error(
-                    "기본 카드 생성 실패:",
+                    "직군 정보 조회 실패:",
                     error,
                 );
 
                 setBasicCardError(
                     error.message ||
-                        "기본 카드 생성에 실패했습니다.",
+                        "직군 정보를 불러오지 못했습니다.",
                 );
             } finally {
                 setIsCreatingBasicCard(
@@ -406,17 +749,30 @@ const Onboarding = () => {
         };
 
     /*
-     * 마지막 만들기 버튼
+     * 최종 만들기
      *
-     * 이미 생성된 기본 카드를 수정한다.
+     * 이때 처음 서버 카드를 생성하고
+     * 입력 정보를 PATCH한다.
      */
     const handleUpdateProfile =
         async () => {
             if (
-                !onboardingData.profileCardId
+                isCardCreationFlow &&
+                !onboardingData.purposeId
             ) {
                 setSubmitError(
-                    "생성된 프로필 카드를 찾을 수 없습니다.",
+                    "카드 목적을 선택해주세요.",
+                );
+
+                return;
+            }
+
+            if (
+                !onboardingData
+                    .jobTypeId
+            ) {
+                setSubmitError(
+                    "선택한 직군을 확인하지 못했습니다.",
                 );
 
                 return;
@@ -438,7 +794,7 @@ const Onboarding = () => {
                     ?.id
             ) {
                 setSubmitError(
-                    "소통 타입을 선택해주세요.",
+                    "성향을 선택해주세요.",
                 );
 
                 return;
@@ -454,38 +810,7 @@ const Onboarding = () => {
                     onboardingData.job ===
                         "backend";
 
-                const selectedItems =
-                    isDeveloper
-                        ? onboardingData.techStacks
-                        : onboardingData.interests;
-
-                const skillIds =
-                    selectedItems
-                        .filter(
-                            (item) =>
-                                item.optionType ===
-                                "skill",
-                        )
-                        .map((item) =>
-                            Number(
-                                item.id,
-                            ),
-                        );
-
-                const interestIds =
-                    selectedItems
-                        .filter(
-                            (item) =>
-                                item.optionType ===
-                                "interest",
-                        )
-                        .map((item) =>
-                            Number(
-                                item.id,
-                            ),
-                        );
-
-                    const profilePayload = {
+                const profilePayload = {
                     affiliationStatusId:
                         Number(
                             onboardingData
@@ -496,10 +821,6 @@ const Onboarding = () => {
                         onboardingData
                             .affiliation
                             .trim(),
-
-                    interestIds,
-
-                    skillIds,
 
                     personalityId:
                         Number(
@@ -514,20 +835,70 @@ const Onboarding = () => {
                             .trim(),
                 };
 
+                if (isDeveloper) {
+                    profilePayload.skillIds =
+                        onboardingData.techStacks.map(
+                            (item) =>
+                                Number(
+                                    item.id,
+                                ),
+                        );
+                } else {
+                    profilePayload.interestIds =
+                        onboardingData.interests.map(
+                            (item) =>
+                                Number(
+                                    item.id,
+                                ),
+                        );
+                }
+
                 if (
-                    onboardingData.profileImageUrl
+                    onboardingData
+                        .profileImageUrl
                 ) {
                     profilePayload.profileImageUrl =
-                        onboardingData.profileImageUrl;
+                        onboardingData
+                            .profileImageUrl;
+                }
+
+                /*
+                 * 최종 제출 시에만 POST
+                 */
+                const createdCard =
+                    await createProfileCard({
+                        jobTypeId:
+                            onboardingData
+                                .jobTypeId,
+
+                        purposeId:
+                            onboardingData
+                                .purposeId,
+                    });
+
+                if (!createdCard?.id) {
+                    throw new Error(
+                        "생성된 프로필 카드 ID를 받지 못했습니다.",
+                    );
                 }
 
                 const updatedCard =
                     await updateProfileCard(
-                        onboardingData.profileCardId,
+                        createdCard.id,
                         profilePayload,
                     );
 
+                /*
+                 * 완료된 임시저장 삭제
+                 */
+                removeOnboardingDraft(
+                    draftId,
+                );
+
                 updateOnboardingData({
+                    profileCardId:
+                        createdCard.id,
+
                     createdProfile:
                         updatedCard,
                 });
@@ -535,7 +906,7 @@ const Onboarding = () => {
                 nextStep();
             } catch (error) {
                 console.error(
-                    "프로필 카드 수정 실패:",
+                    "프로필 카드 생성 실패:",
                     error,
                 );
 
@@ -550,13 +921,54 @@ const Onboarding = () => {
             }
         };
 
+    /*
+     * 새 카드 생성 및 이어쓰기에서는
+     * 목적 선택 화면부터 시작한다.
+     *
+     * 최초 가입 온보딩에서는
+     * 기존 Welcome 화면을 유지한다.
+     */
+    const firstStep =
+        isCardCreationFlow ? (
+            <PurposeSelectStep
+                key="purpose"
+                data={onboardingData}
+                purposeOptions={
+                    optionData.purposes
+                }
+                isLoading={
+                    isOptionLoading
+                }
+                errorMessage={
+                    optionError
+                }
+                onChange={
+                    updateOnboardingData
+                }
+                onNext={
+                    nextStep
+                }
+                onBack={() =>
+                    navigate(
+                        "/profile",
+                    )
+                }
+                currentStep={step}
+                totalSteps={totalSteps}
+            />
+        ) : (
+            <WelcomeStep
+                key="welcome"
+                onNext={
+                    nextStep
+                }
+                currentStep={step}
+                totalSteps={totalSteps}
+            />
+        );
+
     const steps = [
-        <WelcomeStep
-            key="welcome"
-            onNext={nextStep}
-            currentStep={step}
-            totalSteps={totalSteps}
-        />,
+        firstStep,
 
         <JobSelectStep
             key="job"
@@ -580,7 +992,9 @@ const Onboarding = () => {
             onNext={
                 handleJobNext
             }
-            onBack={prevStep}
+            onBack={
+                prevStep
+            }
             currentStep={step}
             totalSteps={totalSteps}
         />,
@@ -598,7 +1012,8 @@ const Onboarding = () => {
                 optionData.personalities
             }
             affiliationStatuses={
-                optionData.affiliationStatuses
+                optionData
+                    .affiliationStatuses
             }
             isSubmitting={
                 isSubmitting
@@ -612,14 +1027,18 @@ const Onboarding = () => {
             onSubmit={
                 handleUpdateProfile
             }
-            onBack={prevStep}
+            onBack={
+                prevStep
+            }
             currentStep={step}
             totalSteps={totalSteps}
         />,
 
         <LoadingStep
             key="loading"
-            onComplete={nextStep}
+            onComplete={
+                nextStep
+            }
             currentStep={step}
             totalSteps={totalSteps}
         />,
@@ -632,7 +1051,11 @@ const Onboarding = () => {
         />,
     ];
 
-    return <>{steps[step]}</>;
+    return (
+        <>
+            {steps[step]}
+        </>
+    );
 };
 
 export default Onboarding;

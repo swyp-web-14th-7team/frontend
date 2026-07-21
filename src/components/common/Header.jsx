@@ -346,6 +346,9 @@ const Header = ({ showNav = false }) => {
                         className={
                             styles.iconButton
                         }
+                        onClick={() =>
+                            navigate("/settings")
+                        }
                         aria-label="설정"
                     >
                         <img
