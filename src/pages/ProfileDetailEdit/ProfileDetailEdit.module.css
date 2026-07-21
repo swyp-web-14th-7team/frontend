@@ -1,0 +1,484 @@
+.container {
+    width: min(
+        520px,
+        calc(100% - 40px)
+    );
+
+    margin: 62px auto 0;
+    padding-bottom: 80px;
+
+    color: #f7f8ff;
+}
+
+.titleArea {
+    margin-bottom: 44px;
+    text-align: center;
+}
+
+.title {
+    margin: 0;
+    color: #ffffff;
+}
+
+.description {
+    margin: 10px 0 0;
+    color: #7f849b;
+}
+
+.profileImage {
+    position: relative;
+
+    width: 84px;
+    height: 84px;
+
+    margin: 0 auto 44px;
+
+    border-radius: 50%;
+    background: #6d748e;
+}
+
+.profileImage img,
+.profilePlaceholder {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+    border-radius: inherit;
+}
+
+.editBadge {
+    position: absolute;
+    right: -2px;
+    bottom: 1px;
+
+    width: 24px;
+    height: 24px;
+
+    display: grid;
+    place-items: center;
+
+    border: 2px solid #0f0f17;
+    border-radius: 50%;
+
+    color: #ffffff;
+    background: #4287ff;
+
+    font-size: 12px;
+}
+
+.formSection {
+    margin-bottom: 34px;
+}
+
+.sectionHeading {
+    margin-bottom: 12px;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+}
+
+.sectionLabel {
+    margin: 0;
+
+    color: #e9ebf6;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.sectionHelp {
+    margin: 6px 0 0;
+
+    color: #73798f;
+    font-size: 12px;
+}
+
+.count {
+    margin: 0;
+
+    color: #8d92a7;
+    font-size: 11px;
+}
+
+.selectedList {
+    margin-bottom: 12px;
+
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.selectedChip {
+    min-height: 34px;
+    padding: 7px 12px;
+
+    border: 1px solid #6e758e;
+    border-radius: 7px;
+
+    color: #273149;
+    background: #e7f1ff;
+
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.selectedChip span {
+    margin-left: 6px;
+}
+
+.addButton {
+    min-width: 96px;
+    height: 38px;
+    padding: 0 16px;
+
+    border: 0;
+    border-radius: 6px;
+
+    color: #eef0f8;
+    background: #363b52;
+
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.addButton:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+}
+
+.linkList {
+    display: grid;
+    gap: 10px;
+
+    margin-bottom: 12px;
+}
+
+.linkRow {
+    display: grid;
+    grid-template-columns:
+        120px 1fr 36px;
+    gap: 8px;
+}
+
+.select,
+.input,
+.textarea {
+    width: 100%;
+    box-sizing: border-box;
+
+    border: 1px solid transparent;
+    border-radius: 6px;
+
+    color: #f2f4fb;
+    background: #34394f;
+
+    outline: none;
+}
+
+.select:focus,
+.input:focus,
+.textarea:focus {
+    border-color: #9bd2ff;
+}
+
+.select {
+    height: 42px;
+    padding: 0 12px;
+}
+
+.input {
+    height: 42px;
+    padding: 0 14px;
+}
+
+.textarea {
+    min-height: 86px;
+    padding: 12px 14px;
+
+    resize: vertical;
+}
+
+.input::placeholder,
+.textarea::placeholder {
+    color: #747a91;
+}
+
+.removeButton {
+    width: 36px;
+    height: 42px;
+
+    border: 0;
+    border-radius: 6px;
+
+    color: #c9ccda;
+    background: #2a2e42;
+
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.experienceList {
+    display: grid;
+    gap: 14px;
+
+    margin-bottom: 12px;
+}
+
+.experienceCard {
+    padding: 16px;
+
+    border: 1px solid #383d54;
+    border-radius: 8px;
+
+    background: #25293b;
+}
+
+.experienceTop {
+    margin-bottom: 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.representativeLabel {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    color: #dfe2ed;
+    font-size: 13px;
+}
+
+.representativeLabel input {
+    accent-color: #9bd2ff;
+}
+
+.removeExperienceButton {
+    border: 0;
+
+    color: #ff858d;
+    background: transparent;
+
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.inputLabel {
+    margin: 12px 0 7px;
+
+    display: flex;
+    justify-content: space-between;
+
+    color: #c3c7d5;
+    font-size: 12px;
+}
+
+.inputLabel span {
+    color: #767c91;
+    font-size: 10px;
+}
+
+.bottomButtons {
+    margin-top: 56px;
+
+    display: grid;
+    grid-template-columns:
+        130px 1fr;
+    gap: 8px;
+}
+
+.skipButton,
+.submitButton {
+    height: 48px;
+
+    border: 0;
+    border-radius: 6px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.skipButton {
+    color: #343849;
+    background: #edf0f5;
+}
+
+.submitButton {
+    color: #243143;
+    background: #a9d8fc;
+}
+
+.skipButton:disabled,
+.submitButton:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
+.errorArea {
+    padding-top: 140px;
+    text-align: center;
+}
+
+.errorMessage {
+    margin: 14px 0;
+
+    color: #ff747d;
+    font-size: 13px;
+    text-align: center;
+}
+
+.statusMessage {
+    margin: 0;
+    padding-top: 160px;
+
+    color: #ffffff;
+    text-align: center;
+}
+
+.backButton {
+    margin-top: 20px;
+    padding: 12px 20px;
+
+    border: 0;
+    border-radius: 6px;
+
+    color: #222938;
+    background: #abd9fb;
+
+    cursor: pointer;
+}
+
+.modalBackdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+
+    padding: 24px;
+
+    display: grid;
+    place-items: center;
+
+    background:
+        rgba(
+            6,
+            7,
+            13,
+            0.78
+        );
+}
+
+.modal {
+    width: min(480px, 100%);
+    max-height:
+        min(
+            620px,
+            calc(100vh - 48px)
+        );
+
+    overflow-y: auto;
+    box-sizing: border-box;
+
+    padding: 24px;
+
+    border-radius: 12px;
+    background: #24283a;
+}
+
+.modalHeader {
+    margin-bottom: 24px;
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.modalHeader h2 {
+    margin: 0;
+
+    color: #ffffff;
+    font-size: 19px;
+}
+
+.modalHeader p {
+    margin: 8px 0 0;
+
+    color: #858a9f;
+    font-size: 13px;
+}
+
+.modalHeader button {
+    border: 0;
+
+    color: #ffffff;
+    background: transparent;
+
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.optionList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+}
+
+.optionButton {
+    min-height: 38px;
+    padding: 8px 13px;
+
+    border: 1px solid #4d536c;
+    border-radius: 7px;
+
+    color: #e5e7f0;
+    background: #34394f;
+
+    cursor: pointer;
+}
+
+.optionSelected {
+    border-color: #a9d8fc;
+
+    color: #263044;
+    background: #a9d8fc;
+}
+
+.modalSubmitButton {
+    width: 100%;
+    height: 46px;
+
+    margin-top: 28px;
+
+    border: 0;
+    border-radius: 6px;
+
+    color: #293243;
+    background: #a9d8fc;
+
+    font-weight: 600;
+    cursor: pointer;
+}
+
+@media (max-width: 640px) {
+    .container {
+        width:
+            calc(100% - 32px);
+
+        margin-top: 42px;
+    }
+
+    .linkRow {
+        grid-template-columns:
+            100px 1fr 36px;
+    }
+
+    .bottomButtons {
+        grid-template-columns:
+            110px 1fr;
+    }
+}

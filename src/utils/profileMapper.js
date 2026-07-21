@@ -67,9 +67,7 @@ const normalizeTag = (
     tag,
     index,
 ) => {
-    if (
-        typeof tag === "string"
-    ) {
+    if (typeof tag === "string") {
         return {
             id: `tag-${index}-${tag}`,
             name: tag,
@@ -81,16 +79,15 @@ const normalizeTag = (
             tag?.id ??
             `tag-${index}-${tag?.name}`,
 
-        name: tag?.name || "",
+        name:
+            tag?.name || "",
     };
 };
 
 const normalizeTags = (
     tags = [],
 ) => {
-    if (
-        !Array.isArray(tags)
-    ) {
+    if (!Array.isArray(tags)) {
         return [];
     }
 
@@ -109,9 +106,8 @@ const normalizeLink = (
         Number(link?.type);
 
     const linkInfo =
-        LINK_TYPE_MAP[
-            numericType
-        ] || {
+        LINK_TYPE_MAP[numericType] ||
+        {
             type: "website",
             label: "Website",
         };
@@ -122,8 +118,7 @@ const normalizeLink = (
         "";
 
     if (
-        linkInfo.type ===
-            "email" &&
+        linkInfo.type === "email" &&
         url &&
         !url.startsWith(
             "mailto:",
@@ -150,9 +145,7 @@ const normalizeLink = (
 const normalizeLinks = (
     links = [],
 ) => {
-    if (
-        !Array.isArray(links)
-    ) {
+    if (!Array.isArray(links)) {
         return [];
     }
 
@@ -178,24 +171,20 @@ const normalizeExperience = (
 
         summary:
             experience?.summary ||
-            experience
-                ?.description ||
+            experience?.description ||
             "",
 
         description:
-            experience
-                ?.description ||
+            experience?.description ||
             "",
 
         url:
-            experience
-                ?.relatedUrl ||
+            experience?.relatedUrl ||
             experience?.url ||
             "",
 
         linkLabel:
-            experience
-                ?.linkLabel ||
+            experience?.linkLabel ||
             "관련 링크 보기",
 
         sortOrder:
@@ -203,7 +192,10 @@ const normalizeExperience = (
             index,
 
         isRepresentative:
-            index === 0,
+            Boolean(
+                experience?.isRepresentative ??
+                    index === 0,
+            ),
     };
 };
 
@@ -220,10 +212,7 @@ const normalizeExperiences = (
 
     return [...experiences]
         .sort(
-            (
-                first,
-                second,
-            ) =>
+            (first, second) =>
                 (
                     first?.sortOrder ??
                     0
@@ -266,11 +255,18 @@ const getPurposeNames = (
             .filter(Boolean);
     }
 
-    if (
-        profile.purpose?.name
-    ) {
+    if (profile.purpose?.name) {
         return [
             profile.purpose.name,
+        ];
+    }
+
+    if (
+        typeof profile.purpose ===
+        "string"
+    ) {
+        return [
+            profile.purpose,
         ];
     }
 
@@ -319,20 +315,40 @@ export const mapProfileCard = (
         );
 
     const representativeExperience =
-        experiences[0] || null;
+        experiences.find(
+            (experience) =>
+                experience.isRepresentative,
+        ) ||
+        experiences[0] ||
+        null;
 
     return {
-        id: profile.id,
+        id:
+            profile.id || "",
 
         userId:
             profile.userId || "",
+
+        jobTypeId:
+            profile.jobTypeId ??
+            profile.jobType?.id ??
+            null,
+
+        jobTypeName:
+            jobName,
 
         name:
             profile.nickname ||
             profile.name ||
             "이름 없음",
 
-        job: normalizedJob,
+        nickname:
+            profile.nickname ||
+            profile.name ||
+            "",
+
+        job:
+            normalizedJob,
 
         profileImage:
             profile.profileImageUrl ||
@@ -355,6 +371,14 @@ export const mapProfileCard = (
             profile.affiliationType ||
             "",
 
+        affiliationStatusId:
+            profile
+                .affiliationStatus
+                ?.id ??
+            profile
+                .affiliationStatusId ??
+            null,
+
         introduction:
             profile.description ||
             "",
@@ -368,12 +392,26 @@ export const mapProfileCard = (
                 profile.skills,
             ),
 
+        skills:
+            normalizeTags(
+                profile.skills,
+            ),
+
         interests:
             normalizeTags(
                 profile.interests,
             ),
 
         tools: [],
+
+        purposeId:
+            profile.purposeId ??
+            profile.purpose?.id ??
+            null,
+
+        purpose:
+            profile.purpose ||
+            null,
 
         purposes:
             getPurposeNames(
@@ -393,6 +431,11 @@ export const mapProfileCard = (
                               .personality
                               .name,
 
+                      name:
+                          profile
+                              .personality
+                              .name,
+
                       description:
                           profile
                               .personality
@@ -407,6 +450,10 @@ export const mapProfileCard = (
                   }
                 : null,
 
+        personality:
+            profile.personality ||
+            null,
+
         links:
             normalizeLinks(
                 profile.links,
@@ -414,14 +461,15 @@ export const mapProfileCard = (
 
         experiences,
 
-        representativeExperience:
+        representativeExperience,
+
+        representativeExperienceTitle:
             representativeExperience
                 ?.title || "",
 
         representativeExperienceDescription:
             representativeExperience
-                ?.description ||
-            "",
+                ?.description || "",
 
         createdAt:
             profile.createdAt
@@ -436,14 +484,17 @@ export const mapProfileCard = (
             "",
 
         isActive:
-            Boolean(
-                profile.isActive,
-            ),
+            profile.isActive ===
+            true,
 
+        /*
+         * 백엔드 0.3.7부터
+         * isDefault는 true 또는
+         * null로 전달된다.
+         */
         isDefault:
-            Boolean(
-                profile.isDefault,
-            ),
+            profile.isDefault ===
+            true,
     };
 };
 

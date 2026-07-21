@@ -69,6 +69,36 @@ const createSkillSections = (
     );
 };
 
+const createInterestSections = (
+    interests,
+) => {
+    const interestOptions =
+        interests.map(
+            (interest) => ({
+                id: interest.id,
+
+                name:
+                    interest.name,
+
+                type: "interest",
+
+                optionType:
+                    "interest",
+            }),
+        );
+
+    return [
+        {
+            id: "interests",
+
+            title: "관심 분야",
+
+            options:
+                interestOptions,
+        },
+    ];
+};
+
 const CardBasicStep = ({
     data,
     skills = [],
@@ -77,6 +107,7 @@ const CardBasicStep = ({
     affiliationStatuses = [],
     isSubmitting = false,
     submitError = "",
+    isEditMode = false,
     onChange,
     onSubmit,
     onBack,
@@ -89,7 +120,7 @@ const CardBasicStep = ({
     ] = useState(null);
 
     const imageInputRef =
-    useRef(null);
+        useRef(null);
 
     const [
         isImageUploading,
@@ -111,9 +142,15 @@ const CardBasicStep = ({
     };
 
     const isDeveloper =
-        data.job === "frontend" ||
-        data.job === "backend";
+        data.job ===
+            "frontend" ||
+        data.job ===
+            "backend";
 
+    /*
+     * 프론트·백엔드 개발자용
+     * 직군별 스킬 목록
+     */
     const skillSections =
         useMemo(
             () =>
@@ -123,164 +160,146 @@ const CardBasicStep = ({
             [skills],
         );
 
+    /*
+     * 기획자·디자이너용 관심
+     * 분야 목록
+     *
+     * 스킬 섹션을 합치지 않는다.
+     */
     const interestSections =
-        useMemo(() => {
-            const interestOptions =
-                interests.map(
-                    (interest) => ({
-                        id:
-                            interest.id,
+        useMemo(
+            () =>
+                createInterestSections(
+                    interests,
+                ),
+            [interests],
+        );
 
-                        name:
-                            interest.name,
-
-                        type:
-                            "interest",
-
-                        optionType:
-                            "interest",
-                    }),
-                );
-
-            return [
-                {
-                    id: "interests",
-
-                    title:
-                        "관심 분야",
-
-                    options:
-                        interestOptions,
-                },
-
-                ...skillSections,
-            ];
-        }, [
-            interests,
-            skillSections,
-        ]);
-
-        const handleImageButtonClick =
-    () => {
-        if (isImageUploading) {
-            return;
-        }
-
-        imageInputRef.current?.click();
-    };
-
-const handleProfileImageChange =
-    async (event) => {
-        const imageFile =
-            event.target.files?.[0];
-
-        event.target.value = "";
-
-        if (!imageFile) {
-            return;
-        }
-
-        const allowedTypes = [
-            "image/png",
-            "image/jpeg",
-            "image/webp",
-        ];
-
-        if (
-            !allowedTypes.includes(
-                imageFile.type,
-            )
-        ) {
-            setImageError(
-                "PNG, JPG, WEBP 이미지만 등록할 수 있습니다.",
-            );
-
-            return;
-        }
-
-        const maxFileSize =
-            5 * 1024 * 1024;
-
-        if (
-            imageFile.size >
-            maxFileSize
-        ) {
-            setImageError(
-                "이미지는 5MB 이하만 등록할 수 있습니다.",
-            );
-
-            return;
-        }
-
-        try {
-            setIsImageUploading(
-                true,
-            );
-
-            setImageError("");
-
-            const previewUrl =
-                URL.createObjectURL(
-                    imageFile,
-                );
-
-            handleChange(
-                "profileImagePreview",
-                previewUrl,
-            );
-
-            const uploadData =
-                await uploadProfileImage(
-                    imageFile,
-                );
-
-            if (!uploadData?.url) {
-                throw new Error(
-                    "업로드된 이미지 주소를 받지 못했습니다.",
-                );
+    const handleImageButtonClick =
+        () => {
+            if (
+                isImageUploading
+            ) {
+                return;
             }
 
-            handleChange(
-                "profileImageUrl",
-                uploadData.url,
-            );
+            imageInputRef.current?.click();
+        };
 
-            handleChange(
-                "profileImagePreview",
-                `${uploadData.url.replace(
-                    /\/$/,
+    const handleProfileImageChange =
+        async (event) => {
+            const imageFile =
+                event.target
+                    .files?.[0];
+
+            event.target.value = "";
+
+            if (!imageFile) {
+                return;
+            }
+
+            const allowedTypes = [
+                "image/png",
+                "image/jpeg",
+                "image/webp",
+            ];
+
+            if (
+                !allowedTypes.includes(
+                    imageFile.type,
+                )
+            ) {
+                setImageError(
+                    "PNG, JPG, WEBP 이미지만 등록할 수 있습니다.",
+                );
+
+                return;
+            }
+
+            const maxFileSize =
+                5 * 1024 * 1024;
+
+            if (
+                imageFile.size >
+                maxFileSize
+            ) {
+                setImageError(
+                    "이미지는 5MB 이하만 등록할 수 있습니다.",
+                );
+
+                return;
+            }
+
+            try {
+                setIsImageUploading(
+                    true,
+                );
+
+                setImageError("");
+
+                const previewUrl =
+                    URL.createObjectURL(
+                        imageFile,
+                    );
+
+                handleChange(
+                    "profileImagePreview",
+                    previewUrl,
+                );
+
+                const uploadData =
+                    await uploadProfileImage(
+                        imageFile,
+                    );
+
+                if (!uploadData?.url) {
+                    throw new Error(
+                        "업로드된 이미지 주소를 받지 못했습니다.",
+                    );
+                }
+
+                handleChange(
+                    "profileImageUrl",
+                    uploadData.url,
+                );
+
+                handleChange(
+                    "profileImagePreview",
+                    `${uploadData.url.replace(
+                        /\/$/,
+                        "",
+                    )}/72.webp`,
+                );
+
+                URL.revokeObjectURL(
+                    previewUrl,
+                );
+            } catch (requestError) {
+                console.error(
+                    "프로필 이미지 업로드 실패:",
+                    requestError,
+                );
+
+                handleChange(
+                    "profileImageUrl",
                     "",
-                )}/72.webp`,
-            );
+                );
 
-            URL.revokeObjectURL(
-                previewUrl,
-            );
-        } catch (error) {
-            console.error(
-                "프로필 이미지 업로드 실패:",
-                error,
-            );
-
-            handleChange(
-                "profileImageUrl",
-                "",
-            );
-
-            setImageError(
-                error.message ||
-                    "이미지 업로드에 실패했습니다.",
-            );
-        } finally {
-            setIsImageUploading(
-                false,
-            );
-        }
-    };
+                setImageError(
+                    requestError
+                        ?.message ||
+                        "이미지 업로드에 실패했습니다.",
+                );
+            } finally {
+                setIsImageUploading(
+                    false,
+                );
+            }
+        };
 
     /*
-     * 스킬과 관심 분야는
-     * 직군에 따라 없을 수 있으므로
+     * 관심 분야와 스킬은 직군에
+     * 따라 선택값이 없을 수 있으므로
      * 필수 조건에서 제외한다.
      */
     const isFormValid =
@@ -300,8 +319,12 @@ const handleProfileImageChange =
             showBackButton={true}
             showProgress={true}
             onBack={onBack}
-            currentStep={currentStep}
-            totalSteps={totalSteps}
+            currentStep={
+                currentStep
+            }
+            totalSteps={
+                totalSteps
+            }
         >
             <section
                 className={
@@ -329,9 +352,9 @@ const handleProfileImageChange =
                     <p
                         className={`caption1 ${styles.description}`}
                     >
-                        나를 소개하기 위해
-                        기본적인 정보를
-                        작성해보세요
+                        {isEditMode
+                            ? "기존 카드의 정보를 수정해주세요"
+                            : "나를 소개하기 위해 기본적인 정보를 작성해보세요"}
                     </p>
                 </div>
 
@@ -359,7 +382,9 @@ const handleProfileImageChange =
                     </div>
 
                     <input
-                        ref={imageInputRef}
+                        ref={
+                            imageInputRef
+                        }
                         type="file"
                         accept="image/png,image/jpeg,image/webp"
                         onChange={
@@ -390,9 +415,14 @@ const handleProfileImageChange =
                 {imageError && (
                     <p
                         style={{
-                            margin: "8px 0 0",
-                            color: "#e5484d",
-                            textAlign: "center",
+                            margin:
+                                "8px 0 0",
+
+                            color:
+                                "#e5484d",
+
+                            textAlign:
+                                "center",
                         }}
                     >
                         {imageError}
@@ -586,8 +616,12 @@ const handleProfileImageChange =
                     }`}
                 >
                     {isSubmitting
-                        ? "생성 중..."
-                        : "만들기"}
+                        ? isEditMode
+                            ? "저장 중..."
+                            : "생성 중..."
+                        : isEditMode
+                          ? "변경사항 저장"
+                          : "만들기"}
                 </button>
             </section>
 
@@ -627,7 +661,7 @@ const handleProfileImageChange =
             {modalType ===
                 "interests" && (
                 <TagSelectModal
-                    title="나의 관심 분야 및 툴"
+                    title="나의 관심 분야"
                     description="먼저 선택된 3개가 카드에 노출돼요"
                     sections={
                         interestSections

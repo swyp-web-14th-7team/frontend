@@ -15,6 +15,10 @@ import {
 } from "../../api/profile";
 
 import {
+    getPurposes,
+} from "../../api/options";
+
+import {
     mapProfileCards,
 } from "../../utils/profileMapper";
 
@@ -32,6 +36,53 @@ const TABS = [
     "커피챗",
     "교류/네트워킹",
 ];
+
+/*
+ * 프론트 탭 이름과 백엔드 목적 이름을
+ * 비교하기 위해 공백과 구분 기호를 제거한다.
+ *
+ * 예:
+ * 팀 빌딩 -> 팀빌딩
+ * 교류/네트워킹 -> 교류네트워킹
+ * 교류·네트워킹 -> 교류네트워킹
+ */
+const normalizePurposeName = (
+    value = "",
+) => {
+    return String(value)
+        .trim()
+        .toLowerCase()
+        .replace(
+            /[\s/·ㆍ_-]/g,
+            "",
+        );
+};
+
+const getItems = (
+    result,
+) => {
+    if (Array.isArray(result)) {
+        return result;
+    }
+
+    if (
+        Array.isArray(
+            result?.items,
+        )
+    ) {
+        return result.items;
+    }
+
+    if (
+        Array.isArray(
+            result?.data?.items,
+        )
+    ) {
+        return result.data.items;
+    }
+
+    return [];
+};
 
 const getSortParams = (
     sort,
@@ -62,7 +113,9 @@ const Explore = () => {
     const [
         activeTab,
         setActiveTab,
-    ] = useState("전체보기");
+    ] = useState(
+        "전체보기",
+    );
 
     const [
         currentPage,
@@ -84,8 +137,12 @@ const Explore = () => {
         setSelectedTags,
     ] = useState([]);
 
-    const [sort, setSort] =
-        useState("최근 등록순");
+    const [
+        sort,
+        setSort,
+    ] = useState(
+        "최근 등록순",
+    );
 
     const [
         isMobileSearchOpen,
@@ -117,25 +174,195 @@ const Explore = () => {
         setErrorMessage,
     ] = useState("");
 
+    /*
+     * 백엔드에서 조회한 목적 목록
+     */
+    const [
+        purposes,
+        setPurposes,
+    ] = useState([]);
+
+    const [
+        isPurposeLoading,
+        setIsPurposeLoading,
+    ] = useState(true);
+
+    const [
+        purposeError,
+        setPurposeError,
+    ] = useState("");
+
     const isUserLoggedIn =
         isLoggedIn();
 
     const hasSearchKeyword =
-        keyword.trim().length > 0;
+        keyword.trim().length >
+        0;
 
     const isRestrictedTab =
         !isUserLoggedIn &&
-        activeTab !== "전체보기";
+        activeTab !==
+            "전체보기";
 
+    /*
+     * 선택한 탭 이름과 같은
+     * 백엔드 목적 데이터를 찾는다.
+     */
+    const selectedPurpose =
+        activeTab ===
+        "전체보기"
+            ? null
+            : purposes.find(
+                  (
+                      purpose,
+                  ) =>
+                      normalizePurposeName(
+                          purpose?.name,
+                      ) ===
+                      normalizePurposeName(
+                          activeTab,
+                      ),
+              );
+
+    const selectedPurposeId =
+        selectedPurpose?.id ??
+        null;
+
+    /*
+     * 목적 목록 조회
+     */
+    useEffect(() => {
+        const controller =
+            new AbortController();
+
+        const fetchPurposes =
+            async () => {
+                try {
+                    setIsPurposeLoading(
+                        true,
+                    );
+
+                    setPurposeError(
+                        "",
+                    );
+
+                    const result =
+                        await getPurposes({
+                            page: 1,
+                            limit: 100,
+                            sort: "name",
+                            order: "asc",
+
+                            signal:
+                                controller
+                                    .signal,
+                        });
+
+                    const items =
+                        getItems(
+                            result,
+                        );
+
+                    setPurposes(
+                        items,
+                    );
+                } catch (error) {
+                    if (
+                        error.name ===
+                        "AbortError"
+                    ) {
+                        return;
+                    }
+
+                    console.error(
+                        "목적 목록 조회 실패:",
+                        error,
+                    );
+
+                    setPurposes(
+                        [],
+                    );
+
+                    setPurposeError(
+                        "목적 목록을 불러오지 못했습니다.",
+                    );
+                } finally {
+                    if (
+                        !controller
+                            .signal
+                            .aborted
+                    ) {
+                        setIsPurposeLoading(
+                            false,
+                        );
+                    }
+                }
+            };
+
+        fetchPurposes();
+
+        return () => {
+            controller.abort();
+        };
+    }, []);
+
+    /*
+     * 공개 프로필 카드 목록 조회
+     */
     useEffect(() => {
         const controller =
             new AbortController();
 
         const fetchProfiles =
             async () => {
+                /*
+                 * 목적 목록 조회가 완료된 뒤
+                 * 프로필을 조회한다.
+                 */
+                if (
+                    isPurposeLoading
+                ) {
+                    return;
+                }
+
+                /*
+                 * 전체보기가 아닌데 목적 데이터를
+                 * 찾지 못했다면 전체 카드가 표시되지
+                 * 않도록 API 호출을 중단한다.
+                 */
+                if (
+                    activeTab !==
+                        "전체보기" &&
+                    !selectedPurposeId
+                ) {
+                    setProfiles(
+                        [],
+                    );
+
+                    setTotalPages(
+                        1,
+                    );
+
+                    setIsLoading(
+                        false,
+                    );
+
+                    setErrorMessage(
+                        purposeError ||
+                            `${activeTab} 목적 데이터가 등록되어 있지 않습니다.`,
+                    );
+
+                    return;
+                }
+
                 try {
-                    setIsLoading(true);
-                    setErrorMessage("");
+                    setIsLoading(
+                        true,
+                    );
+
+                    setErrorMessage(
+                        "",
+                    );
 
                     const sortParams =
                         getSortParams(
@@ -155,6 +382,16 @@ const Explore = () => {
 
                                 order:
                                     sortParams.order,
+
+                                /*
+                                 * 전체보기에서는
+                                 * purposeId를 보내지 않는다.
+                                 */
+                                purposeId:
+                                    activeTab ===
+                                    "전체보기"
+                                        ? undefined
+                                        : selectedPurposeId,
 
                                 keywords:
                                     keyword,
@@ -177,11 +414,13 @@ const Explore = () => {
 
                     const total =
                         data?.metadata
-                            ?.total || 0;
+                            ?.total ||
+                        0;
 
                     const limit =
                         data?.metadata
-                            ?.limit || 16;
+                            ?.limit ||
+                        16;
 
                     setTotalPages(
                         Math.max(
@@ -206,7 +445,13 @@ const Explore = () => {
                         error,
                     );
 
-                    setProfiles([]);
+                    setProfiles(
+                        [],
+                    );
+
+                    setTotalPages(
+                        1,
+                    );
 
                     setErrorMessage(
                         "프로필을 불러오지 못했습니다.",
@@ -231,30 +476,49 @@ const Explore = () => {
             );
 
         return () => {
-            clearTimeout(timer);
+            clearTimeout(
+                timer,
+            );
+
             controller.abort();
         };
     }, [
+        activeTab,
         currentPage,
         keyword,
         sort,
+        selectedPurposeId,
+        isPurposeLoading,
+        purposeError,
     ]);
 
     const handleTabClick = (
         tab,
     ) => {
-        setActiveTab(tab);
-        setCurrentPage(1);
+        setActiveTab(
+            tab,
+        );
+
+        setCurrentPage(
+            1,
+        );
+
+        setErrorMessage(
+            "",
+        );
     };
 
     const handlePageChange = (
         page,
     ) => {
-        setCurrentPage(page);
+        setCurrentPage(
+            page,
+        );
 
         window.scrollTo({
             top: 0,
-            behavior: "smooth",
+            behavior:
+                "smooth",
         });
     };
 
@@ -278,7 +542,10 @@ const Explore = () => {
                 "전체보기",
             );
 
-            setCurrentPage(1);
+            setCurrentPage(
+                1,
+            );
+
             setKeyword("");
 
             setIsMobileSearchOpen(
@@ -293,7 +560,10 @@ const Explore = () => {
             );
 
             setKeyword("");
-            setCurrentPage(1);
+
+            setCurrentPage(
+                1,
+            );
         };
 
     const handleMobileLogoClick =
@@ -302,7 +572,10 @@ const Explore = () => {
                 "전체보기",
             );
 
-            setCurrentPage(1);
+            setCurrentPage(
+                1,
+            );
+
             setKeyword("");
             setAffiliation("");
             setSelectedTags([]);
@@ -319,9 +592,14 @@ const Explore = () => {
                 false,
             );
 
+            setErrorMessage(
+                "",
+            );
+
             window.scrollTo({
                 top: 0,
-                behavior: "auto",
+                behavior:
+                    "auto",
             });
         };
 
@@ -545,7 +823,8 @@ const Explore = () => {
                                     isUserLoggedIn
                                 }
                                 isLoading={
-                                    isLoading
+                                    isLoading ||
+                                    isPurposeLoading
                                 }
                                 errorMessage={
                                     errorMessage
@@ -555,6 +834,7 @@ const Explore = () => {
                             {!isRestrictedTab &&
                                 !isMobileSearchOpen &&
                                 !isLoading &&
+                                !isPurposeLoading &&
                                 !errorMessage && (
                                     <Pagination
                                         currentPage={
@@ -570,7 +850,9 @@ const Explore = () => {
                                 )}
 
                             {isRestrictedTab &&
-                                !isMobileSearchOpen && (
+                                !isMobileSearchOpen &&
+                                !isLoading &&
+                                !isPurposeLoading && (
                                     <>
                                         <div
                                             className={
