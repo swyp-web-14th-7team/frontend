@@ -12,11 +12,15 @@ import MainLayout from "./layouts/MainLayout";
 
 import AuthCallback from "./pages/Auth/AuthCallback";
 import Explore from "./pages/Explore/Explore";
+import MyPage from "./pages/MyPage/MyPage";
 import Onboarding from "./pages/Onboarding/Onboarding";
 import ProfileCarouselPage from "./pages/ProfileCarousel/ProfileCarouselPage";
 import ProfileDetail from "./pages/Profile/ProfileDetail";
+import ProfileDetailEdit from "./pages/ProfileDetailEdit/ProfileDetailEdit";
+import MyProfileDetail from "./pages/MyProfileDetail/MyProfileDetail";
 import Scrap from "./pages/Scrap/Scrap";
 import Saved from "./pages/Saved/Saved";
+import Settings from "./pages/Settings/Settings";
 
 import profiles from "./mocks/profiles";
 
@@ -126,6 +130,29 @@ function App() {
                     }
                 />
 
+                {/*
+                 * 내 프로필 카드 목록
+                 */}
+                <Route
+                    path="/profile"
+                    element={
+                        <MyPage />
+                    }
+                />
+
+                <Route
+                    path="/settings"
+                    element={<Settings />}
+                />
+
+                <Route
+                    path="/settings/:section"
+                    element={<Settings />}
+                />
+
+                {/*
+                 * 프로필 카드 상세
+                 */}
                 <Route
                     path="/profile/:profileId"
                     element={
@@ -159,6 +186,13 @@ function App() {
                 }
             />
 
+            <Route
+                path="/my-profile/:profileId"
+                element={
+                    <MyProfileDetail />
+                }
+            />
+
             {/*
              * 온보딩은 공통 헤더를
              * 사용하지 않음
@@ -167,6 +201,13 @@ function App() {
                 path="/onboarding"
                 element={
                     <Onboarding />
+                }
+            />
+
+            <Route
+                path="/my-profile/:profileId/detail-edit"
+                element={
+                    <ProfileDetailEdit />
                 }
             />
         </Routes>

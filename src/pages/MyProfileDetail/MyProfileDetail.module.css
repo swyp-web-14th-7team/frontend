@@ -1,0 +1,398 @@
+.summaryCard {
+    position: relative;
+}
+
+.summaryTop {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.menuArea {
+    position: relative;
+}
+
+.moreButton {
+    padding: 4px;
+    border: 0;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 16px;
+    letter-spacing: 2px;
+    background: transparent;
+    cursor: pointer;
+}
+
+.profileMenu {
+    position: absolute;
+    z-index: 20;
+    top: 30px;
+    right: 0;
+    width: 130px;
+    padding: 6px;
+    border: 1px solid #4a5066;
+    border-radius: 7px;
+    background: #34394f;
+    box-shadow:
+        0 15px 32px
+        rgb(0 0 0 / 35%);
+}
+
+.profileMenu button {
+    width: 100%;
+    padding: 10px;
+    border: 0;
+    border-radius: 5px;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 12px;
+    text-align: left;
+    background: transparent;
+    cursor: pointer;
+}
+
+.profileMenu button:hover {
+    background: #444a61;
+}
+
+.profileMenu
+    .deleteMenuButton {
+    color: #ff666e;
+}
+
+.shareMessage {
+    margin: 12px 0 0;
+    color: #b9dfff;
+    font-size: 11px;
+    line-height: 1.5;
+    text-align: center;
+}
+
+.completionCard {
+    min-height: 540px;
+}
+
+.completionHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+}
+
+.completionHeader h1 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.completionHeader span {
+    color: #aeb3c2;
+    font-size: 12px;
+}
+
+.completionList {
+    display: flex;
+    flex-direction: column;
+}
+
+.completionItem {
+    display: flex;
+    min-height: 92px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+    padding: 18px 0;
+    border-bottom: 1px solid #3a3f56;
+}
+
+.completionItem:last-child {
+    border-bottom: 0;
+}
+
+.completionItem > div {
+    display: flex;
+    flex-direction: column;
+}
+
+.completionCategory {
+    margin-bottom: 6px;
+    color: #8f96aa;
+    font-size: 11px;
+}
+
+.completionItem strong {
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+.completionItem p {
+    margin: 0;
+    color: #747a8e;
+    font-size: 12px;
+}
+
+.configureButton,
+.completedButton {
+    min-width: 72px;
+    height: 38px;
+    border: 0;
+    border-radius: 6px;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 12px;
+    background: #4a5067;
+    cursor: pointer;
+}
+
+.completedButton {
+    color: #9dd4fb;
+    background: #34394f;
+}
+
+.experienceContent {
+    padding: 18px;
+}
+
+.experienceContent strong {
+    font-size: 14px;
+}
+
+.experienceContent p {
+    margin: 10px 0;
+    color: #b6bbc9;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.experienceContent a {
+    color: #8f96aa;
+    font-size: 11px;
+    text-decoration: none;
+}
+
+.backArea {
+    position: relative;
+    z-index: 3;
+    width: min(
+        1180px,
+        calc(100% - 80px)
+    );
+    margin: 20px auto 0;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.backArea button {
+    padding: 10px 14px;
+    border: 0;
+    border-radius: 6px;
+    color: #ffffff;
+    font-family: inherit;
+    background: #34394f;
+    cursor: pointer;
+}
+
+.pageError {
+    position: fixed;
+    z-index: 1200;
+    right: 24px;
+    bottom: 24px;
+    margin: 0;
+    padding: 12px 16px;
+    border-radius: 7px;
+    color: #ffbec2;
+    font-size: 13px;
+    background: #462932;
+}
+
+.modalBackdrop {
+    position: fixed;
+    z-index: 1000;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    background:
+        rgb(6 7 13 / 76%);
+    backdrop-filter: blur(5px);
+}
+
+.visibilityModal,
+.deleteModal {
+    width: min(440px, 100%);
+    box-sizing: border-box;
+    padding: 26px;
+    border: 1px solid #41465c;
+    border-radius: 10px;
+    color: #ffffff;
+    background: #222536;
+    box-shadow:
+        0 28px 70px
+        rgb(0 0 0 / 45%);
+}
+
+.modalHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 30px;
+}
+
+.modalHeader h2 {
+    margin: 0;
+    font-size: 17px;
+}
+
+.modalHeader button {
+    border: 0;
+    color: #ffffff;
+    font-size: 24px;
+    background: transparent;
+    cursor: pointer;
+}
+
+.settingRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 56px;
+}
+
+.settingRow label,
+.settingRow > span {
+    color: #e1e3ea;
+    font-size: 13px;
+}
+
+.settingRow select {
+    min-width: 130px;
+    padding: 9px 11px;
+    border: 1px solid #52586f;
+    border-radius: 7px;
+    color: #ffffff;
+    font-family: inherit;
+    background: #34394f;
+}
+
+.toggle {
+    display: flex;
+    width: 62px;
+    height: 32px;
+    padding: 3px;
+    align-items: center;
+    justify-content: space-between;
+    border: 0;
+    border-radius: 999px;
+    color: #c7cad4;
+    font-family: inherit;
+    font-size: 9px;
+    background: #505568;
+    cursor: pointer;
+}
+
+.toggle span {
+    margin-left: 6px;
+}
+
+.toggle i {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #ffffff;
+}
+
+.toggle:not(.toggleOn) {
+    flex-direction: row-reverse;
+}
+
+.toggle:not(.toggleOn)
+    span {
+    margin-right: 4px;
+    margin-left: 0;
+}
+
+.toggleOn {
+    color: #234966;
+    background: #9fd6ff;
+}
+
+.saveButton {
+    width: 100%;
+    height: 48px;
+    margin-top: 50px;
+    border: 0;
+    border-radius: 7px;
+    color: #20364a;
+    font-family: inherit;
+    font-weight: 700;
+    background: #afd8f8;
+    cursor: pointer;
+}
+
+.deleteModal {
+    text-align: center;
+    background: #34394f;
+}
+
+.deleteIcon {
+    display: grid;
+    width: 22px;
+    height: 22px;
+    margin: 0 auto 16px;
+    place-items: center;
+    border-radius: 50%;
+    color: #242736;
+    font-weight: 700;
+    background: #ff5360;
+}
+
+.deleteModal h2 {
+    margin: 0 0 8px;
+    font-size: 18px;
+}
+
+.deleteModal p {
+    margin: 0;
+    color: #c0c3cd;
+    font-size: 13px;
+}
+
+.deleteActions {
+    display: grid;
+    grid-template-columns:
+        1fr 1fr;
+    gap: 8px;
+    margin-top: 28px;
+}
+
+.deleteActions button {
+    height: 46px;
+    border: 0;
+    border-radius: 7px;
+    color: #283544;
+    font-family: inherit;
+    font-weight: 700;
+    background: #eef1f5;
+    cursor: pointer;
+}
+
+.deleteActions button:last-child {
+    background: #afd8f8;
+}
+
+@media (max-width: 768px) {
+    .completionItem {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .configureButton,
+    .completedButton {
+        width: 100%;
+    }
+
+    .backArea {
+        width:
+            calc(100% - 40px);
+    }
+}
