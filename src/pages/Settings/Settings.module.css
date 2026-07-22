@@ -1,20 +1,17 @@
-.page {
+    .page {
     display: grid;
-    grid-template-columns:
-        252px minmax(0, 1fr);
-    min-height:
-        calc(100vh - 72px);
+    grid-template-columns: 252px minmax(0, 1fr);
+    min-height: calc(100vh - 72px);
     color: #f5f6fa;
     background: #0e0e16;
-}
+    }
 
-.sidebar {
+    .sidebar {
     padding: 34px 16px;
-    border-right:
-        1px solid #343747;
-}
+    border-right: 1px solid #343747;
+    }
 
-.backButton {
+    .backButton {
     display: flex;
     align-items: center;
     gap: 12px;
@@ -27,21 +24,21 @@
     font-weight: 600;
     background: transparent;
     cursor: pointer;
-}
+    }
 
-.backButton span {
+    .backButton span {
     font-size: 28px;
     font-weight: 300;
     line-height: 1;
-}
+    }
 
-.sideNav {
+    .sideNav {
     display: flex;
     flex-direction: column;
     gap: 8px;
-}
+    }
 
-.sideNav button {
+    .sideNav button {
     width: 100%;
     padding: 14px 16px;
     border: 0;
@@ -52,140 +49,132 @@
     text-align: left;
     background: transparent;
     cursor: pointer;
-}
+    }
 
-.sideNav button:hover {
+    .sideNav button:hover {
     background: #1b1e2c;
-}
+    }
 
-.sideNav
-    .activeSideItem {
+    .sideNav .activeSideItem {
     color: #ffffff;
     background: #25293b;
-}
+    }
 
-.sideNav
-    .logoutButton {
+    .sideNav .logoutButton {
     margin-top: 10px;
     color: #c7c9d2;
-}
+    }
 
-.content {
-    padding:
-        56px 48px 80px;
-}
+    .content {
+    padding: 56px 48px 80px;
+    }
 
-.contentInner {
+    .contentInner {
     width: min(620px, 100%);
     margin-left: 96px;
-}
+    }
 
-.contentHeader {
+    .contentHeader {
     margin-bottom: 34px;
-}
+    }
 
-.contentHeader h1 {
+    .contentHeader h1 {
     margin: 0 0 10px;
     font-size: 22px;
     font-weight: 700;
-}
+    }
 
-.contentHeader p {
+    .contentHeader p {
     margin: 0;
     color: #858a9d;
     font-size: 14px;
     line-height: 1.5;
-}
+    }
 
-.form {
+    .form {
     display: flex;
     flex-direction: column;
     gap: 24px;
-}
+    }
 
-.field {
+    .field {
     display: flex;
     flex-direction: column;
     gap: 8px;
-}
+    }
 
-.field label {
+    .field label {
     color: #aeb2c1;
     font-size: 13px;
-}
+    }
 
-.field input {
+    .field input {
     width: 100%;
     height: 48px;
     box-sizing: border-box;
     padding: 0 16px;
-    border: 1px solid
-        transparent;
+    border: 1px solid transparent;
     border-radius: 8px;
     color: #f7f8fb;
     font-family: inherit;
     font-size: 14px;
     background: #353a50;
     outline: none;
-}
+    }
 
-.field input:focus {
+    .field input:focus {
     border-color: #acd9fa;
-}
+    }
 
-.field input:disabled {
+    .field input:disabled {
     color: #71768b;
     cursor: not-allowed;
-}
+    }
 
-.jobRow {
+    .jobRow {
     display: grid;
-    grid-template-columns:
-        74px minmax(0, 1fr);
+    grid-template-columns: 74px minmax(0, 1fr);
     gap: 8px;
-}
+    }
 
-.jobSelectButton {
+    .jobSelectButton {
     display: flex;
     height: 48px;
     align-items: center;
-    justify-content:
-        space-between;
+    justify-content: space-between;
     padding: 0 12px;
     border: 1px solid #62687e;
     border-radius: 8px;
     color: #9ca1b2;
     font-family: inherit;
     background: #353a50;
-}
+    }
 
-.fieldDescription {
+    .fieldDescription {
     margin: 0;
     color: #777c90;
     font-size: 12px;
-}
+    }
 
-.error,
-.success {
+    .error,
+    .success {
     margin: -6px 0 0;
     padding: 10px 12px;
     border-radius: 7px;
     font-size: 13px;
-}
+    }
 
-.error {
+    .error {
     color: #ffb9bd;
-    background:
-        rgb(195 50 63 / 16%);
-}
+    background: rgb(195 50 63 / 16%);
+    }
 
-.success {
+    .success {
     color: #b8eed0;
-    background:
-        rgb(42 151 92 / 16%);
-}
+    background: rgb(42 151 92 / 16%);
+    }
 
-.submitButton {
+    .submitButton {
     width: 100%;
     height: 50px;
     margin-top: 8px;
@@ -197,18 +186,18 @@
     font-weight: 700;
     background: #b4dcfa;
     cursor: pointer;
-}
+    }
 
-.submitButton:hover:not(:disabled) {
+    .submitButton:hover:not(:disabled) {
     background: #c8e7ff;
-}
+    }
 
-.submitButton:disabled {
+    .submitButton:disabled {
     opacity: 0.65;
     cursor: wait;
-}
+    }
 
-.emptySection {
+    .emptySection {
     display: grid;
     min-height: 260px;
     place-items: center;
@@ -216,24 +205,139 @@
     border-radius: 12px;
     color: #818697;
     font-size: 14px;
-}
+    }
 
-.statusText {
+    .statusText {
     color: #9da1af;
-}
+    }
 
-.modalBackdrop {
+    .requestList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    }
+
+    .requestItem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 16px;
+    border: 1px solid #343747;
+    border-radius: 10px;
+    background: #171822;
+    }
+
+    .requestProfile,
+    .requestActions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    }
+
+    .requestAvatar,
+    .requestAvatarFallback {
+    width: 48px;
+    height: 48px;
+    flex: 0 0 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    }
+
+    .requestAvatarFallback {
+    display: grid;
+    place-items: center;
+    color: #26384a;
+    font-weight: 700;
+    background: #b4dcfa;
+    }
+
+    .requestProfile strong {
+    font-size: 14px;
+    }
+
+    .requestProfile p {
+    margin: 5px 0 0;
+    color: #858a9d;
+    font-size: 12px;
+    }
+
+    .requestStatus {
+    padding: 6px 9px;
+    border-radius: 999px;
+    color: #b8c0d3;
+    font-size: 12px;
+    background: #292c3b;
+    }
+
+    .status0 {
+    color: #f8d98d;
+    }
+    .status1 {
+    color: #a9e7c5;
+    }
+    .status2,
+    .status3 {
+    color: #a2a6b4;
+    }
+
+    .requestActions button,
+    .dangerSection button {
+    padding: 9px 12px;
+    border: 1px solid #646a7e;
+    border-radius: 7px;
+    color: #e7e9ef;
+    font-family: inherit;
+    background: transparent;
+    cursor: pointer;
+    }
+
+    .requestActions button:disabled {
+    opacity: 0.55;
+    cursor: wait;
+    }
+
+    .dangerSection {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 22px;
+    border: 1px solid rgb(218 79 91 / 45%);
+    border-radius: 10px;
+    background: rgb(195 50 63 / 8%);
+    }
+
+    .dangerSection strong {
+    font-size: 15px;
+    }
+
+    .dangerSection p {
+    margin: 7px 0 0;
+    color: #9da1af;
+    font-size: 13px;
+    line-height: 1.5;
+    }
+
+    .dangerSection button,
+    .withdrawConfirmButton {
+    flex: 0 0 auto;
+    color: #ffd8db;
+    border-color: #b74d58;
+    background: #85333b;
+    }
+
+    .modalBackdrop {
     position: fixed;
     z-index: 1000;
     inset: 0;
     display: grid;
     place-items: center;
     padding: 20px;
-    background:
-        rgb(5 6 12 / 68%);
-}
+    background: rgb(5 6 12 / 68%);
+    }
 
-.leaveModal {
+    .leaveModal {
     width: min(420px, 100%);
     box-sizing: border-box;
     padding: 26px;
@@ -241,66 +345,66 @@
     border-radius: 10px;
     color: #ffffff;
     background: #34394f;
-    box-shadow:
-        0 28px 70px
-        rgb(0 0 0 / 45%);
-}
+    box-shadow: 0 28px 70px rgb(0 0 0 / 45%);
+    }
 
-.leaveModal h2 {
+    .leaveModal h2 {
     margin: 0 0 8px;
     font-size: 18px;
-}
+    }
 
-.leaveModal p {
+    .leaveModal p {
     margin: 0;
     color: #c4c7d1;
     font-size: 14px;
-}
+    }
 
-.modalActions {
+    .modalActions {
     display: grid;
-    grid-template-columns:
-        1fr 1fr;
+    grid-template-columns: 1fr 1fr;
     gap: 8px;
     margin-top: 30px;
-}
+    }
 
-.modalActions button {
+    .modalActions button {
     height: 48px;
     border: 0;
     border-radius: 7px;
     font-family: inherit;
     font-weight: 700;
     cursor: pointer;
-}
+    }
 
-.continueButton {
+    .continueButton {
     color: #303547;
     background: #e1e4eb;
-}
+    }
 
-.discardButton {
+    .discardButton {
     color: #26384a;
     background: #b4dcfa;
-}
+    }
 
-@media (max-width: 900px) {
+    .modalActions .withdrawConfirmButton {
+    color: #ffffff;
+    background: #a43d47;
+    }
+
+    @media (max-width: 900px) {
     .page {
-        grid-template-columns:
-            210px minmax(0, 1fr);
+        grid-template-columns: 210px minmax(0, 1fr);
     }
 
     .content {
-        padding:
-            44px 28px 70px;
+        padding: 44px 28px 70px;
     }
 
     .contentInner {
         margin-left: 0;
     }
-}
+    }
 
-@media (max-width: 680px) {
+    @media (max-width: 680px) {
     .page {
         display: block;
     }
@@ -308,8 +412,7 @@
     .sidebar {
         padding: 20px 16px;
         border-right: 0;
-        border-bottom:
-            1px solid #343747;
+        border-bottom: 1px solid #343747;
     }
 
     .backButton {
@@ -318,8 +421,7 @@
 
     .sideNav {
         display: grid;
-        grid-template-columns:
-            repeat(3, 1fr);
+        grid-template-columns: repeat(3, 1fr);
     }
 
     .sideNav button {
@@ -328,14 +430,12 @@
         text-align: center;
     }
 
-    .sideNav
-        .logoutButton {
+    .sideNav .logoutButton {
         display: none;
     }
 
     .content {
-        padding:
-            32px 16px 60px;
+        padding: 32px 16px 60px;
     }
 
     .jobRow {
@@ -345,4 +445,15 @@
     .modalActions {
         grid-template-columns: 1fr;
     }
-}
+
+    .requestItem,
+    .dangerSection {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .requestActions {
+        width: 100%;
+        justify-content: space-between;
+    }
+    }

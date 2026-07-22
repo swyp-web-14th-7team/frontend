@@ -74,83 +74,88 @@
 
     content: "";
     }
-
+    
     .cardArea {
-    position: relative;
+        position: relative;
+    }
+
+    /*
+    * 로그인 전에 제한된 탭을 열었을 때
+    * 카드가 없어도 로그인 문구가
+    * 카드 영역 맨 아래에 있도록 높이를 확보한다.
+    */
+    .restrictedCardArea {
+        min-height: 520px;
     }
 
     .maskGradient {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    left: 0;
+        position: absolute;
+        inset: 0;
+        z-index: 1;
 
-    z-index: 1;
-    height: 65%;
+        background: linear-gradient(
+            to bottom,
+            rgb(17 16 23 / 0%),
+            rgb(17 16 23 / 45%) 45%,
+            rgb(17 16 23 / 92%) 78%,
+            #111017 100%
+        );
 
-    background: linear-gradient(
-        to bottom,
-        rgb(17 16 23 / 0%),
-        rgb(17 16 23 / 88%) 55%,
-        #111017 100%
-    );
-
-    pointer-events: none;
+        pointer-events: none;
     }
 
     .loginGuide {
-    position: absolute;
-    right: 0;
-    bottom: 56px;
-    left: 0;
+        position: absolute;
+        right: 0;
+        bottom: 48px;
+        left: 0;
+        z-index: 2;
 
-    z-index: 2;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
 
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-
-    text-align: center;
+        text-align: center;
     }
 
     .loginGuideTitle {
-    margin: 0;
+        margin: 0;
 
-    color: #ffffff;
-    font-size: 24px;
-    font-weight: 700;
-    line-height: 1.4;
+        color: #ffffff;
+        font-size: 24px;
+        font-weight: 700;
+        line-height: 1.4;
     }
 
     .loginGuideDescription {
-    margin: 16px 0 24px;
+        margin: 16px 0 24px;
 
-    color: #9ca0b2;
-    font-size: 14px;
-    line-height: 1.6;
+        color: #9ca0b2;
+        font-size: 14px;
+        line-height: 1.6;
     }
 
     .startButton {
-    width: 220px;
-    height: 44px;
+        width: 220px;
+        height: 44px;
 
-    border: 0;
-    border-radius: 6px;
+        border: 0;
+        border-radius: 6px;
 
-    background-color: #cceaff;
-    color: #111017;
+        background-color: #cceaff;
+        color: #111017;
 
-    font-family: inherit;
-    font-size: 14px;
-    font-weight: 600;
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 600;
 
-    cursor: pointer;
+        cursor: pointer;
     }
 
     .startButton:hover {
-    opacity: 0.9;
+        opacity: 0.9;
     }
-    
+
     .mobileOnly {
     display: none;
     }

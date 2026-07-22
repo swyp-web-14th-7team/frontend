@@ -599,30 +599,30 @@ const CardBasicStep = ({
                     </p>
                 )}
 
-                <button
-                    type="button"
-                    onClick={
-                        onSubmit
-                    }
-                    disabled={
-                        !isFormValid ||
-                        isSubmitting
-                    }
-                    className={`body1 ${
-                        isFormValid &&
-                        !isSubmitting
-                            ? styles.nextButtonActive
-                            : styles.nextButton
-                    }`}
-                >
-                    {isSubmitting
-                        ? isEditMode
-                            ? "저장 중..."
-                            : "생성 중..."
-                        : isEditMode
-                          ? "변경사항 저장"
-                          : "만들기"}
-                </button>
+        <button
+            type="button"
+            onClick={
+                onSubmit
+            }
+            disabled={
+                !isFormValid ||
+                isSubmitting
+            }
+            className={`body1 ${
+                isFormValid &&
+                !isSubmitting
+                    ? styles.nextButtonActive
+                    : styles.nextButton
+            }`}
+        >
+            {isSubmitting
+                ? isEditMode
+                    ? "저장 중..."
+                    : "처리 중..."
+                : isEditMode
+                ? "변경사항 저장"
+                : "다음"}
+        </button>
             </section>
 
             {modalType ===
