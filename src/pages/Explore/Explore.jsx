@@ -803,12 +803,14 @@ const Explore = () => {
                                 )}
                             </div>
                         )}
-
-                        <div
-                            className={
-                                styles.cardArea
-                            }
-                        >
+                            <div
+                                className={`${styles.cardArea} ${
+                                    isRestrictedTab
+                                        ? styles.restrictedCardArea
+                                        : ""
+                                }`}
+                            >
+                        
                             <ExploreCardList
                                 profiles={
                                     profiles
