@@ -1,4 +1,6 @@
 import {
+    useCallback,
+    useEffect,
     useState,
 } from "react";
 
@@ -20,8 +22,20 @@ import {
 
 import CardExchangeModal from "../../components/profile/CardExchangeModal";
 
+import {
+    createCollection,
+    createCollectionGroup,
+    deleteCollection,
+    getCollectionGroupItems,
+    getCollectionGroups,
+    moveCollection,
+} from "../../api/collections";
+
 import usePublicProfile from "../../hooks/usePublicProfile";
-import myProfileCards from "../../mocks/myProfileCards";
+
+import {
+    mapProfileCard,
+} from "../../utils/profileMapper";
 
 import styles from "./ProfileDetail.module.css";
 
@@ -41,12 +55,31 @@ const LINK_ICONS = {
     website: MdLanguage,
 };
 
-const ProfileDetail = ({
-    drawers = [],
-    setDrawers,
-}) => {
+const getArrayData = (data) => {
+    if (Array.isArray(data)) {
+        return data;
+    }
+
+    return (
+        data?.items ||
+        data?.collectionGroups ||
+        data?.groups ||
+        []
+    );
+};
+
+const ProfileDetail = () => {
     const { profileId } = useParams();
     const navigate = useNavigate();
+
+    const [drawers, setDrawers] =
+        useState([]);
+
+    const [scrapError, setScrapError] =
+        useState("");
+
+    const [isSavingScrap, setIsSavingScrap] =
+        useState(false);
 
     /* 스크랩 모달 */
 
@@ -89,6 +122,91 @@ const ProfileDetail = ({
     } = usePublicProfile(
         profileId,
     );
+
+    const loadDrawers = useCallback(
+        async (signal) => {
+            try {
+                const groupData =
+                    await getCollectionGroups({
+                        signal,
+                    });
+
+                const groups =
+                    getArrayData(groupData);
+
+                const loadedDrawers =
+                    await Promise.all(
+                        groups.map(
+                            async (group) => {
+                                const itemData =
+                                    await getCollectionGroupItems(
+                                        group.id,
+                                        { signal },
+                                    );
+
+                                const items =
+                                    getArrayData(
+                                        itemData,
+                                    );
+
+                                return {
+                                    id: group.id,
+                                    name: group.name,
+                                    profiles:
+                                        items.map(
+                                            (item) => ({
+                                                ...mapProfileCard(
+                                                    item.card ||
+                                                        item.profile ||
+                                                        item,
+                                                ),
+                                                collectionId:
+                                                    item.collectionId ??
+                                                    item.id,
+                                            }),
+                                        ),
+                                };
+                            },
+                        ),
+                    );
+
+                setDrawers(loadedDrawers);
+                setScrapError("");
+            } catch (error) {
+                if (
+                    error?.name !==
+                    "AbortError"
+                ) {
+                    console.error(
+                        "스크랩 서랍 조회 실패:",
+                        error,
+                    );
+                    setScrapError(
+                        error.message ||
+                            "스크랩 서랍을 불러오지 못했습니다.",
+                    );
+                }
+            }
+        },
+        [],
+    );
+
+    useEffect(() => {
+        const controller =
+            new AbortController();
+
+        const fetchDrawers = async () => {
+            await loadDrawers(
+                controller.signal,
+            );
+        };
+
+        fetchDrawers();
+
+        return () => {
+            controller.abort();
+        };
+    }, [loadDrawers]);
 
     if (isLoading) {
     return (
@@ -242,10 +360,7 @@ if (errorMessage) {
                     );
                 }
 
-                return [
-                    ...currentIds,
-                    drawerId,
-                ];
+                return [drawerId];
             },
         );
     };
@@ -260,7 +375,7 @@ if (errorMessage) {
         setIsAddingDrawer(false);
     };
 
-    const handleCreateDrawer = (
+    const handleCreateDrawer = async (
         event,
     ) => {
         event.preventDefault();
@@ -268,120 +383,105 @@ if (errorMessage) {
         const trimmedName =
             newDrawerName.trim();
 
-        if (
-            !trimmedName ||
-            typeof setDrawers !==
-                "function"
-        ) {
+        if (!trimmedName) {
             return;
         }
 
-        const numericDrawerIds = drawers
-            .map((drawer) =>
-                Number(drawer.id),
-            )
-            .filter((id) =>
-                Number.isFinite(id),
+        setScrapError("");
+
+        try {
+            const createdGroup =
+                await createCollectionGroup(
+                    trimmedName,
+                );
+
+            await loadDrawers();
+
+            if (createdGroup?.id) {
+                setSelectedDrawerIds([
+                    createdGroup.id,
+                ]);
+            }
+
+            setNewDrawerName("");
+            setIsAddingDrawer(false);
+        } catch (error) {
+            console.error(
+                "서랍 생성 실패:",
+                error,
             );
-
-        const newDrawerId =
-            numericDrawerIds.length > 0
-                ? Math.max(
-                      ...numericDrawerIds,
-                  ) + 1
-                : 1;
-
-        const newDrawer = {
-            id: newDrawerId,
-            name: trimmedName,
-            profiles: [],
-        };
-
-        setDrawers(
-            (currentDrawers) => [
-                ...currentDrawers,
-                newDrawer,
-            ],
-        );
-
-        setSelectedDrawerIds(
-            (currentIds) => [
-                ...currentIds,
-                newDrawerId,
-            ],
-        );
-
-        setNewDrawerName("");
-        setIsAddingDrawer(false);
+            setScrapError(
+                error.message ||
+                    "새 서랍을 만들지 못했습니다.",
+            );
+        }
     };
 
-    const handleScrapSave = () => {
-        if (
-            typeof setDrawers !==
-            "function"
-        ) {
+    const handleScrapSave = async () => {
+        if (isSavingScrap) {
             return;
         }
 
-        setDrawers(
-            (currentDrawers) =>
-                currentDrawers.map(
-                    (drawer) => {
-                        const shouldSave =
-                            selectedDrawerIds.includes(
-                                drawer.id,
-                            );
-
-                        const isAlreadySaved =
-                            drawer.profiles?.some(
-                                (item) =>
-                                    String(
-                                        item.id,
-                                    ) ===
-                                    String(
-                                        profile.id,
-                                    ),
-                            );
-
-                        if (
-                            shouldSave &&
-                            !isAlreadySaved
-                        ) {
-                            return {
-                                ...drawer,
-                                profiles: [
-                                    ...(drawer.profiles ||
-                                        []),
-                                    profile,
-                                ],
-                            };
-                        }
-
-                        if (
-                            !shouldSave &&
-                            isAlreadySaved
-                        ) {
-                            return {
-                                ...drawer,
-                                profiles:
-                                    drawer.profiles.filter(
-                                        (item) =>
-                                            String(
-                                                item.id,
-                                            ) !==
-                                            String(
-                                                profile.id,
-                                            ),
-                                    ),
-                            };
-                        }
-
-                        return drawer;
-                    },
-                ),
+        const savedDrawer = drawers.find(
+            isProfileInDrawer,
         );
 
-        handleCloseScrap();
+        const savedProfile =
+            savedDrawer?.profiles.find(
+                (item) =>
+                    String(item.id) ===
+                    String(profile.id),
+            );
+
+        const selectedDrawerId =
+            selectedDrawerIds[0] ?? null;
+
+        setIsSavingScrap(true);
+        setScrapError("");
+
+        try {
+            if (
+                !savedProfile &&
+                selectedDrawerId
+            ) {
+                await createCollection({
+                    cardId: profile.id,
+                    groupId:
+                        selectedDrawerId,
+                });
+            } else if (
+                savedProfile?.collectionId &&
+                !selectedDrawerId
+            ) {
+                await deleteCollection(
+                    savedProfile.collectionId,
+                );
+            } else if (
+                savedProfile?.collectionId &&
+                selectedDrawerId &&
+                String(savedDrawer.id) !==
+                    String(selectedDrawerId)
+            ) {
+                await moveCollection(
+                    savedProfile.collectionId,
+                    selectedDrawerId,
+                );
+            }
+
+            await loadDrawers();
+            handleCloseScrap();
+        } catch (error) {
+            console.error(
+                "스크랩 저장 실패:",
+                error,
+            );
+            setScrapError(
+                error.message ||
+                    "스크랩을 저장하지 못했습니다.",
+            );
+        } finally {
+            setIsSavingScrap(false);
+        }
     };
 
     /* 카드 교환 관련 */
@@ -1116,6 +1216,19 @@ if (errorMessage) {
                             </form>
                         )}
 
+                        {scrapError && (
+                            <p
+                                role="alert"
+                                style={{
+                                    margin: "12px 0",
+                                    color: "#d92d20",
+                                    fontSize: "14px",
+                                }}
+                            >
+                                {scrapError}
+                            </p>
+                        )}
+
                         <div
                             className={
                                 styles.scrapDrawerList
@@ -1195,8 +1308,13 @@ if (errorMessage) {
                             onClick={
                                 handleScrapSave
                             }
+                            disabled={
+                                isSavingScrap
+                            }
                         >
-                            저장
+                            {isSavingScrap
+                                ? "저장 중..."
+                                : "저장"}
                         </button>
                     </section>
                 </div>
@@ -1206,7 +1324,6 @@ if (errorMessage) {
 
             {isExchangeModalOpen && (
                 <CardExchangeModal
-                    cards={myProfileCards}
                     receiver={profile}
                     onClose={
                         handleCloseExchangeModal

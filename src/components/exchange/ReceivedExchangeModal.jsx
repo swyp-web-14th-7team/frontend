@@ -4,9 +4,6 @@ import {
 } from "react";
 
 import ExploreProfileCard from "../profile/ExploreProfileCard";
-import MyCardSelector from "./MyCardSelector";
-
-import myProfileCards from "../../mocks/myProfileCards";
 
 import styles from "./ReceivedExchangeModal.module.css";
 
@@ -21,13 +18,6 @@ const ReceivedExchangeModal = ({
     const [view, setView] =
         useState("card");
 
-    const [
-        selectedCardId,
-        setSelectedCardId,
-    ] = useState(
-        myProfileCards[0]?.id || null,
-    );
-
     const gestureRef = useRef({
         pointerId: null,
         startY: 0,
@@ -37,13 +27,6 @@ const ReceivedExchangeModal = ({
     if (!request) {
         return null;
     }
-
-    const selectedCard =
-        myProfileCards.find(
-            (card) =>
-                card.id ===
-                selectedCardId,
-        );
 
     const canSwipe =
         view === "card" ||
@@ -181,34 +164,10 @@ const ReceivedExchangeModal = ({
     };
 
     const handleAccept = () => {
-        if (view !== "selectCard") {
-            setView("selectCard");
-            return;
-        }
-
-        if (!selectedCard) {
-            return;
-        }
-
-        onAccept?.({
-            requestId: request.id,
-
-            receivedCard:
-                request.receivedCard,
-
-            responseCardId:
-                selectedCard.id,
-
-            responseCard: selectedCard,
-        });
+        onAccept?.(request.id);
     };
 
     const handleSecondaryAction = () => {
-        if (view === "selectCard") {
-            showCard();
-            return;
-        }
-
         onReject?.(request.id);
     };
 
@@ -238,17 +197,13 @@ const ReceivedExchangeModal = ({
                 >
                     <div>
                         <h2 id="received-exchange-title">
-                            {view ===
-                            "selectCard"
-                                ? "상대에게 보낼 내 카드를 선택해주세요"
-                                : `${request.sender.name}님과 카드를 교환하고 싶어해요`}
+                            {request.sender.name}님이
+                            카드 교환을 요청했어요
                         </h2>
 
                         <p>
-                            {view ===
-                            "selectCard"
-                                ? "비공개 카드도 직접 선택해서 보낼 수 있어요."
-                                : "교환 요청을 수락하면 서로의 보관함에 상대의 카드가 보관돼요."}
+                            교환 요청을 수락하면 서로의
+                            보관함에 상대의 카드가 보관돼요.
                         </p>
                     </div>
 
@@ -437,20 +392,6 @@ const ReceivedExchangeModal = ({
                         </div>
                     )}
 
-                    {view ===
-                        "selectCard" && (
-                        <MyCardSelector
-                            cards={
-                                myProfileCards
-                            }
-                            selectedCardId={
-                                selectedCardId
-                            }
-                            onSelect={
-                                setSelectedCardId
-                            }
-                        />
-                    )}
                 </div>
 
                 <div
@@ -467,10 +408,7 @@ const ReceivedExchangeModal = ({
                             handleSecondaryAction
                         }
                     >
-                        {view ===
-                        "selectCard"
-                            ? "이전"
-                            : "거절"}
+                        거절
                     </button>
 
                     <button
@@ -481,16 +419,8 @@ const ReceivedExchangeModal = ({
                         onClick={
                             handleAccept
                         }
-                        disabled={
-                            view ===
-                                "selectCard" &&
-                            !selectedCard
-                        }
                     >
-                        {view ===
-                        "selectCard"
-                            ? "이 카드 보내기"
-                            : "수락하기"}
+                        수락하기
                     </button>
                 </div>
             </section>

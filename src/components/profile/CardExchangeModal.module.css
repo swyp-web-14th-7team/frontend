@@ -78,6 +78,25 @@
     cursor: pointer;
 }
 
+.statusMessage,
+.errorMessage {
+    margin: 16px 8px 0;
+    padding: 12px 14px;
+    border-radius: 7px;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.statusMessage {
+    color: #c8cede;
+    background-color: #303448;
+}
+
+.errorMessage {
+    color: #ffb4ad;
+    background-color: rgba(217, 45, 32, 0.16);
+}
+
 .selectionStep,
 .messageStep {
     min-height: 0;

@@ -1,4 +1,6 @@
 import {
+    useCallback,
+    useEffect,
     useState,
 } from "react";
 
@@ -13,10 +15,21 @@ import NotificationPanel from "./NotificationPanel/NotificationPanel";
 import ReceivedExchangeModal from "../exchange/ReceivedExchangeModal";
 
 import {
+    acceptConnectionRequest,
+    getReceivedConnectionRequests,
+    rejectConnectionRequest,
+} from "../../api/connectionRequests";
+import {
+    getMyProfileCards,
+} from "../../api/profile";
+
+import {
+    mapProfileCard,
+} from "../../utils/profileMapper";
+
+import {
     isLoggedIn,
 } from "../../utils/auth";
-
-import exchangeRequestMocks from "../../mocks/exchangeRequests";
 
 import styles from "./Header.module.css";
 
@@ -43,9 +56,10 @@ const Header = ({
     const [
         exchangeRequests,
         setExchangeRequests,
-    ] = useState(
-        exchangeRequestMocks,
-    );
+    ] = useState([]);
+
+    const [exchangeError, setExchangeError] =
+        useState("");
 
     const [
         isNotificationOpen,
@@ -64,6 +78,131 @@ const Header = ({
 
     const isUserLoggedIn =
         isLoggedIn();
+
+    const loadReceivedRequests = useCallback(
+        async (signal) => {
+            if (!isLoggedIn()) {
+                setExchangeRequests([]);
+                return;
+            }
+
+            try {
+                const cardData =
+                    await getMyProfileCards({
+                        page: 1,
+                        limit: 100,
+                        sort: "createdAt",
+                        order: "desc",
+                        signal,
+                    });
+
+                const myCards =
+                    cardData?.items || [];
+
+                const requestResponses =
+                    await Promise.all(
+                        myCards.map((card) =>
+                            getReceivedConnectionRequests({
+                                cardId: card.id,
+                                page: 1,
+                                limit: 100,
+                                sort: "createdAt",
+                                order: "desc",
+                                signal,
+                            }),
+                        ),
+                    );
+
+                const requestMap = new Map();
+
+                requestResponses.forEach(
+                    (response) => {
+                        const items =
+                            response?.items || [];
+
+                        items.forEach((item) => {
+                            const receivedCard =
+                                mapProfileCard(
+                                    item.card || {},
+                                );
+
+                            requestMap.set(
+                                item.id,
+                                {
+                                    id: item.id,
+                                    status:
+                                        item.status === 0
+                                            ? "pending"
+                                            : item.status === 1
+                                              ? "accepted"
+                                              : item.status === 2
+                                                ? "rejected"
+                                                : "cancelled",
+                                    isRead: false,
+                                    createdAt:
+                                        item.createdAt
+                                            ?.isoString ||
+                                        item.createdAt,
+                                    sender: {
+                                        id:
+                                            receivedCard.id,
+                                        name:
+                                            receivedCard.name,
+                                        profileImage:
+                                            receivedCard.profileImage,
+                                    },
+                                    receivedCard,
+                                    message:
+                                        item.message ||
+                                        "전달된 메시지가 없습니다.",
+                                },
+                            );
+                        });
+                    },
+                );
+
+                const requests = Array.from(
+                    requestMap.values(),
+                ).sort(
+                    (first, second) =>
+                        new Date(second.createdAt) -
+                        new Date(first.createdAt),
+                );
+
+                setExchangeRequests(requests);
+                setExchangeError("");
+            } catch (error) {
+                if (error?.name !== "AbortError") {
+                    console.error(
+                        "받은 교환 요청 조회 실패:",
+                        error,
+                    );
+                    setExchangeError(
+                        error.message ||
+                            "교환 요청을 불러오지 못했습니다.",
+                    );
+                }
+            }
+        },
+        [],
+    );
+
+    useEffect(() => {
+        const controller =
+            new AbortController();
+
+        const fetchRequests = async () => {
+            await loadReceivedRequests(
+                controller.signal,
+            );
+        };
+
+        fetchRequests();
+
+        return () => {
+            controller.abort();
+        };
+    }, [loadReceivedRequests]);
 
     const isExploreActive =
         location.pathname ===
@@ -138,72 +277,68 @@ const Header = ({
         );
     };
 
-    const handleRejectRequest = (
+    const handleRejectRequest = async (
         requestId,
     ) => {
-        setExchangeRequests(
-            (
-                currentRequests,
-            ) =>
-                currentRequests.map(
-                    (request) =>
-                        request.id ===
-                        requestId
-                            ? {
-                                  ...request,
-                                  status:
-                                      "rejected",
-                                  isRead: true,
-                              }
-                            : request,
-                ),
-        );
+        try {
+            await rejectConnectionRequest(
+                requestId,
+            );
 
-        setSelectedRequest(
-            null,
-        );
-
-        window.alert(
-            "카드 교환 요청을 거절했습니다.",
-        );
+            setExchangeRequests(
+                (currentRequests) =>
+                    currentRequests.filter(
+                        (request) =>
+                            request.id !==
+                            requestId,
+                    ),
+            );
+            setSelectedRequest(null);
+            window.alert(
+                "카드 교환 요청을 거절했습니다.",
+            );
+        } catch (error) {
+            console.error(
+                "교환 요청 거절 실패:",
+                error,
+            );
+            window.alert(
+                error.message ||
+                    "교환 요청을 거절하지 못했습니다.",
+            );
+        }
     };
 
-    const handleAcceptRequest = (
-        exchangeData,
+    const handleAcceptRequest = async (
+        requestId,
     ) => {
-        setExchangeRequests(
-            (
-                currentRequests,
-            ) =>
-                currentRequests.map(
-                    (request) =>
-                        request.id ===
-                        exchangeData.requestId
-                            ? {
-                                  ...request,
-                                  status:
-                                      "accepted",
-                                  isRead: true,
+        try {
+            await acceptConnectionRequest(
+                requestId,
+            );
 
-                                  responseCardId:
-                                      exchangeData.responseCardId,
-                              }
-                            : request,
-                ),
-        );
-
-        setSelectedRequest(
-            null,
-        );
-
-        console.log(
-            "카드 교환 완료:",
-            exchangeData,
-        );
-
-        window.alert(
-            "카드 교환이 완료되었습니다.",
-        );
+            setExchangeRequests(
+                (currentRequests) =>
+                    currentRequests.filter(
+                        (request) =>
+                            request.id !==
+                            requestId,
+                    ),
+            );
+            setSelectedRequest(null);
+            window.alert(
+                "카드 교환이 완료되었습니다.",
+            );
+        } catch (error) {
+            console.error(
+                "교환 요청 수락 실패:",
+                error,
+            );
+            window.alert(
+                error.message ||
+                    "교환 요청을 수락하지 못했습니다.",
+            );
+        }
     };
 
     return (
@@ -387,6 +522,9 @@ const Header = ({
                                 <NotificationPanel
                                     requests={
                                         exchangeRequests
+                                    }
+                                    errorMessage={
+                                        exchangeError
                                     }
                                     onRequestClick={
                                         handleRequestClick

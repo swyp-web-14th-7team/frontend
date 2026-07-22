@@ -1,11 +1,21 @@
-import { useMemo, useState } from "react";
+import {
+    useEffect,
+    useMemo,
+    useState,
+} from "react";
 import { useNavigate } from "react-router-dom";
+
+import {
+    getConnections,
+} from "../../api/connections";
 
 import ExploreProfileCard from "../../components/profile/ExploreProfileCard";
 import SkillFilterModal from "../../components/explore/SkillFilterModal";
 import InterestFilterModal from "../../components/explore/InterestFilterModal";
 
-import profiles from "../../mocks/profiles";
+import {
+    mapProfileCard,
+} from "../../utils/profileMapper";
 
 import dropdownIcon from "../../assets/icons/icon_dropdown.svg";
 import sortIcon from "../../assets/icons/icon_sort.svg";
@@ -234,16 +244,99 @@ const getFilterSummary = ({
     }`;
 };
 
-const Saved = ({ cards }) => {
+const Saved = () => {
     const navigate = useNavigate();
 
-    const savedProfiles = useMemo(() => {
-        if (Array.isArray(cards)) {
-            return cards;
-        }
+    const [savedProfiles, setSavedProfiles] =
+        useState([]);
 
-        return profiles.slice(0, 12);
-    }, [cards]);
+    const [isLoading, setIsLoading] =
+        useState(true);
+
+    const [errorMessage, setErrorMessage] =
+        useState("");
+
+    useEffect(() => {
+        const controller =
+            new AbortController();
+
+        const fetchConnections = async () => {
+            setIsLoading(true);
+            setErrorMessage("");
+
+            try {
+                const data =
+                    await getConnections({
+                        page: 1,
+                        limit: 100,
+                        sort: "createdAt",
+                        order: "desc",
+                        signal:
+                            controller.signal,
+                    });
+
+                if (controller.signal.aborted) {
+                    return;
+                }
+
+                const connections =
+                    data?.items || [];
+
+                const profiles =
+                    connections.map(
+                        (connection) => ({
+                            ...mapProfileCard(
+                                connection.card || {},
+                            ),
+                            connectionId:
+                                connection.id,
+                            connectionMessage:
+                                connection.message ||
+                                "",
+                            connectedAt:
+                                connection.connectedAt
+                                    ?.isoString ||
+                                connection.connectedAt ||
+                                "",
+                            createdAt:
+                                connection.connectedAt
+                                    ?.isoString ||
+                                connection.connectedAt ||
+                                "",
+                        }),
+                    );
+
+                setSavedProfiles(profiles);
+            } catch (error) {
+                if (
+                    error?.name ===
+                    "AbortError"
+                ) {
+                    return;
+                }
+
+                console.error(
+                    "보관함 조회 실패:",
+                    error,
+                );
+
+                setErrorMessage(
+                    error.message ||
+                        "보관함을 불러오지 못했습니다.",
+                );
+            } finally {
+                if (!controller.signal.aborted) {
+                    setIsLoading(false);
+                }
+            }
+        };
+
+        fetchConnections();
+
+        return () => {
+            controller.abort();
+        };
+    }, []);
 
     const [selectedJobs, setSelectedJobs] =
         useState([]);
@@ -560,6 +653,21 @@ const Saved = ({ cards }) => {
                     주고받은 카드
                 </h1>
 
+                {isLoading && (
+                    <div className={styles.statusMessage}>
+                        보관함을 불러오는 중입니다.
+                    </div>
+                )}
+
+                {errorMessage && (
+                    <div
+                        className={styles.errorMessage}
+                        role="alert"
+                    >
+                        {errorMessage}
+                    </div>
+                )}
+
                 <div
                     className={
                         styles.filterArea
@@ -808,7 +916,9 @@ const Saved = ({ cards }) => {
                     </span>
                 </div>
 
-                {filteredProfiles.length >
+                {!isLoading &&
+                !errorMessage &&
+                filteredProfiles.length >
                 0 ? (
                     <div
                         className={
@@ -831,7 +941,8 @@ const Saved = ({ cards }) => {
                             ),
                         )}
                     </div>
-                ) : (
+                ) : !isLoading &&
+                  !errorMessage ? (
                     <div
                         className={
                             styles.emptyResult
@@ -847,7 +958,7 @@ const Saved = ({ cards }) => {
                             선택해보세요.
                         </p>
                     </div>
-                )}
+                ) : null}
             </section>
 
             {isSkillModalOpen && (
