@@ -23,6 +23,10 @@ import {
 } from "../../api/options";
 
 import {
+    getCardBackgroundImages,
+} from "../../api/cardBackground";
+
+import {
     createDraftId,
     getOnboardingDraft,
     removeOnboardingDraft,
@@ -30,6 +34,7 @@ import {
 } from "../../utils/onboardingDraft";
 
 import CardBasicStep from "../../components/onboarding/CardBasicStep";
+import CardPreviewStep from "../../components/onboarding/CardPreviewStep";
 import CompleteStep from "../../components/onboarding/CompleteStep";
 import JobSelectStep from "../../components/onboarding/JobSelectStep";
 import LoadingStep from "../../components/onboarding/LoadingStep";
@@ -57,30 +62,24 @@ const JOB_UI_MAP = {
 
     "프론트 개발자": {
         id: "frontend",
-
         name:
             "Frontend Developer",
-
         label:
             "프론트엔드 개발자",
     },
 
     "프론트엔드 개발자": {
         id: "frontend",
-
         name:
             "Frontend Developer",
-
         label:
             "프론트엔드 개발자",
     },
 
     "백엔드 개발자": {
         id: "backend",
-
         name:
             "Backend Developer",
-
         label:
             "백엔드 개발자",
     },
@@ -125,6 +124,10 @@ const INITIAL_ONBOARDING_DATA = {
 
     profileImageUrl: "",
     profileImagePreview: "",
+
+    cardBackgroundImageId:
+        null,
+    cardImageUrl: "",
 
     profileCardId: null,
     createdProfile: null,
@@ -176,15 +179,28 @@ const Onboarding = () => {
         setOptionData,
     ] = useState({
         jobOptions: [],
-
         affiliationStatuses:
             [],
-
         skills: [],
         interests: [],
         personalities: [],
         purposes: [],
     });
+
+    const [
+        cardBackgrounds,
+        setCardBackgrounds,
+    ] = useState([]);
+
+    const [
+        isBackgroundLoading,
+        setIsBackgroundLoading,
+    ] = useState(false);
+
+    const [
+        backgroundError,
+        setBackgroundError,
+    ] = useState("");
 
     const [
         isOptionLoading,
@@ -226,12 +242,8 @@ const Onboarding = () => {
         setLoadedSkillJobTypeId,
     ] = useState(null);
 
-    const totalSteps = 5;
+    const totalSteps = 6;
 
-    /*
-     * 직군, 소속 상태, 관심 분야,
-     * 성향, 목적 목록을 불러온다.
-     */
     useEffect(() => {
         const controller =
             new AbortController();
@@ -391,10 +403,6 @@ const Onboarding = () => {
         };
     }, []);
 
-    /*
-     * localStorage에 저장된
-     * 임시저장 내용을 불러온다.
-     */
     useEffect(() => {
         if (
             isOptionLoading ||
@@ -424,7 +432,6 @@ const Onboarding = () => {
                             previousData,
                         ) => ({
                             ...previousData,
-
                             ...savedDraft.data,
 
                             profileCardId:
@@ -448,7 +455,7 @@ const Onboarding = () => {
                                 savedStep,
                                 0,
                             ),
-                            2,
+                            3,
                         ),
                     );
                 }
@@ -469,22 +476,14 @@ const Onboarding = () => {
         hasLoadedDraft,
     ]);
 
-    /*
-     * 목적, 직군, 기본 정보 작성 중
-     * localStorage에 자동 저장한다.
-     */
     useEffect(() => {
         if (
             !hasLoadedDraft ||
-            step >= 3
+            step >= 4
         ) {
             return;
         }
 
-        /*
-         * 새 카드 목적 선택 전에는
-         * 빈 임시저장을 생성하지 않는다.
-         */
         if (
             isCardCreationFlow &&
             step === 0 &&
@@ -493,10 +492,6 @@ const Onboarding = () => {
             return;
         }
 
-        /*
-         * 최초 가입 Welcome 화면에서는
-         * 빈 임시저장을 생성하지 않는다.
-         */
         if (
             !isCardCreationFlow &&
             step === 0
@@ -517,10 +512,6 @@ const Onboarding = () => {
         isCardCreationFlow,
     ]);
 
-    /*
-     * 개발자 임시저장을 불러왔을 때
-     * 해당 직군 스킬 목록을 다시 조회한다.
-     */
     useEffect(() => {
         const isDeveloper =
             onboardingData.job ===
@@ -606,6 +597,119 @@ const Onboarding = () => {
         loadedSkillJobTypeId,
     ]);
 
+    useEffect(() => {
+        if (step !== 3) {
+            return undefined;
+        }
+
+        const controller =
+            new AbortController();
+
+        const fetchBackgrounds =
+            async () => {
+                try {
+                    setIsBackgroundLoading(
+                        true,
+                    );
+
+                    setBackgroundError(
+                        "",
+                    );
+
+                    const result =
+                        await getCardBackgroundImages(
+                            {
+                                page: 1,
+                                limit: 10,
+                                sort:
+                                    "createdAt",
+                                order: "desc",
+                                signal:
+                                    controller
+                                        .signal,
+                            },
+                        );
+
+                    const items =
+                        getItems(
+                            result,
+                        );
+
+                    setCardBackgrounds(
+                        items,
+                    );
+
+                    if (
+                        items.length ===
+                        0
+                    ) {
+                        setBackgroundError(
+                            "등록된 카드 배경이 없습니다.",
+                        );
+
+                        return;
+                    }
+
+                    setOnboardingData(
+                        (
+                            previousData,
+                        ) => {
+                            if (
+                                previousData.cardImageUrl
+                            ) {
+                                return previousData;
+                            }
+
+                            return {
+                                ...previousData,
+
+                                cardBackgroundImageId:
+                                    items[0]
+                                        .id,
+
+                                cardImageUrl:
+                                    items[0]
+                                        .imageUrl,
+                            };
+                        },
+                    );
+                } catch (error) {
+                    if (
+                        error.name ===
+                        "AbortError"
+                    ) {
+                        return;
+                    }
+
+                    console.error(
+                        "카드 배경 조회 실패:",
+                        error,
+                    );
+
+                    setBackgroundError(
+                        error.message ||
+                            "카드 배경을 불러오지 못했습니다.",
+                    );
+                } finally {
+                    if (
+                        !controller
+                            .signal
+                            .aborted
+                    ) {
+                        setIsBackgroundLoading(
+                            false,
+                        );
+                    }
+                }
+            };
+
+        fetchBackgrounds();
+
+        return () => {
+            controller.abort();
+        };
+    }, [step]);
+
     const nextStep = () => {
         setStep(
             (previousStep) =>
@@ -637,12 +741,20 @@ const Onboarding = () => {
         );
     };
 
-    /*
-     * 직군 선택 후 다음
-     *
-     * 이 단계에서는 서버 카드를
-     * 생성하지 않는다.
-     */
+    const handleSelectBackground = (
+        background,
+    ) => {
+        updateOnboardingData({
+            cardBackgroundImageId:
+                background.id,
+
+            cardImageUrl:
+                background.imageUrl,
+        });
+
+        setBackgroundError("");
+    };
+
     const handleJobNext =
         async (
             selectedJobOption,
@@ -673,30 +785,20 @@ const Onboarding = () => {
 
                 setBasicCardError("");
 
-                const isDeveloper =
-                    selectedJob.id ===
-                        "frontend" ||
-                    selectedJob.id ===
-                        "backend";
+                const skillResult =
+                    await getSkills({
+                        jobTypeId:
+                            selectedJobTypeId,
+                    });
 
-                let skillItems = [];
-
-                if (isDeveloper) {
-                    const skillResult =
-                        await getSkills({
-                            jobTypeId:
-                                selectedJobTypeId,
-                        });
-
-                    skillItems =
-                        getItems(
-                            skillResult,
-                        );
-
-                    setLoadedSkillJobTypeId(
-                        selectedJobTypeId,
+                const skillItems =
+                    getItems(
+                        skillResult,
                     );
-                }
+
+                setLoadedSkillJobTypeId(
+                    selectedJobTypeId,
+                );
 
                 setOptionData(
                     (
@@ -720,13 +822,15 @@ const Onboarding = () => {
                         selectedJob.label,
 
                     techStacks: [],
-
                     interests: [],
-
                     strength: null,
 
-                    profileCardId: null,
+                    cardBackgroundImageId:
+                        null,
 
+                    cardImageUrl: "",
+
+                    profileCardId: null,
                     createdProfile: null,
                 });
 
@@ -748,12 +852,12 @@ const Onboarding = () => {
             }
         };
 
-    /*
-     * 최종 만들기
-     *
-     * 이때 처음 서버 카드를 생성하고
-     * 입력 정보를 PATCH한다.
-     */
+    const handleBasicNext =
+        () => {
+            setSubmitError("");
+            nextStep();
+        };
+
     const handleUpdateProfile =
         async () => {
             if (
@@ -800,9 +904,20 @@ const Onboarding = () => {
                 return;
             }
 
+            if (
+                !onboardingData.cardImageUrl
+            ) {
+                setBackgroundError(
+                    "카드 배경을 선택해주세요.",
+                );
+
+                return;
+            }
+
             try {
                 setIsSubmitting(true);
                 setSubmitError("");
+                setBackgroundError("");
 
                 const isDeveloper =
                     onboardingData.job ===
@@ -833,6 +948,10 @@ const Onboarding = () => {
                         onboardingData
                             .introduction
                             .trim(),
+
+                    cardImageUrl:
+                        onboardingData
+                            .cardImageUrl,
                 };
 
                 if (isDeveloper) {
@@ -843,7 +962,18 @@ const Onboarding = () => {
                                     item.id,
                                 ),
                         );
+
+                    profilePayload.interestIds =
+                        [];
                 } else {
+                    profilePayload.skillIds =
+                        onboardingData.techStacks.map(
+                            (item) =>
+                                Number(
+                                    item.id,
+                                ),
+                        );
+
                     profilePayload.interestIds =
                         onboardingData.interests.map(
                             (item) =>
@@ -862,9 +992,6 @@ const Onboarding = () => {
                             .profileImageUrl;
                 }
 
-                /*
-                 * 최종 제출 시에만 POST
-                 */
                 const createdCard =
                     await createProfileCard({
                         jobTypeId:
@@ -888,9 +1015,6 @@ const Onboarding = () => {
                         profilePayload,
                     );
 
-                /*
-                 * 완료된 임시저장 삭제
-                 */
                 removeOnboardingDraft(
                     draftId,
                 );
@@ -910,7 +1034,7 @@ const Onboarding = () => {
                     error,
                 );
 
-                setSubmitError(
+                setBackgroundError(
                     error.message ||
                         "프로필 카드 생성에 실패했습니다.",
                 );
@@ -921,18 +1045,13 @@ const Onboarding = () => {
             }
         };
 
-    /*
-     * 새 카드 생성 및 이어쓰기에서는
-     * 목적 선택 화면부터 시작한다.
-     *
-     * 최초 가입 온보딩에서는
-     * 기존 Welcome 화면을 유지한다.
-     */
     const firstStep =
         isCardCreationFlow ? (
             <PurposeSelectStep
                 key="purpose"
-                data={onboardingData}
+                data={
+                    onboardingData
+                }
                 purposeOptions={
                     optionData.purposes
                 }
@@ -953,8 +1072,12 @@ const Onboarding = () => {
                         "/profile",
                     )
                 }
-                currentStep={step}
-                totalSteps={totalSteps}
+                currentStep={
+                    step
+                }
+                totalSteps={
+                    totalSteps
+                }
             />
         ) : (
             <WelcomeStep
@@ -962,8 +1085,12 @@ const Onboarding = () => {
                 onNext={
                     nextStep
                 }
-                currentStep={step}
-                totalSteps={totalSteps}
+                currentStep={
+                    step
+                }
+                totalSteps={
+                    totalSteps
+                }
             />
         );
 
@@ -995,8 +1122,12 @@ const Onboarding = () => {
             onBack={
                 prevStep
             }
-            currentStep={step}
-            totalSteps={totalSteps}
+            currentStep={
+                step
+            }
+            totalSteps={
+                totalSteps
+            }
         />,
 
         <CardBasicStep
@@ -1016,7 +1147,7 @@ const Onboarding = () => {
                     .affiliationStatuses
             }
             isSubmitting={
-                isSubmitting
+                false
             }
             submitError={
                 submitError
@@ -1025,13 +1156,49 @@ const Onboarding = () => {
                 updateOnboardingData
             }
             onSubmit={
+                handleBasicNext
+            }
+            onBack={
+                prevStep
+            }
+            currentStep={
+                step
+            }
+            totalSteps={
+                totalSteps
+            }
+        />,
+
+        <CardPreviewStep
+            key="preview"
+            data={onboardingData}
+            backgrounds={
+                cardBackgrounds
+            }
+            isLoading={
+                isBackgroundLoading
+            }
+            isSubmitting={
+                isSubmitting
+            }
+            errorMessage={
+                backgroundError
+            }
+            onSelect={
+                handleSelectBackground
+            }
+            onSubmit={
                 handleUpdateProfile
             }
             onBack={
                 prevStep
             }
-            currentStep={step}
-            totalSteps={totalSteps}
+            currentStep={
+                step
+            }
+            totalSteps={
+                totalSteps
+            }
         />,
 
         <LoadingStep
@@ -1039,15 +1206,23 @@ const Onboarding = () => {
             onComplete={
                 nextStep
             }
-            currentStep={step}
-            totalSteps={totalSteps}
+            currentStep={
+                step
+            }
+            totalSteps={
+                totalSteps
+            }
         />,
 
         <CompleteStep
             key="complete"
             data={onboardingData}
-            currentStep={step}
-            totalSteps={totalSteps}
+            currentStep={
+                step
+            }
+            totalSteps={
+                totalSteps
+            }
         />,
     ];
 
