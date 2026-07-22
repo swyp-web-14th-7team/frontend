@@ -525,3 +525,21 @@
         width: 100%;
     }
 }
+.statusMessage,
+.errorMessage {
+    margin: 18px 0;
+    padding: 14px 16px;
+    border-radius: 10px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.statusMessage {
+    color: #555d6d;
+    background-color: #f5f6f8;
+}
+
+.errorMessage {
+    color: #d92d20;
+    background-color: #fff1f0;
+}

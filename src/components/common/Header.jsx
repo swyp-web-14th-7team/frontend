@@ -1,14 +1,35 @@
-import { useState } from "react";
+import {
+    useCallback,
+    useEffect,
+    useState,
+} from "react";
+
 import {
     NavLink,
     useLocation,
     useNavigate,
 } from "react-router-dom";
 
+import LoginModal from "./LoginModal/LoginModal";
 import NotificationPanel from "./NotificationPanel/NotificationPanel";
 import ReceivedExchangeModal from "../exchange/ReceivedExchangeModal";
 
-import exchangeRequestMocks from "../../mocks/exchangeRequests";
+import {
+    acceptConnectionRequest,
+    getReceivedConnectionRequests,
+    rejectConnectionRequest,
+} from "../../api/connectionRequests";
+import {
+    getMyProfileCards,
+} from "../../api/profile";
+
+import {
+    mapProfileCard,
+} from "../../utils/profileMapper";
+
+import {
+    isLoggedIn,
+} from "../../utils/auth";
 
 import styles from "./Header.module.css";
 
@@ -23,14 +44,22 @@ import scrapActiveIcon from "../../assets/icons/icon_scrap_active.svg";
 import bellIcon from "../../assets/icons/알림.svg";
 import settingIcon from "../../assets/icons/설정.svg";
 
-const Header = ({ showNav = false }) => {
-    const navigate = useNavigate();
-    const location = useLocation();
+const Header = ({
+    showNav = false,
+}) => {
+    const navigate =
+        useNavigate();
+
+    const location =
+        useLocation();
 
     const [
         exchangeRequests,
         setExchangeRequests,
-    ] = useState(exchangeRequestMocks);
+    ] = useState([]);
+
+    const [exchangeError, setExchangeError] =
+        useState("");
 
     const [
         isNotificationOpen,
@@ -42,8 +71,142 @@ const Header = ({ showNav = false }) => {
         setSelectedRequest,
     ] = useState(null);
 
+    const [
+        isLoginModalOpen,
+        setIsLoginModalOpen,
+    ] = useState(false);
+
+    const isUserLoggedIn =
+        isLoggedIn();
+
+    const loadReceivedRequests = useCallback(
+        async (signal) => {
+            if (!isLoggedIn()) {
+                setExchangeRequests([]);
+                return;
+            }
+
+            try {
+                const cardData =
+                    await getMyProfileCards({
+                        page: 1,
+                        limit: 100,
+                        sort: "createdAt",
+                        order: "desc",
+                        signal,
+                    });
+
+                const myCards =
+                    cardData?.items || [];
+
+                const requestResponses =
+                    await Promise.all(
+                        myCards.map((card) =>
+                            getReceivedConnectionRequests({
+                                cardId: card.id,
+                                page: 1,
+                                limit: 100,
+                                sort: "createdAt",
+                                order: "desc",
+                                signal,
+                            }),
+                        ),
+                    );
+
+                const requestMap = new Map();
+
+                requestResponses.forEach(
+                    (response) => {
+                        const items =
+                            response?.items || [];
+
+                        items.forEach((item) => {
+                            const receivedCard =
+                                mapProfileCard(
+                                    item.card || {},
+                                );
+
+                            requestMap.set(
+                                item.id,
+                                {
+                                    id: item.id,
+                                    status:
+                                        item.status === 0
+                                            ? "pending"
+                                            : item.status === 1
+                                              ? "accepted"
+                                              : item.status === 2
+                                                ? "rejected"
+                                                : "cancelled",
+                                    isRead: false,
+                                    createdAt:
+                                        item.createdAt
+                                            ?.isoString ||
+                                        item.createdAt,
+                                    sender: {
+                                        id:
+                                            receivedCard.id,
+                                        name:
+                                            receivedCard.name,
+                                        profileImage:
+                                            receivedCard.profileImage,
+                                    },
+                                    receivedCard,
+                                    message:
+                                        item.message ||
+                                        "전달된 메시지가 없습니다.",
+                                },
+                            );
+                        });
+                    },
+                );
+
+                const requests = Array.from(
+                    requestMap.values(),
+                ).sort(
+                    (first, second) =>
+                        new Date(second.createdAt) -
+                        new Date(first.createdAt),
+                );
+
+                setExchangeRequests(requests);
+                setExchangeError("");
+            } catch (error) {
+                if (error?.name !== "AbortError") {
+                    console.error(
+                        "받은 교환 요청 조회 실패:",
+                        error,
+                    );
+                    setExchangeError(
+                        error.message ||
+                            "교환 요청을 불러오지 못했습니다.",
+                    );
+                }
+            }
+        },
+        [],
+    );
+
+    useEffect(() => {
+        const controller =
+            new AbortController();
+
+        const fetchRequests = async () => {
+            await loadReceivedRequests(
+                controller.signal,
+            );
+        };
+
+        fetchRequests();
+
+        return () => {
+            controller.abort();
+        };
+    }, [loadReceivedRequests]);
+
     const isExploreActive =
-        location.pathname === "/explore" ||
+        location.pathname ===
+            "/explore" ||
         location.pathname.startsWith(
             "/profile-carousel/",
         ) ||
@@ -52,7 +215,8 @@ const Header = ({ showNav = false }) => {
         );
 
     const isScrapActive =
-        location.pathname === "/scrap";
+        location.pathname ===
+        "/scrap";
 
     const hasUnreadNotification =
         exchangeRequests.some(
@@ -62,14 +226,25 @@ const Header = ({ showNav = false }) => {
                 !request.isRead,
         );
 
-    const handleLogoClick = () => {
-        navigate("/explore");
-    };
+    const handleLogoClick =
+        () => {
+            navigate(
+                "/explore",
+            );
+        };
+
+    const handleLoginClick =
+        () => {
+            setIsLoginModalOpen(
+                true,
+            );
+        };
 
     const handleNotificationToggle =
         () => {
             setIsNotificationOpen(
-                (previous) => !previous,
+                (previous) =>
+                    !previous,
             );
         };
 
@@ -77,7 +252,9 @@ const Header = ({ showNav = false }) => {
         request,
     ) => {
         setExchangeRequests(
-            (currentRequests) =>
+            (
+                currentRequests,
+            ) =>
                 currentRequests.map(
                     (item) =>
                         item.id ===
@@ -95,71 +272,81 @@ const Header = ({ showNav = false }) => {
             isRead: true,
         });
 
-        setIsNotificationOpen(false);
+        setIsNotificationOpen(
+            false,
+        );
     };
 
-    const handleRejectRequest = (
+    const handleRejectRequest = async (
         requestId,
     ) => {
-        setExchangeRequests(
-            (currentRequests) =>
-                currentRequests.map(
-                    (request) =>
-                        request.id ===
-                        requestId
-                            ? {
-                                  ...request,
-                                  status: "rejected",
-                                  isRead: true,
-                              }
-                            : request,
-                ),
-        );
+        try {
+            await rejectConnectionRequest(
+                requestId,
+            );
 
-        setSelectedRequest(null);
-
-        window.alert(
-            "카드 교환 요청을 거절했습니다.",
-        );
+            setExchangeRequests(
+                (currentRequests) =>
+                    currentRequests.filter(
+                        (request) =>
+                            request.id !==
+                            requestId,
+                    ),
+            );
+            setSelectedRequest(null);
+            window.alert(
+                "카드 교환 요청을 거절했습니다.",
+            );
+        } catch (error) {
+            console.error(
+                "교환 요청 거절 실패:",
+                error,
+            );
+            window.alert(
+                error.message ||
+                    "교환 요청을 거절하지 못했습니다.",
+            );
+        }
     };
 
-    const handleAcceptRequest = (
-        exchangeData,
+    const handleAcceptRequest = async (
+        requestId,
     ) => {
-        setExchangeRequests(
-            (currentRequests) =>
-                currentRequests.map(
-                    (request) =>
-                        request.id ===
-                        exchangeData.requestId
-                            ? {
-                                  ...request,
-                                  status: "accepted",
-                                  isRead: true,
-                                  responseCardId:
-                                      exchangeData
-                                          .responseCardId,
-                              }
-                            : request,
-                ),
-        );
+        try {
+            await acceptConnectionRequest(
+                requestId,
+            );
 
-        setSelectedRequest(null);
-
-        console.log(
-            "카드 교환 완료:",
-            exchangeData,
-        );
-
-        window.alert(
-            "카드 교환이 완료되었습니다.",
-        );
+            setExchangeRequests(
+                (currentRequests) =>
+                    currentRequests.filter(
+                        (request) =>
+                            request.id !==
+                            requestId,
+                    ),
+            );
+            setSelectedRequest(null);
+            window.alert(
+                "카드 교환이 완료되었습니다.",
+            );
+        } catch (error) {
+            console.error(
+                "교환 요청 수락 실패:",
+                error,
+            );
+            window.alert(
+                error.message ||
+                    "교환 요청을 수락하지 못했습니다.",
+            );
+        }
     };
 
     return (
         <>
             <header
-                className={styles.header}
+                className={
+                    styles.header
+                }
             >
                 <button
                     type="button"
@@ -182,7 +369,9 @@ const Header = ({ showNav = false }) => {
 
                 {showNav && (
                     <nav
-                        className={styles.nav}
+                        className={
+                            styles.nav
+                        }
                     >
                         <NavLink
                             to="/profile"
@@ -232,7 +421,9 @@ const Header = ({ showNav = false }) => {
                                 }
                             />
 
-                            <span>탐색</span>
+                            <span>
+                                탐색
+                            </span>
                         </NavLink>
 
                         <NavLink
@@ -264,122 +455,157 @@ const Header = ({ showNav = false }) => {
                     </nav>
                 )}
 
-                <nav
-                    className={
-                        styles.rightMenu
-                    }
-                >
-                    <NavLink
-                        to="/scrap"
+                {isUserLoggedIn ? (
+                    <nav
                         className={
-                            styles.iconButton
+                            styles.rightMenu
                         }
-                        aria-label="스크랩"
                     >
-                        <img
-                            src={
-                                isScrapActive
-                                    ? scrapActiveIcon
-                                    : scrapIcon
-                            }
-                            alt=""
+                        <NavLink
+                            to="/scrap"
                             className={
-                                styles.icon
+                                styles.iconButton
                             }
-                        />
-                    </NavLink>
+                            aria-label="스크랩"
+                        >
+                            <img
+                                src={
+                                    isScrapActive
+                                        ? scrapActiveIcon
+                                        : scrapIcon
+                                }
+                                alt=""
+                                className={
+                                    styles.icon
+                                }
+                            />
+                        </NavLink>
 
-                    <div
-                        className={
-                            styles.notificationWrapper
-                        }
-                    >
+                        <div
+                            className={
+                                styles.notificationWrapper
+                            }
+                        >
+                            <button
+                                type="button"
+                                className={
+                                    styles.iconButton
+                                }
+                                onClick={
+                                    handleNotificationToggle
+                                }
+                                aria-label="알림"
+                                aria-expanded={
+                                    isNotificationOpen
+                                }
+                            >
+                                {hasUnreadNotification && (
+                                    <span
+                                        className={
+                                            styles.notificationDot
+                                        }
+                                    />
+                                )}
+
+                                <img
+                                    src={
+                                        bellIcon
+                                    }
+                                    alt=""
+                                    className={
+                                        styles.icon
+                                    }
+                                />
+                            </button>
+
+                            {isNotificationOpen && (
+                                <NotificationPanel
+                                    requests={
+                                        exchangeRequests
+                                    }
+                                    errorMessage={
+                                        exchangeError
+                                    }
+                                    onRequestClick={
+                                        handleRequestClick
+                                    }
+                                    onClose={() =>
+                                        setIsNotificationOpen(
+                                            false,
+                                        )
+                                    }
+                                />
+                            )}
+                        </div>
+
                         <button
                             type="button"
                             className={
                                 styles.iconButton
                             }
-                            onClick={
-                                handleNotificationToggle
+                            onClick={() =>
+                                navigate(
+                                    "/settings",
+                                )
                             }
-                            aria-label="알림"
-                            aria-expanded={
-                                isNotificationOpen
-                            }
+                            aria-label="설정"
                         >
-                            {hasUnreadNotification && (
-                                <span
-                                    className={
-                                        styles.notificationDot
-                                    }
-                                />
-                            )}
-
                             <img
-                                src={bellIcon}
+                                src={
+                                    settingIcon
+                                }
                                 alt=""
                                 className={
                                     styles.icon
                                 }
                             />
                         </button>
-
-                        {isNotificationOpen && (
-                            <NotificationPanel
-                                requests={
-                                    exchangeRequests
-                                }
-                                onRequestClick={
-                                    handleRequestClick
-                                }
-                                onClose={() =>
-                                    setIsNotificationOpen(
-                                        false,
-                                    )
-                                }
-                            />
-                        )}
-                    </div>
-
+                    </nav>
+                ) : (
                     <button
                         type="button"
                         className={
-                            styles.iconButton
+                            styles.loginButton
                         }
-                        onClick={() =>
-                            navigate("/settings")
+                        onClick={
+                            handleLoginClick
                         }
-                        aria-label="설정"
                     >
-                        <img
-                            src={settingIcon}
-                            alt=""
-                            className={
-                                styles.icon
-                            }
-                        />
+                        로그인하기
                     </button>
-                </nav>
+                )}
             </header>
 
-            {selectedRequest && (
-                <ReceivedExchangeModal
-                    request={
-                        selectedRequest
-                    }
-                    onClose={() =>
-                        setSelectedRequest(
-                            null,
-                        )
-                    }
-                    onReject={
-                        handleRejectRequest
-                    }
-                    onAccept={
-                        handleAcceptRequest
-                    }
-                />
-            )}
+            <LoginModal
+                isOpen={
+                    isLoginModalOpen
+                }
+                onClose={() =>
+                    setIsLoginModalOpen(
+                        false,
+                    )
+                }
+            />
+
+            {isUserLoggedIn &&
+                selectedRequest && (
+                    <ReceivedExchangeModal
+                        request={
+                            selectedRequest
+                        }
+                        onClose={() =>
+                            setSelectedRequest(
+                                null,
+                            )
+                        }
+                        onReject={
+                            handleRejectRequest
+                        }
+                        onAccept={
+                            handleAcceptRequest
+                        }
+                    />
+                )}
         </>
     );
 };

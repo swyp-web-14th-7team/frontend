@@ -30,6 +30,7 @@ const formatDateLabel = (
 
 const NotificationPanel = ({
     requests = [],
+    errorMessage = "",
     onRequestClick,
     onClose,
 }) => {
@@ -74,7 +75,16 @@ const NotificationPanel = ({
                 className={styles.panel}
                 aria-label="알림함"
             >
-                {pendingRequests.length >
+                {errorMessage && (
+                    <div
+                        className={styles.empty}
+                        role="alert"
+                    >
+                        {errorMessage}
+                    </div>
+                )}
+
+                {!errorMessage && pendingRequests.length >
                 0 ? (
                     Object.entries(
                         groupedRequests,
@@ -171,7 +181,7 @@ const NotificationPanel = ({
                             </section>
                         ),
                     )
-                ) : (
+                ) : !errorMessage ? (
                     <div
                         className={
                             styles.empty
@@ -179,7 +189,7 @@ const NotificationPanel = ({
                     >
                         새로운 알림이 없습니다.
                     </div>
-                )}
+                ) : null}
             </section>
         </>
     );

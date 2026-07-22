@@ -1,48 +1,39 @@
-import {
-    apiRequest,
-} from "./apiClient";
+    import { apiRequest } from "./apiClient";
 
-export const getCurrentUser =
-    async ({
+    export const getCurrentUser = async ({ signal } = {}) => {
+    return apiRequest("/users/me", {
         signal,
-    } = {}) => {
-        return apiRequest(
-            "/users/me",
-            {
-                signal,
-            },
-        );
+    });
     };
 
-export const updateCurrentUser =
-    async (nickname) => {
-        const trimmedNickname =
-            nickname?.trim();
+    export const updateCurrentUser = async (user) => {
+    const nickname =
+        typeof user === "string"
+        ? user
+        : user?.nickname;
 
-        if (!trimmedNickname) {
-            throw new Error(
-                "닉네임을 입력해주세요.",
-            );
-        }
+    const trimmedNickname = nickname?.trim();
 
-        return apiRequest(
-            "/users/me",
-            {
-                method: "PATCH",
+    if (!trimmedNickname) {
+        throw new Error("닉네임을 입력해주세요.");
+    }
 
-                body: JSON.stringify({
-                    nickname:
-                        trimmedNickname,
-                }),
-            },
-        );
+    return apiRequest("/users/me", {
+        method: "PATCH",
+        body: JSON.stringify({
+        nickname: trimmedNickname,
+        }),
+    });
     };
 
-/*
- * 기존 Settings.jsx에서 사용하는 이름
- */
-export const getMyUser =
-    getCurrentUser;
+    export const deleteCurrentUser = async () => {
+    return apiRequest("/users/me", {
+        method: "DELETE",
+    });
+    };
 
-export const updateMyUser =
-    updateCurrentUser;
+    /*
+    * 기존 Settings.jsx에서 사용하는 이름
+    */
+    export const getMyUser = getCurrentUser;
+    export const updateMyUser = updateCurrentUser;

@@ -1,8 +1,4 @@
 import {
-    useState,
-} from "react";
-
-import {
     Navigate,
     Route,
     Routes,
@@ -22,35 +18,7 @@ import Scrap from "./pages/Scrap/Scrap";
 import Saved from "./pages/Saved/Saved";
 import Settings from "./pages/Settings/Settings";
 
-import profiles from "./mocks/profiles";
-
-const INITIAL_SCRAP_DRAWERS = [
-    {
-        id: 1,
-        name: "보류함 2",
-        profiles: profiles.slice(
-            0,
-            8,
-        ),
-    },
-    {
-        id: 2,
-        name: "팀원후보",
-        profiles: profiles.slice(
-            8,
-            16,
-        ),
-    },
-];
-
 function App() {
-    const [
-        scrapDrawers,
-        setScrapDrawers,
-    ] = useState(
-        INITIAL_SCRAP_DRAWERS,
-    );
-
     return (
         <Routes>
             <Route
@@ -63,9 +31,8 @@ function App() {
                 }
             />
 
-            {/*
-             * 소셜 로그인 콜백
-             */}
+            {/* 소셜 로그인 콜백 */}
+
             <Route
                 path="/auth/google/callback"
                 element={
@@ -93,51 +60,29 @@ function App() {
                 }
             />
 
-            {/*
-             * 공통 헤더와 레이아웃을
-             * 사용하는 화면
-             */}
+            {/* 공통 헤더와 레이아웃을 사용하는 화면 */}
+
             <Route
-                element={
-                    <MainLayout />
-                }
+                element={<MainLayout />}
             >
                 <Route
                     path="/explore"
-                    element={
-                        <Explore />
-                    }
+                    element={<Explore />}
                 />
 
                 <Route
                     path="/scrap"
-                    element={
-                        <Scrap
-                            drawers={
-                                scrapDrawers
-                            }
-                            setDrawers={
-                                setScrapDrawers
-                            }
-                        />
-                    }
+                    element={<Scrap />}
                 />
 
                 <Route
                     path="/saved"
-                    element={
-                        <Saved />
-                    }
+                    element={<Saved />}
                 />
 
-                {/*
-                 * 내 프로필 카드 목록
-                 */}
                 <Route
                     path="/profile"
-                    element={
-                        <MyPage />
-                    }
+                    element={<MyPage />}
                 />
 
                 <Route
@@ -150,39 +95,20 @@ function App() {
                     element={<Settings />}
                 />
 
-                {/*
-                 * 프로필 카드 상세
-                 */}
                 <Route
                     path="/profile/:profileId"
                     element={
-                        <ProfileDetail
-                            drawers={
-                                scrapDrawers
-                            }
-                            setDrawers={
-                                setScrapDrawers
-                            }
-                        />
+                        <ProfileDetail />
                     }
                 />
             </Route>
 
-            {/*
-             * 프로필 캐러셀은
-             * 공통 레이아웃을 사용하지 않음
-             */}
+            {/* 공통 레이아웃을 사용하지 않는 화면 */}
+
             <Route
                 path="/profile-carousel/:profileId"
                 element={
-                    <ProfileCarouselPage
-                        drawers={
-                            scrapDrawers
-                        }
-                        setDrawers={
-                            setScrapDrawers
-                        }
-                    />
+                    <ProfileCarouselPage />
                 }
             />
 
@@ -193,15 +119,9 @@ function App() {
                 }
             />
 
-            {/*
-             * 온보딩은 공통 헤더를
-             * 사용하지 않음
-             */}
             <Route
                 path="/onboarding"
-                element={
-                    <Onboarding />
-                }
+                element={<Onboarding />}
             />
 
             <Route
