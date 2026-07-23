@@ -1,0 +1,239 @@
+.backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1200;
+
+    padding: 16px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: rgba(14, 14, 21, 0.78);
+    backdrop-filter: blur(7px);
+
+    box-sizing: border-box;
+}
+
+.modal {
+    width: 620px;
+    max-width: 100%;
+    height: 700px;
+    max-height: calc(100vh - 32px);
+    padding: 28px 20px 20px;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+
+    border-radius: 10px;
+    background-color: #222435;
+    color: #ffffff;
+
+    box-sizing: border-box;
+}
+
+.modalHeader {
+    padding: 0 8px;
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+
+    flex-shrink: 0;
+}
+
+.modalHeader h2 {
+    margin: 0;
+
+    color: #ffffff;
+
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+.modalHeader p {
+    margin: 10px 0 0;
+
+    color: #8f96aa;
+
+    font-size: 13px;
+}
+
+.closeButton {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+
+    border: 0;
+    background: transparent;
+    color: #ffffff;
+
+    font-size: 30px;
+    line-height: 1;
+
+    cursor: pointer;
+}
+
+.statusMessage,
+.errorMessage {
+    margin: 16px 8px 0;
+    padding: 12px 14px;
+    border-radius: 7px;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.statusMessage {
+    color: #c8cede;
+    background-color: #303448;
+}
+
+.errorMessage {
+    color: #ffb4ad;
+    background-color: rgba(217, 45, 32, 0.16);
+}
+
+.selectionStep,
+.messageStep {
+    min-height: 0;
+
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.selectionStep {
+    margin-top: 16px;
+}
+
+.messageStep {
+    padding: 0 8px;
+}
+
+.messageSection {
+    margin-top: 42px;
+}
+
+.messageLabel {
+    display: flex;
+    justify-content: space-between;
+
+    margin-bottom: 8px;
+}
+
+.messageLabel label,
+.messageLabel span {
+    color: #8f96aa;
+
+    font-size: 12px;
+}
+
+.messageSection textarea {
+    width: 100%;
+    height: 130px;
+    padding: 14px;
+
+    resize: none;
+
+    border: 1px solid transparent;
+    border-radius: 6px;
+    outline: none;
+
+    background-color: #363b51;
+    color: #ffffff;
+
+    font-family: inherit;
+    font-size: 13px;
+    line-height: 1.6;
+
+    box-sizing: border-box;
+}
+
+.messageSection textarea:focus {
+    border-color: #afd8f8;
+}
+
+.messageSection textarea::placeholder {
+    color: #777d91;
+}
+
+.actions {
+    margin-top: auto;
+
+    display: grid;
+    grid-template-columns:
+        110px
+        minmax(0, 1fr);
+    gap: 10px;
+}
+
+.primaryButton,
+.secondaryButton {
+    height: 52px;
+
+    flex-shrink: 0;
+
+    border: 0;
+    border-radius: 7px;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+.primaryButton {
+    width: 100%;
+    margin-top: auto;
+
+    background-color: #afd8f8;
+    color: #171925;
+}
+
+.primaryButton:hover {
+    background-color: #c4e4fc;
+}
+
+.primaryButton:disabled {
+    background-color: #596077;
+    color: #9298aa;
+
+    cursor: not-allowed;
+}
+
+.secondaryButton {
+    background-color: #f1f4f8;
+    color: #171925;
+}
+
+.actions .primaryButton {
+    margin-top: 0;
+}
+
+@media (max-width: 768px) {
+    .backdrop {
+        padding: 0;
+
+        align-items: flex-end;
+    }
+
+    .modal {
+        width: 100%;
+        height: 90vh;
+        max-height: 90vh;
+        padding: 24px 16px 32px;
+
+        border-radius: 16px 16px 0 0;
+    }
+
+    .actions {
+        grid-template-columns:
+            90px
+            minmax(0, 1fr);
+    }
+}

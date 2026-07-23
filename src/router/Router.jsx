@@ -9,6 +9,7 @@ import ProfileCarouselPage from "../pages/ProfileCarousel/ProfileCarouselPage";
 import Mypage from "../pages/MyPage/MyPage";
 import Exchange from "../pages/Exchange/Exchange";
 import NotFound from "../pages/NotFound/NotFound";
+import Scrap from "../pages/Scrap/Scrap";
 
 function Router() {
     return (
@@ -51,6 +52,12 @@ function Router() {
                         path="/exchange"
                         element={<Exchange />}
                     />
+
+                    <Route
+                    path="/scrap"
+                    element={<Scrap />}
+                    />
+                    
                 </Route>
 
                 {/* 풀스크린 프로필 슬라이드 */}

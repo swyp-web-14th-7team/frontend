@@ -1,0 +1,712 @@
+    .page {
+    width: 100%;
+    min-height: calc(100vh - 64px);
+    padding: 56px 80px 80px;
+
+    background-color: #0e0e15;
+    color: #ffffff;
+
+    box-sizing: border-box;
+    }
+
+    /* =========================
+    �곷떒
+    ========================= */
+
+    .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 56px;
+    }
+
+    .header h1 {
+    margin: 0;
+
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 140%;
+    }
+
+    .manageButton {
+    padding: 12px 18px;
+
+    border: 0;
+    border-radius: 8px;
+    background-color: #363b51;
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+    }
+
+    .manageButton:hover {
+    background-color: #474d66;
+    }
+
+    /* =========================
+    愿�由� 紐⑤뱶 �곷떒 踰꾪듉
+    ========================= */
+
+    .manageActions {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    }
+
+    .deleteSelectedButton {
+    min-width: 96px;
+    padding: 12px 16px;
+
+    border: 0;
+    border-radius: 8px;
+    background-color: #363b51;
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+    }
+
+    .deleteSelectedButton:disabled {
+    background-color: #2b2f42;
+    color: #777d91;
+
+    cursor: not-allowed;
+    }
+
+    .deleteSelectedButton:not(:disabled):hover {
+    background-color: #474d66;
+    }
+
+    .doneButton {
+    padding: 8px;
+
+    border: 0;
+    background: transparent;
+    color: #b9dfff;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+    }
+
+    /* =========================
+    蹂몃Ц
+    ========================= */
+
+    .content {
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+    }
+
+    .drawerList {
+    min-width: 0;
+
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 40px;
+    }
+
+    .drawer {
+    min-width: 0;
+    }
+
+    .drawerHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 12px;
+    }
+
+    .drawerTitle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    }
+
+    .drawerTitle h2,
+    .drawerHeader h2 {
+    margin: 0;
+
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 700;
+    }
+
+    .drawerTitle span,
+    .drawerHeader span {
+    color: #aeb3c2;
+    font-size: 12px;
+    }
+
+    /* �쒕엻 �대쫫 �섏젙 */
+
+    .editNameButton {
+    width: 22px;
+    height: 22px;
+    padding: 0;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 0;
+    background: transparent;
+    color: #ffffff;
+
+    font-size: 16px;
+    line-height: 1;
+
+    cursor: pointer;
+    }
+
+    .editNameButton:hover {
+    color: #b9dfff;
+    }
+
+    /* �쒕엻 ��젣 */
+
+    .deleteDrawerButton {
+    padding: 6px 0;
+
+    border: 0;
+    background: transparent;
+    color: #ff4d5e;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+    }
+
+    .deleteDrawerButton:hover {
+    color: #ff7a87;
+    text-decoration: underline;
+    }
+
+    /* =========================
+    移대뱶 �щ씪�대뜑
+    ========================= */
+
+    .cardSlider {
+    position: relative;
+    isolation: isolate;
+
+    width: 876px;
+    max-width: 100%;
+    }
+
+    /* 醫뚯슦 洹몃씪�붿뼵�� */
+
+    .cardSlider::before,
+    .cardSlider::after {
+    position: absolute;
+    top: 8px;
+    bottom: 8px;
+    z-index: 1;
+
+    width: 80px;
+
+    opacity: 0;
+    pointer-events: none;
+
+    content: "";
+
+    transition: opacity 0.2s ease;
+    }
+
+    .cardSlider::before {
+    left: 0;
+
+    background: linear-gradient(
+        90deg,
+        rgba(14, 14, 21, 0.98) 0%,
+        rgba(14, 14, 21, 0.72) 45%,
+        rgba(14, 14, 21, 0) 100%
+    );
+    }
+
+    .cardSlider::after {
+    right: 0;
+
+    background: linear-gradient(
+        270deg,
+        rgba(14, 14, 21, 0.98) 0%,
+        rgba(14, 14, 21, 0.72) 45%,
+        rgba(14, 14, 21, 0) 100%
+    );
+    }
+
+    /* �щ씪�대뜑 hover �� 洹몃씪�붿뼵�� �쒖떆 */
+
+    .cardSlider:hover::before,
+    .cardSlider:hover::after {
+    opacity: 1;
+    }
+
+    .cardList {
+    position: relative;
+    z-index: 0;
+
+    width: 100%;
+    padding: 8px 0;
+
+    display: flex;
+    align-items: stretch;
+    gap: 12px;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+
+    box-sizing: border-box;
+    }
+
+    .cardList::-webkit-scrollbar {
+    display: none;
+    }
+
+    .cardItem {
+    width: 210px;
+    min-width: 210px;
+    padding: 0;
+
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+
+    color: inherit;
+    font: inherit;
+    text-align: left;
+
+    cursor: pointer;
+
+    box-sizing: border-box;
+    scroll-snap-align: start;
+    }
+
+    .cardItem > article {
+    width: 210px;
+
+    border: 1px solid transparent;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+
+    box-sizing: border-box;
+    }
+
+    .cardItem:hover,
+    .cardItem:focus-visible {
+    outline: none;
+    }
+
+    /* �쇰컲 紐⑤뱶 移대뱶 hover */
+
+    .cardItem:hover > article,
+    .cardItem:focus-visible > article {
+    border-color: #a7bdd2;
+
+    box-shadow:
+        inset 0 0 10px rgba(167, 189, 210, 0.8),
+        inset 0 0 20px rgba(126, 149, 178, 0.35),
+        0 0 6px rgba(167, 189, 210, 0.45);
+    }
+
+    /* 愿�由� 紐⑤뱶�먯꽌 �좏깮�� 移대뱶 */
+
+    .selectedCard > article,
+    .selectedCard:hover > article,
+    .selectedCard:focus-visible > article {
+    border-color: #b8d9f5;
+
+    box-shadow:
+        inset 0 0 4px rgba(184, 217, 245, 0.25),
+        0 0 2px rgba(184, 217, 245, 0.45);
+    }
+
+    /* =========================
+    醫뚯슦 �대룞 踰꾪듉
+    ========================= */
+
+    .slideButton {
+    position: absolute;
+    top: 50%;
+    z-index: 2;
+
+    width: 40px;
+    height: 40px;
+    padding: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 0;
+    border-radius: 50%;
+    background-color: rgba(14, 14, 21, 0.96);
+    color: #ffffff;
+
+    font-size: 30px;
+    font-weight: 300;
+    line-height: 1;
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    cursor: pointer;
+
+    transform: translateY(-50%);
+
+    transition:
+        opacity 0.2s ease,
+        visibility 0.2s ease,
+        background-color 0.2s ease,
+        transform 0.2s ease;
+    }
+
+    /* �щ씪�대뜑 hover �� �붿궡�� �쒖떆 */
+
+    .cardSlider:hover .slideButton {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    }
+
+    .previousButton {
+    left: 12px;
+    }
+
+    .nextButton {
+    right: 12px;
+    }
+
+    .slideButton:hover {
+    background-color: #242736;
+
+    transform:
+        translateY(-50%)
+        scale(1.06);
+    }
+
+    /* =========================
+    �ㅻⅨ履� �먯깋 �꾨줈�� 移대뱶
+    ========================= */
+
+    .preview {
+    width: 282px;
+    min-height: 400px;
+    margin-top: 42px;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transform: translateX(-16px);
+    }
+
+    .previewGuide {
+    margin: 0;
+
+    color: #777d91;
+    font-size: 14px;
+    text-align: center;
+    }
+
+    /* =========================
+    鍮� �쒕엻
+    ========================= */
+
+    .emptyDrawer {
+    width: 876px;
+    max-width: 100%;
+    min-height: 120px;
+    padding: 24px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px dashed #3d435a;
+    border-radius: 8px;
+    color: #777d91;
+
+    font-size: 14px;
+
+    box-sizing: border-box;
+    }
+
+    /* =========================
+    �� �ㅽ겕�� �쒕엻 踰꾪듉
+    ========================= */
+
+    .createDrawerButton {
+    width: fit-content;
+    padding: 10px 14px;
+
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    border: 0;
+    border-radius: 8px;
+    background-color: #363b51;
+    color: #ffffff;
+
+    font-size: 13px;
+    font-weight: 500;
+
+    cursor: pointer;
+    }
+
+    .createDrawerButton:hover {
+    background-color: #474d66;
+    }
+
+    /* =========================
+    紐⑤떖
+    ========================= */
+
+    .modalBackdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+
+    padding: 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: rgba(0, 0, 0, 0.6);
+
+    box-sizing: border-box;
+    }
+
+    .modal {
+    width: 420px;
+    max-width: 100%;
+    padding: 24px;
+
+    border-radius: 8px;
+    background-color: #222435;
+    color: #ffffff;
+
+    box-sizing: border-box;
+    }
+
+    .modalHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 28px;
+    }
+
+    .modalHeader h2 {
+    margin: 0;
+
+    font-size: 18px;
+    font-weight: 700;
+    }
+
+    .closeButton {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+
+    border: 0;
+    background: transparent;
+    color: #ffffff;
+
+    font-size: 24px;
+    line-height: 1;
+
+    cursor: pointer;
+    }
+
+    .inputHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 8px;
+    }
+
+    .inputHeader label,
+    .inputHeader span {
+    color: #9da3b6;
+    font-size: 12px;
+    }
+
+    .modal input {
+    width: 100%;
+    height: 44px;
+    padding: 0 14px;
+
+    border: 1px solid transparent;
+    border-radius: 6px;
+    outline: none;
+
+    background-color: #34394f;
+    color: #ffffff;
+
+    font-size: 13px;
+
+    box-sizing: border-box;
+    }
+
+    .modal input::placeholder {
+    color: #73798d;
+    }
+
+    .modal input:focus {
+    border-color: #9fcaf2;
+    }
+
+    .submitButton {
+    width: 100%;
+    height: 48px;
+    margin-top: 64px;
+
+    border: 0;
+    border-radius: 6px;
+
+    background-color: #afd8f8;
+    color: #171925;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+    }
+
+    .submitButton:disabled {
+    background-color: #596077;
+    color: #9298aa;
+
+    cursor: not-allowed;
+    }
+
+    /* =========================
+    �쒕툝由�
+    ========================= */
+
+    @media (max-width: 1200px) {
+    .page {
+        padding: 48px 40px 72px;
+    }
+
+    .content {
+        display: block;
+    }
+
+    .preview {
+        display: none;
+    }
+    }
+
+    /* =========================
+    紐⑤컮��
+    ========================= */
+
+    @media (max-width: 768px) {
+    .page {
+        display: none;
+    }
+
+    .header {
+        margin-bottom: 40px;
+    }
+
+    .header h1 {
+        font-size: 22px;
+    }
+
+    .manageButton,
+    .deleteSelectedButton {
+        padding: 10px 14px;
+
+        font-size: 13px;
+    }
+
+    .manageActions {
+        gap: 8px;
+    }
+
+    .drawerList {
+        gap: 32px;
+    }
+
+    .cardSlider {
+        width: 100%;
+    }
+
+    .cardList {
+        padding: 8px 20px 8px 0;
+    }
+
+    .previousButton {
+        left: 10px;
+    }
+
+    .nextButton {
+        right: 10px;
+    }
+
+    .cardItem,
+    .cardItem > article {
+        width: 210px;
+        min-width: 210px;
+    }
+
+    .modal {
+        padding: 20px;
+    }
+
+    .submitButton {
+        margin-top: 48px;
+    }
+
+    /* 紐⑤컮�쇱� 吏곸젒 �ㅼ��댄봽�섎�濡� �붿궡�쒖� 洹몃씪�붿뼵�� �④� */
+
+    .cardSlider::before,
+    .cardSlider::after,
+    .slideButton {
+        display: none;
+    }
+    }
+.statusMessage,
+.errorMessage {
+    margin: 16px 0;
+    padding: 14px 16px;
+    border-radius: 10px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.statusMessage {
+    color: #555d6d;
+    background: #f5f6f8;
+}
+
+.errorMessage {
+    color: #d92d20;
+    background: #fff1f0;
+}

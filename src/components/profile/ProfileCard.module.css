@@ -104,17 +104,40 @@
     ========================= */
 
     .horizontalCard {
-    width: 302px;
-    min-height: 164px;
-    padding: 14px;
+    width: 210px;
+    min-height: 247px;
+    padding: 12px 16px 16px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 40px;
 
     border-radius: 8px;
-    background-color: #202335;
+    background-color: #222435;
+
+    box-sizing: border-box;
+    overflow: hidden;
+    color: #ffffff;
+    }
+
+    .horizontalCard .job {
+    width: 100%;
+    margin: 0;
+
+    color: #b8bdcf;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 18px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     }
 
     .horizontalMain {
     width: 100%;
-    margin-top: 18px;
+    margin: 0;
     }
 
     .horizontalProfile {
@@ -122,7 +145,7 @@
 
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     }
 
     .avatar,
@@ -140,36 +163,36 @@
     }
 
     .avatarPlaceholder {
-    background-color: #878ea1;
+    background-color: #aab4ec;
     }
 
-    .nameRow {
+    .profileInfo {
     min-width: 0;
-
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    flex: 1;
     }
 
     .name {
+    display: block;
     min-width: 0;
 
     color: #ffffff;
     font-size: 18px;
     font-weight: 600;
-    line-height: 140%;
+    line-height: 25px;
 
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     }
 
-    .affiliationInline {
-    min-width: 0;
+    .horizontalAffiliation {
+    width: 100%;
+    margin: 0;
 
     color: #d5d8e0;
-    font-size: 11px;
-    line-height: 150%;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 18px;
 
     white-space: nowrap;
     overflow: hidden;
@@ -177,13 +200,73 @@
     }
 
     .horizontalCard .strengthRow {
-    margin-top: 6px;
+    min-width: 0;
+    margin-top: 16px;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    }
+
+    .horizontalCard .strengthIcon,
+    .horizontalCard .strengthIconPlaceholder {
+    width: 24px;
+    height: 24px;
+
+    flex-shrink: 0;
+    }
+
+    .horizontalCard .strengthIcon {
+    display: block;
+    object-fit: contain;
+    }
+
+    .horizontalCard .strengthIconPlaceholder {
+    border-radius: 2px;
+    background-color: #313648;
+    }
+
+    .horizontalCard .strengthText {
+    min-width: 0;
+
+    color: #d5d8e0;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 21px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     }
 
     .horizontalCard .tagList {
-    margin-top: 18px;
+    width: 100%;
+    margin: 32px 0 0;
+
+    display: flex;
     flex-wrap: nowrap;
+    align-items: center;
+    gap: 4px;
+
     overflow: hidden;
+    }
+
+    .horizontalCard .tag {
+    max-width: 92px;
+    padding: 6px 10px;
+
+    border-radius: 8px;
+    background-color: #3d435a;
+    color: #dfe2eb;
+
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 18px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-shrink: 1;
     }
 
     /* =========================
@@ -322,247 +405,406 @@
     text-overflow: ellipsis;
     }
 
-
-
     /* =========================
-    탐색 프로필 카드
+        탐색 프로필 카드
     ========================= */
 
     .cardButton {
-    width: 100%;
-    padding: 0;
+        width: 282px;
+        height: 400px;
+        padding: 0;
 
-    display: block;
+        display: block;
 
-    border: 0;
-    background: transparent;
+        border: 0;
+        border-radius: 12px;
+        background: transparent;
 
-    color: inherit;
-    font: inherit;
-    text-align: left;
+        color: inherit;
+        font: inherit;
+        text-align: left;
 
-    cursor: pointer;
+        cursor: pointer;
     }
 
-    .exploreCard {
-    width: 100%;
-    min-height: 400px;
-    padding: 16px 20px;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 80px;
-
-    border-radius: 12px;
-    background-color: #676d82;
-    color: #ffffff;
-
-    box-sizing: border-box;
-    overflow: hidden;
+    .cardButton:focus-visible {
+        outline: 2px solid
+            #b7ddff;
+        outline-offset: 4px;
     }
 
-    .exploreJob {
-    width: 100%;
-    margin: 0;
+    .card {
+        position: relative;
 
-    color: #d5d8e0;
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 150%;
+        width: 282px;
+        height: 400px;
+        padding: 16px 20px;
 
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+        display: flex;
+        flex-direction: column;
+
+        border: 0;
+        border-radius: 12px;
+
+        background:
+            radial-gradient(
+                circle at 100% 100%,
+                #fffed1 0%,
+                rgba(
+                        255,
+                        254,
+                        209,
+                        0.6
+                    )
+                    10%,
+                rgba(
+                        255,
+                        254,
+                        209,
+                        0
+                    )
+                    34%
+            ),
+            linear-gradient(
+                135deg,
+                #69adfb 0%,
+                #5298f5 25%,
+                #438bf1 100%
+            );
+
+        color: #ffffff;
+
+        box-sizing: border-box;
+        overflow: hidden;
+
+        transition:
+            transform 160ms ease,
+            box-shadow 160ms ease;
     }
 
-    .exploreCardContent {
-    width: 100%;
+    .cardButton:hover
+        .card {
+        transform: translateY(
+            -4px
+        );
 
-    display: flex;
-    flex-direction: column;
+        box-shadow:
+            0 18px 36px
+            rgba(0, 0, 0, 0.24);
     }
 
-    .exploreProfileRow {
-    width: 100%;
+    .topRow {
+        width: 100%;
 
-    display: flex;
-    align-items: center;
-    gap: 12px;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
     }
 
-    .exploreAvatar,
-    .exploreAvatarPlaceholder {
-    width: 60px;
-    height: 60px;
+    .job {
+        min-width: 0;
+        margin: 0;
 
-    border-radius: 50%;
-    flex-shrink: 0;
+        color: rgba(
+            255,
+            255,
+            255,
+            0.72
+        );
+
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 21px;
+
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
-    .exploreAvatar {
-    display: block;
-    object-fit: cover;
+    .shareIcon {
+        width: 24px;
+        height: 24px;
+
+        display: block;
+        flex-shrink: 0;
+
+        object-fit: contain;
     }
 
-    .exploreAvatarPlaceholder {
-    background-color: #aab4ec;
+    .content {
+        width: 100%;
+        margin-top: 82px;
+
+        display: flex;
+        flex-direction: column;
     }
 
-    .exploreProfileInfo {
-    min-width: 0;
-    flex: 1;
+    .profileRow {
+        width: 100%;
+
+        display: flex;
+        align-items: center;
+        gap: 12px;
     }
 
-    .exploreName {
-    display: block;
+    .avatar,
+    .avatarPlaceholder {
+        width: 56px;
+        height: 56px;
 
-    color: #ffffff;
-    font-size: 20px;
-    font-weight: 700;
-    line-height: 140%;
-
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+        border-radius: 50%;
+        flex-shrink: 0;
     }
 
-    .exploreAffiliation {
-    margin: 4px 0 0;
-
-    color: #d5d8e0;
-    font-size: 12px;
-    line-height: 150%;
-
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    .avatar {
+        display: block;
+        object-fit: cover;
     }
 
-    .exploreTagList {
-    width: 100%;
-    margin-top: 16px;
+    .avatarPlaceholder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
-    display: flex;
-    align-items: center;
-    gap: 8px;
+        background-color: #ffffff;
+        color: #2d70cc;
 
-    overflow: hidden;
+        font-size: 24px;
+        font-weight: 700;
+        line-height: 1;
     }
 
-    .exploreTag {
-    max-width: 110px;
-    min-height: 36px;
-    padding: 0 12px;
-
-    display: inline-flex;
-    align-items: center;
-
-    border-radius: 9px;
-    background-color: #3d435a;
-    color: #ffffff;
-
-    font-size: 13px;
-
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-
-    box-sizing: border-box;
-    flex-shrink: 0;
+    .profileInfo {
+        min-width: 0;
+        flex: 1;
     }
 
-    .exploreExperienceBox {
-    width: 100%;
-    min-height: 88px;
-    margin-top: 20px;
-    padding: 14px;
+    .name {
+        display: block;
+        width: 100%;
 
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+        color: #ffffff;
 
-    border-radius: 12px;
-    background-color: #596077;
+        font-size: 20px;
+        font-weight: 700;
+        line-height: 28px;
+        letter-spacing: -0.24px;
 
-    box-sizing: border-box;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
-    .exploreExperienceTitle {
-    margin: 0;
+    .affiliation {
+        width: 100%;
+        margin: 1px 0 0;
 
-    color: #ffffff;
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 150%;
+        color: rgba(
+            255,
+            255,
+            255,
+            0.78
+        );
 
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 18px;
+
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
-    .exploreExperienceDescription {
-    margin: 0;
+    .tagList {
+        width: 100%;
+        height: 34px;
+        margin-top: 12px;
 
-    color: #d5d8e0;
-    font-size: 12px;
-    line-height: 18px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
 
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-
-    overflow: hidden;
-    text-overflow: ellipsis;
-    word-break: keep-all;
+        overflow: hidden;
     }
 
-    .exploreStrengthBox {
-    width: fit-content;
-    max-width: 100%;
-    min-height: 48px;
-    margin-top: 20px;
-    padding: 8px 14px;
+    .tag {
+        min-width: 0;
+        max-width: 106px;
+        padding: 6px 10px;
 
-    display: flex;
-    align-items: center;
-    gap: 10px;
+        border-radius: 8px;
 
-    border-radius: 10px;
-    background-color: #3d435a;
+        background-color: #2f75da;
+        color: #ffffff;
 
-    box-sizing: border-box;
+        font-size: 12px;
+        font-weight: 500;
+        line-height: 18px;
+
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
-    .exploreStrengthIcon,
-    .exploreStrengthPlaceholder {
-    width: 28px;
-    height: 28px;
+    .emptyTag {
+        background-color: rgba(
+            47,
+            117,
+            218,
+            0.62
+        );
 
-    flex-shrink: 0;
+        color: rgba(
+            255,
+            255,
+            255,
+            0.8
+        );
     }
 
-    .exploreStrengthIcon {
-    display: block;
-    object-fit: contain;
+    .experienceBox {
+        width: 100%;
+        height: 66px;
+        margin-top: 18px;
+        padding: 10px 12px;
+
+        border: 1px solid
+            rgba(
+                199,
+                228,
+                255,
+                0.48
+            );
+
+        border-radius: 10px;
+
+        background:
+            linear-gradient(
+                135deg,
+                rgba(
+                        62,
+                        137,
+                        233,
+                        0.68
+                    )
+                    0%,
+                rgba(
+                        110,
+                        176,
+                        241,
+                        0.42
+                    )
+                    100%
+            );
+
+        box-shadow:
+            inset 0 0 16px
+            rgba(
+                208,
+                235,
+                255,
+                0.28
+            );
+
+        box-sizing: border-box;
+        overflow: hidden;
     }
 
-    .exploreStrengthPlaceholder {
-    display: block;
-    background-color: #242a41;
+    .experienceTitle {
+        width: 100%;
+        margin: 0;
+
+        color: #ffffff;
+
+        font-size: 13px;
+        font-weight: 600;
+        line-height: 20px;
+
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
-    .exploreStrengthText {
-    min-width: 0;
+    .experienceDescription {
+        width: 100%;
+        margin: 4px 0 0;
 
-    color: #ffffff;
-    font-size: 14px;
-    font-weight: 700;
-    line-height: 150%;
+        color: rgba(
+            255,
+            255,
+            255,
+            0.76
+        );
 
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+        font-size: 11px;
+        font-weight: 400;
+        line-height: 17px;
+
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .strengthBox {
+        width: fit-content;
+        max-width: 100%;
+        height: 44px;
+        margin-top: 18px;
+        padding: 8px 12px;
+
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        border-radius: 9px;
+
+        background-color: rgba(
+            122,
+            182,
+            250,
+            0.46
+        );
+
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+
+    .strengthIcon,
+    .strengthPlaceholder {
+        width: 28px;
+        height: 28px;
+
+        flex-shrink: 0;
+    }
+
+    .strengthIcon {
+        display: block;
+        object-fit: contain;
+    }
+
+    .strengthPlaceholder {
+        border-radius: 5px;
+
+        background-color: rgba(
+            215,
+            237,
+            255,
+            0.38
+        );
+    }
+
+    .strengthText {
+        min-width: 0;
+
+        color: #ffffff;
+
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 21px;
+
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     /* =========================

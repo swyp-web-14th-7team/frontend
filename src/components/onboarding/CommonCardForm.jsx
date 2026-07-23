@@ -1,47 +1,112 @@
-    import Dropdown from "../common/Dropdown/Dropdown";
-    import styles from "./CommonCardForm.module.css";
+import Dropdown from "../common/Dropdown/Dropdown";
 
-    const affiliationOptions = [
-    "직장인",
-    "재학생",
-    "휴학생",
-    "취준생",
-    ];
+import styles from "./CommonCardForm.module.css";
 
-    const CommonCardForm = ({ data, handleChange }) => {
-    return (
-        <div className={styles.field}>
-        <label className={`caption1 ${styles.label}`}>
-            현 소속
-        </label>
+const CommonCardForm = ({
+    data,
+    affiliationStatuses = [],
+    handleChange,
+}) => {
+    const affiliationOptions =
+        affiliationStatuses.map(
+            (status) =>
+                status.name,
+        );
 
-        <div className={styles.affiliationRow}>
-            <div className={styles.dropdownWrapper}>
-            <Dropdown
-                value={data.affiliationType}
-                options={affiliationOptions}
-                onChange={(value) =>
-                handleChange("affiliationType", value)
-                }
-            />
-            </div>
+    const handleStatusChange = (
+        statusName,
+    ) => {
+        const selectedStatus =
+            affiliationStatuses.find(
+                (status) =>
+                    status.name ===
+                    statusName,
+            );
 
-            <input
-            className={styles.input}
-            value={data.affiliation}
-            maxLength={20}
-            onChange={(event) =>
-                handleChange("affiliation", event.target.value)
-            }
-            placeholder="텍스트를 입력하세요"
-            />
+        handleChange(
+            "affiliationType",
+            statusName,
+        );
 
-            <p className={styles.count}>
-            {(data.affiliation || "").length}/20
-            </p>
-        </div>
-        </div>
-    );
+        handleChange(
+            "affiliationStatusId",
+            selectedStatus?.id ||
+                null,
+        );
     };
 
-    export default CommonCardForm;
+    return (
+        <div
+            className={
+                styles.field
+            }
+        >
+            <label
+                className={`caption1 ${styles.label}`}
+            >
+                현 소속
+            </label>
+
+            <div
+                className={
+                    styles.affiliationRow
+                }
+            >
+                <div
+                    className={
+                        styles.dropdownWrapper
+                    }
+                >
+                    <Dropdown
+                        value={
+                            data.affiliationType
+                        }
+                        placeholder="현재 상태"
+                        options={
+                            affiliationOptions
+                        }
+                        onChange={
+                            handleStatusChange
+                        }
+                    />
+                </div>
+
+                <input
+                    className={
+                        styles.input
+                    }
+                    value={
+                        data.affiliation
+                    }
+                    maxLength={20}
+                    onChange={(
+                        event,
+                    ) =>
+                        handleChange(
+                            "affiliation",
+                            event.target
+                                .value,
+                        )
+                    }
+                    placeholder="텍스트를 입력하세요"
+                />
+
+                <p
+                    className={
+                        styles.count
+                    }
+                >
+                    {
+                        (
+                            data.affiliation ||
+                            ""
+                        ).length
+                    }
+                    /20
+                </p>
+            </div>
+        </div>
+    );
+};
+
+export default CommonCardForm;
