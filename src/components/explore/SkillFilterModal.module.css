@@ -83,6 +83,42 @@
     flex-shrink: 0;
     }
 
+    .jobArea {
+    margin-top: 18px;
+    margin-bottom: 18px;
+    padding: 14px;
+    border-radius: 10px;
+    background: #222435;
+    }
+
+    .jobTitleRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    }
+
+    .jobTitleRow .sectionTitle {
+    margin: 0;
+    }
+
+    .optionalLabel {
+    padding: 2px 6px;
+    border: 1px solid #32374c;
+    border-radius: 4px;
+    color: #7cb9f2;
+    font-size: 10px;
+    }
+
+    .disabledItem {
+    opacity: 0.25;
+    cursor: not-allowed;
+    }
+
+    .disabledSection {
+    opacity: 0.45;
+    }
+
     .searchInput {
     min-width: 0;
     flex: 1;
@@ -315,8 +351,8 @@
     }
 
     /* =========================
-    모바일 바텀시트
-    ========================= */
+        紐⑤컮�� 諛뷀��쒗듃
+        ========================= */
 
     @media (max-width: 600px) {
     .overlay {

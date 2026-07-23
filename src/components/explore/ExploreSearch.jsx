@@ -1,4 +1,6 @@
-import { useState } from "react";
+import {
+  useState,
+} from "react";
 
 import Dropdown from "../common/Dropdown/Dropdown";
 import SkillFilterModal from "./SkillFilterModal";
@@ -9,6 +11,7 @@ import dropdownIcon from "../../assets/icons/icon_dropdown.svg";
 import searchIcon from "../../assets/icons/icon_search.svg";
 
 const AFFILIATION_OPTIONS = [
+  "모두",
   "직장인",
   "재학생",
   "휴학생",
@@ -25,35 +28,48 @@ const SORT_OPTIONS = [
 const ExploreSearch = ({
   keyword,
   affiliation,
+  selectedJobType,
   selectedTags,
   sort,
   isMobileSearchOpen = false,
   onKeywordChange,
   onAffiliationChange,
+  onJobTypeChange,
   onTagsChange,
   onSortChange,
 }) => {
-  const [isSkillModalOpen, setIsSkillModalOpen] =
-    useState(false);
+  const [
+    isSkillModalOpen,
+    setIsSkillModalOpen,
+  ] = useState(false);
 
-  const selectedTagLabel = (() => {
-    if (selectedTags.length === 0) {
-      return "스킬";
-    }
+  /*
+   * 직군 1개와 선택 스킬 개수를 합산한다.
+   */
+  const selectedFilterCount =
+    (selectedJobType ? 1 : 0) +
+    selectedTags.length;
 
-    if (selectedTags.length === 1) {
-      return selectedTags[0].name;
-    }
-
-    return `${selectedTags[0].name} 외 ${
-      selectedTags.length - 1
-    }`;
-  })();
+  /*
+   * 모달에서 적용 버튼을 눌렀을 때만
+   * 실제 탐색 필터를 변경한다.
+   */
+  const handleFilterApply = ({
+    jobType,
+    skills,
+  }) => {
+    onJobTypeChange(jobType);
+    onTagsChange(skills);
+  };
 
   return (
-    <div className={styles.container}>
+    <div
+      className={styles.container}
+    >
       <div
-        className={`${styles.searchBox} ${
+        className={`${
+          styles.searchBox
+        } ${
           isMobileSearchOpen
             ? styles.mobileSearchOpen
             : ""
@@ -62,61 +78,121 @@ const ExploreSearch = ({
         <img
           src={searchIcon}
           alt=""
-          className={styles.searchIcon}
+          className={
+            styles.searchIcon
+          }
         />
 
         <input
           type="search"
           value={keyword}
           onChange={(event) =>
-            onKeywordChange(event.target.value)
+            onKeywordChange(
+              event.target.value,
+            )
           }
           placeholder="이름, 직군, 관심분야를 검색해보세요."
-          className={styles.searchInput}
+          className={
+            styles.searchInput
+          }
           aria-label="프로필 검색"
         />
 
-        <div className={styles.filterArea}>
+        <div
+          className={
+            styles.filterArea
+          }
+        >
           <Dropdown
             value={affiliation}
             placeholder="현 소속"
-            options={AFFILIATION_OPTIONS}
-            onChange={onAffiliationChange}
-            className={styles.affiliationDropdown}
+            options={
+              AFFILIATION_OPTIONS
+            }
+            onChange={
+              onAffiliationChange
+            }
+            className={
+              styles.affiliationDropdown
+            }
           />
 
           <button
             type="button"
-            className={styles.filterButton}
-            onClick={() => setIsSkillModalOpen(true)}
+            className={`${
+              styles.filterButton
+            } ${
+              selectedFilterCount > 0
+                ? styles.activeFilterButton
+                : ""
+            }`}
+            onClick={() =>
+              setIsSkillModalOpen(
+                true,
+              )
+            }
           >
-            <span className={styles.filterText}>
-              {selectedTagLabel}
+            <span
+              className={
+                styles.filterText
+              }
+            >
+              직군·스킬
             </span>
+
+            {selectedFilterCount >
+              0 && (
+              <span
+                className={
+                  styles.filterCount
+                }
+              >
+                {
+                  selectedFilterCount
+                }
+              </span>
+            )}
 
             <img
               src={dropdownIcon}
               alt=""
-              className={styles.arrow}
+              className={
+                styles.arrow
+              }
             />
           </button>
         </div>
       </div>
 
-      <div className={styles.sortArea}>
+      <div
+        className={styles.sortArea}
+      >
         <Dropdown
           value={sort}
           options={SORT_OPTIONS}
           onChange={onSortChange}
-          className={styles.sortDropdown}
+          className={
+            styles.sortDropdown
+          }
         />
       </div>
 
       {isSkillModalOpen && (
         <SkillFilterModal
-          selectedSkills={selectedTags}
-          onClose={() => setIsSkillModalOpen(false)}
-          onApply={onTagsChange}
+          selectedJobType={
+            selectedJobType
+          }
+          selectedSkills={
+            selectedTags
+          }
+          onClose={() =>
+            setIsSkillModalOpen(
+              false,
+            )
+          }
+          onApply={
+            handleFilterApply
+          }
         />
       )}
     </div>

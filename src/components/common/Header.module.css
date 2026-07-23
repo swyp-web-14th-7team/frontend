@@ -117,4 +117,89 @@
 
     .iconButton:hover {
     opacity: 0.7;
+<<<<<<< Updated upstream
     }
+=======
+    }
+
+    .activeIconButton {
+    opacity: 1;
+    }
+
+    .activeIconButton .icon {
+    filter:
+        brightness(0)
+        saturate(100%)
+        invert(74%)
+        sepia(22%)
+        saturate(842%)
+        hue-rotate(190deg)
+        brightness(101%)
+        contrast(95%);
+    }
+
+    .notificationWrapper {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.notificationDot {
+    position: absolute;
+    top: 0;
+    right: 1px;
+    z-index: 2;
+
+    width: 5px;
+    height: 5px;
+
+    border-radius: 50%;
+    background-color: #ff4d5e;
+}
+
+    .loginButton {
+    margin-left: auto;
+    padding: 0;
+
+    border: 0;
+    border-radius: 0;
+
+    color: #ffffff;
+    background: transparent;
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+
+    appearance: none;
+    cursor: pointer;
+    }
+
+    .loginButton:hover {
+    color: #afd9fa;
+    background: transparent;
+    }
+
+    .loginButton:active {
+    opacity: 0.7;
+    transform: scale(0.97);
+    }
+
+    .loginButton:focus {
+    outline: none;
+    }
+
+    .loginButton:focus-visible {
+    border-radius: 2px;
+    outline: 2px solid #afd9fa;
+    outline-offset: 4px;
+    }
+
+    @media (max-width: 767px) {
+    .loginButton {
+        font-size: 13px;
+    }
+}
+>>>>>>> Stashed changes

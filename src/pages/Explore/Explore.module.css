@@ -79,6 +79,15 @@
     position: relative;
     }
 
+    /*
+    * 비로그인 제한 탭에서 카드가 없어도
+    * 로그인 유도 문구가 화면 아래쪽에
+    * 배치될 수 있도록 높이를 확보한다.
+    */
+    .restrictedCardArea {
+    min-height: 520px;
+    }
+
     .maskGradient {
     position: absolute;
     right: 0;
@@ -101,7 +110,7 @@
     .loginGuide {
     position: absolute;
     right: 0;
-    bottom: 56px;
+    bottom: 0;
     left: 0;
 
     z-index: 2;
@@ -150,7 +159,7 @@
     .startButton:hover {
     opacity: 0.9;
     }
-    
+
     .mobileOnly {
     display: none;
     }
@@ -242,10 +251,15 @@
         position: relative;
     }
 
+    .restrictedCardArea {
+        min-height:
+        calc(100vh - 340px);
+    }
+
     .loginGuide {
         position: absolute;
         right: 0;
-        bottom: 140px;
+        bottom: 0;
         left: 0;
 
         z-index: 500;
@@ -279,6 +293,4 @@
         cursor: pointer;
         pointer-events: auto;
     }
-}
-
-
+    }
