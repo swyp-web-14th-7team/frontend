@@ -1,4 +1,6 @@
-import shareIcon from "../../assets/icons/icon_share.svg";
+import {
+    makeCardBackgroundUrl,
+} from "../../api/cardBackground";
 
 import styles from "./ProfileCard.module.css";
 
@@ -96,12 +98,36 @@ const ExploreProfileCard = ({
         profile.strength?.imageUrl ||
         "";
 
+    /*
+     * 같은 소속 정보가 두 번 들어오면
+     * 한 번만 표시합니다.
+     */
     const affiliationText = [
         profile.affiliationType,
         profile.affiliation,
     ]
-        .filter(Boolean)
+        .filter(
+            (
+                value,
+                index,
+                values,
+            ) =>
+                Boolean(value) &&
+                values.indexOf(
+                    value,
+                ) === index,
+        )
         .join(" | ");
+
+    /*
+     * 사용자가 선택한 카드 배경을
+     * 탐색 카드에 표시합니다.
+     */
+    const cardBackgroundUrl =
+        makeCardBackgroundUrl(
+            profile.cardImageUrl ||
+            profile.cardImage,
+        );
 
     const handleClick = () => {
         if (!profile.id) {
@@ -128,6 +154,27 @@ const ExploreProfileCard = ({
                 className={
                     styles.card
                 }
+                style={
+                    cardBackgroundUrl
+                        ? {
+                              backgroundImage:
+                                  `linear-gradient(
+                                      rgba(17, 16, 23, 0.12),
+                                      rgba(17, 16, 23, 0.12)
+                                  ),
+                                  url("${cardBackgroundUrl}")`,
+
+                              backgroundPosition:
+                                  "center",
+
+                              backgroundSize:
+                                  "cover",
+
+                              backgroundRepeat:
+                                  "no-repeat",
+                          }
+                        : undefined
+                }
             >
                 <div
                     className={
@@ -145,16 +192,6 @@ const ExploreProfileCard = ({
                             profile.jobTypeName ||
                             "직군 미선택"}
                     </p>
-
-                    <img
-                        src={
-                            shareIcon
-                        }
-                        alt=""
-                        className={
-                            styles.shareIcon
-                        }
-                    />
                 </div>
 
                 <div

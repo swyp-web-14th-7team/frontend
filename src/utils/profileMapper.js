@@ -1,3 +1,5 @@
+import avatarPlaceholderDefault from "../assets/images/avatarPlaceholder_default.png";
+
 const JOB_NAME_MAP = {
     PM: "planner",
     기획자: "planner",
@@ -118,7 +120,8 @@ const normalizeLink = (
         "";
 
     if (
-        linkInfo.type === "email" &&
+        linkInfo.type ===
+            "email" &&
         url &&
         !url.startsWith(
             "mailto:",
@@ -353,9 +356,14 @@ export const mapProfileCard = (
         profileImage:
             profile.profileImageUrl ||
             profile.profileImageUri ||
-            "",
+            avatarPlaceholderDefault,
 
         cardImage:
+            profile.cardImageUrl ||
+            profile.cardImageUri ||
+            "",
+
+        cardImageUrl:
             profile.cardImageUrl ||
             profile.cardImageUri ||
             "",

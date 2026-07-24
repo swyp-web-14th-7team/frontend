@@ -10,6 +10,7 @@ import {
 
 import {
     createProfileCard,
+    getDefaultProfileCard,
     updateProfileCard,
 } from "../../api/profile";
 
@@ -131,6 +132,37 @@ const INITIAL_ONBOARDING_DATA = {
 
     profileCardId: null,
     createdProfile: null,
+};
+
+const getDefaultCardData = (
+    profileCard,
+) => {
+    if (!profileCard) {
+        return {};
+    }
+
+    const nickname =
+        profileCard.nickname ||
+        profileCard.name ||
+        "";
+
+    const profileImageUrl =
+        profileCard.profileImageUrl ||
+        "";
+
+    return {
+        name: nickname,
+        nickname,
+        profileImage:
+            profileImageUrl,
+        profileImageUrl,
+        links:
+            Array.isArray(
+                profileCard.links,
+            )
+                ? profileCard.links
+                : [],
+    };
 };
 
 const Onboarding = () => {
@@ -709,8 +741,7 @@ const Onboarding = () => {
             controller.abort();
         };
     }, [step]);
-
-    const nextStep = () => {
+        const nextStep = () => {
         setStep(
             (previousStep) =>
                 Math.min(
@@ -811,6 +842,40 @@ const Onboarding = () => {
                     }),
                 );
 
+                let basicProfileCard =
+                    null;
+
+                /*
+                 * 최초 온보딩에서는 기본 카드가 있는지
+                 * GET /profile-cards/default로 확인합니다.
+                 *
+                 * 404라면 아직 기본 카드가 없다는 뜻이므로
+                 * 직군 선택 직후 기본 카드를 생성합니다.
+                 */
+                if (
+                    !isCardCreationFlow
+                ) {
+                    try {
+                        basicProfileCard =
+                            await getDefaultProfileCard();
+                    } catch (error) {
+                        if (
+                            error?.status !==
+                            404
+                        ) {
+                            throw error;
+                        }
+
+                        basicProfileCard =
+                            await createProfileCard(
+                                {
+                                    jobTypeId:
+                                        selectedJobTypeId,
+                                },
+                            );
+                    }
+                }
+
                 updateOnboardingData({
                     job:
                         selectedJob.id,
@@ -830,8 +895,21 @@ const Onboarding = () => {
 
                     cardImageUrl: "",
 
-                    profileCardId: null,
-                    createdProfile: null,
+                    profileCardId:
+                        basicProfileCard
+                            ?.id ||
+                        null,
+
+                    createdProfile:
+                        basicProfileCard,
+
+                    /*
+                     * 기본 카드에서 받은 닉네임과
+                     * 프로필 이미지를 미리보기에 반영합니다.
+                     */
+                    ...getDefaultCardData(
+                        basicProfileCard,
+                    ),
                 });
 
                 nextStep();
@@ -992,18 +1070,41 @@ const Onboarding = () => {
                             .profileImageUrl;
                 }
 
-                const createdCard =
-                    await createProfileCard({
-                        jobTypeId:
-                            onboardingData
-                                .jobTypeId,
+                /*
+                 * 최초 온보딩에서는 직군 선택 단계에서
+                 * 기본 카드가 이미 만들어져 있습니다.
+                 */
+                let profileCardId =
+                    onboardingData
+                        .profileCardId;
 
-                        purposeId:
-                            onboardingData
-                                .purposeId,
-                    });
+                let createdCard =
+                    onboardingData
+                        .createdProfile;
 
-                if (!createdCard?.id) {
+                /*
+                 * 추가 카드 생성 흐름에서는 아직 카드가
+                 * 없으므로 마지막 단계에서 새로 생성합니다.
+                 */
+                if (!profileCardId) {
+                    createdCard =
+                        await createProfileCard(
+                            {
+                                jobTypeId:
+                                    onboardingData
+                                        .jobTypeId,
+
+                                purposeId:
+                                    onboardingData
+                                        .purposeId,
+                            },
+                        );
+
+                    profileCardId =
+                        createdCard?.id;
+                }
+
+                if (!profileCardId) {
                     throw new Error(
                         "생성된 프로필 카드 ID를 받지 못했습니다.",
                     );
@@ -1011,7 +1112,7 @@ const Onboarding = () => {
 
                 const updatedCard =
                     await updateProfileCard(
-                        createdCard.id,
+                        profileCardId,
                         profilePayload,
                     );
 
@@ -1021,7 +1122,7 @@ const Onboarding = () => {
 
                 updateOnboardingData({
                     profileCardId:
-                        createdCard.id,
+                        profileCardId,
 
                     createdProfile:
                         updatedCard,
