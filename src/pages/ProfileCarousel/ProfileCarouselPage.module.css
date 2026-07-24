@@ -1,26 +1,26 @@
-    .container {
+.container {
     width: 100%;
     min-height: calc(100vh - 80px);
 
     overflow: hidden;
 
     box-sizing: border-box;
-    }
+}
 
-    /* =========================
-    상단
-    ========================= */
+/* =========================
+상단
+========================= */
 
-    .pageHeader {
+.pageHeader {
     width: 100%;
     max-width: 1440px;
     margin: 0 auto;
     padding: 56px 88px 0;
 
     box-sizing: border-box;
-    }
+}
 
-    .backButton {
+.backButton {
     min-height: 32px;
     padding: 0;
 
@@ -43,66 +43,67 @@
     transition:
         opacity 0.2s ease,
         transform 0.2s ease;
-    }
+}
 
-    .backButton svg {
+.backButton svg {
     display: block;
     flex-shrink: 0;
-    }
+}
 
-    .backButton:hover {
+.backButton:hover {
     opacity: 0.75;
     transform: translateX(-2px);
-    }
+}
 
-    .backButton:active {
+.backButton:active {
     opacity: 0.6;
     transform: translateX(-4px);
-    }
+}
 
-    .backButton:focus-visible {
+.backButton:focus-visible {
     border-radius: 4px;
     outline: 2px solid #ffffff;
     outline-offset: 5px;
-    }
+}
 
-    /* =========================
-    캐러셀
-    ========================= */
+/* =========================
+캐러셀
+========================= */
 
-    .carouselSection {
+.carouselSection {
     width: 100%;
     margin-top: 22px;
-    }
+}
 
-    .carouselArea {
+.carouselArea {
     position: relative;
 
     width: 100%;
 
     overflow: hidden;
-    }
+}
 
-    .swiper {
+.swiper {
     width: 100%;
     padding: 58px 0 32px;
 
     overflow: visible;
 
     box-sizing: border-box;
-    }
+}
 
-    .slide {
-    width: 302px;
+.slide {
+    width: 100%;
     height: auto;
 
     display: flex;
     align-items: center;
     justify-content: center;
-    }
+}
 
-    .slide > button {
-    width: 100%;
+.slide > button {
+    width: 282px;
+    margin: 0 auto;
 
     opacity: 0.18;
     filter: blur(2.5px);
@@ -112,51 +113,51 @@
         opacity 0.45s ease,
         transform 0.45s ease,
         filter 0.45s ease;
-    }
+}
 
-    .slide:global(.swiper-slide-active) {
+.slide:global(.swiper-slide-active) {
     z-index: 10;
-    }
+}
 
-    .slide:global(.swiper-slide-active) > button {
+.slide:global(.swiper-slide-active) > button {
     opacity: 1;
     filter: blur(0);
     transform: scale(1);
-    }
+}
 
-    .slide:global(.swiper-slide-active) article {
+.slide:global(.swiper-slide-active) article {
     box-shadow:
         0 24px 50px rgba(0, 0, 0, 0.38);
-    }
+}
 
-    .slide:global(.swiper-slide-prev),
-    .slide:global(.swiper-slide-next) {
+.slide:global(.swiper-slide-prev),
+.slide:global(.swiper-slide-next) {
     z-index: 5;
-    }
+}
 
-    .slide:global(.swiper-slide-prev) > button,
-    .slide:global(.swiper-slide-next) > button {
+.slide:global(.swiper-slide-prev) > button,
+.slide:global(.swiper-slide-next) > button {
     opacity: 0.58;
     filter: blur(0.7px);
-    }
+}
 
-    .slide:global(.swiper-slide-prev) > button {
+.slide:global(.swiper-slide-prev) > button {
     transform:
         translateX(-12px)
         scale(0.9);
-    }
+}
 
-    .slide:global(.swiper-slide-next) > button {
+.slide:global(.swiper-slide-next) > button {
     transform:
         translateX(12px)
         scale(0.9);
-    }
+}
 
-    /* =========================
-    화살표
-    ========================= */
+/* =========================
+화살표
+========================= */
 
-    .arrowButton {
+.arrowButton {
     position: absolute;
     top: 50%;
     z-index: 30;
@@ -192,10 +193,10 @@
         visibility 0.25s ease,
         transform 0.25s ease,
         background-color 0.2s ease;
-    }
+}
 
-    .carouselArea:hover
-    .arrowButton:not(:disabled) {
+.carouselArea:hover
+.arrowButton:not(:disabled) {
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
@@ -203,9 +204,9 @@
     transform:
         translateY(-50%)
         scale(1);
-    }
+}
 
-    .arrowButton:focus-visible {
+.arrowButton:focus-visible {
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
@@ -216,44 +217,44 @@
     transform:
         translateY(-50%)
         scale(1);
-    }
+}
 
-    .arrowButton:hover {
+.arrowButton:hover {
     background-color: #343a54;
 
     transform:
         translateY(-50%)
         scale(1.08);
-    }
+}
 
-    .arrowButton:disabled {
+.arrowButton:disabled {
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
-    }
+}
 
-    .leftArrow {
+.leftArrow {
     left: 40px;
-    }
+}
 
-    .rightArrow {
+.rightArrow {
     right: 40px;
-    }
+}
 
-    /* =========================
-    스크랩 버튼
-    ========================= */
+/* =========================
+스크랩 버튼
+========================= */
 
-    .actionArea {
+.actionArea {
     width: 100%;
     margin: 8px 0 24px;
 
     display: flex;
     align-items: center;
     justify-content: center;
-    }
+}
 
-    .scrapButton {
+.scrapButton {
     min-width: 112px;
     height: 44px;
     padding: 0 20px;
@@ -280,51 +281,51 @@
         background-color 0.2s ease,
         border-color 0.2s ease,
         transform 0.2s ease;
-    }
+}
 
-    .scrapIcon {
+.scrapIcon {
     display: block;
     width: 20px;
     height: 20px;
 
     flex-shrink: 0;
-    }
+}
 
-    .scrapButton:hover {
+.scrapButton:hover {
     border-color:
         rgba(255, 255, 255, 0.28);
 
     background-color: #343a54;
 
     transform: translateY(-2px);
-    }
+}
 
-    .scrapButton.scrapped {
+.scrapButton.scrapped {
     border-color: #525dff;
     background-color: #525dff;
-    }
+}
 
-    .emptyMessage {
+.emptyMessage {
     margin: 120px auto 0;
 
     color: #ffffff;
     font-size: 16px;
     text-align: center;
-    }
+}
 
-    /* =========================
-    인디케이터
-    ========================= */
+/* =========================
+인디케이터
+========================= */
 
-    .indicatorContainer {
+.indicatorContainer {
     width: 100%;
     padding-bottom: 40px;
 
     display: flex;
     justify-content: center;
-    }
+}
 
-    .indicator {
+.indicator {
     position: relative;
 
     width: 420px;
@@ -333,9 +334,9 @@
     cursor: grab;
     touch-action: none;
     user-select: none;
-    }
+}
 
-    .indicator::before {
+.indicator::before {
     position: absolute;
     top: 50%;
     left: 0;
@@ -348,9 +349,9 @@
 
     content: "";
     transform: translateY(-50%);
-    }
+}
 
-    .indicatorThumb {
+.indicatorThumb {
     position: absolute;
     top: 50%;
     left: calc(
@@ -375,13 +376,13 @@
         0 0 28px rgba(133, 146, 213, 0.28);
 
     transition: left 0.18s ease-out;
-    }
+}
 
-    /* =========================
-    스크랩 바텀시트
-    ========================= */
+/* =========================
+스크랩 바텀시트
+========================= */
 
-    .scrapSheetBackdrop {
+.scrapSheetBackdrop {
     position: fixed;
     inset: 0;
     z-index: 1000;
@@ -392,9 +393,9 @@
 
     background-color: rgba(10, 10, 16, 0.72);
     backdrop-filter: blur(7px);
-    }
+}
 
-    .scrapSheet {
+.scrapSheet {
     width: 100%;
     max-width: 640px;
     min-height: 430px;
@@ -405,24 +406,24 @@
     color: #ffffff;
 
     box-sizing: border-box;
-    }
+}
 
-    .scrapSheetHeader {
+.scrapSheetHeader {
     display: flex;
     align-items: center;
     justify-content: space-between;
 
     margin-bottom: 34px;
-    }
+}
 
-    .scrapSheetHeader h2 {
+.scrapSheetHeader h2 {
     margin: 0;
 
     font-size: 24px;
     font-weight: 700;
-    }
+}
 
-    .sheetCloseButton {
+.sheetCloseButton {
     width: 36px;
     height: 36px;
     padding: 0;
@@ -436,9 +437,9 @@
     line-height: 1;
 
     cursor: pointer;
-    }
+}
 
-    .collectionSummary {
+.collectionSummary {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -447,9 +448,9 @@
 
     color: #a4a9bb;
     font-size: 15px;
-    }
+}
 
-    .addDrawerButton {
+.addDrawerButton {
     padding: 4px 0;
 
     border: 0;
@@ -461,13 +462,13 @@
     font-weight: 600;
 
     cursor: pointer;
-    }
+}
 
-    .addDrawerButton:hover {
+.addDrawerButton:hover {
     color: #afd8f8;
-    }
+}
 
-    .collectionList {
+.collectionList {
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -475,9 +476,9 @@
     max-height: 230px;
 
     overflow-y: auto;
-    }
+}
 
-    .collectionItem {
+.collectionItem {
     width: 100%;
     min-height: 58px;
     padding: 0;
@@ -494,9 +495,9 @@
     text-align: left;
 
     cursor: pointer;
-    }
+}
 
-    .selectionIcon {
+.selectionIcon {
     width: 34px;
     height: 34px;
 
@@ -513,18 +514,18 @@
     line-height: 1;
 
     box-sizing: border-box;
-    }
+}
 
-    .selectedIcon {
+.selectedIcon {
     border-color: #ffffff;
     background-color: #ffffff;
     color: #222435;
 
     font-size: 20px;
     font-weight: 800;
-    }
+}
 
-    .saveScrapButton {
+.saveScrapButton {
     width: 100%;
     height: 52px;
     margin-top: 34px;
@@ -539,32 +540,32 @@
     font-weight: 700;
 
     cursor: pointer;
-    }
+}
 
-    /* =========================
-    새 서랍 생성
-    ========================= */
+/* =========================
+새 서랍 생성
+========================= */
 
-    .createDrawerForm {
+.createDrawerForm {
     display: flex;
     flex-direction: column;
-    }
+}
 
-    .createDrawerInputHeader {
+.createDrawerInputHeader {
     display: flex;
     align-items: center;
     justify-content: space-between;
 
     margin-bottom: 8px;
-    }
+}
 
-    .createDrawerInputHeader label,
-    .createDrawerInputHeader span {
+.createDrawerInputHeader label,
+.createDrawerInputHeader span {
     color: #9da3b6;
     font-size: 13px;
-    }
+}
 
-    .createDrawerForm input {
+.createDrawerForm input {
     width: 100%;
     height: 46px;
     padding: 0 14px;
@@ -580,26 +581,26 @@
     font-size: 14px;
 
     box-sizing: border-box;
-    }
+}
 
-    .createDrawerForm input::placeholder {
+.createDrawerForm input::placeholder {
     color: #73798d;
-    }
+}
 
-    .createDrawerForm input:focus {
+.createDrawerForm input:focus {
     border-color: #afd8f8;
-    }
+}
 
-    .createDrawerActions {
+.createDrawerActions {
     margin-top: 80px;
 
     display: flex;
     align-items: center;
     gap: 10px;
-    }
+}
 
-    .cancelCreateButton,
-    .createDrawerButton {
+.cancelCreateButton,
+.createDrawerButton {
     height: 50px;
 
     border: 0;
@@ -610,34 +611,34 @@
     font-weight: 700;
 
     cursor: pointer;
-    }
+}
 
-    .cancelCreateButton {
+.cancelCreateButton {
     width: 100px;
 
     background-color: #363b51;
     color: #ffffff;
-    }
+}
 
-    .createDrawerButton {
+.createDrawerButton {
     flex: 1;
 
     background-color: #afd8f8;
     color: #222435;
-    }
+}
 
-    .createDrawerButton:disabled {
+.createDrawerButton:disabled {
     background-color: #596077;
     color: #9298aa;
 
     cursor: not-allowed;
-    }
+}
 
-    /* =========================
-    태블릿
-    ========================= */
+/* =========================
+태블릿
+========================= */
 
-    @media (max-width: 1024px) {
+@media (max-width: 1024px) {
     .pageHeader {
         padding: 44px 48px 0;
     }
@@ -653,13 +654,13 @@
     .indicator {
         width: min(380px, 68%);
     }
-    }
+}
 
-    /* =========================
-    모바일
-    ========================= */
+/* =========================
+모바일
+========================= */
 
-    @media (max-width: 768px) {
+@media (max-width: 768px) {
     .container {
         min-height: 100vh;
     }
@@ -688,13 +689,23 @@
     }
 
     .slide {
-        width: min(78vw, 302px);
+        width: 100%;
     }
 
     .slide > button {
         opacity: 0.14;
         filter: blur(2px);
         transform: scale(0.82);
+    }
+
+    .slide:not(
+            :global(.swiper-slide-active),
+            :global(.swiper-slide-prev),
+            :global(.swiper-slide-next)
+        ) > button {
+            opacity: 0.2;
+            filter: blur(2px);
+            transform: scale(0.78);
     }
 
     .slide:global(.swiper-slide-prev) > button,
@@ -759,4 +770,4 @@
     .createDrawerActions {
         margin-top: 100px;
     }
-    }
+}

@@ -107,6 +107,66 @@
     width: 282px;
 }
 
+.cardShell {
+    height: 400px;
+    perspective: 1200px;
+}
+
+.cardFlipInner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+
+    transform-style: preserve-3d;
+
+    transition:
+        transform 650ms
+        cubic-bezier(
+            0.22,
+            0.75,
+            0.25,
+            1
+        );
+}
+
+.cardShellFlipped
+    .cardFlipInner {
+    transform: rotateY(180deg);
+}
+
+.cardFace {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+
+    transform-style: preserve-3d;
+}
+
+.cardFront {
+    z-index: 2;
+    transform: rotateY(0deg);
+}
+
+.cardBack {
+    transform: rotateY(180deg);
+}
+
+.cardShell:not(
+    .cardShellFlipped
+) .cardBack {
+    pointer-events: none;
+}
+
+.cardShellFlipped
+    .cardFront {
+    pointer-events: none;
+}
+
 .sideCardShell {
     opacity: 0.42;
     filter: brightness(0.6);
@@ -156,23 +216,30 @@
     z-index: 20;
     inset: 56px 20px 20px;
     display: flex;
+    box-sizing: border-box;
     align-items: center;
     justify-content: center;
     padding: 20px;
     flex-direction: column;
     border: 1px solid
-        rgb(255 255 255 / 15%);
+        rgb(255 255 255 / 12%);
     border-radius: 10px;
     color: #ffffff;
     text-align: center;
     background:
-        rgb(72 139 224 / 86%);
-    backdrop-filter: blur(7px);
+        rgb(105 166 242 / 78%);
+    box-shadow:
+        inset 0 1px 0
+        rgb(255 255 255 / 8%);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 }
 
 .privateOverlay strong {
     margin-bottom: 12px;
     font-size: 14px;
+    font-weight: 600;
+    line-height: 1.5;
 }
 
 .privateOverlay p {
@@ -185,14 +252,17 @@
 }
 
 .privateOverlay button {
-    padding: 9px 13px;
+    min-width: 104px;
+    height: 42px;
+    padding: 0 14px;
     border: 0;
     border-radius: 7px;
     color: #ffffff;
     font-family: inherit;
     font-size: 12px;
+    font-weight: 600;
     background:
-        rgb(255 255 255 / 20%);
+        rgb(255 255 255 / 18%);
     cursor: pointer;
 }
 
@@ -204,9 +274,15 @@
 .qrCard {
     position: relative;
     width: 282px;
+    height: 400px;
     min-height: 400px;
+    padding: 20px;
     gap: 0;
     align-items: stretch;
+
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
 }
 
 .qrHeader {
@@ -235,15 +311,16 @@
     display: grid;
     flex: 1;
     place-items: center;
+    padding: 8px 0;
 }
 
 .qrContainer svg {
     display: block;
-    width: 205px;
-    max-width: 90%;
+    width: 220px;
+    max-width: 100%;
     height: auto;
-    padding: 8px;
-    border-radius: 10px;
+    padding: 10px;
+    border-radius: 9px;
     background: #ffffff;
     box-shadow:
         0 14px 34px
@@ -254,19 +331,36 @@
     position: relative;
     z-index: 10;
     display: flex;
+    gap: 8px;
     justify-content: center;
 }
 
 .qrActions button {
-    padding: 9px 15px;
+    min-width: 0;
+    height: 42px;
+    padding: 0 13px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+
+    flex: 1;
+
     border: 0;
-    border-radius: 7px;
+    border-radius: 8px;
     color: #ffffff;
     font-family: inherit;
     font-size: 12px;
+    font-weight: 600;
     background:
         rgb(255 255 255 / 18%);
     cursor: pointer;
+}
+
+.qrActions button span {
+    font-size: 18px;
+    line-height: 1;
 }
 
 .qrActions button:hover {
@@ -285,24 +379,55 @@
     text-align: center;
 }
 
+@media (
+    prefers-reduced-motion:
+    reduce
+) {
+    .cardFlipInner {
+        transition-duration:
+            1ms;
+    }
+}
+
 .badgeRow {
     display: flex;
     justify-content: center;
     gap: 7px;
     margin-top: 20px;
+    cursor: pointer;
+}
+
+.badgeRow:focus-visible {
+    width: fit-content;
+    margin-right: auto;
+    margin-left: auto;
+    border-radius: 7px;
+    outline: 2px solid #aedcff;
+    outline-offset: 4px;
 }
 
 .statusBadge,
 .purposeBadge {
     padding: 6px 11px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
     border: 0;
     border-radius: 6px;
+
     font-family: inherit;
     font-size: 12px;
+    line-height: 1;
+
+    cursor: default;
+    user-select: none;
 }
 
 .statusBadge {
-    cursor: pointer;
+    min-width: 42px;
+    box-sizing: border-box;
 }
 
 .activeStatusBadge {
@@ -318,6 +443,16 @@
 .purposeBadge {
     color: #e2d9bc;
     background: #29261f;
+    cursor: pointer;
+}
+
+.purposeBadge:hover {
+    background: #383328;
+}
+
+.purposeBadge:focus-visible {
+    outline: 2px solid #aedcff;
+    outline-offset: 2px;
 }
 
 .pagination {

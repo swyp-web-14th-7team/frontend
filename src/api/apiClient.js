@@ -24,11 +24,23 @@ const parseResponse = async (
             result?.error?.message ||
             "API 요청에 실패했습니다.";
 
-        throw new Error(
+        const error = new Error(
             Array.isArray(message)
                 ? message.join(", ")
                 : message,
         );
+
+        /*
+         * 호출하는 화면에서 404, 401 등의
+         * HTTP 상태를 구분할 수 있도록 저장합니다.
+         */
+        error.status =
+            response.status;
+
+        error.data =
+            result;
+
+        throw error;
     }
 
     return result?.data;
@@ -91,7 +103,7 @@ export const apiRequest = async (
 
     /*
      * 로그인된 상태에서 401이 발생하면
-     * access token 재발급 후 한 번 재요청한다.
+     * access token 재발급 후 한 번 재요청합니다.
      */
     if (
         response.status === 401 &&

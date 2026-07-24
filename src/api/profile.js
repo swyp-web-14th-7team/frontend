@@ -1,269 +1,326 @@
-    import { apiRequest } from "./apiClient";
+    import {
+    apiRequest,
+    } from "./apiClient";
 
-    export const getPublicProfileCards = async ({
-    page = 1,
-    limit = 16,
-    sort = "createdAt",
-    order = "desc",
-    purposeId,
-    jobTypeId,
-    skillIds,
-    affiliationStatusId,
-    keywords,
-    signal,
+    export const getPublicProfileCards =
+    async ({
+        page = 1,
+        limit = 16,
+        sort = "createdAt",
+        order = "desc",
+        purposeId,
+        jobTypeId,
+        skillIds,
+        affiliationStatusId,
+        keywords,
+        signal,
     } = {}) => {
-    const params = new URLSearchParams({
-        page: String(page),
-        limit: String(limit),
-        sort,
-        order,
-    });
+        const params =
+        new URLSearchParams({
+            page:
+            String(page),
 
-    if (
-        purposeId !== undefined &&
+            limit:
+            String(limit),
+
+            sort,
+
+            order,
+        });
+
+        if (
+        purposeId !==
+            undefined &&
         purposeId !== null &&
         purposeId !== ""
-    ) {
+        ) {
         params.append(
-        "purposeId",
-        String(purposeId),
+            "purposeId",
+            String(purposeId),
         );
-    }
+        }
 
-    if (
-        jobTypeId !== undefined &&
+        /*
+        * 필요한 다른 화면에서는
+        * 직군 필터를 사용할 수 있기 때문에
+        * API 함수 자체의 직군 옵션은 유지한다.
+        *
+        * 탐색 화면에서는 jobTypeId를
+        * 전달하지 않으므로 적용되지 않는다.
+        */
+        if (
+        jobTypeId !==
+            undefined &&
         jobTypeId !== null &&
         jobTypeId !== ""
-    ) {
+        ) {
         params.append(
-        "jobTypeId",
-        String(jobTypeId),
+            "jobTypeId",
+            String(jobTypeId),
         );
-    }
+        }
 
-    if (
-        affiliationStatusId !== undefined &&
-        affiliationStatusId !== null &&
-        affiliationStatusId !== ""
-    ) {
+        if (
+        affiliationStatusId !==
+            undefined &&
+        affiliationStatusId !==
+            null &&
+        affiliationStatusId !==
+            ""
+        ) {
         params.append(
-        "affiliationStatusId",
-        String(affiliationStatusId),
+            "affiliationStatusId",
+            String(
+            affiliationStatusId,
+            ),
         );
-    }
+        }
 
-    if (
-        Array.isArray(skillIds) &&
+        /*
+        * 여러 스킬을 다음과 같이 전달한다.
+        *
+        * skillIds=1&skillIds=2&skillIds=3
+        */
+        if (
+        Array.isArray(
+            skillIds,
+        ) &&
         skillIds.length > 0
-    ) {
-        params.append(
-        "skillIds",
-        skillIds.join(","),
+        ) {
+        skillIds.forEach(
+            (skillId) => {
+            if (
+                skillId !==
+                undefined &&
+                skillId !==
+                null &&
+                skillId !== ""
+            ) {
+                params.append(
+                "skillIds",
+                String(
+                    skillId,
+                ),
+                );
+            }
+            },
         );
-    }
+        }
 
-    if (keywords?.trim()) {
+        if (
+        keywords?.trim()
+        ) {
         params.append(
-        "keywords",
-        keywords.trim(),
+            "keywords",
+            keywords.trim(),
         );
-    }
+        }
 
-    return apiRequest(
+        return apiRequest(
         `/public/profile-cards?${params.toString()}`,
         {
-        signal,
+            signal,
         },
-    );
+        );
     };
 
-    export const getPublicProfileCard = async (
-    profileId,
-    { signal } = {},
+    export const getPublicProfileCard =
+    async (
+        profileId,
+        {
+        signal,
+        } = {},
     ) => {
-    if (!profileId) {
+        if (!profileId) {
         throw new Error(
-        "프로필 카드 ID가 필요합니다.",
+            "프로필 카드 ID가 필요합니다.",
         );
-    }
+        }
 
-    return apiRequest(
+        return apiRequest(
         `/public/profile-cards/${profileId}`,
         {
-        signal,
+            signal,
         },
-    );
+        );
     };
 
-    export const getMyProfileCards = async ({
-    page = 1,
-    limit = 10,
-    sort = "createdAt",
-    order = "desc",
-    signal,
+    export const getMyProfileCards =
+    async ({
+        page = 1,
+        limit = 10,
+        sort = "createdAt",
+        order = "desc",
+        signal,
     } = {}) => {
-    const params = new URLSearchParams({
-        page: String(page),
-        limit: String(limit),
-        sort,
-        order,
-    });
+        const params =
+        new URLSearchParams({
+            page:
+            String(page),
 
-    return apiRequest(
+            limit:
+            String(limit),
+
+            sort,
+
+            order,
+        });
+
+        return apiRequest(
         `/profile-cards?${params.toString()}`,
         {
-        signal,
+            signal,
+
+            /*
+            * 목적 변경 후 이전 카드 정보가
+            * 캐시에서 조회되는 것을 방지한다.
+            */
+            cache:
+            "no-store",
         },
-    );
+        );
     };
 
-    export const getMyProfileCard = async (
-    profileId,
-    { signal } = {},
-    ) => {
-    if (!profileId) {
-        throw new Error(
-        "프로필 카드 ID가 필요합니다.",
-        );
-    }
-
-    return apiRequest(
-        `/profile-cards/${profileId}`,
+    export const getMyProfileCard =
+    async (
+        profileId,
         {
         signal,
+        } = {},
+    ) => {
+        if (!profileId) {
+        throw new Error(
+            "프로필 카드 ID가 필요합니다.",
+        );
+        }
+
+        return apiRequest(
+        `/profile-cards/${profileId}`,
+        {
+            signal,
+
+            cache:
+            "no-store",
         },
-    );
+        );
+    };
+
+    export const getDefaultProfileCard =
+    async ({
+        signal,
+    } = {}) => {
+        return apiRequest(
+        "/profile-cards/default",
+        {
+            signal,
+        },
+        );
     };
 
     /*
-    * 온보딩 직군 선택 직후 기본 프로필 카드를 생성합니다.
-    * 이 단계에서는 직군과 목적만 전달합니다.
+    * 실제 카드는 온보딩 마지막
+    * '만들기' 버튼을 눌렀을 때만 생성한다.
+    *
+    * 닉네임과 연락처는 백엔드가
+    * 기본 카드에서 복사한다.
+    *
+    * 프론트에서는 사용자가 선택한
+    * 직군과 목적만 전달한다.
     */
-    export const createBasicProfileCard = async ({
-    jobTypeId,
-    purposeId,
+    export const createProfileCard =
+    async ({
+        jobTypeId,
+        purposeId,
     }) => {
-    if (
-        jobTypeId === undefined ||
+        if (
+        jobTypeId ===
+            undefined ||
         jobTypeId === null ||
         jobTypeId === ""
-    ) {
+        ) {
         throw new Error(
-        "직군을 선택해주세요.",
+            "직군을 선택해주세요.",
         );
-    }
+        }
 
-    const requestBody = {
-        jobTypeId: Number(jobTypeId),
-    };
+        const requestBody = {
+        jobTypeId:
+            Number(
+            jobTypeId,
+            ),
+        };
 
-    if (
-        purposeId !== undefined &&
+        if (
+        purposeId !==
+            undefined &&
         purposeId !== null &&
         purposeId !== ""
-    ) {
+        ) {
         requestBody.purposeId =
-        Number(purposeId);
-    }
+            Number(
+            purposeId,
+            );
+        }
 
-    return apiRequest("/profile-cards", {
-        method: "POST",
-        body: JSON.stringify(requestBody),
-    });
-    };
+        return apiRequest(
+        "/profile-cards",
+        {
+            method:
+            "POST",
 
-    export const createProfileCard = async (
-    profileData,
-    ) => {
-    return apiRequest("/profile-cards", {
-        method: "POST",
-        body: JSON.stringify(profileData),
-    });
-    };
-
-    export const updateProfileCard = async (
-    profileId,
-    profileData,
-    ) => {
-    if (!profileId) {
-        throw new Error(
-        "프로필 카드 ID가 필요합니다.",
+            body:
+            JSON.stringify(
+                requestBody,
+            ),
+        },
         );
-    }
+    };
 
-    return apiRequest(
+    export const updateProfileCard =
+    async (
+        profileId,
+        profileData,
+    ) => {
+        if (!profileId) {
+        throw new Error(
+            "수정할 프로필 카드 ID가 필요합니다.",
+        );
+        }
+
+        return apiRequest(
         `/profile-cards/${profileId}`,
         {
-        method: "PATCH",
-        body: JSON.stringify(profileData),
+            method:
+            "PATCH",
+
+            body:
+            JSON.stringify(
+                profileData,
+            ),
         },
-    );
+        );
     };
 
-    export const deleteProfileCard = async (
-    profileId,
+    /*
+    * 기본 카드는 삭제할 수 없다.
+    * 기본 카드 삭제 시 백엔드에서
+    * 오류를 반환할 수 있다.
+    */
+    export const deleteProfileCard =
+    async (
+        profileId,
     ) => {
-    if (!profileId) {
+        if (!profileId) {
         throw new Error(
-        "프로필 카드 ID가 필요합니다.",
+            "삭제할 프로필 카드 ID가 필요합니다.",
         );
-    }
+        }
 
-    return apiRequest(
+        return apiRequest(
         `/profile-cards/${profileId}`,
         {
-        method: "DELETE",
+            method:
+            "DELETE",
         },
-    );
-    };
-
-    export const activateProfileCard = async (
-    profileId,
-    ) => {
-    if (!profileId) {
-        throw new Error(
-        "프로필 카드 ID가 필요합니다.",
         );
-    }
-
-    return apiRequest(
-        `/profile-cards/${profileId}/activate`,
-        {
-        method: "PATCH",
-        },
-    );
-    };
-
-    export const deactivateProfileCard = async (
-    profileId,
-    ) => {
-    if (!profileId) {
-        throw new Error(
-        "프로필 카드 ID가 필요합니다.",
-        );
-    }
-
-    return apiRequest(
-        `/profile-cards/${profileId}/deactivate`,
-        {
-        method: "PATCH",
-        },
-    );
-    };
-
-    export const setDefaultProfileCard = async (
-    profileId,
-    ) => {
-    if (!profileId) {
-        throw new Error(
-        "프로필 카드 ID가 필요합니다.",
-        );
-    }
-
-    return apiRequest(
-        `/profile-cards/${profileId}/default`,
-        {
-        method: "PATCH",
-        },
-    );
     };

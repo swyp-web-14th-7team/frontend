@@ -44,32 +44,66 @@ const ExploreSearch = ({
   ] = useState(false);
 
   /*
-   * 직군 1개와 선택 스킬 개수를 합산한다.
+   * 직군은 스킬 목록을 좁히는 용도로만 사용한다.
+   * 실제 탐색 결과에 적용되는 필터 개수는
+   * 선택한 스킬만 계산한다.
    */
   const selectedFilterCount =
-    (selectedJobType ? 1 : 0) +
     selectedTags.length;
 
   /*
-   * 모달에서 적용 버튼을 눌렀을 때만
-   * 실제 탐색 필터를 변경한다.
+   * 모바일 스킬 표시
+   *
+   * 1개 선택: Swift
+   * 여러 개 선택: Swift 외 3
+   * 선택 없음: 직군·스킬
    */
+  const mobileFilterLabel =
+    selectedTags.length > 0
+      ? `${
+          selectedTags[0]
+            ?.name ||
+          "스킬"
+        }${
+          selectedTags.length >
+          1
+            ? ` 외 ${
+                selectedTags.length -
+                1
+              }`
+            : ""
+        }`
+      : "직군·스킬";
+
   const handleFilterApply = ({
     jobType,
     skills,
   }) => {
-    onJobTypeChange(jobType);
-    onTagsChange(skills);
+    /*
+     * 직군 선택값은 모달을 다시 열었을 때
+     * 선택 상태를 유지하기 위해서만 저장한다.
+     */
+    onJobTypeChange(
+      jobType,
+    );
+
+    /*
+     * 실제 탐색 결과에는
+     * 선택한 스킬만 적용한다.
+     */
+    onTagsChange(
+      skills,
+    );
   };
 
   return (
     <div
-      className={styles.container}
+      className={
+        styles.container
+      }
     >
       <div
-        className={`${
-          styles.searchBox
-        } ${
+        className={`${styles.searchBox} ${
           isMobileSearchOpen
             ? styles.mobileSearchOpen
             : ""
@@ -86,7 +120,9 @@ const ExploreSearch = ({
         <input
           type="search"
           value={keyword}
-          onChange={(event) =>
+          onChange={(
+            event,
+          ) =>
             onKeywordChange(
               event.target.value,
             )
@@ -104,7 +140,9 @@ const ExploreSearch = ({
           }
         >
           <Dropdown
-            value={affiliation}
+            value={
+              affiliation
+            }
             placeholder="현 소속"
             options={
               AFFILIATION_OPTIONS
@@ -119,10 +157,9 @@ const ExploreSearch = ({
 
           <button
             type="button"
-            className={`${
-              styles.filterButton
-            } ${
-              selectedFilterCount > 0
+            className={`${styles.filterButton} ${
+              selectedFilterCount >
+              0
                 ? styles.activeFilterButton
                 : ""
             }`}
@@ -140,6 +177,16 @@ const ExploreSearch = ({
               직군·스킬
             </span>
 
+            <span
+              className={
+                styles.mobileFilterText
+              }
+            >
+              {
+                mobileFilterLabel
+              }
+            </span>
+
             {selectedFilterCount >
               0 && (
               <span
@@ -154,7 +201,9 @@ const ExploreSearch = ({
             )}
 
             <img
-              src={dropdownIcon}
+              src={
+                dropdownIcon
+              }
               alt=""
               className={
                 styles.arrow
@@ -165,12 +214,18 @@ const ExploreSearch = ({
       </div>
 
       <div
-        className={styles.sortArea}
+        className={
+          styles.sortArea
+        }
       >
         <Dropdown
           value={sort}
-          options={SORT_OPTIONS}
-          onChange={onSortChange}
+          options={
+            SORT_OPTIONS
+          }
+          onChange={
+            onSortChange
+          }
           className={
             styles.sortDropdown
           }

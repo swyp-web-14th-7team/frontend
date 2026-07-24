@@ -4,6 +4,8 @@ import {
 
 import OnboardingLayout from "../common/OnboardingLayout";
 
+import avatarPlaceholderDefault from "../../assets/images/avatarPlaceholder_default.png";
+
 import styles from "./CardPreviewStep.module.css";
 
 const JOB_LABELS = {
@@ -132,33 +134,26 @@ const CardPreviewStep = ({
                             styles.profileRow
                         }
                     >
-                        {data.profileImagePreview ||
-                        data.profileImage ? (
-                            <img
-                                src={
-                                    data.profileImagePreview ||
-                                    data.profileImage
-                                }
-                                alt="프로필"
-                                className={
-                                    styles.avatar
-                                }
-                            />
-                        ) : (
-                            <div
-                                className={
-                                    styles.avatarPlaceholder
-                                }
-                            >
-                                {(data.name ||
-                                    data.nickname ||
-                                    "N")
-                                    .slice(
-                                        0,
-                                        1,
-                                    )}
-                            </div>
-                        )}
+                        <img
+                            src={
+                                data.profileImagePreview ||
+                                data.profileImage ||
+                                avatarPlaceholderDefault
+                            }
+                            alt="프로필"
+                            className={
+                                styles.avatar
+                            }
+                            onError={(
+                                event,
+                            ) => {
+                                event.currentTarget.onerror =
+                                    null;
+
+                                event.currentTarget.src =
+                                    avatarPlaceholderDefault;
+                            }}
+                        />
 
                         <div
                             className={
