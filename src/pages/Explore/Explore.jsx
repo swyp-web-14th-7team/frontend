@@ -37,6 +37,15 @@
     "교류/네트워킹",
     ];
 
+    /*
+    * 프론트 탭 이름과 백엔드 목적 이름을
+    * 비교하기 위해 공백과 구분 기호를 제거한다.
+    *
+    * 예:
+    * 팀 빌딩 -> 팀빌딩
+    * 교류/네트워킹 -> 교류네트워킹
+    * 교류·네트워킹 -> 교류네트워킹
+    */
     const normalizePurposeName = (
     value = "",
     ) => {
@@ -49,13 +58,19 @@
         );
     };
 
-    const getItems = (result) => {
-    if (Array.isArray(result)) {
+    const getItems = (
+    result,
+    ) => {
+    if (
+        Array.isArray(result)
+    ) {
         return result;
     }
 
     if (
-        Array.isArray(result?.items)
+        Array.isArray(
+        result?.items,
+        )
     ) {
         return result.items;
     }
@@ -71,7 +86,9 @@
     return [];
     };
 
-    const getSortParams = (sort) => {
+    const getSortParams = (
+    sort,
+    ) => {
     switch (sort) {
         case "오래된 등록순":
         return {
@@ -98,7 +115,9 @@
     const [
         activeTab,
         setActiveTab,
-    ] = useState("전체보기");
+    ] = useState(
+        "전체보기",
+    );
 
     const [
         currentPage,
@@ -120,13 +139,22 @@
         setSelectedTags,
     ] = useState([]);
 
+    /*
+    * 직군 선택값은 스킬 모달 내부에서
+    * 직군별 스킬 목록을 보여주기 위해서만 사용한다.
+    * 프로필 목록 API 필터에는 전달하지 않는다.
+    */
     const [
         selectedJobType,
         setSelectedJobType,
     ] = useState(null);
 
-    const [sort, setSort] =
-        useState("최근 등록순");
+    const [
+        sort,
+        setSort,
+    ] = useState(
+        "최근 등록순",
+    );
 
     const [
         isMobileSearchOpen,
@@ -158,6 +186,9 @@
         setErrorMessage,
     ] = useState("");
 
+    /*
+    * 백엔드에서 조회한 목적 목록
+    */
     const [
         purposes,
         setPurposes,
@@ -177,14 +208,21 @@
         isLoggedIn();
 
     const hasSearchKeyword =
-        keyword.trim().length > 0;
+        keyword.trim().length >
+        0;
 
     const isRestrictedTab =
         !isUserLoggedIn &&
-        activeTab !== "전체보기";
+        activeTab !==
+        "전체보기";
 
+    /*
+    * 선택한 탭 이름과 같은
+    * 백엔드 목적 데이터를 찾는다.
+    */
     const selectedPurpose =
-        activeTab === "전체보기"
+        activeTab ===
+        "전체보기"
         ? null
         : purposes.find(
             (purpose) =>
@@ -197,7 +235,8 @@
             );
 
     const selectedPurposeId =
-        selectedPurpose?.id ?? null;
+        selectedPurpose?.id ??
+        null;
 
     /*
     * 목적 목록 조회
@@ -213,23 +252,31 @@
                 true,
             );
 
-            setPurposeError("");
+            setPurposeError(
+                "",
+            );
 
             const result =
-                await getPurposes({
-                page: 1,
-                limit: 100,
-                sort: "name",
-                order: "asc",
+                await getPurposes(
+                {
+                    page: 1,
+                    limit: 100,
+                    sort: "name",
+                    order: "asc",
 
-                signal:
+                    signal:
                     controller.signal,
-                });
+                },
+                );
 
             const items =
-                getItems(result);
+                getItems(
+                result,
+                );
 
-            setPurposes(items);
+            setPurposes(
+                items,
+            );
             } catch (error) {
             if (
                 error.name ===
@@ -243,14 +290,17 @@
                 error,
             );
 
-            setPurposes([]);
+            setPurposes(
+                [],
+            );
 
             setPurposeError(
                 "목적 목록을 불러오지 못했습니다.",
             );
             } finally {
             if (
-                !controller.signal
+                !controller
+                .signal
                 .aborted
             ) {
                 setIsPurposeLoading(
@@ -276,20 +326,37 @@
 
         const fetchProfiles =
         async () => {
+            /*
+            * 목적 목록 조회가 완료된 뒤
+            * 프로필을 조회한다.
+            */
             if (
             isPurposeLoading
             ) {
             return;
             }
 
+            /*
+            * 전체보기가 아닌데 목적 데이터를
+            * 찾지 못했다면 전체 카드가 표시되지
+            * 않도록 API 호출을 중단한다.
+            */
             if (
             activeTab !==
                 "전체보기" &&
             !selectedPurposeId
             ) {
-            setProfiles([]);
-            setTotalPages(1);
-            setIsLoading(false);
+            setProfiles(
+                [],
+            );
+
+            setTotalPages(
+                1,
+            );
+
+            setIsLoading(
+                false,
+            );
 
             setErrorMessage(
                 purposeError ||
@@ -300,11 +367,18 @@
             }
 
             try {
-            setIsLoading(true);
-            setErrorMessage("");
+            setIsLoading(
+                true,
+            );
+
+            setErrorMessage(
+                "",
+            );
 
             const sortParams =
-                getSortParams(sort);
+                getSortParams(
+                sort,
+                );
 
             const data =
                 await getPublicProfileCards(
@@ -320,16 +394,21 @@
                     order:
                     sortParams.order,
 
+                    /*
+                    * 전체보기에서는
+                    * purposeId를 보내지 않는다.
+                    */
                     purposeId:
                     activeTab ===
                     "전체보기"
                         ? undefined
                         : selectedPurposeId,
 
-                    jobTypeId:
-                    selectedJobType
-                        ?.id,
-
+                    /*
+                    * 직군 ID는 보내지 않고
+                    * 사용자가 선택한 스킬만
+                    * 실제 탐색 필터로 전달한다.
+                    */
                     skillIds:
                     selectedTags.map(
                         (tag) =>
@@ -345,7 +424,8 @@
                 );
 
             const items =
-                data?.items || [];
+                data?.items ||
+                [];
 
             setProfiles(
                 mapProfileCards(
@@ -355,17 +435,21 @@
 
             const total =
                 data?.metadata
-                ?.total || 0;
+                ?.total ||
+                0;
 
             const limit =
                 data?.metadata
-                ?.limit || 16;
+                ?.limit ||
+                16;
 
             setTotalPages(
                 Math.max(
                 1,
+
                 Math.ceil(
-                    total / limit,
+                    total /
+                    limit,
                 ),
                 ),
             );
@@ -382,18 +466,26 @@
                 error,
             );
 
-            setProfiles([]);
-            setTotalPages(1);
+            setProfiles(
+                [],
+            );
+
+            setTotalPages(
+                1,
+            );
 
             setErrorMessage(
                 "프로필을 불러오지 못했습니다.",
             );
             } finally {
             if (
-                !controller.signal
+                !controller
+                .signal
                 .aborted
             ) {
-                setIsLoading(false);
+                setIsLoading(
+                false,
+                );
             }
             }
         };
@@ -405,7 +497,10 @@
         );
 
         return () => {
-        clearTimeout(timer);
+        clearTimeout(
+            timer,
+        );
+
         controller.abort();
         };
     }, [
@@ -416,22 +511,31 @@
         selectedPurposeId,
         isPurposeLoading,
         purposeError,
-        selectedJobType,
         selectedTags,
     ]);
 
     const handleTabClick = (
         tab,
     ) => {
-        setActiveTab(tab);
-        setCurrentPage(1);
-        setErrorMessage("");
+        setActiveTab(
+        tab,
+        );
+
+        setCurrentPage(
+        1,
+        );
+
+        setErrorMessage(
+        "",
+        );
     };
 
     const handlePageChange = (
         page,
     ) => {
-        setCurrentPage(page);
+        setCurrentPage(
+        page,
+        );
 
         window.scrollTo({
         top: 0,
@@ -459,8 +563,13 @@
             "전체보기",
         );
 
-        setCurrentPage(1);
-        setKeyword("");
+        setCurrentPage(
+            1,
+        );
+
+        setKeyword(
+            "",
+        );
 
         setIsMobileSearchOpen(
             true,
@@ -473,21 +582,40 @@
             false,
         );
 
-        setKeyword("");
-        setCurrentPage(1);
-        };
+        setKeyword(
+            "",
+        );
 
-    const handleMobileLogoClick =
+        setCurrentPage(
+            1,
+        );
+        };
+        
+        const handleMobileLogoClick =
         () => {
         setActiveTab(
             "전체보기",
         );
 
-        setCurrentPage(1);
-        setKeyword("");
-        setAffiliation("");
-        setSelectedJobType(null);
-        setSelectedTags([]);
+        setCurrentPage(
+            1,
+        );
+
+        setKeyword(
+            "",
+        );
+
+        setAffiliation(
+            "",
+        );
+
+        setSelectedJobType(
+            null,
+        );
+
+        setSelectedTags(
+            [],
+        );
 
         setSort(
             "최근 등록순",
@@ -501,7 +629,9 @@
             false,
         );
 
-        setErrorMessage("");
+        setErrorMessage(
+            "",
+        );
 
         window.scrollTo({
             top: 0,
@@ -530,13 +660,19 @@
         </div>
 
         <main
-            className={styles.main}
+            className={
+            styles.main
+            }
         >
             <section
-            className={styles.hero}
+            className={
+                styles.hero
+            }
             >
             <h1
-                className={styles.title}
+                className={
+                styles.title
+                }
             >
                 나와 맞는 사람 찾기
             </h1>
@@ -585,7 +721,9 @@
             </div>
 
             <ExploreSearch
-                keyword={keyword}
+                keyword={
+                keyword
+                }
                 affiliation={
                 affiliation
                 }
@@ -602,8 +740,13 @@
                 onKeywordChange={(
                 value,
                 ) => {
-                setKeyword(value);
-                setCurrentPage(1);
+                setKeyword(
+                    value,
+                );
+
+                setCurrentPage(
+                    1,
+                );
                 }}
                 onAffiliationChange={(
                 value,
@@ -612,31 +755,46 @@
                     value,
                 );
 
-                setCurrentPage(1);
+                setCurrentPage(
+                    1,
+                );
                 }}
                 onTagsChange={(
                 value,
                 ) => {
+                /*
+                * 실제 탐색 결과에는
+                * 선택한 스킬만 적용한다.
+                */
                 setSelectedTags(
                     value,
                 );
 
-                setCurrentPage(1);
+                setCurrentPage(
+                    1,
+                );
                 }}
                 onJobTypeChange={(
                 value,
                 ) => {
+                /*
+                * 직군은 스킬 모달 내부에서
+                * 스킬 목록을 좁히기 위해서만 저장한다.
+                */
                 setSelectedJobType(
                     value,
                 );
-
-                setCurrentPage(1);
                 }}
                 onSortChange={(
                 value,
                 ) => {
-                setSort(value);
-                setCurrentPage(1);
+                setSort(
+                    value,
+                );
+
+                setCurrentPage(
+                    1,
+                );
                 }}
             />
             </section>
@@ -664,15 +822,15 @@
 
                         return (
                         <button
-                            key={tab}
+                            key={
+                            tab
+                            }
                             type="button"
                             role="tab"
                             aria-selected={
                             isActive
                             }
-                            className={`${
-                            styles.tabButton
-                            } ${
+                            className={`${styles.tabButton} ${
                             isActive
                                 ? styles.activeTab
                                 : ""
@@ -692,9 +850,7 @@
                 )}
 
                 <div
-                className={`${
-                    styles.cardArea
-                } ${
+                className={`${styles.cardArea} ${
                     isRestrictedTab
                     ? styles.restrictedCardArea
                     : ""
@@ -774,8 +930,8 @@
                             styles.loginGuideDescription
                             }
                         >
-                            나를 소개하는
-                            가장 쉬운 방법,
+                            나를 소개하는 가장
+                            쉬운 방법,
                             <br />
                             Nodi와 함께 새로운
                             연결을 시작해요.

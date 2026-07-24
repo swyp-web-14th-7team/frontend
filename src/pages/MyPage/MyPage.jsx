@@ -1,5 +1,6 @@
 import {
     useEffect,
+    useRef,
     useState,
 } from "react";
 
@@ -12,6 +13,7 @@ import {
 } from "qrcode.react";
 
 import {
+    getMyProfileCard,
     getMyProfileCards,
     updateProfileCard,
 } from "../../api/profile";
@@ -19,6 +21,10 @@ import {
 import {
     getPurposes,
 } from "../../api/options";
+
+import {
+    makeCardBackgroundUrl,
+} from "../../api/cardBackground";
 
 import {
     mapProfileCards,
@@ -84,6 +90,9 @@ const getProfilePurposeName = (
 const MyPage = () => {
     const navigate =
         useNavigate();
+
+    const qrCodeRef =
+        useRef(null);
 
     const [
         profiles,
@@ -421,6 +430,62 @@ const MyPage = () => {
             }
         };
 
+    const handleDownloadQr =
+        () => {
+            const qrSvg =
+                qrCodeRef.current?.querySelector(
+                    "svg",
+                );
+
+            if (
+                !qrSvg ||
+                !selectedProfile
+            ) {
+                return;
+            }
+
+            const serializedQr =
+                new XMLSerializer().serializeToString(
+                    qrSvg,
+                );
+
+            const qrBlob =
+                new Blob(
+                    [serializedQr],
+                    {
+                        type:
+                            "image/svg+xml;charset=utf-8",
+                    },
+                );
+
+            const downloadUrl =
+                URL.createObjectURL(
+                    qrBlob,
+                );
+
+            const downloadLink =
+                document.createElement(
+                    "a",
+                );
+
+            downloadLink.href =
+                downloadUrl;
+
+            downloadLink.download =
+                `${selectedProfile.nickname || selectedProfile.name || "nodi"}-qr.svg`;
+
+            document.body.appendChild(
+                downloadLink,
+            );
+
+            downloadLink.click();
+            downloadLink.remove();
+
+            URL.revokeObjectURL(
+                downloadUrl,
+            );
+        };
+
     const handleOpenVisibilityModal =
         () => {
             if (
@@ -531,28 +596,57 @@ const MyPage = () => {
                             ),
                     );
 
+                const updatedProfileResult =
+                    await getMyProfileCard(
+                        selectedProfile.id,
+                    );
+
+                const mappedUpdatedProfile =
+                    mapProfileCards([
+                        updatedProfileResult,
+                    ])[0];
+
                 setProfiles(
                     (
                         currentProfiles,
                     ) =>
                         currentProfiles.map(
-                            (profile) =>
-                                profile.id ===
-                                selectedProfile.id
-                                    ? {
-                                          ...profile,
+                            (profile) => {
+                                if (
+                                    profile.id !==
+                                    selectedProfile.id
+                                ) {
+                                    return profile;
+                                }
 
-                                          isActive:
-                                              selectedIsActive,
+                                if (
+                                    mappedUpdatedProfile
+                                ) {
+                                    return mappedUpdatedProfile;
+                                }
 
-                                          purposes:
-                                              selectedPurpose
-                                                  ? [
-                                                        selectedPurpose.name,
-                                                    ]
-                                                  : profile.purposes,
-                                      }
-                                    : profile,
+                                return {
+                                    ...profile,
+
+                                    isActive:
+                                        selectedIsActive,
+
+                                    purposeId:
+                                        selectedPurpose?.id ??
+                                        profile.purposeId,
+
+                                    purpose:
+                                        selectedPurpose ||
+                                        profile.purpose,
+
+                                    purposes:
+                                        selectedPurpose
+                                            ? [
+                                                  selectedPurpose.name,
+                                              ]
+                                            : profile.purposes,
+                                };
+                            },
                         ),
                 );
 
@@ -766,93 +860,23 @@ const MyPage = () => {
                                 }
                             >
                                 <div
-                                    className={
-                                        styles.cardShell
-                                    }
+                                    className={`${styles.cardShell} ${
+                                        isSelectedCardFlipped
+                                            ? styles.cardShellFlipped
+                                            : ""
+                                    }`}
                                 >
-                                    {isSelectedCardFlipped ? (
-                                        <article
-                                            className={`${cardStyles.exploreCard} ${styles.qrCard}`}
+                                    <div
+                                        className={
+                                            styles.cardFlipInner
+                                        }
+                                    >
+                                        <div
+                                            className={`${styles.cardFace} ${styles.cardFront}`}
+                                            aria-hidden={
+                                                isSelectedCardFlipped
+                                            }
                                         >
-                                            <div
-                                                className={
-                                                    styles.qrHeader
-                                                }
-                                            >
-                                                <span>
-                                                    {getJobLabel(
-                                                        selectedProfile
-                                                            .job,
-                                                    )}
-                                                </span>
-
-                                                <button
-                                                    type="button"
-                                                    className={
-                                                        styles.flipButton
-                                                    }
-                                                    onClick={
-                                                        handleFlipCard
-                                                    }
-                                                    aria-label="카드 앞면 보기"
-                                                >
-                                                    <img
-                                                        src={
-                                                            shareIcon
-                                                        }
-                                                        alt=""
-                                                    />
-                                                </button>
-                                            </div>
-
-                                            <div
-                                                className={
-                                                    styles.qrContainer
-                                                }
-                                            >
-                                                <QRCodeSVG
-                                                    value={
-                                                        profileShareUrl
-                                                    }
-                                                    size={
-                                                        205
-                                                    }
-                                                    level="H"
-                                                    includeMargin
-                                                />
-                                            </div>
-
-                                            <div
-                                                className={
-                                                    styles.qrActions
-                                                }
-                                            >
-                                                <button
-                                                    type="button"
-                                                    onClick={
-                                                        handleCopyLink
-                                                    }
-                                                >
-                                                    링크
-                                                    복사
-                                                </button>
-                                            </div>
-
-                                            {copyMessage && (
-                                                <p
-                                                    className={
-                                                        styles.copyMessage
-                                                    }
-                                                    role="status"
-                                                >
-                                                    {
-                                                        copyMessage
-                                                    }
-                                                </p>
-                                            )}
-                                        </article>
-                                    ) : (
-                                        <>
                                             <ExploreProfileCard
                                                 profile={
                                                     selectedProfile
@@ -917,8 +941,137 @@ const MyPage = () => {
                                                     </button>
                                                 </div>
                                             )}
-                                        </>
-                                    )}
+                                        </div>
+
+                                        <div
+                                            className={`${styles.cardFace} ${styles.cardBack}`}
+                                            aria-hidden={
+                                                !isSelectedCardFlipped
+                                            }
+                                        >
+                                            <article
+                                                className={`${cardStyles.card} ${styles.qrCard}`}
+                                                style={{
+                                                    backgroundImage:
+                                                        selectedProfile
+                                                            .cardImageUrl ||
+                                                        selectedProfile
+                                                            .cardImage
+                                                            ? `linear-gradient(
+                                                                rgba(17, 16, 23, 0.08),
+                                                                rgba(17, 16, 23, 0.08)
+                                                            ),
+                                                            url("${makeCardBackgroundUrl(
+                                                                selectedProfile.cardImageUrl ||
+                                                                    selectedProfile.cardImage,
+                                                            )}")`
+                                                            : undefined,
+                                                }}
+                                            >
+                                                <div
+                                                    className={
+                                                        styles.qrHeader
+                                                    }
+                                                >
+                                                    <span>
+                                                        {getJobLabel(
+                                                            selectedProfile
+                                                                .job,
+                                                        )}
+                                                    </span>
+
+                                                    <button
+                                                        type="button"
+                                                        className={
+                                                            styles.flipButton
+                                                        }
+                                                        onClick={
+                                                            handleFlipCard
+                                                        }
+                                                        aria-label="카드 앞면 보기"
+                                                    >
+                                                        <img
+                                                            src={
+                                                                shareIcon
+                                                            }
+                                                            alt=""
+                                                        />
+                                                    </button>
+                                                </div>
+
+                                                <div
+                                                    ref={
+                                                        qrCodeRef
+                                                    }
+                                                    className={
+                                                        styles.qrContainer
+                                                    }
+                                                >
+                                                    <QRCodeSVG
+                                                        value={
+                                                            profileShareUrl
+                                                        }
+                                                        size={
+                                                            205
+                                                        }
+                                                        level="H"
+                                                        includeMargin
+                                                        fgColor="#5b9cff"
+                                                        bgColor="#ffffff"
+                                                    />
+                                                </div>
+
+                                                <div
+                                                    className={
+                                                        styles.qrActions
+                                                    }
+                                                >
+                                                    <button
+                                                        type="button"
+                                                        onClick={
+                                                            handleCopyLink
+                                                        }
+                                                    >
+                                                        <span
+                                                            aria-hidden="true"
+                                                        >
+                                                            ⧉
+                                                        </span>
+
+                                                        링크 복사
+                                                    </button>
+
+                                                    <button
+                                                        type="button"
+                                                        onClick={
+                                                            handleDownloadQr
+                                                        }
+                                                    >
+                                                        <span
+                                                            aria-hidden="true"
+                                                        >
+                                                            ⇩
+                                                        </span>
+
+                                                        다운로드
+                                                    </button>
+                                                </div>
+
+                                                {copyMessage && (
+                                                    <p
+                                                        className={
+                                                            styles.copyMessage
+                                                        }
+                                                        role="status"
+                                                    >
+                                                        {
+                                                            copyMessage
+                                                        }
+                                                    </p>
+                                                )}
+                                            </article>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -937,35 +1090,62 @@ const MyPage = () => {
                             className={
                                 styles.badgeRow
                             }
+                            onClick={
+                                handleOpenVisibilityModal
+                            }
+                            role="button"
+                            tabIndex={0}
+                            onKeyDown={(
+                                event,
+                            ) => {
+                                if (
+                                    event.key ===
+                                        "Enter" ||
+                                    event.key ===
+                                        " "
+                                ) {
+                                    event.preventDefault();
+
+                                    handleOpenVisibilityModal();
+                                }
+                            }}
+                            aria-label="카드 공개 상태 및 목적 변경"
                         >
-                            <button
-                                type="button"
+                            <span
                                 className={`${styles.statusBadge} ${
                                     selectedProfile
                                         .isActive
                                         ? styles.activeStatusBadge
                                         : styles.inactiveStatusBadge
                                 }`}
-                                onClick={
-                                    handleOpenVisibilityModal
-                                }
                             >
                                 {selectedProfile
                                     .isActive
                                     ? "공개"
                                     : "비공개"}
-                            </button>
+                            </span>
 
-                            <span
+                            <button
+                                type="button"
                                 className={
                                     styles.purposeBadge
                                 }
+                                onClick={
+                                    (
+                                        event,
+                                    ) => {
+                                        event.stopPropagation();
+
+                                        handleOpenVisibilityModal();
+                                    }
+                                }
+                                aria-label="카드 목적 변경"
                             >
                                 {getProfilePurposeName(
                                     selectedProfile,
                                 ) ||
                                     "목적 미설정"}
-                            </span>
+                            </button>
                         </div>
 
                         <div
