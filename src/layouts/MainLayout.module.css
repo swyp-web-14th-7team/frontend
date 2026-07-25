@@ -1,10 +1,17 @@
-    .desktopHeader,
-    .mobileHiddenHeader {
+.desktopHeader {
     display: block;
-    }
+}
 
-    @media (max-width: 768px) {
+.mobileHiddenHeader {
+    display: block;
+}
+
+@media (max-width: 767px) {
     .mobileHiddenHeader {
         display: none;
     }
+
+    .desktopHeader {
+        display: block;
     }
+}

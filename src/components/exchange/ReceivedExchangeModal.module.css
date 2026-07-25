@@ -1,187 +1,293 @@
 .modalOverlay {
     position: fixed;
     inset: 0;
-    z-index: 3000;
+    z-index: 99999;
 
     display: flex;
     align-items: flex-end;
     justify-content: center;
 
-    width: 100%;
-    height: 100dvh;
-
-    background: rgba(10, 10, 16, 0.72);
-    backdrop-filter: blur(5px);
+    background: rgba(0, 0, 0, 0.62);
+    backdrop-filter: blur(4px);
 }
 
 .modalContainer {
-    position: relative;
+    box-sizing: border-box;
+
+    width: min(582px, 100%);
+
+    height: min(830px, calc(100dvh - 72px));
+    max-height: calc(100dvh - 72px);
 
     display: flex;
     flex-direction: column;
-
-    width: 100%;
-    height: calc(100dvh - 114px);
-    max-height: 754px;
-
-    border-radius: 14px 14px 0 0;
-    background: #202334;
-    color: #ffffff;
-
     overflow: hidden;
-    animation: modalSlideUp 0.25s ease-out;
+
+    border-radius: 16px 16px 0 0;
+    background: #222536;
+    color: #f7f8fb;
 }
 
 .header {
-    flex-shrink: 0;
+    position: relative;
+    z-index: 3;
+    flex: 0 0 auto;
 
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 16px;
+    gap: 20px;
 
-    padding: 32px 17px 0;
     box-sizing: border-box;
+    padding: 36px 16px 0;
+}
+
+.header > div {
+    min-width: 0;
 }
 
 .title {
     margin: 0;
 
-    color: #f5f6f8;
-    font-size: 20px;
+    color: #f7f8fb;
+    font-size: 22px;
     font-weight: 700;
-    line-height: 150%;
-    letter-spacing: -0.4px;
+    line-height: 1.45;
+    letter-spacing: -0.04em;
 }
 
 .description {
-    margin: 10px 0 0;
+    margin: 12px 0 0;
 
-    color: #8f93a5;
-    font-size: 15px;
-    font-weight: 500;
-    line-height: 170%;
-    letter-spacing: -0.2px;
+    color: #898da0;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.7;
+    letter-spacing: -0.025em;
 }
 
 .closeButton {
-    flex-shrink: 0;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    flex: 0 0 auto;
 
     width: 32px;
     height: 32px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
     margin-top: -2px;
     padding: 0;
-
     border: 0;
     background: transparent;
-    color: #ffffff;
 
-    font-size: 32px;
+    color: #f7f8fb;
+    font-family: inherit;
+    font-size: 36px;
     font-weight: 200;
     line-height: 1;
 
     cursor: pointer;
 }
 
+.closeButton:hover {
+    opacity: 0.72;
+}
+
 .content {
+    width: 100%;
     min-height: 0;
     flex: 1;
 
+    box-sizing: border-box;
+    padding: 26px 16px 12px;
+    overflow: hidden;
+}
+
+.viewport {
+    position: relative;
+
     width: 100%;
-    padding: 22px 17px 96px;
+    height: 100%;
+
+    overflow: hidden;
+}
+
+.screen {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
     box-sizing: border-box;
 
-    overflow-y: auto;
-}
+    opacity: 1;
+    transform: translateY(0);
 
-.cardStep {
-    display: flex;
-    justify-content: center;
+    transition:
+        transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 180ms ease;
 
-    width: 100%;
-}
-
-.dragArea {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    width: 100%;
-
+    will-change: transform, opacity;
     touch-action: none;
     user-select: none;
-    -webkit-user-select: none;
-
     cursor: grab;
-    will-change: transform;
 }
 
-.dragArea:active {
+.screen:active {
     cursor: grabbing;
 }
 
-
-.cardStrength strong {
-    color: #ffffff;
-    font-size: 14px;
-    font-weight: 700;
+.dragging {
+    transition: none;
 }
 
-.swipeGuide {
-    margin-top: 20px;
-    padding: 14px 23px;
+.leaving {
+    opacity: 0;
+    transform: translateY(-105%);
+    pointer-events: none;
+}
 
-    border: 0;
+.entering {
+    opacity: 0;
+    transform: translateY(38px);
+    transition: none;
+    pointer-events: none;
+}
+
+/* 移대뱶�� �덈궡 臾멸뎄瑜� 媛숈� �몃줈 �먮쫫�� 諛곗튂 */
+.cardScreen {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+
+    box-sizing: border-box;
+}
+
+/* ExploreProfileCard�� �ㅼ젣 �ш린瑜� �대�吏��� 鍮꾩듂�섍쾶 異뺤냼�� �꾩껜 �몄텧 */
+.exchangeCardPreview {
+    --card-scale: 0.875;
+
+    width: calc(360px * var(--card-scale));
+    height: calc(510px * var(--card-scale));
+    max-width: 100%;
+    flex: 0 1 auto;
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+
+    pointer-events: none;
+}
+
+.exchangeCardPreview > * {
+    flex: 0 0 auto;
+    transform: scale(var(--card-scale));
+    transform-origin: top center;
+}
+
+.swipeGuide,
+.messageSwipeGuide {
+    flex: 0 0 auto;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 34px;
+    padding: 8px 18px;
+
     border-radius: 999px;
-    background: #303449;
-    color: #e2e4eb;
+    background: rgba(86, 91, 119, 0.48);
 
+    color: #d8dae5;
     font-size: 14px;
     font-weight: 500;
-    line-height: 150%;
+    line-height: 1.4;
+    text-align: center;
+    white-space: nowrap;
 
     opacity: 1;
-    pointer-events: none;
-    cursor: default;
-    user-select: none;
+    transform: translateY(0);
 
-    transition: opacity 0.4s ease;
+    transition:
+        opacity 220ms ease,
+        transform 220ms ease;
 }
 
 .swipeGuideHidden {
     opacity: 0;
+    transform: translateY(-6px);
+    pointer-events: none;
 }
 
-.messageStep {
+.messageScreen {
     width: 100%;
-    padding-top: 32px;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
     box-sizing: border-box;
 }
 
 .messageJob {
-    margin: 0;
+    margin: 0 0 22px;
 
-    color: #b5b8c7;
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 150%;
+    color: #aeb2c4;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.4;
+    letter-spacing: -0.02em;
 }
 
 .messageProfile {
     display: flex;
     align-items: center;
-    gap: 13px;
+    gap: 14px;
 
-    margin-top: 18px;
+    margin-bottom: 31px;
 }
 
 .messageProfileImageWrapper {
-    width: 56px;
-    height: 56px;
+    width: 66px;
+    height: 66px;
+    flex: 0 0 66px;
+
+    overflow: hidden;
+
+    border-radius: 50%;
+    background: #c9d0ff;
+}
+
+.messageProfileImage {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+.messageProfileFallback {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #303348;
+    font-size: 24px;
+    font-weight: 700;
 }
 
 .messageProfileInfo {
@@ -189,117 +295,304 @@
 
     display: flex;
     flex-direction: column;
+    gap: 1px;
 }
 
 .messageProfileInfo strong {
-    color: #ffffff;
-    font-size: 20px;
+    overflow: hidden;
+
+    color: #f7f8fb;
+    font-size: 22px;
     font-weight: 700;
-    line-height: 140%;
+    line-height: 1.35;
+    letter-spacing: -0.035em;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .messageProfileInfo span {
-    margin-top: 2px;
+    overflow: hidden;
 
-    color: #a6aabc;
-    font-size: 13px;
-    font-weight: 500;
-    line-height: 150%;
+    color: #b2b6c7;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.45;
+    letter-spacing: -0.02em;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .messageBox {
-    margin-top: 29px;
-    padding: 12px 14px;
+    width: 100%;
+    min-height: 188px;
+    flex: none;
+
     box-sizing: border-box;
+    padding: 13px 16px;
 
-    border: 1px solid #babdcc;
+    border: 1px solid #d5d7df;
     border-radius: 8px;
-    background: #292d40;
-    color: #e2e4eb;
+    background: rgba(255, 255, 255, 0.055);
 
-    font-size: 15px;
-    font-weight: 500;
-    line-height: 170%;
+    color: #f0f1f6;
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 1.58;
+    letter-spacing: -0.025em;
+
     white-space: pre-wrap;
-    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+.messageSwipeGuide {
+    align-self: center;
+    margin-top: 22px;
 }
 
 .footer {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 10;
+    position: relative;
+    z-index: 3;
+    flex: 0 0 auto;
 
     display: grid;
-    grid-template-columns: 125px 1fr;
-    gap: 8px;
+    grid-template-columns:
+        minmax(0, 1fr)
+        minmax(0, 1.8fr);
+    gap: 10px;
 
-    width: 100%;
-    padding:
-        12px 17px
-        calc(18px + env(safe-area-inset-bottom));
     box-sizing: border-box;
+    padding:
+        14px
+        16px
+        max(38px, env(safe-area-inset-bottom));
 
-    background:
-        linear-gradient(
-            to top,
-            #202334 75%,
-            rgba(32, 35, 52, 0)
-        );
+    background: #222536;
 }
 
 .rejectButton,
 .acceptButton {
-    height: 54px;
+    height: 58px;
+    padding: 0 16px;
 
     border: 0;
-    border-radius: 8px;
+    border-radius: 9px;
 
-    font-size: 16px;
-    font-weight: 700;
-    line-height: 150%;
+    font-family: inherit;
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.03em;
 
     cursor: pointer;
+
+    transition:
+        transform 120ms ease,
+        filter 120ms ease;
 }
 
 .rejectButton {
-    background: #eef0f4;
-    color: #222638;
+    background: #e7eaf0;
+    color: #292c3d;
 }
 
 .acceptButton {
-    background: #b9ddfa;
-    color: #222638;
+    background: #b8dcf8;
+    color: #202334;
+}
+
+.rejectButton:hover,
+.acceptButton:hover {
+    filter: brightness(0.97);
 }
 
 .rejectButton:active,
 .acceptButton:active {
-    transform: scale(0.98);
+    transform: translateY(1px);
 }
 
-@keyframes modalSlideUp {
-    from {
-        transform: translateY(100%);
+.rejectButton:focus-visible,
+.acceptButton:focus-visible,
+.closeButton:focus-visible {
+    outline: 2px solid #8c42ff;
+    outline-offset: 2px;
+}
+
+.overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+
+    background: rgba(8, 9, 15, 0.36);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+@media (max-width: 480px) {
+   .modalContainer {
+        width: 100%;
+
+        height: calc(100dvh - 72px);
+        max-height: calc(100dvh - 72px);
+
+        border-radius: 16px 16px 0 0;
     }
 
-    to {
-        transform: translateY(0);
+    .header {
+        padding-top: 28px;
+    }
+
+    .content {
+        padding-top: 20px;
+        padding-bottom: 10px;
     }
 }
 
-@media (min-width: 768px) {
-    .modalOverlay {
-        align-items: center;
-
-        padding: 32px;
-        box-sizing: border-box;
-    }
-
+@media (max-width: 430px) {
     .modalContainer {
-        width: 420px;
-        height: min(754px, calc(100dvh - 64px));
+        height: calc(100dvh - 120px);
+        min-height: 0;
+    }
 
-        border-radius: 14px;
+    .title {
+        font-size: 21px;
+    }
+
+    .description {
+        font-size: 16px;
+    }
+
+    .content {
+        padding: 20px 16px 10px;
+    }
+
+    .cardScreen {
+        gap: 12px;
+    }
+
+   .exchangeCardPreview {
+    --card-scale: 0.94;
+
+    width: calc(360px * var(--card-scale));
+    height: calc(510px * var(--card-scale));
+    max-width: 100%;
+    flex: 0 1 auto;
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+
+    pointer-events: none;
+}
+
+    .swipeGuide {
+        min-height: 32px;
+        padding: 8px 17px;
+        font-size: 13px;
+    }
+
+    .messageBox {
+        min-height: 188px;
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 390px), (max-height: 760px) {
+    .header {
+        padding-top: 28px;
+        padding-inline: 15px;
+    }
+
+    .description {
+        margin-top: 8px;
+    }
+
+    .content {
+        padding: 14px 15px 8px;
+    }
+
+    .cardScreen {
+        gap: 8px;
+    }
+
+    .exchangeCardPreview {
+        --card-scale: 0.76;
+    }
+
+    .swipeGuide {
+        min-height: 30px;
+        padding: 7px 15px;
+        font-size: 12px;
+    }
+
+    .footer {
+        padding-inline: 15px;
+        padding-top: 10px;
+    }
+
+    .title {
+        font-size: 20px;
+    }
+
+    .description,
+    .messageProfileInfo span,
+    .messageBox {
+        font-size: 15px;
+    }
+
+    .messageJob {
+        font-size: 15px;
+    }
+
+    .messageProfileImageWrapper {
+        width: 62px;
+        height: 62px;
+        flex-basis: 62px;
+    }
+
+    .messageProfileInfo strong {
+        font-size: 21px;
+    }
+
+    .rejectButton,
+    .acceptButton {
+        height: 56px;
+        font-size: 16px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .screen,
+    .swipeGuide,
+    .messageSwipeGuide,
+    .rejectButton,
+    .acceptButton {
+        transition: none;
+    }
+}
+
+@media (max-height: 820px) {
+    .exchangeCardPreview {
+        --card-scale: 0.84;
+    }
+
+    .cardScreen {
+        gap: 8px;
+    }
+
+    .header {
+        padding-top: 22px;
+    }
+
+    .description {
+        margin-top: 8px;
+    }
+
+    .content {
+        padding-top: 14px;
     }
 }
