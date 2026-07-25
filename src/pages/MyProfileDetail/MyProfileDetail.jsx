@@ -31,6 +31,10 @@ import {
 } from "../../api/options";
 
 import {
+    makeCardBackgroundUrl,
+} from "../../api/cardBackground";
+
+import {
     mapProfileCard,
 } from "../../utils/profileMapper";
 
@@ -40,10 +44,8 @@ import styles from "./MyProfileDetail.module.css";
 const JOB_LABELS = {
     planner: "Planner",
     designer: "Designer",
-    frontend:
-        "Frontend Developer",
-    backend:
-        "Backend Developer",
+    frontend: "Frontend Developer",
+    backend: "Backend Developer",
 };
 
 const LINK_ICONS = {
@@ -57,13 +59,17 @@ const LINK_ICONS = {
     linkedin: MdLanguage,
 };
 
-const MyProfileDetail = () => {
-    const {
-        profileId,
-    } = useParams();
+const getTagName = (tag) => {
+    if (typeof tag === "string") {
+        return tag;
+    }
 
-    const navigate =
-        useNavigate();
+    return tag?.name || "";
+};
+
+const MyProfileDetail = () => {
+    const { profileId } = useParams();
+    const navigate = useNavigate();
 
     const [
         profile,
@@ -129,79 +135,95 @@ const MyProfileDetail = () => {
         const controller =
             new AbortController();
 
-        const loadProfile =
-            async () => {
-                try {
-                    const [
-                        profileResult,
-                        purposeResult,
-                    ] =
-                        await Promise.all(
-                            [
-                                getMyProfileCard(
-                                    profileId,
-                                    {
+        const timerId =
+            window.setTimeout(
+                async () => {
+                    try {
+                        const [
+                            profileResult,
+                            purposeResult,
+                        ] =
+                            await Promise.all(
+                                [
+                                    getMyProfileCard(
+                                        profileId,
+                                        {
+                                            signal:
+                                                controller
+                                                    .signal,
+                                        },
+                                    ),
+
+                                    getPurposes({
                                         signal:
                                             controller
                                                 .signal,
-                                    },
-                                ),
+                                    }),
+                                ],
+                            );
 
-                                getPurposes({
-                                    signal:
-                                        controller
-                                            .signal,
-                                }),
-                            ],
+                        const mappedProfile =
+                            mapProfileCard(
+                                profileResult ||
+                                    {},
+                            );
+
+                        const purposeItems =
+                            Array.isArray(
+                                purposeResult,
+                            )
+                                ? purposeResult
+                                : purposeResult
+                                      ?.items ??
+                                  purposeResult
+                                      ?.data
+                                      ?.items ??
+                                  [];
+
+                        setProfile(
+                            mappedProfile,
                         );
 
-                    const mappedProfile =
-                        mapProfileCard(
-                            profileResult ||
-                                {},
+                        setPurposes(
+                            purposeItems,
                         );
 
-                    const purposeItems =
-                        Array.isArray(
-                            purposeResult,
-                        )
-                            ? purposeResult
-                            : purposeResult
-                                  ?.items ??
-                              [];
-
-                    setProfile(
-                        mappedProfile,
-                    );
-
-                    setPurposes(
-                        purposeItems,
-                    );
-                } catch (
-                    requestError
-                ) {
-                    if (
-                        requestError.name ===
-                        "AbortError"
-                    ) {
-                        return;
-                    }
-
-                    setError(
+                        setError("");
+                    } catch (
                         requestError
-                            ?.message ||
-                            "프로필을 불러오지 못했습니다.",
-                    );
-                } finally {
-                    setIsLoading(
-                        false,
-                    );
-                }
-            };
+                    ) {
+                        if (
+                            requestError?.name ===
+                            "AbortError"
+                        ) {
+                            return;
+                        }
 
-        loadProfile();
+                        setError(
+                            requestError
+                                ?.message ||
+                                "프로필을 불러오지 못했습니다.",
+                        );
+                    } finally {
+                        if (
+                            !controller
+                                .signal
+                                .aborted
+                        ) {
+                            setIsLoading(
+                                false,
+                            );
+                        }
+                    }
+                },
+                0,
+            );
 
         return () => {
+            window.clearTimeout(
+                timerId,
+            );
+
             controller.abort();
         };
     }, [profileId]);
@@ -250,11 +272,53 @@ const MyProfileDetail = () => {
         );
     }
 
-    const interests =
-        profile.interests || [];
+    const interests = (
+        profile.interests || []
+    )
+        .map(
+            (
+                interest,
+                index,
+            ) => ({
+                id:
+                    interest?.id ??
+                    `interest-${index}`,
 
-    const skills =
-        profile.techStacks || [];
+                name:
+                    getTagName(
+                        interest,
+                    ),
+            }),
+        )
+        .filter(
+            (interest) =>
+                interest.name,
+        );
+
+    const skills = (
+        profile.techStacks ||
+        profile.skills ||
+        []
+    )
+        .map(
+            (
+                skill,
+                index,
+            ) => ({
+                id:
+                    skill?.id ??
+                    `skill-${index}`,
+
+                name:
+                    getTagName(
+                        skill,
+                    ),
+            }),
+        )
+        .filter(
+            (skill) =>
+                skill.name,
+        );
 
     const links =
         profile.links || [];
@@ -262,89 +326,48 @@ const MyProfileDetail = () => {
     const experiences =
         profile.experiences || [];
 
-    const hasDescription =
-        Boolean(
+    const introduction =
+        profile.description ||
+        profile.introduction ||
+        "등록된 한 줄 소개가 없습니다.";
+
+    const affiliationText = [
+        profile.affiliationType,
+        profile.affiliation,
+    ]
+        .filter(
             (
-                profile.description ||
-                profile.introduction
-            )?.trim(),
+                value,
+                index,
+                values,
+            ) =>
+                Boolean(value) &&
+                values.indexOf(
+                    value,
+                ) === index,
+        )
+        .join(" | ");
+
+    const cardBackgroundUrl =
+        makeCardBackgroundUrl(
+            profile.cardImageUrl ||
+                profile.cardImage,
         );
-
-    const hasInterests =
-        interests.some(
-            (interest) =>
-                interest?.id &&
-                interest?.name?.trim(),
-        );
-
-    const hasSkills =
-        skills.some(
-            (skill) =>
-                skill?.id &&
-                skill?.name?.trim(),
-        );
-
-    const hasLinks =
-        links.length > 0;
-
-    const hasExperiences =
-        experiences.length > 0;
-
-    const completionItems = [
-        {
-            key: "description",
-            label: "소개 작성",
-            description:
-                "나를 더 자세히 설명하고 인사를 건네보세요.",
-            completed:
-                hasDescription,
-        },
-        {
-            key: "interests",
-            label: "관심 분야 선택",
-            description:
-                "관심 있는 분야를 보여주세요.",
-            completed:
-                hasInterests,
-        },
-        {
-            key: "skills",
-            label: "스킬 추가",
-            description:
-                "나의 사용 툴과 역량을 어필해보세요.",
-            completed:
-                hasSkills,
-        },
-        {
-            key: "links",
-            label: "링크 첨부",
-            description:
-                "내 이메일과 포트폴리오를 첨부해보세요.",
-            completed:
-                hasLinks,
-        },
-        {
-            key: "experiences",
-            label: "경험 추가",
-            description:
-                "내가 쌓아온 활동을 보여주세요.",
-            completed:
-                hasExperiences,
-        },
-    ];
-
-    const completedCount =
-        completionItems.filter(
-            (item) =>
-                item.completed,
-        ).length;
-
-    const isComplete =
-        completedCount ===
-        completionItems.length;
 
     const shareUrl =
         `${window.location.origin}/profile/${profile.id}`;
+
+    const handleBack = () => {
+        navigate(-1);
+    };
+
+    const handleEdit = () => {
+        setIsMenuOpen(false);
+
+        navigate(
+            `/my-profile/${profileId}/detail-edit`,
+        );
+    };
 
     const handleShare =
         async () => {
@@ -371,14 +394,6 @@ const MyProfileDetail = () => {
             }
         };
 
-    const handleEdit = () => {
-        setIsMenuOpen(false);
-
-        navigate(
-            `/my-profile/${profileId}/detail-edit`,
-        );
-    };
-
     const handleOpenVisibility =
         () => {
             const currentPurposeName =
@@ -400,7 +415,9 @@ const MyProfileDetail = () => {
             );
 
             setSelectedIsActive(
-                profile.isActive,
+                Boolean(
+                    profile.isActive,
+                ),
             );
 
             setIsVisibilityModalOpen(
@@ -463,8 +480,10 @@ const MyProfileDetail = () => {
                         currentProfile,
                     ) => ({
                         ...currentProfile,
+
                         isActive:
                             selectedIsActive,
+
                         purposes:
                             purpose
                                 ? [
@@ -555,95 +574,126 @@ const MyProfileDetail = () => {
         >
             <div
                 className={
-                    detailStyles.hero
-                }
-                aria-hidden="true"
-            />
-
-            <div
-                className={
                     detailStyles.layout
                 }
             >
                 <aside
                     className={`${detailStyles.summaryCard} ${styles.summaryCard}`}
+                    style={
+                        cardBackgroundUrl
+                            ? {
+                                  backgroundImage: `
+                                      linear-gradient(
+                                          rgba(22, 25, 38, 0.12),
+                                          rgba(22, 25, 38, 0.24)
+                                      ),
+                                      url("${cardBackgroundUrl}")
+                                  `,
+                                  backgroundPosition:
+                                      "center",
+                                  backgroundSize:
+                                      "cover",
+                                  backgroundRepeat:
+                                      "no-repeat",
+                              }
+                            : undefined
+                    }
                 >
+                    <button
+                        type="button"
+                        className={
+                            detailStyles.backButton
+                        }
+                        onClick={
+                            handleBack
+                        }
+                        aria-label="이전 화면으로 돌아가기"
+                    >
+                        ‹
+                    </button>
+
                     <div
                         className={
-                            styles.summaryTop
+                            detailStyles.actionMenuArea
                         }
                     >
-                        {profile.profileImage ? (
-                            <img
-                                src={
-                                    profile.profileImage
-                                }
-                                alt={`${profile.name} 프로필`}
-                                className={
-                                    detailStyles.avatar
-                                }
-                            />
-                        ) : (
-                            <div
-                                className={
-                                    detailStyles.avatarPlaceholder
-                                }
-                            />
-                        )}
-
-                        <div
+                        <button
+                            type="button"
                             className={
-                                styles.menuArea
+                                detailStyles.moreButton
+                            }
+                            onClick={() =>
+                                setIsMenuOpen(
+                                    (
+                                        currentValue,
+                                    ) =>
+                                        !currentValue,
+                                )
+                            }
+                            aria-label="프로필 관리 메뉴"
+                            aria-expanded={
+                                isMenuOpen
                             }
                         >
-                            <button
-                                type="button"
-                                className={
-                                    styles.moreButton
-                                }
-                                onClick={() =>
-                                    setIsMenuOpen(
-                                        (
-                                            currentValue,
-                                        ) =>
-                                            !currentValue,
-                                    )
-                                }
-                                aria-label="프로필 관리 메뉴"
-                            >
-                                •••
-                            </button>
+                            •••
+                        </button>
 
-                            {isMenuOpen && (
-                                <div
+                        {isMenuOpen && (
+                            <div
+                                className={
+                                    detailStyles.summaryActions
+                                }
+                            >
+                                <button
+                                    type="button"
                                     className={
-                                        styles.profileMenu
+                                        detailStyles.scrapButton
+                                    }
+                                    onClick={
+                                        handleEdit
                                     }
                                 >
-                                    <button
-                                        type="button"
-                                        onClick={
-                                            handleEdit
-                                        }
-                                    >
-                                        수정하기
-                                    </button>
+                                    수정하기
+                                </button>
 
-                                    <button
-                                        type="button"
-                                        className={
-                                            styles.deleteMenuButton
-                                        }
-                                        onClick={
-                                            handleOpenDelete
-                                        }
-                                    >
-                                        이 프로필 삭제
-                                    </button>
-                                </div>
-                            )}
-                        </div>
+                                <button
+                                    type="button"
+                                    className={
+                                        detailStyles.exchangeButton
+                                    }
+                                    onClick={
+                                        handleOpenDelete
+                                    }
+                                >
+                                    이 프로필 삭제
+                                </button>
+                            </div>
+                        )}
                     </div>
+
+                    {profile.profileImage ? (
+                        <img
+                            src={
+                                profile.profileImage
+                            }
+                            alt={`${profile.name || "사용자"} 프로필`}
+                            className={
+                                detailStyles.avatar
+                            }
+                        />
+                    ) : (
+                        <div
+                            className={
+                                detailStyles.avatarPlaceholder
+                            }
+                            aria-hidden="true"
+                        >
+                            {profile.name
+                                ?.trim()
+                                ?.charAt(0) ||
+                                "N"}
+                        </div>
+                    )}
 
                     <div
                         className={
@@ -655,7 +705,8 @@ const MyProfileDetail = () => {
                                 detailStyles.name
                             }
                         >
-                            {profile.name}
+                            {profile.name ||
+                                "이름 없음"}
                         </strong>
 
                         <span
@@ -666,6 +717,7 @@ const MyProfileDetail = () => {
                             {JOB_LABELS[
                                 profile.job
                             ] ||
+                                profile.jobTypeName ||
                                 "직군 미선택"}
                         </span>
                     </div>
@@ -675,12 +727,7 @@ const MyProfileDetail = () => {
                             detailStyles.affiliation
                         }
                     >
-                        {[
-                            profile.affiliationType,
-                            profile.affiliation,
-                        ]
-                            .filter(Boolean)
-                            .join(" | ") ||
+                        {affiliationText ||
                             "소속 정보 없음"}
                     </p>
 
@@ -709,6 +756,7 @@ const MyProfileDetail = () => {
                                     className={
                                         detailStyles.strengthPlaceholder
                                     }
+                                    aria-hidden="true"
                                 />
                             )}
 
@@ -717,25 +765,24 @@ const MyProfileDetail = () => {
                                     detailStyles.strengthText
                                 }
                             >
-                                {
+                                {profile
+                                    .strength
+                                    .title ||
                                     profile
                                         .strength
-                                        .title
-                                }
+                                        .name ||
+                                    "성향 정보 없음"}
                             </span>
                         </div>
                     )}
 
                     <div
                         className={
-                            detailStyles.summaryActions
+                            styles.ownerActions
                         }
                     >
                         <button
                             type="button"
-                            className={
-                                detailStyles.scrapButton
-                            }
                             onClick={
                                 handleShare
                             }
@@ -745,9 +792,6 @@ const MyProfileDetail = () => {
 
                         <button
                             type="button"
-                            className={
-                                detailStyles.exchangeButton
-                            }
                             onClick={
                                 handleOpenVisibility
                             }
@@ -768,48 +812,48 @@ const MyProfileDetail = () => {
                     )}
                 </aside>
 
-                {isComplete ? (
-                    <article
+                <article
+                    className={
+                        detailStyles.detailCard
+                    }
+                >
+                    <section
                         className={
-                            detailStyles.detailCard
+                            detailStyles.section
                         }
                     >
-                        <section
+                        <h2
                             className={
-                                detailStyles.section
+                                detailStyles.sectionTitle
                             }
                         >
-                            <h2
-                                className={
-                                    detailStyles.sectionTitle
-                                }
-                            >
-                                한 줄 소개
-                            </h2>
+                            한 줄 소개
+                        </h2>
 
-                            <p
-                                className={
-                                    detailStyles.introduction
-                                }
-                            >
-                                {profile.description ||
-                                    profile.introduction}
-                            </p>
-                        </section>
-
-                        <section
+                        <p
                             className={
-                                detailStyles.section
+                                detailStyles.introduction
                             }
                         >
-                            <h2
-                                className={
-                                    detailStyles.sectionTitle
-                                }
-                            >
-                                관심 분야
-                            </h2>
+                            {introduction}
+                        </p>
+                    </section>
 
+                    <section
+                        className={
+                            detailStyles.section
+                        }
+                    >
+                        <h2
+                            className={
+                                detailStyles.sectionTitle
+                            }
+                        >
+                            관심 분야
+                        </h2>
+
+                        {interests.length >
+                        0 ? (
                             <div
                                 className={
                                     detailStyles.tagList
@@ -834,21 +878,33 @@ const MyProfileDetail = () => {
                                     ),
                                 )}
                             </div>
-                        </section>
-
-                        <section
-                            className={
-                                detailStyles.section
-                            }
-                        >
-                            <h2
+                        ) : (
+                            <p
                                 className={
-                                    detailStyles.sectionTitle
+                                    detailStyles.emptyText
                                 }
                             >
-                                스킬
-                            </h2>
+                                등록된 관심 분야가
+                                없습니다.
+                            </p>
+                        )}
+                    </section>
 
+                    <section
+                        className={
+                            detailStyles.section
+                        }
+                    >
+                        <h2
+                            className={
+                                detailStyles.sectionTitle
+                            }
+                        >
+                            스킬
+                        </h2>
+
+                        {skills.length >
+                        0 ? (
                             <div
                                 className={
                                     detailStyles.tagList
@@ -871,44 +927,75 @@ const MyProfileDetail = () => {
                                     ),
                                 )}
                             </div>
-                        </section>
-
-                        <section
-                            className={
-                                detailStyles.section
-                            }
-                        >
-                            <h2
+                        ) : (
+                            <p
                                 className={
-                                    detailStyles.sectionTitle
+                                    detailStyles.emptyText
                                 }
                             >
-                                링크
-                            </h2>
+                                등록된 스킬이
+                                없습니다.
+                            </p>
+                        )}
+                    </section>
 
+                    <section
+                        className={
+                            detailStyles.section
+                        }
+                    >
+                        <h2
+                            className={
+                                detailStyles.sectionTitle
+                            }
+                        >
+                            링크
+                        </h2>
+
+                        {links.length >
+                        0 ? (
                             <div
                                 className={
                                     detailStyles.linkList
                                 }
                             >
                                 {links.map(
-                                    (link) => {
+                                    (
+                                        link,
+                                        index,
+                                    ) => {
                                         const Icon =
                                             LINK_ICONS[
                                                 link.type
                                             ] ||
                                             MdLanguage;
 
+                                        const isEmail =
+                                            link.type ===
+                                                "email" ||
+                                            link.url?.startsWith(
+                                                "mailto:",
+                                            );
+
                                         return (
                                             <a
                                                 key={
-                                                    link.id
+                                                    link.id ??
+                                                    `${link.type}-${index}`
                                                 }
                                                 href={
                                                     link.url
                                                 }
-                                                target="_blank"
-                                                rel="noreferrer"
+                                                target={
+                                                    isEmail
+                                                        ? undefined
+                                                        : "_blank"
+                                                }
+                                                rel={
+                                                    isEmail
+                                                        ? undefined
+                                                        : "noreferrer"
+                                                }
                                                 className={
                                                     detailStyles.linkItem
                                                 }
@@ -922,6 +1009,7 @@ const MyProfileDetail = () => {
                                                         className={
                                                             detailStyles.linkIcon
                                                         }
+                                                        aria-hidden="true"
                                                     />
                                                 </span>
 
@@ -931,28 +1019,41 @@ const MyProfileDetail = () => {
                                                     }
                                                 >
                                                     {link.label ||
-                                                        link.type}
+                                                        link.type ||
+                                                        "링크"}
                                                 </span>
                                             </a>
                                         );
                                     },
                                 )}
                             </div>
-                        </section>
-
-                        <section
-                            className={
-                                detailStyles.section
-                            }
-                        >
-                            <h2
+                        ) : (
+                            <p
                                 className={
-                                    detailStyles.sectionTitle
+                                    detailStyles.emptyText
                                 }
                             >
-                                경험
-                            </h2>
+                                등록된 링크가
+                                없습니다.
+                            </p>
+                        )}
+                    </section>
 
+                    <section
+                        className={
+                            detailStyles.section
+                        }
+                    >
+                        <h2
+                            className={
+                                detailStyles.sectionTitle
+                            }
+                        >
+                            경험
+                        </h2>
+
+                        {experiences.length >
+                        0 ? (
                             <div
                                 className={
                                     detailStyles.experienceGrid
@@ -961,10 +1062,12 @@ const MyProfileDetail = () => {
                                 {experiences.map(
                                     (
                                         experience,
+                                        index,
                                     ) => (
                                         <article
                                             key={
-                                                experience.id
+                                                experience.id ??
+                                                `experience-${index}`
                                             }
                                             className={
                                                 detailStyles.experienceCard
@@ -972,18 +1075,42 @@ const MyProfileDetail = () => {
                                         >
                                             <div
                                                 className={
-                                                    styles.experienceContent
+                                                    detailStyles.experienceContent
                                                 }
                                             >
-                                                <strong>
-                                                    {
-                                                        experience.title
+                                                <div
+                                                    className={
+                                                        detailStyles.experienceTitleRow
                                                     }
-                                                </strong>
+                                                >
+                                                    {experience.isRepresentative && (
+                                                        <span
+                                                            className={
+                                                                detailStyles.representativeBadge
+                                                            }
+                                                        >
+                                                            대표
+                                                        </span>
+                                                    )}
 
-                                                <p>
+                                                    <strong
+                                                        className={
+                                                            detailStyles.experienceTitle
+                                                        }
+                                                    >
+                                                        {experience.title ||
+                                                            "프로젝트 경험"}
+                                                    </strong>
+                                                </div>
+
+                                                <p
+                                                    className={
+                                                        detailStyles.experienceDescription
+                                                    }
+                                                >
                                                     {experience.description ||
-                                                        experience.summary}
+                                                        experience.summary ||
+                                                        "등록된 경험 설명이 없습니다."}
                                                 </p>
 
                                                 {experience.url && (
@@ -993,8 +1120,20 @@ const MyProfileDetail = () => {
                                                         }
                                                         target="_blank"
                                                         rel="noreferrer"
+                                                        className={
+                                                            detailStyles.experienceLink
+                                                        }
                                                     >
-                                                        관련 링크
+                                                        <span>
+                                                            {experience.linkLabel ||
+                                                                "관련 링크"}
+                                                        </span>
+
+                                                        <span
+                                                            aria-hidden="true"
+                                                        >
+                                                            ↗
+                                                        </span>
                                                     </a>
                                                 )}
                                             </div>
@@ -1002,118 +1141,18 @@ const MyProfileDetail = () => {
                                     ),
                                 )}
                             </div>
-                        </section>
-                    </article>
-                ) : (
-                    <article
-                        className={`${detailStyles.detailCard} ${styles.completionCard}`}
-                    >
-                        <div
-                            className={
-                                styles.completionHeader
-                            }
-                        >
-                            <h1>
-                                세부 프로필
-                                완성하기
-                            </h1>
-
-                            <span>
-                                {completedCount}/
-                                {
-                                    completionItems.length
-                                }{" "}
-                                완료
-                            </span>
-                        </div>
-
-                        <div
-                            className={
-                                styles.completionList
-                            }
-                        >
-                            {completionItems.map(
-                                (item) => (
-                                    <div
-                                        key={
-                                            item.key
-                                        }
-                                        className={
-                                            styles.completionItem
-                                        }
-                                    >
-                                        <div>
-                                            <span
-                                                className={
-                                                    styles.completionCategory
-                                                }
-                                            >
-                                                {item.key ===
-                                                "description"
-                                                    ? "한 줄 소개"
-                                                    : item.key ===
-                                                        "interests"
-                                                      ? "관심 분야"
-                                                      : item.key ===
-                                                          "skills"
-                                                        ? "스킬"
-                                                        : item.key ===
-                                                            "links"
-                                                          ? "링크"
-                                                          : "경험"}
-                                            </span>
-
-                                            <strong>
-                                                {
-                                                    item.label
-                                                }
-                                            </strong>
-
-                                            <p>
-                                                {
-                                                    item.description
-                                                }
-                                            </p>
-                                        </div>
-
-                                        <button
-                                            type="button"
-                                            className={
-                                                item.completed
-                                                    ? styles.completedButton
-                                                    : styles.configureButton
-                                            }
-                                            onClick={
-                                                handleEdit
-                                            }
-                                        >
-                                            {item.completed
-                                                ? "완료"
-                                                : "설정하기"}
-                                        </button>
-                                    </div>
-                                ),
-                            )}
-                        </div>
-                    </article>
-                )}
-            </div>
-
-            <div
-                className={
-                    styles.backArea
-                }
-            >
-                <button
-                    type="button"
-                    onClick={() =>
-                        navigate(
-                            "/profile",
-                        )
-                    }
-                >
-                    ‹ 메인으로 돌아가기
-                </button>
+                        ) : (
+                            <p
+                                className={
+                                    detailStyles.emptyText
+                                }
+                            >
+                                등록된 경험이
+                                없습니다.
+                            </p>
+                        )}
+                    </section>
+                </article>
             </div>
 
             {error && (
@@ -1133,12 +1172,19 @@ const MyProfileDetail = () => {
                         styles.modalBackdrop
                     }
                     role="presentation"
-                    onMouseDown={() =>
-                        !isSavingVisibility &&
-                        setIsVisibilityModalOpen(
-                            false,
-                        )
-                    }
+                    onMouseDown={(
+                        event,
+                    ) => {
+                        if (
+                            event.target ===
+                                event.currentTarget &&
+                            !isSavingVisibility
+                        ) {
+                            setIsVisibilityModalOpen(
+                                false,
+                            );
+                        }
+                    }}
                 >
                     <section
                         className={
@@ -1146,11 +1192,6 @@ const MyProfileDetail = () => {
                         }
                         role="dialog"
                         aria-modal="true"
-                        onMouseDown={(
-                            event,
-                        ) =>
-                            event.stopPropagation()
-                        }
                     >
                         <div
                             className={
@@ -1168,6 +1209,7 @@ const MyProfileDetail = () => {
                                         false,
                                     )
                                 }
+                                aria-label="공개 설정 창 닫기"
                             >
                                 ×
                             </button>
