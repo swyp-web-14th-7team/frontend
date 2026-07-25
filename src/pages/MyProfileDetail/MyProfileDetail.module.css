@@ -28,11 +28,15 @@
     z-index: 20;
     top: 30px;
     right: 0;
+
     width: 130px;
     padding: 6px;
+
     border: 1px solid #4a5066;
     border-radius: 7px;
+
     background: #34394f;
+
     box-shadow:
         0 15px 32px
         rgb(0 0 0 / 35%);
@@ -41,13 +45,18 @@
 .profileMenu button {
     width: 100%;
     padding: 10px;
+
     border: 0;
     border-radius: 5px;
+
     color: #ffffff;
+
     font-family: inherit;
     font-size: 12px;
     text-align: left;
+
     background: transparent;
+
     cursor: pointer;
 }
 
@@ -55,18 +64,86 @@
     background: #444a61;
 }
 
-.profileMenu
-    .deleteMenuButton {
+.profileMenu .deleteMenuButton {
     color: #ff666e;
 }
 
+/* =========================
+   내 프로필 전용 액션
+========================= */
+
+.ownerActions {
+    position: absolute;
+    right: 16px;
+    bottom: 20px;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ownerActions button {
+    min-height: 34px;
+    padding: 0 12px;
+
+    border: 1px solid rgb(255 255 255 / 22%);
+    border-radius: 7px;
+
+    color: #ffffff;
+
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 600;
+
+    background: rgb(18 22 35 / 22%);
+
+    backdrop-filter: blur(8px);
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.18s ease,
+        border-color 0.18s ease,
+        transform 0.18s ease;
+}
+
+.ownerActions button:hover {
+    border-color: rgb(255 255 255 / 42%);
+    background: rgb(18 22 35 / 36%);
+
+    transform: translateY(-1px);
+}
+
+.ownerActions button:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+}
+
 .shareMessage {
-    margin: 12px 0 0;
-    color: #b9dfff;
+    position: absolute;
+    right: 16px;
+    bottom: -30px;
+    z-index: 5;
+
+    margin: 0;
+    padding: 7px 10px;
+
+    border: 1px solid rgb(255 255 255 / 12%);
+    border-radius: 6px;
+
+    color: #d9ecff;
+
     font-size: 11px;
     line-height: 1.5;
     text-align: center;
+
+    background: rgb(28 32 48 / 92%);
+    box-shadow: 0 8px 20px rgb(0 0 0 / 28%);
 }
+
+/* =========================
+   기존 완성도 영역
+========================= */
 
 .completionCard {
     min-height: 540px;
@@ -76,16 +153,19 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+
     margin-bottom: 18px;
 }
 
 .completionHeader h1 {
     margin: 0;
+
     font-size: 18px;
 }
 
 .completionHeader span {
     color: #aeb3c2;
+
     font-size: 12px;
 }
 
@@ -95,12 +175,14 @@
 }
 
 .completionItem {
-    display: flex;
     min-height: 92px;
+    padding: 18px 0;
+
+    display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 30px;
-    padding: 18px 0;
+
     border-bottom: 1px solid #3a3f56;
 }
 
@@ -115,18 +197,23 @@
 
 .completionCategory {
     margin-bottom: 6px;
+
     color: #8f96aa;
+
     font-size: 11px;
 }
 
 .completionItem strong {
     margin-bottom: 5px;
+
     font-size: 14px;
 }
 
 .completionItem p {
     margin: 0;
+
     color: #747a8e;
+
     font-size: 12px;
 }
 
@@ -134,12 +221,17 @@
 .completedButton {
     min-width: 72px;
     height: 38px;
+
     border: 0;
     border-radius: 6px;
+
     color: #ffffff;
+
     font-family: inherit;
     font-size: 12px;
+
     background: #4a5067;
+
     cursor: pointer;
 }
 
@@ -158,13 +250,16 @@
 
 .experienceContent p {
     margin: 10px 0;
+
     color: #b6bbc9;
+
     font-size: 12px;
     line-height: 1.6;
 }
 
 .experienceContent a {
     color: #8f96aa;
+
     font-size: 11px;
     text-decoration: none;
 }
@@ -172,121 +267,214 @@
 .backArea {
     position: relative;
     z-index: 3;
+
     width: min(
         1180px,
         calc(100% - 80px)
     );
     margin: 20px auto 0;
+
     display: flex;
     justify-content: flex-end;
 }
 
 .backArea button {
     padding: 10px 14px;
+
     border: 0;
     border-radius: 6px;
+
     color: #ffffff;
+
     font-family: inherit;
+
     background: #34394f;
+
     cursor: pointer;
 }
+
+/* =========================
+   오류 메시지
+========================= */
 
 .pageError {
     position: fixed;
     z-index: 1200;
     right: 24px;
     bottom: 24px;
+
+    max-width: min(
+        360px,
+        calc(100% - 48px)
+    );
     margin: 0;
     padding: 12px 16px;
+
+    border: 1px solid rgb(255 190 194 / 18%);
     border-radius: 7px;
+
     color: #ffbec2;
+
     font-size: 13px;
+    line-height: 1.5;
+
     background: #462932;
+    box-shadow: 0 12px 28px rgb(0 0 0 / 30%);
 }
+
+/* =========================
+   공통 모달
+========================= */
 
 .modalBackdrop {
     position: fixed;
     z-index: 1000;
     inset: 0;
+
     display: grid;
     place-items: center;
+
     padding: 20px;
+
     background:
         rgb(6 7 13 / 76%);
+
     backdrop-filter: blur(5px);
+
+    box-sizing: border-box;
 }
 
 .visibilityModal,
 .deleteModal {
     width: min(440px, 100%);
-    box-sizing: border-box;
     padding: 26px;
+
     border: 1px solid #41465c;
     border-radius: 10px;
+
     color: #ffffff;
     background: #222536;
+
     box-shadow:
         0 28px 70px
         rgb(0 0 0 / 45%);
+
+    box-sizing: border-box;
 }
 
 .modalHeader {
     display: flex;
     align-items: center;
     justify-content: space-between;
+
     margin-bottom: 30px;
 }
 
 .modalHeader h2 {
     margin: 0;
+
     font-size: 17px;
 }
 
 .modalHeader button {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+
+    display: grid;
+    place-items: center;
+
     border: 0;
+    border-radius: 50%;
+
     color: #ffffff;
+
+    font-family: inherit;
     font-size: 24px;
+    line-height: 1;
+
     background: transparent;
+
     cursor: pointer;
 }
 
+.modalHeader button:hover {
+    background: rgb(255 255 255 / 8%);
+}
+
+/* =========================
+   공개 설정
+========================= */
+
 .settingRow {
+    min-height: 56px;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
-    min-height: 56px;
+    gap: 20px;
+}
+
+.settingRow + .settingRow {
+    border-top: 1px solid #373b4f;
 }
 
 .settingRow label,
 .settingRow > span {
     color: #e1e3ea;
+
     font-size: 13px;
+    font-weight: 600;
 }
 
 .settingRow select {
-    min-width: 130px;
-    padding: 9px 11px;
+    min-width: 150px;
+    max-width: 220px;
+    height: 40px;
+    padding: 0 34px 0 11px;
+
     border: 1px solid #52586f;
     border-radius: 7px;
+
+    outline: none;
+
     color: #ffffff;
+
     font-family: inherit;
-    background: #34394f;
+    font-size: 12px;
+
+    background-color: #34394f;
+
+    cursor: pointer;
+}
+
+.settingRow select:focus {
+    border-color: #afd8f8;
 }
 
 .toggle {
-    display: flex;
     width: 62px;
     height: 32px;
     padding: 3px;
+
+    display: flex;
     align-items: center;
     justify-content: space-between;
+
     border: 0;
     border-radius: 999px;
+
     color: #c7cad4;
+
     font-family: inherit;
     font-size: 9px;
+    font-weight: 700;
+
     background: #505568;
+
     cursor: pointer;
+
+    transition: background-color 0.18s ease;
 }
 
 .toggle span {
@@ -296,16 +484,21 @@
 .toggle i {
     width: 26px;
     height: 26px;
+
+    flex-shrink: 0;
+
     border-radius: 50%;
+
     background: #ffffff;
+
+    box-shadow: 0 2px 7px rgb(0 0 0 / 20%);
 }
 
 .toggle:not(.toggleOn) {
     flex-direction: row-reverse;
 }
 
-.toggle:not(.toggleOn)
-    span {
+.toggle:not(.toggleOn) span {
     margin-right: 4px;
     margin-left: 0;
 }
@@ -318,60 +511,98 @@
 .saveButton {
     width: 100%;
     height: 48px;
-    margin-top: 50px;
+    margin-top: 38px;
+
     border: 0;
     border-radius: 7px;
+
     color: #20364a;
+
     font-family: inherit;
+    font-size: 14px;
     font-weight: 700;
+
     background: #afd8f8;
+
     cursor: pointer;
 }
 
+.saveButton:hover {
+    background: #c3e5ff;
+}
+
+.saveButton:disabled {
+    opacity: 0.65;
+
+    cursor: not-allowed;
+}
+
+/* =========================
+   삭제 모달
+========================= */
+
 .deleteModal {
     text-align: center;
+
     background: #34394f;
 }
 
 .deleteIcon {
-    display: grid;
     width: 22px;
     height: 22px;
     margin: 0 auto 16px;
+
+    display: grid;
     place-items: center;
+
     border-radius: 50%;
+
     color: #242736;
+
+    font-size: 15px;
     font-weight: 700;
+    line-height: 1;
+
     background: #ff5360;
 }
 
 .deleteModal h2 {
     margin: 0 0 8px;
+
     font-size: 18px;
 }
 
 .deleteModal p {
     margin: 0;
+
     color: #c0c3cd;
+
     font-size: 13px;
+    line-height: 1.6;
 }
 
 .deleteActions {
+    margin-top: 28px;
+
     display: grid;
     grid-template-columns:
         1fr 1fr;
     gap: 8px;
-    margin-top: 28px;
 }
 
 .deleteActions button {
     height: 46px;
+
     border: 0;
     border-radius: 7px;
+
     color: #283544;
+
     font-family: inherit;
     font-weight: 700;
+
     background: #eef1f5;
+
     cursor: pointer;
 }
 
@@ -379,7 +610,56 @@
     background: #afd8f8;
 }
 
+.deleteActions button:hover {
+    filter: brightness(1.04);
+}
+
+.deleteActions button:disabled {
+    opacity: 0.65;
+
+    cursor: not-allowed;
+}
+
+/* =========================
+   태블릿 이상
+========================= */
+
+@media (min-width: 769px) {
+    .ownerActions {
+        right: 32px;
+        bottom: 28px;
+    }
+
+    .shareMessage {
+        right: 32px;
+        bottom: -32px;
+    }
+}
+
+/* =========================
+   모바일
+========================= */
+
 @media (max-width: 768px) {
+    .ownerActions {
+        right: 16px;
+        bottom: 18px;
+
+        gap: 6px;
+    }
+
+    .ownerActions button {
+        min-height: 32px;
+        padding: 0 10px;
+
+        font-size: 10px;
+    }
+
+    .shareMessage {
+        right: 16px;
+        bottom: -28px;
+    }
+
     .completionItem {
         align-items: flex-start;
         flex-direction: column;
@@ -394,5 +674,71 @@
     .backArea {
         width:
             calc(100% - 40px);
+    }
+
+    .modalBackdrop {
+        padding: 0;
+
+        align-items: end;
+    }
+
+    .visibilityModal,
+    .deleteModal {
+        width: 100%;
+        max-height: 88vh;
+        padding: 26px 20px 30px;
+
+        overflow-y: auto;
+
+        border-right: 0;
+        border-bottom: 0;
+        border-left: 0;
+        border-radius: 16px 16px 0 0;
+    }
+
+    .settingRow {
+        min-height: 62px;
+    }
+
+    .settingRow select {
+        min-width: 142px;
+        max-width: 58%;
+    }
+
+    .saveButton {
+        margin-top: 28px;
+    }
+
+    .pageError {
+        right: 16px;
+        bottom: 16px;
+
+        max-width:
+            calc(100% - 32px);
+    }
+}
+
+@media (max-width: 420px) {
+    .ownerActions {
+        left: 16px;
+        right: 16px;
+
+        justify-content: flex-end;
+    }
+
+    .ownerActions button {
+        padding: 0 9px;
+    }
+
+    .settingRow {
+        gap: 12px;
+    }
+
+    .settingRow select {
+        min-width: 130px;
+    }
+
+    .deleteActions {
+        grid-template-columns: 1fr;
     }
 }
