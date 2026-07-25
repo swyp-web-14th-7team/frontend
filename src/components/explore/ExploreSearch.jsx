@@ -10,7 +10,7 @@ import styles from "./ExploreSearch.module.css";
 import dropdownIcon from "../../assets/icons/icon_dropdown.svg";
 import searchIcon from "../../assets/icons/icon_search.svg";
 
-const AFFILIATION_OPTIONS = [
+const DEFAULT_AFFILIATION_OPTIONS = [
   "모두",
   "직장인",
   "재학생",
@@ -28,6 +28,14 @@ const SORT_OPTIONS = [
 const ExploreSearch = ({
   keyword,
   affiliation,
+
+  /*
+   * Explore.jsx에서 백엔드로 조회한
+   * 실제 현 소속 목록을 전달받는다.
+   */
+  affiliationOptions =
+    DEFAULT_AFFILIATION_OPTIONS,
+
   selectedJobType,
   selectedTags,
   sort,
@@ -52,11 +60,10 @@ const ExploreSearch = ({
     selectedTags.length;
 
   /*
-   * 모바일 스킬 표시
+   * 모바일 스킬 필터 표시
    *
    * 1개 선택: Swift
    * 여러 개 선택: Swift 외 3
-   * 선택 없음: 직군·스킬
    */
   const mobileFilterLabel =
     selectedTags.length > 0
@@ -73,15 +80,15 @@ const ExploreSearch = ({
               }`
             : ""
         }`
-      : "직군·스킬";
+      : "스킬";
 
   const handleFilterApply = ({
     jobType,
     skills,
   }) => {
     /*
-     * 직군 선택값은 모달을 다시 열었을 때
-     * 선택 상태를 유지하기 위해서만 저장한다.
+     * 직군 선택값은 모달 안에서
+     * 직군별 스킬을 보여주기 위해 저장한다.
      */
     onJobTypeChange(
       jobType,
@@ -89,7 +96,7 @@ const ExploreSearch = ({
 
     /*
      * 실제 탐색 결과에는
-     * 선택한 스킬만 적용한다.
+     * 선택한 스킬을 적용한다.
      */
     onTagsChange(
       skills,
@@ -140,19 +147,16 @@ const ExploreSearch = ({
           }
         >
           <Dropdown
-            value={
-              affiliation
-            }
+            value={affiliation}
             placeholder="현 소속"
-            options={
-              AFFILIATION_OPTIONS
-            }
-            onChange={
-              onAffiliationChange
-            }
-            className={
-              styles.affiliationDropdown
-            }
+            options={affiliationOptions}
+            onChange={onAffiliationChange}
+            className={`${styles.affiliationDropdown} ${
+              affiliation &&
+              affiliation !== "모두"
+                ? styles.selectedAffiliationDropdown
+                : ""
+            }`}
           />
 
           <button
