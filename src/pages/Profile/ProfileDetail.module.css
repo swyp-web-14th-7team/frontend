@@ -1,156 +1,162 @@
 .page {
-    position: relative;
-
     width: 100%;
     min-height: calc(100vh - 64px);
     padding-bottom: 72px;
 
-    background-color: #0e0e15;
+    background-color: #101017;
     color: #ffffff;
 
     box-sizing: border-box;
 }
 
-/* 그라디언트만 표시되는 상단 배경 */
+/* =========================
+   상단 프로필 배경
+========================= */
 
 .hero {
-    position: absolute;
-    top: 0;
-    left: 0;
-
-    width: 100%;
-    height: 220px;
-
-    overflow: hidden;
-
-    background: linear-gradient(
-        110deg,
-        #4f91f7 0%,
-        #62a5fa 48%,
-        #f0edc6 100%
-    );
+    display: none;
 }
 
 .layout {
-    position: relative;
-    z-index: 1;
-
-    width: min(1180px, calc(100% - 80px));
+    width: min(760px, 100%);
     margin: 0 auto;
-    padding-top: 120px;
 
-    display: grid;
-    grid-template-columns: 270px minmax(0, 1fr);
-    align-items: start;
-    gap: 20px;
+    background-color: #101017;
 
     box-sizing: border-box;
 }
 
-/* 왼쪽 요약 카드 */
+/* =========================
+   프로필 요약 영역
+========================= */
 
 .summaryCard {
-    padding: 28px 20px 20px;
+    position: relative;
 
-    border-radius: 8px;
-    background-color: #222435;
+    width: 100%;
+    min-height: 306px;
+    padding: 112px 32px 24px;
+
+    border-radius: 0;
+
+    background:
+        radial-gradient(
+            circle at 80% 65%,
+            transparent 0,
+            transparent 54px,
+            rgba(184, 222, 255, 0.2) 55px,
+            rgba(184, 222, 255, 0.2) 76px,
+            transparent 77px
+        ),
+        linear-gradient(
+            135deg,
+            #68a8f8 0%,
+            #4f91f7 55%,
+            #9ed2f5 100%
+        );
+
+    box-sizing: border-box;
+    overflow: visible;
+}
+
+.avatar,
+.avatarPlaceholder {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 18px;
+
+    border: 3px solid rgba(255, 255, 255, 0.25);
+    border-radius: 50%;
+
+    flex-shrink: 0;
 
     box-sizing: border-box;
 }
 
 .avatar {
     display: block;
-
-    width: 64px;
-    height: 64px;
-    margin-bottom: 20px;
-
-    border-radius: 50%;
     object-fit: cover;
-
-    background-color: #aeb8eb;
 }
 
-/* 프로필 사진이 없으면 이름 없이 단색 원 */
-
 .avatarPlaceholder {
-    width: 64px;
-    height: 64px;
-    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-    overflow: hidden;
+    background-color: #d8e6ff;
+    color: #4d75b1;
 
-    border-radius: 50%;
-    background-color: #aeb8eb;
-
-    color: transparent;
-    font-size: 0;
+    font-size: 24px;
+    font-weight: 700;
 }
 
 .nameRow {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     flex-wrap: wrap;
     gap: 8px;
 
-    margin-bottom: 6px;
+    margin-bottom: 4px;
 }
 
 .name {
     color: #ffffff;
 
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 700;
     line-height: 1.4;
 }
 
 .job {
-    color: #d4d8e5;
+    color: rgba(255, 255, 255, 0.88);
 
     font-size: 12px;
-    font-weight: 500;
+    font-weight: 600;
+    line-height: 1.5;
 }
 
 .affiliation {
     margin: 0;
 
-    color: #aeb3c2;
+    color: rgba(255, 255, 255, 0.82);
 
     font-size: 12px;
+    font-weight: 400;
     line-height: 1.5;
 }
 
 .strength {
     width: fit-content;
     max-width: 100%;
-    margin-top: 20px;
+    margin-top: 18px;
     padding: 8px 10px;
 
     display: flex;
     align-items: center;
     gap: 8px;
 
-    border-radius: 4px;
-    background-color: #363b51;
+    border-radius: 7px;
+    background-color: rgba(255, 255, 255, 0.12);
 
     box-sizing: border-box;
 }
 
-.strengthIcon {
-    width: 18px;
-    height: 18px;
+.strengthIcon,
+.strengthPlaceholder {
+    width: 24px;
+    height: 24px;
 
     flex-shrink: 0;
+}
+
+.strengthIcon {
+    display: block;
     object-fit: contain;
 }
 
 .strengthPlaceholder {
-    width: 18px;
-    height: 18px;
-
-    flex-shrink: 0;
-
-    background-color: #272b3e;
+    border-radius: 2px;
+    background-color: #252b3f;
 }
 
 .strengthText {
@@ -160,112 +166,126 @@
 
     color: #ffffff;
 
-    font-size: 11px;
-    font-weight: 500;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.5;
 
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
+/* 다른 사람 프로필 버튼 */
+
 .summaryActions {
-    margin-top: 24px;
+    position: absolute;
+    top: 88px;
+    right: 18px;
+
+    width: 132px;
 
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 0;
+
+    padding: 6px 0;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 7px;
+
+    background-color: #34384c;
+
+    box-shadow: 0 12px 28px rgba(10, 11, 18, 0.35);
+
+    overflow: hidden;
 }
 
 .scrapButton,
 .exchangeButton {
     width: 100%;
-    height: 44px;
+    min-height: 44px;
+    padding: 0 14px;
 
     border: 0;
-    border-radius: 6px;
+    border-radius: 0;
 
-    font-size: 13px;
-    font-weight: 700;
+    color: #ffffff;
+
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    text-align: left;
+
+    background-color: transparent;
 
     cursor: pointer;
 }
 
-.scrapButton {
-    background-color: #afd8f8;
-    color: #171925;
-}
-
-.scrapButton:hover {
-    background-color: #c4e4fc;
-}
-
-.exchangeButton {
-    background-color: #f1f4f8;
-    color: #171925;
-}
-
+.scrapButton:hover,
 .exchangeButton:hover {
-    background-color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.08);
 }
 
-/* 오른쪽 상세 카드 */
+/* =========================
+   상세 내용
+========================= */
 
 .detailCard {
     min-width: 0;
-    padding: 48px 44px;
+    padding: 0;
 
-    border-radius: 8px;
-    background-color: #222435;
+    border-radius: 0;
+    background-color: #101017;
 
     box-sizing: border-box;
 }
 
 .section {
-    padding-bottom: 32px;
+    padding: 28px 32px;
 
-    border-bottom: 1px solid #3a3f56;
-}
-
-.section + .section {
-    padding-top: 32px;
+    border-bottom: 3px solid #272b3d;
 }
 
 .section:last-child {
-    padding-bottom: 0;
-
     border-bottom: 0;
 }
 
 .sectionTitle {
     margin: 0 0 14px;
 
-    color: #aeb3c2;
+    color: #888e9f;
 
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 500;
+    line-height: 1.5;
 }
 
 .introduction {
     margin: 0;
 
-    color: #ffffff;
+    color: #f5f6f8;
 
     font-size: 14px;
     font-weight: 400;
-    line-height: 1.8;
+    line-height: 1.7;
 
     white-space: pre-line;
+    word-break: keep-all;
 }
+
+/* =========================
+   관심 분야 / 스킬
+========================= */
 
 .tagList {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 6px;
 }
 
 .tag {
     max-width: 100%;
-    min-height: 30px;
-    padding: 0 12px;
+    min-height: 32px;
+    padding: 6px 11px;
 
     display: inline-flex;
     align-items: center;
@@ -273,12 +293,13 @@
 
     overflow: hidden;
 
-    border-radius: 6px;
+    border-radius: 7px;
     background-color: #363b51;
     color: #dce0eb;
 
     font-size: 12px;
     font-weight: 500;
+    line-height: 18px;
 
     text-align: center;
     text-overflow: ellipsis;
@@ -287,50 +308,50 @@
     box-sizing: border-box;
 }
 
-/* 링크 */
+/* =========================
+   링크
+========================= */
 
 .linkList {
     display: flex;
     align-items: flex-start;
     flex-wrap: wrap;
-    gap: 40px;
+    gap: 26px;
 }
 
 .linkItem {
-    width: 64px;
+    width: 54px;
 
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: 9px;
 
-    border-radius: 6px;
-    color: #aeb3c2;
-
+    color: #858b9d;
     text-decoration: none;
 }
 
 .linkCircle {
-    width: 48px;
-    height: 48px;
+    width: 52px;
+    height: 52px;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
     border-radius: 50%;
-    background-color: #363b51;
-    color: #cdd2df;
+    background-color: #353a50;
+    color: #d9dde8;
 
     transition:
-        color 0.2s ease,
-        background-color 0.2s ease,
-        transform 0.2s ease;
+        transform 0.18s ease,
+        background-color 0.18s ease,
+        color 0.18s ease;
 }
 
 .linkIcon {
-    width: 25px;
-    height: 25px;
+    width: 24px;
+    height: 24px;
 }
 
 .linkLabel {
@@ -338,40 +359,41 @@
 
     overflow: hidden;
 
-    color: #8f96aa;
+    color: #74798a;
 
-    font-size: 11px;
+    font-size: 10px;
+    font-weight: 400;
     line-height: 1.4;
     text-align: center;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-.linkItem:hover .linkCircle,
-.linkItem:focus-visible .linkCircle {
-    background-color: #4b516b;
+.linkItem:hover .linkCircle {
+    background-color: #454b64;
     color: #ffffff;
 
     transform: translateY(-2px);
 }
 
-.linkItem:hover .linkLabel,
-.linkItem:focus-visible .linkLabel {
+.linkItem:hover .linkLabel {
     color: #ffffff;
 }
 
 .linkItem:focus-visible {
+    border-radius: 8px;
     outline: 2px solid #afd8f8;
     outline-offset: 4px;
 }
 
-/* 경험 */
+/* =========================
+   경험
+========================= */
 
 .experienceGrid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    align-items: start;
-    gap: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .experienceCard {
@@ -379,31 +401,26 @@
 
     overflow: hidden;
 
-    border: 1px solid transparent;
-    border-radius: 8px;
+    border: 0;
+    border-radius: 7px;
     background-color: #363b51;
-
-    transition:
-        border-color 0.2s ease,
-        background-color 0.2s ease;
 
     box-sizing: border-box;
 }
 
 .experienceCard:hover {
-    border-color: #596078;
+    background-color: #3c4259;
 }
 
 .expandedExperienceCard {
-    border-color: #7f8eaf;
-    background-color: #3b4056;
+    background-color: #3c4259;
 }
 
 .experienceToggle {
     position: relative;
 
     width: 100%;
-    padding: 20px 44px 20px 20px;
+    padding: 18px 44px 18px 18px;
 
     display: block;
 
@@ -428,22 +445,23 @@
 
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
 
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
 
 .representativeBadge {
-    padding: 5px 8px;
+    padding: 5px 9px;
 
     flex-shrink: 0;
 
     border-radius: 4px;
-    background-color: #4b516b;
-    color: #ffffff;
+    background-color: #50566d;
+    color: #f5f6f8;
 
     font-size: 10px;
-    font-weight: 700;
+    font-weight: 600;
+    line-height: 1.3;
 }
 
 .experienceTitle {
@@ -455,6 +473,7 @@
 
     font-size: 14px;
     font-weight: 700;
+    line-height: 1.5;
 
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -466,10 +485,11 @@
     display: -webkit-box;
     overflow: hidden;
 
-    color: #b7bdcc;
+    color: #aeb3c2;
 
     font-size: 12px;
-    line-height: 1.6;
+    font-weight: 400;
+    line-height: 1.65;
 
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
@@ -477,27 +497,28 @@
 
 .expandIcon {
     position: absolute;
-    top: 20px;
-    right: 20px;
+    top: 18px;
+    right: 18px;
 
     color: #aeb3c2;
 
-    font-size: 18px;
+    font-size: 16px;
     line-height: 1;
 }
 
 .experienceDetail {
-    padding: 0 20px 20px;
+    padding: 0 18px 18px;
 
     border-top: 1px solid #50566e;
 }
 
 .experienceDescription {
-    margin: 18px 0 0;
+    margin: 16px 0 0;
 
-    color: #d1d5e0;
+    color: #c8ccd7;
 
     font-size: 12px;
+    font-weight: 400;
     line-height: 1.7;
 
     white-space: pre-line;
@@ -505,38 +526,41 @@
 
 .experienceLink {
     width: fit-content;
-    margin-top: 16px;
-    padding: 9px 12px;
+    max-width: 100%;
+    margin-top: 14px;
 
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
 
-    border-radius: 5px;
-    background-color: #4b516b;
-    color: #b9dfff;
+    color: #8f96aa;
 
-    font-size: 12px;
-    font-weight: 600;
+    font-size: 11px;
+    font-weight: 500;
     text-decoration: none;
 }
 
 .experienceLink:hover {
-    background-color: #596078;
     color: #ffffff;
 }
+
+/* =========================
+   빈 데이터
+========================= */
 
 .emptyText,
 .emptyDrawerText {
     margin: 0;
 
-    color: #777d91;
+    color: #74798a;
 
-    font-size: 13px;
+    font-size: 12px;
     line-height: 1.6;
 }
 
-/* 스크랩 모달 */
+/* =========================
+   스크랩 모달
+========================= */
 
 .modalBackdrop {
     position: fixed;
@@ -549,17 +573,20 @@
     align-items: center;
     justify-content: center;
 
-    background-color: rgba(10, 10, 16, 0.72);
+    background-color: rgba(8, 8, 13, 0.76);
     backdrop-filter: blur(6px);
 
     box-sizing: border-box;
 }
 
 .scrapModal {
-    width: 500px;
-    max-width: 100%;
-    padding: 32px;
+    width: min(500px, 100%);
+    max-height: 82vh;
+    padding: 30px;
 
+    overflow-y: auto;
+
+    border: 1px solid #41465c;
     border-radius: 12px;
     background-color: #222435;
     color: #ffffff;
@@ -572,7 +599,7 @@
     align-items: center;
     justify-content: space-between;
 
-    margin-bottom: 30px;
+    margin-bottom: 28px;
 }
 
 .modalHeader h2 {
@@ -580,7 +607,7 @@
 
     color: #ffffff;
 
-    font-size: 24px;
+    font-size: 22px;
     font-weight: 700;
 }
 
@@ -597,15 +624,14 @@
     background: transparent;
     color: #ffffff;
 
-    font-size: 32px;
-    font-weight: 300;
+    font-size: 30px;
     line-height: 1;
 
     cursor: pointer;
 }
 
 .closeButton:hover {
-    color: #b9dfff;
+    color: #afd8f8;
 }
 
 .scrapSummary {
@@ -613,14 +639,14 @@
     align-items: center;
     justify-content: space-between;
 
-    margin-bottom: 20px;
+    margin-bottom: 18px;
 }
 
 .scrapSummary > span {
     color: #777d91;
 
-    font-size: 16px;
-    font-weight: 700;
+    font-size: 14px;
+    font-weight: 600;
 }
 
 .addDrawerButton {
@@ -630,14 +656,15 @@
     background: transparent;
     color: #dce0eb;
 
-    font-size: 16px;
+    font-family: inherit;
+    font-size: 14px;
     font-weight: 700;
 
     cursor: pointer;
 }
 
 .addDrawerButton:hover {
-    color: #b9dfff;
+    color: #afd8f8;
 }
 
 .addDrawerForm {
@@ -665,6 +692,7 @@
     background-color: #363b51;
     color: #ffffff;
 
+    font-family: inherit;
     font-size: 13px;
 
     box-sizing: border-box;
@@ -707,6 +735,7 @@
     border: 0;
     border-radius: 5px;
 
+    font-family: inherit;
     font-size: 12px;
     font-weight: 600;
 
@@ -741,7 +770,7 @@
 
 .scrapDrawerButton {
     width: 100%;
-    min-height: 62px;
+    min-height: 58px;
     padding: 0;
 
     display: flex;
@@ -752,6 +781,7 @@
     background: transparent;
     color: #ffffff;
 
+    font-family: inherit;
     text-align: left;
 
     cursor: pointer;
@@ -764,7 +794,7 @@
 
     color: #dce0eb;
 
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 500;
 
     text-overflow: ellipsis;
@@ -772,9 +802,9 @@
 }
 
 .scrapStatusIcon {
-    width: 34px;
-    height: 34px;
-    margin-right: 12px;
+    width: 32px;
+    height: 32px;
+    margin-right: 8px;
 
     flex-shrink: 0;
 
@@ -788,45 +818,30 @@
     background-color: transparent;
     color: #ffffff;
 
-    font-size: 26px;
-    font-weight: 400;
+    font-size: 22px;
     line-height: 1;
 
     box-sizing: border-box;
-
-    transition:
-        background-color 0.2s ease,
-        color 0.2s ease,
-        transform 0.2s ease;
 }
 
 .selectedStatusIcon {
-    border-color: #ffffff;
     background-color: #ffffff;
     color: #222435;
 
-    font-size: 22px;
+    font-size: 19px;
     font-weight: 700;
-}
-
-.scrapDrawerButton:hover
-    .scrapStatusIcon {
-    transform: scale(1.06);
 }
 
 .emptyDrawerText {
     margin: 24px 0;
 
-    color: #777d91;
-
-    font-size: 13px;
     text-align: center;
 }
 
 .saveButton {
     width: 100%;
-    height: 52px;
-    margin-top: 28px;
+    height: 50px;
+    margin-top: 26px;
 
     border: 0;
     border-radius: 7px;
@@ -834,7 +849,8 @@
     background-color: #afd8f8;
     color: #171925;
 
-    font-size: 16px;
+    font-family: inherit;
+    font-size: 15px;
     font-weight: 700;
 
     cursor: pointer;
@@ -844,8 +860,14 @@
     background-color: #c4e4fc;
 }
 
+.saveButton:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
 
-/* 프로필을 찾을 수 없는 경우 */
+/* =========================
+   로딩 / 오류
+========================= */
 
 .notFound {
     min-height: calc(100vh - 64px);
@@ -856,7 +878,7 @@
     justify-content: center;
     gap: 20px;
 
-    background-color: #0e0e15;
+    background-color: #101017;
     color: #ffffff;
 }
 
@@ -869,87 +891,199 @@
 
     border: 0;
     border-radius: 6px;
+
     background-color: #afd8f8;
     color: #171925;
+
+    font-family: inherit;
+    cursor: pointer;
+}
+
+
+/* =========================
+   상단 뒤로가기 / 더보기
+========================= */
+
+.backButton {
+    position: absolute;
+    z-index: 5;
+    top: 18px;
+    left: 16px;
+
+    width: 40px;
+    height: 40px;
+    padding: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 0;
+    border-radius: 50%;
+
+    background-color: rgba(20, 23, 35, 0.18);
+    color: #ffffff;
+
+    font-family: inherit;
+    font-size: 34px;
+    font-weight: 300;
+    line-height: 1;
 
     cursor: pointer;
 }
 
-/* 태블릿 */
+.backButton:hover {
+    background-color: rgba(20, 23, 35, 0.32);
+}
 
-@media (max-width: 1024px) {
-    .layout {
-        width: min(
-            940px,
-            calc(100% - 48px)
-        );
+.backButton:focus-visible,
+.moreButton:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+}
 
-        grid-template-columns:
-            240px
-            minmax(0, 1fr);
+.actionMenuArea {
+    position: absolute;
+    z-index: 10;
+    top: 18px;
+    right: 16px;
+}
+
+.moreButton {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 0;
+    border-radius: 50%;
+
+    background-color: rgba(20, 23, 35, 0.18);
+    color: #ffffff;
+
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 2px;
+
+    cursor: pointer;
+}
+
+.moreButton:hover {
+    background-color: rgba(20, 23, 35, 0.32);
+}
+
+.actionMenuArea .summaryActions {
+    top: 46px;
+    right: 0;
+}
+
+.experienceContent {
+    padding: 18px;
+}
+
+.scrapError {
+    margin: 12px 0;
+
+    color: #ff8c92;
+
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/* =========================
+   태블릿 이상
+========================= */
+
+@media (min-width: 769px) {
+    .page {
+        padding: 48px 0 80px;
     }
 
-    .detailCard {
-        padding: 40px 32px;
+    .layout {
+        border-radius: 14px;
+
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.3);
+
+        overflow: hidden;
+    }
+
+    .summaryCard {
+        min-height: 330px;
+        padding: 130px 48px 32px;
+    }
+
+    .avatar,
+    .avatarPlaceholder {
+        width: 72px;
+        height: 72px;
+    }
+
+    .section {
+        padding: 34px 48px;
     }
 
     .experienceGrid {
-        grid-template-columns: 1fr;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .summaryActions {
+        top: 96px;
+        right: 32px;
     }
 }
 
-/* 모바일 */
+
+
+/* =========================
+   모바일
+========================= */
 
 @media (max-width: 768px) {
     .page {
         min-height: 100vh;
-        padding-bottom: 40px;
-    }
-
-    .hero {
-        height: 180px;
+        padding-bottom: 0;
     }
 
     .layout {
-        width: calc(100% - 40px);
-        padding-top: 96px;
-
-        display: block;
+        width: 100%;
     }
 
     .summaryCard {
-        position: relative;
-        z-index: 2;
-
-        width: 100%;
-        padding: 24px 20px;
+        min-height: 306px;
+        padding: 112px 16px 20px;
     }
 
-    .detailCard {
-        margin-top: 20px;
-        padding: 32px 20px;
+    .avatar,
+    .avatarPlaceholder {
+        width: 62px;
+        height: 62px;
+        margin-bottom: 18px;
+    }
+
+    .name {
+        font-size: 21px;
+    }
+
+    .summaryActions {
+        top: 88px;
+        right: 14px;
     }
 
     .section {
-        padding-bottom: 28px;
-    }
-
-    .section + .section {
-        padding-top: 28px;
+        padding: 26px 16px;
     }
 
     .linkList {
-        gap: 24px;
-    }
-}
-
-    .experienceGrid {
-        grid-template-columns: 1fr;
+        gap: 26px;
     }
 
-    /* 모바일에서는 바텀시트 형태 */
-
-@media (max-width: 768px) {
     .modalBackdrop {
         padding: 0;
 
@@ -958,10 +1092,8 @@
 
     .scrapModal {
         width: 100%;
-        max-height: 80vh;
-        padding: 28px 20px 36px;
-
-        overflow-y: auto;
+        max-height: 82vh;
+        padding: 26px 20px 34px;
 
         border-radius: 16px 16px 0 0;
     }
@@ -970,50 +1102,42 @@
         font-size: 20px;
     }
 
-    .scrapDrawerName {
-        font-size: 16px;
-    }
-
-    .scrapStatusIcon {
-        width: 32px;
-        height: 32px;
-    }
-
     .saveButton {
         position: sticky;
         bottom: 0;
-
-        margin-top: 24px;
     }
-
 }
 
 @media (max-width: 420px) {
-    .layout {
-        width: calc(100% - 32px);
+    .summaryCard {
+        padding-right: 16px;
+        padding-left: 16px;
     }
 
-    .hero {
-        height: 160px;
+    .section {
+        padding-right: 16px;
+        padding-left: 16px;
     }
 
-    .name {
-        font-size: 18px;
+    .linkList {
+        justify-content: flex-start;
+        gap: 20px;
     }
 
-    .introduction {
-        font-size: 13px;
+    .linkItem {
+        width: 50px;
     }
 
-    .detailCard {
-        padding: 28px 16px;
+    .linkCircle {
+        width: 50px;
+        height: 50px;
     }
 
     .experienceToggle {
-        padding: 18px 40px 18px 16px;
+        padding: 16px 42px 16px 16px;
     }
 
     .experienceDetail {
-        padding: 0 16px 18px;
+        padding: 0 16px 16px;
     }
 }

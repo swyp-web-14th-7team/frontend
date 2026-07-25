@@ -115,10 +115,48 @@
     const headerText = PURPOSE_HEADER_TEXT[purpose] ?? "";
 
     /*
-    * 목적 탭 API 데이터가 완성될 때까지
-    * 전체 공개 프로필을 표시합니다.
-    */
-    const carouselProfiles = profiles;
+     * 탐색 화면에서 선택한 섹션의 purpose가
+     * 쿼리스트링으로 전달되면 해당 목적의 카드만 표시합니다.
+     *
+     * 전체보기에서는 purpose가 없으므로 모든 카드를 표시합니다.
+     */
+    const normalizePurposeName = (value = "") =>
+        String(value)
+            .replace(/\s+/g, "")
+            .replace(/[·/]/g, "")
+            .toLowerCase();
+
+    const normalizedPurpose =
+        normalizePurposeName(purpose);
+
+    const carouselProfiles = purpose
+        ? profiles.filter((profile) => {
+              const purposeNames = Array.isArray(
+                  profile.purposes,
+              )
+                  ? profile.purposes
+                  : [];
+
+              return purposeNames.some(
+                  (item) => {
+                      const purposeName =
+                          typeof item ===
+                          "string"
+                              ? item
+                              : item?.name ||
+                                item?.purposeName ||
+                                "";
+
+                      return (
+                          normalizePurposeName(
+                              purposeName,
+                          ) ===
+                          normalizedPurpose
+                      );
+                  },
+              );
+          })
+        : profiles;
 
     const selectedIndex = carouselProfiles.findIndex(
         (profile) => String(profile.id) === String(profileId),
@@ -733,35 +771,18 @@
                 </button>
 
                 <Swiper
-                centeredSlides={
-                    true
-                }
-                slidesPerView={
-                    1
-                }
+                centeredSlides={true}
+                slidesPerView="auto"
                 initialSlide={
                     initialSlide
                 }
-                spaceBetween={
-                    32
-                }
+                spaceBetween={16}
                 speed={
                     400
                 }
                 grabCursor
                 slideToClickedSlide
                 watchSlidesProgress
-                breakpoints={{
-                    768: {
-                        slidesPerView: 3,
-                        spaceBetween: 24,
-                    },
-
-                    1200: {
-                        slidesPerView: 5,
-                        spaceBetween: 16,
-                    },
-                    }}
                 onSwiper={(
                     swiper,
                 ) => {

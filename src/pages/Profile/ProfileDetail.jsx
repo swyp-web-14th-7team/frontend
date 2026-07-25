@@ -14,6 +14,7 @@ import {
     FaGithub,
     FaInstagram,
 } from "react-icons/fa";
+
 import {
     MdArticle,
     MdEmail,
@@ -30,6 +31,10 @@ import {
     getCollectionGroups,
     moveCollection,
 } from "../../api/collections";
+
+import {
+    makeCardBackgroundUrl,
+} from "../../api/cardBackground";
 
 import usePublicProfile from "../../hooks/usePublicProfile";
 
@@ -48,11 +53,13 @@ const JOB_LABELS = {
 
 const LINK_ICONS = {
     blog: MdArticle,
+    notion: MdArticle,
     github: FaGithub,
     behance: FaBehance,
     instagram: FaInstagram,
     email: MdEmail,
     website: MdLanguage,
+    linkedin: MdLanguage,
 };
 
 const getArrayData = (data) => {
@@ -68,23 +75,39 @@ const getArrayData = (data) => {
     );
 };
 
+const getTagName = (tag) => {
+    if (typeof tag === "string") {
+        return tag;
+    }
+
+    return tag?.name || "";
+};
+
 const ProfileDetail = () => {
     const { profileId } = useParams();
-    const navigate = useNavigate();
 
-    const [drawers, setDrawers] =
-        useState([]);
+    const navigate =
+        useNavigate();
 
-    const [scrapError, setScrapError] =
-        useState("");
+    const [
+        drawers,
+        setDrawers,
+    ] = useState([]);
 
-    const [isSavingScrap, setIsSavingScrap] =
-        useState(false);
+    const [
+        scrapError,
+        setScrapError,
+    ] = useState("");
 
-    /* 스크랩 모달 */
+    const [
+        isSavingScrap,
+        setIsSavingScrap,
+    ] = useState(false);
 
-    const [isScrapOpen, setIsScrapOpen] =
-        useState(false);
+    const [
+        isScrapOpen,
+        setIsScrapOpen,
+    ] = useState(false);
 
     const [
         selectedDrawerIds,
@@ -101,14 +124,10 @@ const ProfileDetail = () => {
         setNewDrawerName,
     ] = useState("");
 
-    /* 경험 상세 */
-
     const [
-        expandedExperienceIds,
-        setExpandedExperienceIds,
-    ] = useState([]);
-
-    /* 카드 교환 요청 모달 */
+        isActionMenuOpen,
+        setIsActionMenuOpen,
+    ] = useState(false);
 
     const [
         isExchangeModalOpen,
@@ -132,16 +151,22 @@ const ProfileDetail = () => {
                     });
 
                 const groups =
-                    getArrayData(groupData);
+                    getArrayData(
+                        groupData,
+                    );
 
                 const loadedDrawers =
                     await Promise.all(
                         groups.map(
-                            async (group) => {
+                            async (
+                                group,
+                            ) => {
                                 const itemData =
                                     await getCollectionGroupItems(
                                         group.id,
-                                        { signal },
+                                        {
+                                            signal,
+                                        },
                                     );
 
                                 const items =
@@ -150,16 +175,23 @@ const ProfileDetail = () => {
                                     );
 
                                 return {
-                                    id: group.id,
-                                    name: group.name,
+                                    id:
+                                        group.id,
+
+                                    name:
+                                        group.name,
+
                                     profiles:
                                         items.map(
-                                            (item) => ({
+                                            (
+                                                item,
+                                            ) => ({
                                                 ...mapProfileCard(
                                                     item.card ||
                                                         item.profile ||
                                                         item,
                                                 ),
+
                                                 collectionId:
                                                     item.collectionId ??
                                                     item.id,
@@ -170,93 +202,87 @@ const ProfileDetail = () => {
                         ),
                     );
 
-                setDrawers(loadedDrawers);
+                setDrawers(
+                    loadedDrawers,
+                );
+
                 setScrapError("");
             } catch (error) {
                 if (
-                    error?.name !==
+                    error?.name ===
                     "AbortError"
                 ) {
-                    console.error(
-                        "스크랩 서랍 조회 실패:",
-                        error,
-                    );
-                    setScrapError(
-                        error.message ||
-                            "스크랩 서랍을 불러오지 못했습니다.",
-                    );
+                    return;
                 }
+
+                console.error(
+                    "스크랩 서랍 조회 실패:",
+                    error,
+                );
+
+                setScrapError(
+                    error?.message ||
+                        "스크랩 서랍을 불러오지 못했습니다.",
+                );
             }
         },
         [],
     );
 
-    useEffect(() => {
-        const controller =
-            new AbortController();
 
-        const fetchDrawers = async () => {
-            await loadDrawers(
+useEffect(() => {
+    const controller =
+        new AbortController();
+
+    const timerId =
+        window.setTimeout(() => {
+            void loadDrawers(
                 controller.signal,
             );
-        };
+        }, 0);
 
-        fetchDrawers();
+    return () => {
+        window.clearTimeout(
+            timerId,
+        );
 
-        return () => {
-            controller.abort();
-        };
-    }, [loadDrawers]);
+        controller.abort();
+    };
+}, [loadDrawers]);
+
 
     if (isLoading) {
-    return (
-        <main
-            className={
-                styles.notFound
-            }
-        >
-            <p>
-                프로필을 불러오는
-                중입니다.
-            </p>
-        </main>
-    );
-}
-
-if (errorMessage) {
-    return (
-        <main
-            className={
-                styles.notFound
-            }
-        >
-            <p>
-                {errorMessage}
-            </p>
-
-            <button
-                type="button"
-                onClick={() =>
-                    navigate(
-                        "/explore",
-                    )
+        return (
+            <main
+                className={
+                    styles.notFound
                 }
             >
-                탐색으로 돌아가기
-            </button>
-        </main>
-    );
-}
+                <p>
+                    프로필을 불러오는
+                    중입니다.
+                </p>
+            </main>
+        );
+    }
 
-    if (!profile) {
+    if (errorMessage) {
         return (
-            <main className={styles.notFound}>
-                <p>프로필을 찾을 수 없습니다.</p>
+            <main
+                className={
+                    styles.notFound
+                }
+            >
+                <p>
+                    {errorMessage}
+                </p>
 
                 <button
                     type="button"
                     onClick={() =>
-                        navigate("/explore")
+                        navigate(
+                            "/explore",
+                        )
                     }
                 >
                     탐색으로 돌아가기
@@ -265,18 +291,82 @@ if (errorMessage) {
         );
     }
 
-    const isDeveloper =
-        profile.job === "frontend" ||
-        profile.job === "backend";
+    if (!profile) {
+        return (
+            <main
+                className={
+                    styles.notFound
+                }
+            >
+                <p>
+                    프로필을 찾을 수
+                    없습니다.
+                </p>
 
-    const skillTags = isDeveloper
-        ? profile.techStacks || []
-        : profile.interests || [];
+                <button
+                    type="button"
+                    onClick={() =>
+                        navigate(
+                            "/explore",
+                        )
+                    }
+                >
+                    탐색으로 돌아가기
+                </button>
+            </main>
+        );
+    }
 
-    const interests =
-        profile.interests || [];
+    const interests = (
+        profile.interests || []
+    )
+        .map(
+            (
+                interest,
+                index,
+            ) => ({
+                id:
+                    interest?.id ??
+                    `interest-${index}`,
 
-    const links = profile.links || [];
+                name:
+                    getTagName(
+                        interest,
+                    ),
+            }),
+        )
+        .filter(
+            (interest) =>
+                interest.name,
+        );
+
+    const skills = (
+        profile.techStacks ||
+        profile.skills ||
+        []
+    )
+        .map(
+            (
+                skill,
+                index,
+            ) => ({
+                id:
+                    skill?.id ??
+                    `skill-${index}`,
+
+                name:
+                    getTagName(
+                        skill,
+                    ),
+            }),
+        )
+        .filter(
+            (skill) =>
+                skill.name,
+        );
+
+    const links =
+        profile.links || [];
 
     const experiences =
         profile.experiences || [];
@@ -284,35 +374,30 @@ if (errorMessage) {
     const introduction =
         profile.introduction ||
         profile.description ||
-        "안녕하세요. 다양한 사람들과 경험을 나누고 새로운 프로젝트를 함께 만들어가고 싶습니다.";
+        "등록된 한 줄 소개가 없습니다.";
 
-    /* 경험 펼치기 */
+    const affiliationText = [
+        profile.affiliationType,
+        profile.affiliation,
+    ]
+        .filter(
+            (
+                value,
+                index,
+                values,
+            ) =>
+                Boolean(value) &&
+                values.indexOf(
+                    value,
+                ) === index,
+        )
+        .join(" | ");
 
-    const handleExperienceToggle = (
-        experienceId,
-    ) => {
-        setExpandedExperienceIds(
-            (currentIds) => {
-                if (
-                    currentIds.includes(
-                        experienceId,
-                    )
-                ) {
-                    return currentIds.filter(
-                        (id) =>
-                            id !== experienceId,
-                    );
-                }
-
-                return [
-                    ...currentIds,
-                    experienceId,
-                ];
-            },
+    const cardBackgroundUrl =
+        makeCardBackgroundUrl(
+            profile.cardImageUrl ||
+                profile.cardImage,
         );
-    };
-
-    /* 스크랩 관련 */
 
     const isProfileInDrawer = (
         drawer,
@@ -323,25 +408,54 @@ if (errorMessage) {
                 String(profile.id),
         );
 
+    const handleBack = () => {
+        navigate(-1);
+    };
+
+    const handleActionMenuToggle =
+        () => {
+            setIsActionMenuOpen(
+                (
+                    currentValue,
+                ) =>
+                    !currentValue,
+            );
+        };
+
     const handleOpenScrap = () => {
-        const savedDrawerIds = drawers
-            .filter(isProfileInDrawer)
-            .map((drawer) => drawer.id);
+        const savedDrawerIds =
+            drawers
+                .filter(
+                    isProfileInDrawer,
+                )
+                .map(
+                    (drawer) =>
+                        drawer.id,
+                );
 
         setSelectedDrawerIds(
             savedDrawerIds,
         );
 
         setNewDrawerName("");
-        setIsAddingDrawer(false);
+        setIsAddingDrawer(
+            false,
+        );
+        setIsActionMenuOpen(
+            false,
+        );
         setIsScrapOpen(true);
     };
 
     const handleCloseScrap = () => {
         setIsScrapOpen(false);
-        setSelectedDrawerIds([]);
+        setSelectedDrawerIds(
+            [],
+        );
         setNewDrawerName("");
-        setIsAddingDrawer(false);
+        setIsAddingDrawer(
+            false,
+        );
     };
 
     const handleDrawerToggle = (
@@ -356,164 +470,203 @@ if (errorMessage) {
                 ) {
                     return currentIds.filter(
                         (id) =>
-                            id !== drawerId,
+                            id !==
+                            drawerId,
                     );
                 }
 
+                /*
+                 * 하나의 프로필은 한 서랍에만
+                 * 저장할 수 있으므로 단일 선택
+                 */
                 return [drawerId];
             },
         );
     };
 
-    const handleOpenAddDrawer = () => {
-        setNewDrawerName("");
-        setIsAddingDrawer(true);
-    };
-
-    const handleCancelAddDrawer = () => {
-        setNewDrawerName("");
-        setIsAddingDrawer(false);
-    };
-
-    const handleCreateDrawer = async (
-        event,
-    ) => {
-        event.preventDefault();
-
-        const trimmedName =
-            newDrawerName.trim();
-
-        if (!trimmedName) {
-            return;
-        }
-
-        setScrapError("");
-
-        try {
-            const createdGroup =
-                await createCollectionGroup(
-                    trimmedName,
-                );
-
-            await loadDrawers();
-
-            if (createdGroup?.id) {
-                setSelectedDrawerIds([
-                    createdGroup.id,
-                ]);
-            }
-
+    const handleOpenAddDrawer =
+        () => {
             setNewDrawerName("");
-            setIsAddingDrawer(false);
-        } catch (error) {
-            console.error(
-                "서랍 생성 실패:",
-                error,
+            setIsAddingDrawer(
+                true,
             );
-            setScrapError(
-                error.message ||
-                    "새 서랍을 만들지 못했습니다.",
+        };
+
+    const handleCancelAddDrawer =
+        () => {
+            setNewDrawerName("");
+            setIsAddingDrawer(
+                false,
             );
-        }
-    };
+        };
 
-    const handleScrapSave = async () => {
-        if (isSavingScrap) {
-            return;
-        }
+    const handleCreateDrawer =
+        async (event) => {
+            event.preventDefault();
 
-        const savedDrawer = drawers.find(
-            isProfileInDrawer,
-        );
+            const trimmedName =
+                newDrawerName.trim();
 
-        const savedProfile =
-            savedDrawer?.profiles.find(
-                (item) =>
-                    String(item.id) ===
-                    String(profile.id),
-            );
-
-        const selectedDrawerId =
-            selectedDrawerIds[0] ?? null;
-
-        setIsSavingScrap(true);
-        setScrapError("");
-
-        try {
-            if (
-                !savedProfile &&
-                selectedDrawerId
-            ) {
-                await createCollection({
-                    cardId: profile.id,
-                    groupId:
-                        selectedDrawerId,
-                });
-            } else if (
-                savedProfile?.collectionId &&
-                !selectedDrawerId
-            ) {
-                await deleteCollection(
-                    savedProfile.collectionId,
-                );
-            } else if (
-                savedProfile?.collectionId &&
-                selectedDrawerId &&
-                String(savedDrawer.id) !==
-                    String(selectedDrawerId)
-            ) {
-                await moveCollection(
-                    savedProfile.collectionId,
-                    selectedDrawerId,
-                );
+            if (!trimmedName) {
+                return;
             }
 
-            await loadDrawers();
-            handleCloseScrap();
-        } catch (error) {
-            console.error(
-                "스크랩 저장 실패:",
-                error,
+            setScrapError("");
+
+            try {
+                const createdGroup =
+                    await createCollectionGroup(
+                        trimmedName,
+                    );
+
+                await loadDrawers();
+
+                if (
+                    createdGroup?.id
+                ) {
+                    setSelectedDrawerIds(
+                        [
+                            createdGroup.id,
+                        ],
+                    );
+                }
+
+                setNewDrawerName("");
+
+                setIsAddingDrawer(
+                    false,
+                );
+            } catch (error) {
+                console.error(
+                    "서랍 생성 실패:",
+                    error,
+                );
+
+                setScrapError(
+                    error?.message ||
+                        "새 서랍을 만들지 못했습니다.",
+                );
+            }
+        };
+
+    const handleScrapSave =
+        async () => {
+            if (
+                isSavingScrap
+            ) {
+                return;
+            }
+
+            const savedDrawer =
+                drawers.find(
+                    isProfileInDrawer,
+                );
+
+            const savedProfile =
+                savedDrawer?.profiles.find(
+                    (item) =>
+                        String(
+                            item.id,
+                        ) ===
+                        String(
+                            profile.id,
+                        ),
+                );
+
+            const selectedDrawerId =
+                selectedDrawerIds[0] ??
+                null;
+
+            setIsSavingScrap(
+                true,
             );
-            setScrapError(
-                error.message ||
-                    "스크랩을 저장하지 못했습니다.",
+
+            setScrapError("");
+
+            try {
+                if (
+                    !savedProfile &&
+                    selectedDrawerId
+                ) {
+                    await createCollection({
+                        cardId:
+                            profile.id,
+
+                        groupId:
+                            selectedDrawerId,
+                    });
+                } else if (
+                    savedProfile?.collectionId &&
+                    !selectedDrawerId
+                ) {
+                    await deleteCollection(
+                        savedProfile.collectionId,
+                    );
+                } else if (
+                    savedProfile?.collectionId &&
+                    selectedDrawerId &&
+                    String(
+                        savedDrawer.id,
+                    ) !==
+                        String(
+                            selectedDrawerId,
+                        )
+                ) {
+                    await moveCollection(
+                        savedProfile.collectionId,
+                        selectedDrawerId,
+                    );
+                }
+
+                await loadDrawers();
+
+                handleCloseScrap();
+            } catch (error) {
+                console.error(
+                    "스크랩 저장 실패:",
+                    error,
+                );
+
+                setScrapError(
+                    error?.message ||
+                        "스크랩을 저장하지 못했습니다.",
+                );
+            } finally {
+                setIsSavingScrap(
+                    false,
+                );
+            }
+        };
+
+    const handleOpenExchangeModal =
+        () => {
+            setIsActionMenuOpen(
+                false,
             );
-        } finally {
-            setIsSavingScrap(false);
-        }
-    };
 
-    /* 카드 교환 관련 */
+            setIsExchangeModalOpen(
+                true,
+            );
+        };
 
-    const handleOpenExchangeModal = () => {
-        setIsExchangeModalOpen(true);
-    };
-
-    const handleCloseExchangeModal = () => {
-        setIsExchangeModalOpen(false);
-    };
+    const handleCloseExchangeModal =
+        () => {
+            setIsExchangeModalOpen(
+                false,
+            );
+        };
 
     const handleSendExchange = (
         requestData,
     ) => {
-        /*
-         * API 연결 후에는 여기서 요청
-         *
-         * requestData:
-         * {
-         *   receiverId,
-         *   cardId,
-         *   message
-         * }
-         */
-
         console.log(
             "카드 교환 요청:",
             requestData,
         );
 
-        setIsExchangeModalOpen(false);
+        setIsExchangeModalOpen(
+            false,
+        );
 
         window.alert(
             `${profile.name}님에게 카드 교환 요청을 보냈습니다.`,
@@ -522,27 +675,104 @@ if (errorMessage) {
 
     return (
         <main className={styles.page}>
-            {/* 그라디언트 상단 배경 */}
-
-            <div
-                className={styles.hero}
-                aria-hidden="true"
-            />
-
             <div className={styles.layout}>
-                {/* 왼쪽 요약 카드 */}
-
                 <aside
                     className={
                         styles.summaryCard
                     }
+                    style={
+                        cardBackgroundUrl
+                            ? {
+                                  backgroundImage: `
+                                      linear-gradient(
+                                          rgba(22, 25, 38, 0.12),
+                                          rgba(22, 25, 38, 0.24)
+                                      ),
+                                      url("${cardBackgroundUrl}")
+                                  `,
+                                  backgroundPosition:
+                                      "center",
+                                  backgroundSize:
+                                      "cover",
+                                  backgroundRepeat:
+                                      "no-repeat",
+                              }
+                            : undefined
+                    }
                 >
+                    <button
+                        type="button"
+                        className={
+                            styles.backButton
+                        }
+                        onClick={
+                            handleBack
+                        }
+                        aria-label="이전 화면으로 돌아가기"
+                    >
+                        ‹
+                    </button>
+
+                    <div
+                        className={
+                            styles.actionMenuArea
+                        }
+                    >
+                        <button
+                            type="button"
+                            className={
+                                styles.moreButton
+                            }
+                            onClick={
+                                handleActionMenuToggle
+                            }
+                            aria-label="프로필 메뉴 열기"
+                            aria-expanded={
+                                isActionMenuOpen
+                            }
+                        >
+                            •••
+                        </button>
+
+                        {isActionMenuOpen && (
+                            <div
+                                className={
+                                    styles.summaryActions
+                                }
+                            >
+                                <button
+                                    type="button"
+                                    className={
+                                        styles.scrapButton
+                                    }
+                                    onClick={
+                                        handleOpenScrap
+                                    }
+                                >
+                                    스크랩하기
+                                </button>
+
+                                <button
+                                    type="button"
+                                    className={
+                                        styles.exchangeButton
+                                    }
+                                    onClick={
+                                        handleOpenExchangeModal
+                                    }
+                                >
+                                    카드 교환 요청
+                                </button>
+                            </div>
+                        )}
+                    </div>
+
                     {profile.profileImage ? (
                         <img
                             src={
                                 profile.profileImage
                             }
-                            alt={`${profile.name} 프로필`}
+                            alt={`${profile.name || "사용자"} 프로필`}
                             className={
                                 styles.avatar
                             }
@@ -552,8 +782,13 @@ if (errorMessage) {
                             className={
                                 styles.avatarPlaceholder
                             }
-                            aria-label="기본 프로필 이미지"
-                        />
+                            aria-hidden="true"
+                        >
+                            {profile.name
+                                ?.trim()
+                                ?.charAt(0) ||
+                                "N"}
+                        </div>
                     )}
 
                     <div
@@ -566,15 +801,20 @@ if (errorMessage) {
                                 styles.name
                             }
                         >
-                            {profile.name}
+                            {profile.name ||
+                                "이름 없음"}
                         </strong>
 
                         <span
-                            className={styles.job}
+                            className={
+                                styles.job
+                            }
                         >
                             {JOB_LABELS[
                                 profile.job
-                            ] || "직군 미선택"}
+                            ] ||
+                                profile.jobTypeName ||
+                                "직군 미선택"}
                         </span>
                     </div>
 
@@ -583,12 +823,7 @@ if (errorMessage) {
                             styles.affiliation
                         }
                     >
-                        {[
-                            profile.affiliationType,
-                            profile.affiliation,
-                        ]
-                            .filter(Boolean)
-                            .join(" | ") ||
+                        {affiliationText ||
                             "소속 정보 없음"}
                     </p>
 
@@ -598,7 +833,8 @@ if (errorMessage) {
                                 styles.strength
                             }
                         >
-                            {profile.strength
+                            {profile
+                                .strength
                                 .icon ? (
                                 <img
                                     src={
@@ -625,46 +861,17 @@ if (errorMessage) {
                                     styles.strengthText
                                 }
                             >
-                                {
-                                    profile.strength
-                                        .title
-                                }
+                                {profile
+                                    .strength
+                                    .title ||
+                                    profile
+                                        .strength
+                                        .name ||
+                                    "성향 정보 없음"}
                             </span>
                         </div>
                     )}
-
-                    <div
-                        className={
-                            styles.summaryActions
-                        }
-                    >
-                        <button
-                            type="button"
-                            className={
-                                styles.scrapButton
-                            }
-                            onClick={
-                                handleOpenScrap
-                            }
-                        >
-                            스크랩하기
-                        </button>
-
-                        <button
-                            type="button"
-                            className={
-                                styles.exchangeButton
-                            }
-                            onClick={
-                                handleOpenExchangeModal
-                            }
-                        >
-                            카드 교환 요청
-                        </button>
-                    </div>
                 </aside>
-
-                {/* 오른쪽 상세 정보 */}
 
                 <article
                     className={
@@ -716,12 +923,10 @@ if (errorMessage) {
                                 {interests.map(
                                     (
                                         interest,
-                                        index,
                                     ) => (
                                         <span
                                             key={
-                                                interest.id ??
-                                                `${interest.name}-${index}`
+                                                interest.id
                                             }
                                             className={
                                                 styles.tag
@@ -759,28 +964,26 @@ if (errorMessage) {
                             스킬
                         </h2>
 
-                        {skillTags.length >
+                        {skills.length >
                         0 ? (
                             <div
                                 className={
                                     styles.tagList
                                 }
                             >
-                                {skillTags.map(
-                                    (
-                                        tag,
-                                        index,
-                                    ) => (
+                                {skills.map(
+                                    (skill) => (
                                         <span
                                             key={
-                                                tag.id ??
-                                                `${tag.name}-${index}`
+                                                skill.id
                                             }
                                             className={
                                                 styles.tag
                                             }
                                         >
-                                            {tag.name}
+                                            {
+                                                skill.name
+                                            }
                                         </span>
                                     ),
                                 )}
@@ -797,8 +1000,6 @@ if (errorMessage) {
                         )}
                     </section>
 
-                    {/* 링크 */}
-
                     <section
                         className={
                             styles.section
@@ -812,7 +1013,8 @@ if (errorMessage) {
                             링크
                         </h2>
 
-                        {links.length > 0 ? (
+                        {links.length >
+                        0 ? (
                             <div
                                 className={
                                     styles.linkList
@@ -859,7 +1061,7 @@ if (errorMessage) {
                                                 className={
                                                     styles.linkItem
                                                 }
-                                                aria-label={`${link.label} 링크 열기`}
+                                                aria-label={`${link.label || link.type || "링크"} 열기`}
                                             >
                                                 <span
                                                     className={
@@ -879,9 +1081,9 @@ if (errorMessage) {
                                                         styles.linkLabel
                                                     }
                                                 >
-                                                    {
-                                                        link.label
-                                                    }
+                                                    {link.label ||
+                                                        link.type ||
+                                                        "링크"}
                                                 </span>
                                             </a>
                                         );
@@ -899,8 +1101,6 @@ if (errorMessage) {
                             </p>
                         )}
                     </section>
-
-                    {/* 경험 */}
 
                     <section
                         className={
@@ -926,130 +1126,82 @@ if (errorMessage) {
                                     (
                                         experience,
                                         index,
-                                    ) => {
-                                        const experienceId =
-                                            experience.id ??
-                                            index;
-
-                                        const isExpanded =
-                                            expandedExperienceIds.includes(
-                                                experienceId,
-                                            );
-
-                                        return (
-                                            <article
-                                                key={
-                                                    experienceId
+                                    ) => (
+                                        <article
+                                            key={
+                                                experience.id ??
+                                                `experience-${index}`
+                                            }
+                                            className={
+                                                styles.experienceCard
+                                            }
+                                        >
+                                            <div
+                                                className={
+                                                    styles.experienceContent
                                                 }
-                                                className={`${styles.experienceCard} ${
-                                                    isExpanded
-                                                        ? styles.expandedExperienceCard
-                                                        : ""
-                                                }`}
                                             >
-                                                <button
-                                                    type="button"
+                                                <div
                                                     className={
-                                                        styles.experienceToggle
-                                                    }
-                                                    onClick={() =>
-                                                        handleExperienceToggle(
-                                                            experienceId,
-                                                        )
-                                                    }
-                                                    aria-expanded={
-                                                        isExpanded
+                                                        styles.experienceTitleRow
                                                     }
                                                 >
-                                                    <div
-                                                        className={
-                                                            styles.experienceTitleRow
-                                                        }
-                                                    >
-                                                        {experience.isRepresentative && (
-                                                            <span
-                                                                className={
-                                                                    styles.representativeBadge
-                                                                }
-                                                            >
-                                                                대표
-                                                            </span>
-                                                        )}
-
-                                                        <strong
+                                                    {experience.isRepresentative && (
+                                                        <span
                                                             className={
-                                                                styles.experienceTitle
+                                                                styles.representativeBadge
                                                             }
                                                         >
-                                                            {experience.title ||
-                                                                "프로젝트 경험"}
-                                                        </strong>
-                                                    </div>
+                                                            대표
+                                                        </span>
+                                                    )}
 
-                                                    <p
+                                                    <strong
                                                         className={
-                                                            styles.experienceSummary
+                                                            styles.experienceTitle
                                                         }
                                                     >
-                                                        {experience.summary ||
-                                                            "프로젝트에서 맡은 역할과 주요 경험을 소개합니다."}
-                                                    </p>
+                                                        {experience.title ||
+                                                            "프로젝트 경험"}
+                                                    </strong>
+                                                </div>
 
-                                                    <span
-                                                        className={
-                                                            styles.expandIcon
-                                                        }
-                                                        aria-hidden="true"
-                                                    >
-                                                        {isExpanded
-                                                            ? "⌃"
-                                                            : "⌄"}
-                                                    </span>
-                                                </button>
+                                                <p
+                                                    className={
+                                                        styles.experienceDescription
+                                                    }
+                                                >
+                                                    {experience.description ||
+                                                        experience.summary ||
+                                                        "등록된 경험 설명이 없습니다."}
+                                                </p>
 
-                                                {isExpanded && (
-                                                    <div
+                                                {experience.url && (
+                                                    <a
+                                                        href={
+                                                            experience.url
+                                                        }
+                                                        target="_blank"
+                                                        rel="noreferrer"
                                                         className={
-                                                            styles.experienceDetail
+                                                            styles.experienceLink
                                                         }
                                                     >
-                                                        <p
-                                                            className={
-                                                                styles.experienceDescription
-                                                            }
+                                                        <span>
+                                                            {experience.linkLabel ||
+                                                                "관련 링크"}
+                                                        </span>
+
+                                                        <span
+                                                            aria-hidden="true"
                                                         >
-                                                            {experience.description ||
-                                                                "등록된 상세 내용이 없습니다."}
-                                                        </p>
-
-                                                        {experience.url && (
-                                                            <a
-                                                                href={
-                                                                    experience.url
-                                                                }
-                                                                target="_blank"
-                                                                rel="noreferrer"
-                                                                className={
-                                                                    styles.experienceLink
-                                                                }
-                                                            >
-                                                                <span>
-                                                                    {experience.linkLabel ||
-                                                                        "관련 링크 보기"}
-                                                                </span>
-
-                                                                <span
-                                                                    aria-hidden="true"
-                                                                >
-                                                                    ↗
-                                                                </span>
-                                                            </a>
-                                                        )}
-                                                    </div>
+                                                            ↗
+                                                        </span>
+                                                    </a>
                                                 )}
-                                            </article>
-                                        );
-                                    },
+                                            </div>
+                                        </article>
+                                    ),
                                 )}
                             </div>
                         ) : (
@@ -1065,8 +1217,6 @@ if (errorMessage) {
                     </section>
                 </article>
             </div>
-
-            {/* 스크랩 모달 */}
 
             {isScrapOpen && (
                 <div
@@ -1218,12 +1368,10 @@ if (errorMessage) {
 
                         {scrapError && (
                             <p
+                                className={
+                                    styles.scrapError
+                                }
                                 role="alert"
-                                style={{
-                                    margin: "12px 0",
-                                    color: "#d92d20",
-                                    fontSize: "14px",
-                                }}
                             >
                                 {scrapError}
                             </p>
@@ -1237,7 +1385,9 @@ if (errorMessage) {
                             {drawers.length >
                             0 ? (
                                 drawers.map(
-                                    (drawer) => {
+                                    (
+                                        drawer,
+                                    ) => {
                                         const isSelected =
                                             selectedDrawerIds.includes(
                                                 drawer.id,
@@ -1320,11 +1470,11 @@ if (errorMessage) {
                 </div>
             )}
 
-            {/* 카드 교환 요청 모달 */}
-
             {isExchangeModalOpen && (
                 <CardExchangeModal
-                    receiver={profile}
+                    receiver={
+                        profile
+                    }
                     onClose={
                         handleCloseExchangeModal
                     }

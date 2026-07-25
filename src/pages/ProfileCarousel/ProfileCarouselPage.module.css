@@ -93,7 +93,7 @@
 }
 
 .slide {
-    width: 100%;
+    width: 282px;
     height: auto;
 
     display: flex;
@@ -102,7 +102,7 @@
 }
 
 .slide > button {
-    width: 282px;
+    width: 100%;
     margin: 0 auto;
 
     opacity: 0.18;
@@ -686,10 +686,11 @@
 
     .swiper {
         padding: 36px 0 28px;
+        overflow: visible;
     }
 
     .slide {
-        width: 100%;
+        width: min(76vw, 320px);
     }
 
     .slide > button {
