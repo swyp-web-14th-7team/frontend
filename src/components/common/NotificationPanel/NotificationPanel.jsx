@@ -124,11 +124,10 @@ const NotificationPanel = ({
                                                         ? styles.unreadItem
                                                         : ""
                                                 }`}
-                                                onClick={() =>
-                                                    onRequestClick?.(
-                                                        request,
-                                                    )
-                                                }
+                                                    onClick={(event) => {
+                                                        event.stopPropagation();
+                                                        onRequestClick?.(request);
+                                                    }}
                                             >
                                                 {request
                                                     .sender

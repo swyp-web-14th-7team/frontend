@@ -1,7 +1,7 @@
 .dismissLayer {
     position: fixed;
     inset: 0;
-    z-index: 90;
+    z-index: 1998;
 
     padding: 0;
 
@@ -13,7 +13,7 @@
     position: absolute;
     top: 42px;
     right: 0;
-    z-index: 100;
+    z-index: 1999;
 
     width: 360px;
     max-height: 480px;
@@ -132,13 +132,51 @@
 }
 
 @media (max-width: 768px) {
+    .dismissLayer {
+        z-index: 998;
+    }
+
     .panel {
         position: fixed;
-        top: 72px;
-        right: 12px;
-        left: 12px;
+        top: 64px;
+        left: 0;
+        right: 0;
+        bottom: 0;
 
-        width: auto;
-        max-height: calc(100vh - 96px);
+        z-index: 999;
+
+        width: 100%;
+        max-height: none;
+
+        padding: 20px;
+
+        border: 0;
+        border-radius: 20px 20px 0 0;
+
+        background: #222435;
+
+        overflow-y: auto;
+    }
+
+    .group + .group {
+        margin-top: 24px;
+    }
+
+    .item {
+        min-height: 76px;
+    }
+
+    .avatar,
+    .avatarPlaceholder {
+        width: 48px;
+        height: 48px;
+    }
+
+    .itemText strong {
+        font-size: 14px;
+    }
+
+    .itemText > span {
+        font-size: 13px;
     }
 }
