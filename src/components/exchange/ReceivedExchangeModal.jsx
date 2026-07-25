@@ -6,7 +6,13 @@ import {
 
 import { createPortal } from "react-dom";
 
+import ExploreProfileCard from "../profile/ExploreProfileCard";
+
 import styles from "./ReceivedExchangeModal.module.css";
+
+const SWIPE_THRESHOLD = 72;
+const MAX_DRAG_DISTANCE = 260;
+const TRANSITION_DURATION = 260;
 
 const getCardImage = (card) => {
     return (
@@ -32,7 +38,9 @@ const getCardName = (request) => {
 const getCardJob = (card) => {
     return (
         card?.job ||
+        card?.jobType ||
         card?.jobName ||
+        card?.jobTypeName ||
         card?.position ||
         card?.occupation ||
         card?.role ||
@@ -50,35 +58,58 @@ const getCardAffiliation = (card) => {
     );
 };
 
-const getCardIntroduction = (card) => {
-    return (
-        card?.introduction ||
-        card?.bio ||
-        card?.description ||
-        card?.summary ||
-        "나를 소개하는 한마디가 아직 등록되지 않았어요."
-    );
-};
+const normalizeJobValue = (card) => {
+    const rawJob = getCardJob(card);
 
-const normalizeTags = (value) => {
-    if (!Array.isArray(value)) {
-        return [];
+    const normalizedJob = String(rawJob)
+        .trim()
+        .toLowerCase();
+
+    if (
+        normalizedJob === "frontend" ||
+        normalizedJob.includes("frontend") ||
+        normalizedJob.includes("프론트")
+    ) {
+        return "frontend";
     }
 
-    return value
-        .map((item) => {
-            if (typeof item === "string") {
-                return item;
-            }
+    if (
+        normalizedJob === "backend" ||
+        normalizedJob.includes("backend") ||
+        normalizedJob.includes("백엔드")
+    ) {
+        return "backend";
+    }
 
-            return (
-                item?.name ||
-                item?.title ||
-                item?.label ||
-                ""
-            );
-        })
-        .filter(Boolean);
+    if (
+        normalizedJob === "designer" ||
+        normalizedJob.includes("design") ||
+        normalizedJob.includes("디자인")
+    ) {
+        return "designer";
+    }
+
+    if (
+        normalizedJob === "planner" ||
+        normalizedJob.includes("plan") ||
+        normalizedJob.includes("기획")
+    ) {
+        return "planner";
+    }
+
+    return rawJob;
+};
+
+const getStrengthLabel = (value) => {
+    if (!value) {
+        return "";
+    }
+
+    if (typeof value === "string") {
+        return value;
+    }
+
+    return value?.title || value?.name || "";
 };
 
 const ReceivedExchangeModal = ({
@@ -87,65 +118,45 @@ const ReceivedExchangeModal = ({
     onReject,
     onAccept,
 }) => {
-    const [isMessageOpen, setIsMessageOpen] =
-        useState(false);
+    const [activeScreen, setActiveScreen] =
+        useState("card");
 
     const [dragOffset, setDragOffset] =
         useState(0);
+
+    const [isDragging, setIsDragging] =
+        useState(false);
+
+    const [isLeaving, setIsLeaving] =
+        useState(false);
+
+    const [isEntering, setIsEntering] =
+        useState(false);
 
     const [isSwipeHintVisible, setIsSwipeHintVisible] =
         useState(true);
 
     const dragStartYRef = useRef(null);
     const dragOffsetRef = useRef(0);
-
-    /*
-     * "위로 밀어 쪽지를 확인해보세요" 안내 문구는
-     * 모달이 열리고 잠깐 보였다가 자동으로 사라진다.
-     */
-    useEffect(() => {
-        const hintTimer = setTimeout(() => {
-            setIsSwipeHintVisible(false);
-        }, 2200);
-
-        return () => {
-            clearTimeout(hintTimer);
-        };
-    }, []);
+    const transitionTimerRef = useRef(null);
+    const enterFrameRef = useRef(null);
 
     const receivedCard =
         request?.receivedCard ||
         request?.rawRequest?.card ||
         {};
 
-    const senderName =
-        getCardName(request);
+    const senderName = getCardName(request);
 
     const profileImage =
         request?.sender?.profileImage ||
+        request?.sender?.profileImageUrl ||
         getCardImage(receivedCard);
 
-    const job =
-        getCardJob(receivedCard);
+    const job = getCardJob(receivedCard);
 
     const affiliation =
         getCardAffiliation(receivedCard);
-
-    const introduction =
-        getCardIntroduction(receivedCard);
-
-    const skills =
-        normalizeTags(
-            receivedCard?.skills ||
-                receivedCard?.skillTags,
-        ).slice(0, 3);
-
-    const interests =
-        normalizeTags(
-            receivedCard?.interests ||
-                receivedCard?.interestTags ||
-                receivedCard?.interestAreas,
-        );
 
     const message =
         request?.message ||
@@ -156,46 +167,116 @@ const ReceivedExchangeModal = ({
         request?.id ||
         request?.rawRequest?.id;
 
-    const getStrengthLabel = (
-        value,
-    ) => {
-        if (!value) {
-            return "";
-        }
-
-        if (typeof value === "string") {
-            return value;
-        }
-
-        return (
-            value?.title ||
-            value?.name ||
-            ""
-        );
-    };
-
-    const strength =
-        getStrengthLabel(
-            receivedCard?.strength,
-        ) ||
-        getStrengthLabel(
-            receivedCard?.strengthName,
-        ) ||
+    const strengthLabel =
+        getStrengthLabel(receivedCard?.strength) ||
+        getStrengthLabel(receivedCard?.strengthName) ||
         getStrengthLabel(
             receivedCard?.communicationType,
         ) ||
         getStrengthLabel(
             receivedCard?.communicationTypeName,
         ) ||
-        interests[0] ||
         "새로운 연결";
+
+    const exchangeProfile = {
+        id:
+            receivedCard?.id ||
+            receivedCard?.cardId ||
+            requestId ||
+            "exchange-preview",
+
+        name: senderName,
+
+        job: normalizeJobValue(receivedCard),
+
+        jobTypeName:
+            receivedCard?.jobTypeName ||
+            receivedCard?.jobName ||
+            receivedCard?.position ||
+            job,
+
+        affiliationType:
+            receivedCard?.affiliationType ||
+            receivedCard?.organizationType ||
+            "",
+
+        affiliation:
+            receivedCard?.affiliation ||
+            receivedCard?.organization ||
+            receivedCard?.company ||
+            receivedCard?.school ||
+            "",
+
+        profileImage,
+
+        techStacks:
+            receivedCard?.techStacks ||
+            receivedCard?.skills ||
+            receivedCard?.skillTags ||
+            [],
+
+        skills:
+            receivedCard?.skills ||
+            receivedCard?.skillTags ||
+            [],
+
+        interests:
+            receivedCard?.interests ||
+            receivedCard?.interestTags ||
+            receivedCard?.interestAreas ||
+            [],
+
+        representativeExperience:
+            receivedCard?.representativeExperience ||
+            null,
+
+        representativeExperienceTitle:
+            receivedCard
+                ?.representativeExperienceTitle ||
+            receivedCard?.experienceTitle ||
+            receivedCard?.projectTitle ||
+            "대표 경험이 없습니다.",
+
+        representativeExperienceDescription:
+            receivedCard
+                ?.representativeExperienceDescription ||
+            receivedCard?.experienceDescription ||
+            receivedCard?.projectDescription ||
+            receivedCard?.introduction ||
+            receivedCard?.bio ||
+            receivedCard?.description ||
+            receivedCard?.summary ||
+            "아직 등록된 대표 경험이 없어요.",
+
+        strength:
+            typeof receivedCard?.strength ===
+            "object"
+                ? receivedCard.strength
+                : {
+                      title: strengthLabel,
+                      icon:
+                          receivedCard
+                              ?.strengthIcon ||
+                          receivedCard
+                              ?.strengthImageUrl ||
+                          receivedCard
+                              ?.communicationTypeIcon ||
+                          "",
+                  },
+
+        cardImageUrl:
+            receivedCard?.cardImageUrl ||
+            receivedCard?.cardImage ||
+            receivedCard?.backgroundImageUrl ||
+            receivedCard?.backgroundImage ||
+            "",
+    };
 
     useEffect(() => {
         const previousOverflow =
             document.body.style.overflow;
 
-        document.body.style.overflow =
-            "hidden";
+        document.body.style.overflow = "hidden";
 
         const handleKeyDown = (event) => {
             if (event.key === "Escape") {
@@ -216,8 +297,30 @@ const ReceivedExchangeModal = ({
                 "keydown",
                 handleKeyDown,
             );
+
+            if (transitionTimerRef.current) {
+                window.clearTimeout(
+                    transitionTimerRef.current,
+                );
+            }
+
+            if (enterFrameRef.current) {
+                window.cancelAnimationFrame(
+                    enterFrameRef.current,
+                );
+            }
         };
     }, [onClose]);
+
+    useEffect(() => {
+        const hintTimer = window.setTimeout(() => {
+            setIsSwipeHintVisible(false);
+        }, 2200);
+
+        return () => {
+            window.clearTimeout(hintTimer);
+        };
+    }, []);
 
     const handleReject = () => {
         if (!requestId) {
@@ -243,62 +346,123 @@ const ReceivedExchangeModal = ({
         onAccept?.(requestId);
     };
 
-const handlePointerDown = (event) => {
-    dragStartYRef.current = event.clientY;
-    dragOffsetRef.current = 0;
+    const resetDrag = () => {
+        dragStartYRef.current = null;
+        dragOffsetRef.current = 0;
 
-    event.currentTarget.setPointerCapture?.(
-        event.pointerId,
-    );
-};
+        setDragOffset(0);
+        setIsDragging(false);
+    };
 
-const handlePointerMove = (event) => {
-    if (dragStartYRef.current === null) {
-        return;
-    }
+    const moveToNextScreen = () => {
+        if (isLeaving) {
+            return;
+        }
 
-    const difference =
-        event.clientY -
-        dragStartYRef.current;
+        setIsDragging(false);
+        setIsLeaving(true);
+        setDragOffset(0);
 
-    const nextOffset = Math.max(
-        -160,
-        Math.min(0, difference),
-    );
+        transitionTimerRef.current =
+            window.setTimeout(() => {
+                setActiveScreen((currentScreen) =>
+                    currentScreen === "card"
+                        ? "message"
+                        : "card",
+                );
 
-    dragOffsetRef.current = nextOffset;
-    setDragOffset(nextOffset);
-};
+                setIsLeaving(false);
+                setIsEntering(true);
 
-const handlePointerUp = (event) => {
-    if (dragStartYRef.current === null) {
-        return;
-    }
+                enterFrameRef.current =
+                    window.requestAnimationFrame(() => {
+                        enterFrameRef.current =
+                            window.requestAnimationFrame(
+                                () => {
+                                    setIsEntering(false);
+                                },
+                            );
+                    });
+            }, TRANSITION_DURATION);
+    };
 
-    event.currentTarget.releasePointerCapture?.(
-        event.pointerId,
-    );
+    const handlePointerDown = (event) => {
+        if (isLeaving || isEntering) {
+            return;
+        }
 
-    if (dragOffsetRef.current <= -35) {
-        setIsMessageOpen(
-            (previous) => !previous,
+        dragStartYRef.current = event.clientY;
+        dragOffsetRef.current = 0;
+
+        setIsDragging(true);
+        setIsSwipeHintVisible(false);
+
+        event.currentTarget.setPointerCapture?.(
+            event.pointerId,
         );
-    }
+    };
 
-    setDragOffset(0);
-    dragOffsetRef.current = 0;
-    dragStartYRef.current = null;
-};
+    const handlePointerMove = (event) => {
+        if (
+            dragStartYRef.current === null ||
+            isLeaving
+        ) {
+            return;
+        }
 
-const handlePointerCancel = (event) => {
-    event.currentTarget.releasePointerCapture?.(
-        event.pointerId,
-    );
+        const difference =
+            event.clientY -
+            dragStartYRef.current;
 
-    setDragOffset(0);
-    dragOffsetRef.current = 0;
-    dragStartYRef.current = null;
-};
+        /*
+         * 아래 방향 스와이프는 사용하지 않는다.
+         * 손가락이 아래로 움직이면 화면은 제자리에서
+         * 아주 약하게만 저항하고 전환되지 않는다.
+         */
+        const nextOffset =
+            difference < 0
+                ? Math.max(
+                      -MAX_DRAG_DISTANCE,
+                      difference,
+                  )
+                : 0;
+
+        dragOffsetRef.current = nextOffset;
+        setDragOffset(nextOffset);
+    };
+
+    const handlePointerUp = (event) => {
+        if (dragStartYRef.current === null) {
+            return;
+        }
+
+        event.currentTarget.releasePointerCapture?.(
+            event.pointerId,
+        );
+
+        const shouldMove =
+            dragOffsetRef.current <=
+            -SWIPE_THRESHOLD;
+
+        dragStartYRef.current = null;
+        dragOffsetRef.current = 0;
+
+        if (shouldMove) {
+            moveToNextScreen();
+            return;
+        }
+
+        setDragOffset(0);
+        setIsDragging(false);
+    };
+
+    const handlePointerCancel = (event) => {
+        event.currentTarget.releasePointerCapture?.(
+            event.pointerId,
+        );
+
+        resetDrag();
+    };
 
     const handleBackdropClick = (event) => {
         if (
@@ -309,20 +473,26 @@ const handlePointerCancel = (event) => {
         }
     };
 
+    const screenClassName = [
+        styles.screen,
+        isDragging ? styles.dragging : "",
+        isLeaving ? styles.leaving : "",
+        isEntering ? styles.entering : "",
+    ]
+        .filter(Boolean)
+        .join(" ");
+
+    const screenStyle = isDragging
+        ? {
+              transform: `translateY(${dragOffset}px)`,
+          }
+        : undefined;
+
     return createPortal(
         <div
             className={styles.modalOverlay}
             role="presentation"
             onMouseDown={handleBackdropClick}
-            style={{
-                position: "fixed",
-                inset: 0,
-                zIndex: 99999,
-                display: "flex",
-                alignItems: "flex-end",
-                justifyContent: "center",
-                background: "rgba(0, 0, 0, 0.6)",
-            }}
         >
             <section
                 className={styles.modalContainer}
@@ -333,9 +503,7 @@ const handlePointerCancel = (event) => {
                     event.stopPropagation()
                 }
             >
-                <header
-                    className={styles.header}
-                >
+                <header className={styles.header}>
                     <div>
                         <h1
                             id="received-exchange-title"
@@ -359,9 +527,7 @@ const handlePointerCancel = (event) => {
 
                     <button
                         type="button"
-                        className={
-                            styles.closeButton
-                        }
+                        className={styles.closeButton}
                         onClick={onClose}
                         aria-label="닫기"
                     >
@@ -369,38 +535,68 @@ const handlePointerCancel = (event) => {
                     </button>
                 </header>
 
-                <div
-                    className={styles.content}
-                >
-                    {!isMessageOpen ? (
+                <div className={styles.content}>
+                    <div
+                        className={styles.viewport}
+                    >
                         <div
-                            className={
-                                styles.cardStep
+                            className={screenClassName}
+                            style={screenStyle}
+                            onPointerDown={
+                                handlePointerDown
+                            }
+                            onPointerMove={
+                                handlePointerMove
+                            }
+                            onPointerUp={
+                                handlePointerUp
+                            }
+                            onPointerCancel={
+                                handlePointerCancel
                             }
                         >
-                            <div
-                                className={
-                                    styles.dragArea
-                                }
-                
-                                style={{
-                                    transform: `translateY(${dragOffset}px)`,
-                                    touchAction: "none",
-                                }}
-
-                                onPointerDown={handlePointerDown}
-                                onPointerMove={handlePointerMove}
-                                onPointerUp={handlePointerUp}
-                                onPointerCancel={handlePointerCancel}
-                            >
-                                <article
+                            {activeScreen ===
+                            "card" ? (
+                                <div
                                     className={
-                                        styles.profileCard
+                                        styles.cardScreen
+                                    }
+                                >
+                                    <div
+                                        className={
+                                            styles.exchangeCardPreview
+                                        }
+                                    >
+                                        <ExploreProfileCard
+                                            profile={
+                                                exchangeProfile
+                                            }
+                                        />
+                                    </div>
+
+                                    <span
+                                        className={`${
+                                            styles.swipeGuide
+                                        } ${
+                                            isSwipeHintVisible
+                                                ? ""
+                                                : styles.swipeGuideHidden
+                                        }`}
+                                        aria-hidden="true"
+                                    >
+                                        위로 밀어 쪽지를
+                                        확인해보세요
+                                    </span>
+                                </div>
+                            ) : (
+                                <div
+                                    className={
+                                        styles.messageScreen
                                     }
                                 >
                                     <p
                                         className={
-                                            styles.cardJob
+                                            styles.messageJob
                                         }
                                     >
                                         {job}
@@ -408,12 +604,12 @@ const handlePointerCancel = (event) => {
 
                                     <div
                                         className={
-                                            styles.cardProfileRow
+                                            styles.messageProfile
                                         }
                                     >
                                         <div
                                             className={
-                                                styles.cardProfileImageWrapper
+                                                styles.messageProfileImageWrapper
                                             }
                                         >
                                             {profileImage ? (
@@ -423,13 +619,13 @@ const handlePointerCancel = (event) => {
                                                     }
                                                     alt={`${senderName} 프로필`}
                                                     className={
-                                                        styles.cardProfileImage
+                                                        styles.messageProfileImage
                                                     }
                                                 />
                                             ) : (
                                                 <span
                                                     className={
-                                                        styles.cardProfileFallback
+                                                        styles.messageProfileFallback
                                                     }
                                                 >
                                                     {senderName
@@ -444,7 +640,7 @@ const handlePointerCancel = (event) => {
 
                                         <div
                                             className={
-                                                styles.cardProfileInfo
+                                                styles.messageProfileInfo
                                             }
                                         >
                                             <strong>
@@ -461,148 +657,30 @@ const handlePointerCancel = (event) => {
                                         </div>
                                     </div>
 
-                                    {skills.length >
-                                        0 && (
-                                        <div
-                                            className={
-                                                styles.cardTagList
-                                            }
-                                        >
-                                            {skills.map(
-                                                (
-                                                    skill,
-                                                    index,
-                                                ) => (
-                                                    <span
-                                                        key={`${skill}-${index}`}
-                                                    >
-                                                        {
-                                                            skill
-                                                        }
-                                                    </span>
-                                                ),
-                                            )}
-                                        </div>
-                                    )}
-
                                     <div
                                         className={
-                                            styles.cardIntroduction
+                                            styles.messageBox
                                         }
                                     >
-                                        <strong>
-                                            노디:{" "}
-                                        </strong>
-
-                                        <span>
-                                            {
-                                                introduction
-                                            }
-                                        </span>
+                                        {message}
                                     </div>
 
-                                    <div
+                                    <span
                                         className={
-                                            styles.cardStrength
+                                            styles.messageSwipeGuide
                                         }
+                                        aria-hidden="true"
                                     >
-                                        <span
-                                            className={
-                                                styles.strengthIcon
-                                            }
-                                        >
-                                            ❯❯
-                                        </span>
-
-                                        <span>
-                                            실험력{" "}
-                                            <strong>
-                                                {
-                                                    strength
-                                                }
-                                            </strong>
-                                        </span>
-                                    </div>
-                                </article>
-
-                                <span
-                                    className={`${
-                                        styles.swipeGuide
-                                    } ${
-                                        isSwipeHintVisible
-                                            ? ""
-                                            : styles.swipeGuideHidden
-                                    }`}
-                                    aria-hidden="true"
-                                >
-                                    위로 밀어 쪽지를
-                                    확인해보세요
-                                </span>
-                            </div>
+                                        위로 밀어 카드를
+                                        확인해보세요
+                                    </span>
+                                </div>
+                            )}
                         </div>
-                    ) : (
-                        <div
-    className={styles.messageStep}
-    style={{
-        transform: `translateY(${dragOffset}px)`,
-        touchAction: "none",
-    }}
-    onPointerDown={handlePointerDown}
-    onPointerMove={handlePointerMove}
-    onPointerUp={handlePointerUp}
-    onPointerCancel={handlePointerCancel}
->
-    <p className={styles.messageJob}>
-        {job}
-    </p>
-
-    <div className={styles.messageProfile}>
-        <div
-            className={
-                styles.messageProfileImageWrapper
-            }
-        >
-            {profileImage ? (
-                <img
-                    src={profileImage}
-                    alt={`${senderName} 프로필`}
-                    className={
-                        styles.messageProfileImage
-                    }
-                />
-            ) : (
-                <span
-                    className={
-                        styles.messageProfileFallback
-                    }
-                >
-                    {senderName
-                        .slice(0, 1)
-                        .toUpperCase()}
-                </span>
-            )}
-        </div>
-
-        <div
-            className={
-                styles.messageProfileInfo
-            }
-        >
-            <strong>{senderName}</strong>
-            <span>{affiliation}</span>
-        </div>
-    </div>
-
-    <div className={styles.messageBox}>
-        {message}
-    </div>
-</div>
-                    )}
+                    </div>
                 </div>
 
-                <footer
-                    className={styles.footer}
-                >
+                <footer className={styles.footer}>
                     <button
                         type="button"
                         className={

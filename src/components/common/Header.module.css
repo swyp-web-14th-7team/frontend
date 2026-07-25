@@ -198,12 +198,17 @@
     outline: 2px solid #afd9fa;
     outline-offset: 4px;
 }
+.mobileProfileSetting {
+    display: none;
+}
 
 @media (max-width: 767px) {
     .header {
         height: 88px;
         padding: 0 20px;
 
+        display: flex;
+        align-items: center;
         justify-content: space-between;
 
         border-bottom: 0;
@@ -220,6 +225,9 @@
 
     .rightMenu {
         margin-left: auto;
+
+        display: flex;
+        align-items: center;
         gap: 0;
     }
 
@@ -230,6 +238,17 @@
     .iconButton {
         position: relative;
 
+        width: 40px;
+        height: 40px;
+    }
+
+    /* 반드시 .iconButton보다 아래에 작성 */
+    .iconButton.mobileProfileSetting {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        position: relative;
         width: 40px;
         height: 40px;
     }

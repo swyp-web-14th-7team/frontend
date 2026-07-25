@@ -268,6 +268,12 @@ const Header = ({
         location.pathname ===
         "/scrap";
 
+const normalizedPath =
+    location.pathname.replace(/\/+$/, "");
+
+const isMyProfilePage =
+    normalizedPath === "/profile";
+
     const hasUnreadNotification =
         exchangeRequests.some(
             (request) =>
@@ -575,82 +581,93 @@ const Header = ({
                         </NavLink>
 
                         <div
-                            className={
-                                styles.notificationWrapper
-                            }
-                        >
-                            <button
-                                type="button"
-                                className={
-                                    styles.iconButton
-                                }
-                                onClick={
-                                    handleNotificationToggle
-                                }
-                                aria-label="알림"
-                                aria-expanded={
-                                    isNotificationOpen
-                                }
-                            >
-                                {hasUnreadNotification && (
-                                    <span
-                                        className={
-                                            styles.notificationDot
-                                        }
-                                    />
-                                )}
+    className={
+        styles.notificationWrapper
+    }
+>
+    <button
+        type="button"
+        className={
+            styles.iconButton
+        }
+        onClick={
+            handleNotificationToggle
+        }
+        aria-label="알림"
+        aria-expanded={
+            isNotificationOpen
+        }
+    >
+        {hasUnreadNotification && (
+            <span
+                className={
+                    styles.notificationDot
+                }
+            />
+        )}
 
-                                <img
-                                    src={
-                                        bellIcon
-                                    }
-                                    alt=""
-                                    className={
-                                        styles.icon
-                                    }
-                                />
-                            </button>
+        <img
+            src={bellIcon}
+            alt=""
+            className={
+                styles.icon
+            }
+        />
+    </button>
 
-                            {isNotificationOpen && (
-                                <NotificationPanel
-                                    requests={
-                                        exchangeRequests
-                                    }
-                                    errorMessage={
-                                        exchangeError
-                                    }
-                                    onRequestClick={
-                                        handleRequestClick
-                                    }
-                                    onClose={() =>
-                                        setIsNotificationOpen(
-                                            false,
-                                        )
-                                    }
-                                />
-                            )}
-                        </div>
+    {isNotificationOpen && (
+        <NotificationPanel
+            requests={
+                exchangeRequests
+            }
+            errorMessage={
+                exchangeError
+            }
+            onRequestClick={
+                handleRequestClick
+            }
+            onClose={() =>
+                setIsNotificationOpen(
+                    false,
+                )
+            }
+        />
+    )}
+</div>
 
-                        <button
-                            type="button"
-                            className={`${styles.iconButton} ${styles.mobileHiddenAction}`}
-                            onClick={() =>
-                                navigate(
-                                    "/settings",
-                                )
-                            }
-                            aria-label="설정"
-                        >
-                            <img
-                                src={
-                                    settingIcon
-                                }
-                                alt=""
-                                className={
-                                    styles.icon
-                                }
-                            />
-                        </button>
+{/* 모바일 내 프로필 화면용 설정 버튼 */}
+{isMyProfilePage && (
+    <button
+        type="button"
+        className={`${styles.iconButton} ${styles.mobileProfileSetting}`}
+        onClick={() =>
+            navigate("/settings")
+        }
+        aria-label="설정"
+    >
+        <img
+            src={settingIcon}
+            alt=""
+            className={styles.icon}
+        />
+    </button>
+)}
+
+{/* 데스크톱 설정 버튼 */}
+<button
+    type="button"
+    className={`${styles.iconButton} ${styles.mobileHiddenAction}`}
+    onClick={() =>
+        navigate("/settings")
+    }
+    aria-label="설정"
+>
+    <img
+        src={settingIcon}
+        alt=""
+        className={styles.icon}
+    />
+</button>
                     </nav>
                 ) : (
                     <button
