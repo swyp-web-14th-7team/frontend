@@ -567,10 +567,13 @@ const MyPage = () => {
             }
 
             const currentPurposeName =
-                getProfilePurposeName(
-                    selectedProfile,
-                    purposes,
-                );
+                typeof selectedProfile.purpose ===
+                "string"
+                    ? selectedProfile.purpose
+                    : selectedProfile.purpose
+                          ?.name ||
+                      selectedProfile.purposes?.[0] ||
+                      "";
 
             const currentPurpose =
                 purposes.find(
@@ -579,23 +582,22 @@ const MyPage = () => {
                         currentPurposeName,
                 );
 
+            const currentPurposeId =
+                selectedProfile.purposeId ??
+                selectedProfile.purpose?.id ??
+                currentPurpose?.id ??
+                1;
+
             setSelectedPurposeId(
-                selectedProfile
-                    .purposeId
-                    ? String(
-                          selectedProfile
-                              .purposeId,
-                      )
-                    : currentPurpose?.id
-                    ? String(
-                          currentPurpose.id,
-                      )
-                    : "1",
+                String(
+                    currentPurposeId,
+                ),
             );
 
             setSelectedIsActive(
-                selectedProfile
-                    .isActive,
+                Boolean(
+                    selectedProfile.isActive,
+                ),
             );
 
             setError("");

@@ -2,6 +2,11 @@
     position: relative;
 }
 
+.summaryContent {
+    position: relative;
+    transform: translateY(-20px);
+}
+
 .summaryTop {
     display: flex;
     align-items: flex-start;
@@ -68,8 +73,12 @@
     color: #ff666e;
 }
 
+.mobileVisibilityButton {
+    display: none;
+}
+
 /* =========================
-   내 프로필 전용 액션
+   占쏙옙 占쎄쑬以덌옙占� 占쎄쑴�� 占썩돦��
 ========================= */
 
 .ownerActions {
@@ -142,7 +151,7 @@
 }
 
 /* =========================
-   기존 완성도 영역
+   疫꿸퀣�� 占쎄쑴苑�옙占� 占쎄낯肉�
 ========================= */
 
 .completionCard {
@@ -294,7 +303,7 @@
 }
 
 /* =========================
-   오류 메시지
+   占썬끇履� 筌롫뗄�놅쭪占�
 ========================= */
 
 .pageError {
@@ -323,7 +332,7 @@
 }
 
 /* =========================
-   공통 모달
+   �⑤벏�� 筌뤴뫀��
 ========================= */
 
 .modalBackdrop {
@@ -403,7 +412,7 @@
 }
 
 /* =========================
-   공개 설정
+   �⑤벀而� 占썬끉��
 ========================= */
 
 .settingRow {
@@ -538,7 +547,7 @@
 }
 
 /* =========================
-   삭제 모달
+   占쏙옙�� 筌뤴뫀��
 ========================= */
 
 .deleteModal {
@@ -621,7 +630,7 @@
 }
 
 /* =========================
-   태블릿 이상
+   占쎌뮆�앯뵳占� 占쎈똻湲�
 ========================= */
 
 @media (min-width: 769px) {
@@ -637,10 +646,14 @@
 }
 
 /* =========================
-   모바일
+   筌뤴뫀而�옙占�
 ========================= */
 
 @media (max-width: 768px) {
+    .summaryContent {
+        transform: translateY(-12px);
+    }
+
     .ownerActions {
         right: 16px;
         bottom: 18px;
@@ -718,6 +731,63 @@
     }
 }
 
+@media (max-width: 768px) {
+    .profileMenu {
+        position: fixed;
+        top: 146px;
+        right: 22px;
+        z-index: 50;
+
+        width: 174px;
+        padding: 0;
+
+        overflow: hidden;
+
+        border: 1px solid #596078;
+        border-radius: 12px;
+
+        background: #34394f;
+        box-shadow: 0 12px 28px rgb(0 0 0 / 30%);
+    }
+
+    .profileMenu button {
+        display: block;
+        width: 100%;
+        height: 68px;
+        padding: 0 24px;
+
+        border: 0;
+        border-radius: 0;
+
+        color: #ffffff;
+
+        font-family: inherit;
+        font-size: 17px;
+        font-weight: 400;
+        line-height: 1;
+        text-align: left;
+
+        background: transparent;
+        cursor: pointer;
+    }
+
+    .profileMenu button:hover {
+        background: rgb(255 255 255 / 5%);
+    }
+
+    .profileMenu button + button {
+        border-top: 1px solid rgb(255 255 255 / 4%);
+    }
+
+    .profileMenu .mobileVisibilityButton {
+        display: block;
+    }
+
+    .profileMenu .deleteMenuButton {
+        color: #ff4d4f;
+    }
+}
+
 @media (max-width: 420px) {
     .ownerActions {
         left: 16px;
@@ -740,5 +810,256 @@
 
     .deleteActions {
         grid-template-columns: 1fr;
+    }
+}
+/* =========================
+   占쎄퀣�わ옙��� 占쎄쑴�� 獄쏄퀣�� 癰귣똻��
+========================= */
+@media (min-width: 769px) {
+    .ownerActions {
+        left: 20px;
+        right: 20px;
+        bottom: 22px;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 6px;
+    }
+
+    .ownerActions button {
+        width: 100%;
+        min-height: 36px;
+        padding: 0 12px;
+        border: 0;
+        border-radius: 4px;
+        color: #263447;
+        font-size: 10px;
+        background: #d8ecff;
+        backdrop-filter: none;
+    }
+
+    .ownerActions button:first-child {
+        background: #b9dcf8;
+    }
+
+    .ownerActions button:hover {
+        border-color: transparent;
+        background: #e7f4ff;
+        transform: none;
+    }
+
+    .shareMessage {
+        right: auto;
+        left: 20px;
+        bottom: -34px;
+        width: calc(100% - 40px);
+        box-sizing: border-box;
+    }
+
+    .backArea {
+        width: min(1180px, calc(100% - 80px));
+        margin: 20px auto 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .backArea {
+        display: none;
+    }
+}
+/* =========================
+   紐⑤컮�� �쒖븞 �꾩슜 諛곗튂
+   �곗뒪�ы넲�먮뒗 �곹뼢 �놁쓬
+========================= */
+@media (max-width: 768px) {
+    .page {
+        width: 100%;
+        min-height: 100dvh;
+        padding: 0;
+        background: #0f0e16;
+    }
+
+    .layout {
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        display: block;
+    }
+
+    .summaryCard {
+        width: 100%;
+        min-height: 545px;
+        height: 545px;
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+        overflow: hidden;
+    }
+
+    .backButton {
+        top: 70px;
+        left: 18px;
+    }
+
+    .actionMenuArea {
+        top: 68px;
+        right: 18px;
+    }
+
+    .summaryContent {
+        position: absolute;
+        left: 20px;
+        right: 20px;
+        bottom: 34px;
+        transform: none;
+    }
+
+    .avatar {
+        width: 78px;
+        height: 78px;
+        margin: 0 0 24px;
+    }
+
+    .nameRow {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+        margin: 0;
+    }
+
+    .name {
+        font-size: 23px;
+        line-height: 1.25;
+    }
+
+    .job {
+        font-size: 15px;
+        line-height: 1.4;
+    }
+
+    .affiliation {
+        margin: 6px 0 22px;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .strength {
+        width: fit-content;
+        min-height: 42px;
+        margin: 0;
+        padding: 0 14px;
+        border-radius: 7px;
+    }
+
+    .ownerActions,
+    .shareMessage {
+        display: none;
+    }
+
+    .completionCard {
+        width: 100%;
+        min-height: auto;
+        margin: 0;
+        padding: 30px 20px 48px;
+        border: 0;
+        border-radius: 0;
+        background: #0f0e16;
+        box-shadow: none;
+    }
+
+    .completionHeader {
+        margin-bottom: 24px;
+    }
+
+    .completionHeader h1 {
+        font-size: 19px;
+        line-height: 1.4;
+    }
+
+    .completionHeader span {
+        font-size: 14px;
+    }
+
+    .completionList {
+        display: block;
+    }
+
+    .completionItem {
+        min-height: 118px;
+        padding: 20px 0;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 16px;
+        border-bottom: 0;
+    }
+
+    .completionItem:nth-child(2),
+    .completionItem:nth-child(3) {
+        margin-right: -20px;
+        margin-left: -20px;
+        padding-right: 20px;
+        padding-left: 20px;
+        border-bottom: 4px solid #292d42;
+    }
+
+    .completionItem:nth-child(3) {
+        border-top: 0;
+    }
+
+    .completionItem > div {
+        min-width: 0;
+    }
+
+    .completionCategory {
+        margin-bottom: 14px;
+        font-size: 13px;
+        line-height: 1.3;
+    }
+
+    .completionItem strong {
+        margin-bottom: 7px;
+        font-size: 17px;
+        line-height: 1.35;
+    }
+
+    .completionItem p {
+        font-size: 14px;
+        line-height: 1.5;
+        white-space: normal;
+    }
+
+    .configureButton,
+    .completedButton {
+        width: 88px;
+        min-width: 88px;
+        height: 42px;
+        padding: 0 10px;
+        border-radius: 8px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 420px) {
+    .summaryCard {
+        min-height: 545px;
+        height: 545px;
+    }
+
+    .summaryContent {
+        bottom: 34px;
+    }
+
+    .completionCard {
+        padding-right: 18px;
+        padding-left: 18px;
+    }
+
+    .completionItem:nth-child(2),
+    .completionItem:nth-child(3) {
+        margin-right: -18px;
+        margin-left: -18px;
+        padding-right: 18px;
+        padding-left: 18px;
     }
 }

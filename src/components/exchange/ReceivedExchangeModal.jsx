@@ -58,6 +58,40 @@ const getCardAffiliation = (card) => {
     );
 };
 
+const getDeveloperJobLabel = (value) => {
+    const label = String(value || "").trim().toLowerCase();
+
+    if (
+        label.includes("frontend") ||
+        label.includes("프론트")
+    ) {
+        return "Frontend Developer";
+    }
+
+    if (
+        label.includes("backend") ||
+        label.includes("백엔드")
+    ) {
+        return "Backend Developer";
+    }
+
+    if (
+        label.includes("designer") ||
+        label.includes("디자인")
+    ) {
+        return "Designer";
+    }
+
+    if (
+        label.includes("planner") ||
+        label.includes("기획")
+    ) {
+        return "Planner";
+    }
+
+    return value || "Developer";
+};
+
 const normalizeJobValue = (card) => {
     const rawJob = getCardJob(card);
 
@@ -599,7 +633,7 @@ const ReceivedExchangeModal = ({
                                             styles.messageJob
                                         }
                                     >
-                                        {job}
+                                        {getDeveloperJobLabel(job)}
                                     </p>
 
                                     <div

@@ -15,9 +15,8 @@
     box-sizing: border-box;
 
     width: min(582px, 100%);
-
-    height: min(830px, calc(100dvh - 72px));
-    max-height: calc(100dvh - 72px);
+    height: min(900px, calc(100dvh - 52px));
+    max-height: calc(100dvh - 52px);
 
     display: flex;
     flex-direction: column;
@@ -231,6 +230,7 @@
 .messageScreen {
     width: 100%;
     height: 100%;
+    min-height: 0;
 
     display: flex;
     flex-direction: column;
@@ -344,6 +344,7 @@
 
     white-space: pre-wrap;
     overflow-wrap: anywhere;
+    overflow-y: auto;
 }
 
 .messageSwipeGuide {
@@ -418,43 +419,29 @@
     outline-offset: 2px;
 }
 
-.overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 1000;
-
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-
-    background: rgba(8, 9, 15, 0.36);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-}
-
-@media (max-width: 480px) {
-   .modalContainer {
+@media (max-width: 640px) {
+    .modalContainer {
         width: 100%;
+        height: calc(100dvh - 96px);
+        max-height: calc(100dvh - 96px);
+        min-height: 0;
 
-        height: calc(100dvh - 72px);
-        max-height: calc(100dvh - 72px);
-
-        border-radius: 16px 16px 0 0;
+        border-radius: 14px 14px 0 0;
     }
 
     .header {
-        padding-top: 28px;
+        padding-top: 36px;
     }
 
     .content {
-        padding-top: 20px;
-        padding-bottom: 10px;
+        padding-top: 24px;
     }
 }
 
 @media (max-width: 430px) {
     .modalContainer {
-        height: calc(100dvh - 120px);
+        height: calc(100dvh - 96px);
+        max-height: calc(100dvh - 96px);
         min-height: 0;
     }
 
@@ -474,20 +461,9 @@
         gap: 12px;
     }
 
-   .exchangeCardPreview {
-    --card-scale: 0.94;
-
-    width: calc(360px * var(--card-scale));
-    height: calc(510px * var(--card-scale));
-    max-width: 100%;
-    flex: 0 1 auto;
-
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-
-    pointer-events: none;
-}
+    .exchangeCardPreview {
+        --card-scale: 0.84;
+    }
 
     .swipeGuide {
         min-height: 32px;
@@ -520,7 +496,7 @@
     }
 
     .exchangeCardPreview {
-        --card-scale: 0.76;
+        --card-scale: 0.80;
     }
 
     .swipeGuide {
@@ -565,6 +541,323 @@
     }
 }
 
+
+/* =========================================================
+   iPhone / 紐⑤컮�� �몃줈 �붾㈃ 蹂댁젙
+   - 二쇱냼李� 蹂��붿뿉 ���묓븯�꾨줉 svh �ъ슜
+   - �곷떒 �ㅻ뜑媛� 議곌툑 蹂댁씠�꾨줉 諛뷀� �쒗듃 �믪씠 �쒗븳
+   - 移대뱶�� 履쎌� 移대뱶媛� 湲곌린 �믪씠�� �곕씪 �먮룞 異뺤냼
+   - �� �몃뵒耳��댄꽣 �곸뿭源뚯� �덉쟾�섍쾶 �뺣낫
+   ========================================================= */
+
+@supports (height: 100svh) {
+    .modalContainer {
+        height: min(900px, calc(100svh - 52px));
+        max-height: calc(100svh - 52px);
+    }
+}
+
+@media (max-width: 480px) {
+    .modalOverlay {
+        align-items: flex-end;
+    }
+
+    .modalContainer {
+        width: 100%;
+        height: calc(100dvh - 52px);
+        max-height: calc(100dvh - 52px);
+        min-height: 0;
+
+        border-radius: 16px 16px 0 0;
+    }
+
+    .header {
+        padding:
+            24px
+            max(16px, env(safe-area-inset-right))
+            0
+            max(16px, env(safe-area-inset-left));
+    }
+
+    .title {
+        font-size: 20px;
+        line-height: 1.4;
+    }
+
+    .description {
+        margin-top: 8px;
+        font-size: 14px;
+        line-height: 1.55;
+    }
+
+    .content {
+        min-height: 0;
+        padding:
+            12px
+            max(14px, env(safe-area-inset-right))
+            6px
+            max(14px, env(safe-area-inset-left));
+    }
+
+    .viewport,
+    .screen,
+    .cardScreen,
+    .messageScreen {
+        min-height: 0;
+    }
+
+    .cardScreen {
+        justify-content: flex-start;
+        gap: 8px;
+    }
+
+    .messageScreen {
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .exchangeCardPreview {
+        --card-scale: min(
+            0.84,
+            calc((100dvh - 330px) / 510)
+        );
+
+        flex: 0 0 auto;
+    }
+
+    .swipeGuide,
+    .messageSwipeGuide {
+        min-height: 28px;
+        padding: 6px 13px;
+
+        font-size: 12px;
+        line-height: 1.3;
+    }
+
+    .footer {
+        padding:
+            10px
+            max(14px, env(safe-area-inset-right))
+            max(14px, env(safe-area-inset-bottom))
+            max(14px, env(safe-area-inset-left));
+    }
+
+    .rejectButton,
+    .acceptButton {
+        height: 52px;
+        font-size: 16px;
+    }
+}
+
+@supports (height: 100svh) {
+    @media (max-width: 480px) {
+        .modalContainer {
+            height: calc(100svh - 52px);
+            max-height: calc(100svh - 52px);
+        }
+
+        .exchangeCardPreview {
+            --card-scale: min(
+                0.84,
+                calc((100svh - 330px) / 510)
+            );
+        }
+    }
+}
+
+/* iPhone SE, 12/13 mini泥섎읆 �몃줈 怨듦컙�� 吏㏃� 湲곌린 */
+@media (max-width: 390px) and (max-height: 760px) {
+    .modalContainer {
+        height: calc(100dvh - 44px);
+        max-height: calc(100dvh - 44px);
+    }
+
+    .header {
+        padding-top: 18px;
+    }
+
+    .title {
+        font-size: 18px;
+    }
+
+    .description {
+        margin-top: 5px;
+        font-size: 13px;
+        line-height: 1.45;
+    }
+
+    .content {
+        padding-top: 8px;
+        padding-bottom: 4px;
+    }
+
+    .exchangeCardPreview {
+        --card-scale: min(
+            0.72,
+            calc((100dvh - 292px) / 510)
+        );
+    }
+
+    .swipeGuide,
+    .messageSwipeGuide {
+        min-height: 26px;
+        padding: 5px 11px;
+        font-size: 11px;
+    }
+
+    .footer {
+        padding-top: 8px;
+    }
+
+    .rejectButton,
+    .acceptButton {
+        height: 48px;
+        font-size: 15px;
+    }
+}
+
+@supports (height: 100svh) {
+    @media (max-width: 390px) and (max-height: 760px) {
+        .modalContainer {
+            height: calc(100svh - 44px);
+            max-height: calc(100svh - 44px);
+        }
+
+        .exchangeCardPreview {
+            --card-scale: min(
+                0.72,
+                calc((100svh - 292px) / 510)
+            );
+        }
+    }
+}
+
+/* iPhone Pro Max 怨꾩뿴泥섎읆 �믪씠媛� 異⑸텇�� 湲곌린 */
+@media (min-width: 414px) and (min-height: 850px) and (max-width: 480px) {
+    .exchangeCardPreview {
+        --card-scale: 0.86;
+    }
+
+    .content {
+        padding-top: 16px;
+    }
+}
+
+
+
+@media (max-width: 480px) {
+    .messageScreen {
+        justify-content: center;
+    }
+
+    .messageJob {
+        margin-bottom: 14px;
+        font-size: 15px;
+    }
+
+    .messageProfile {
+        gap: 12px;
+        margin-bottom: 18px;
+    }
+
+    .messageProfileImageWrapper {
+        width: 58px;
+        height: 58px;
+        flex-basis: 58px;
+    }
+
+    .messageProfileInfo strong {
+        font-size: 20px;
+    }
+
+    .messageProfileInfo span {
+        font-size: 14px;
+    }
+
+    .messageBox {
+        min-height: 140px;
+        max-height: 210px;
+        padding: 12px 14px;
+        font-size: 15px;
+    }
+
+    .messageSwipeGuide {
+        margin-top: 12px;
+    }
+}
+
+@media (max-width: 390px) and (max-height: 760px) {
+    .messageJob {
+        margin-bottom: 10px;
+        font-size: 14px;
+    }
+
+    .messageProfile {
+        margin-bottom: 12px;
+    }
+
+    .messageProfileImageWrapper {
+        width: 52px;
+        height: 52px;
+        flex-basis: 52px;
+    }
+
+    .messageProfileInfo strong {
+        font-size: 18px;
+    }
+
+    .messageProfileInfo span {
+        font-size: 13px;
+    }
+
+    .messageBox {
+        min-height: 112px;
+        max-height: 150px;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .messageSwipeGuide {
+        margin-top: 8px;
+    }
+}
+
+
+/* 怨좎젙 移대뱶 �ш린瑜� �좎��섎㈃�� 紐⑤떖 �덉뿉 移대뱶 �꾩껜媛� 蹂댁씠�꾨줉 諛곗튂 */
+@media (max-width: 480px) {
+    .content {
+        padding-top: 10px;
+        padding-bottom: 4px;
+    }
+
+    .cardScreen {
+        overflow: visible;
+    }
+
+    .exchangeCardPreview {
+        --card-scale: 0.84;
+        flex-shrink: 0;
+    }
+
+    .footer {
+        flex-shrink: 0;
+    }
+}
+
+@media (max-width: 390px) and (max-height: 760px) {
+    .exchangeCardPreview {
+        --card-scale: 0.80;
+    }
+
+    .header {
+        padding-top: 14px;
+    }
+
+    .description {
+        line-height: 1.35;
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .screen,
     .swipeGuide,
@@ -572,27 +865,5 @@
     .rejectButton,
     .acceptButton {
         transition: none;
-    }
-}
-
-@media (max-height: 820px) {
-    .exchangeCardPreview {
-        --card-scale: 0.84;
-    }
-
-    .cardScreen {
-        gap: 8px;
-    }
-
-    .header {
-        padding-top: 22px;
-    }
-
-    .description {
-        margin-top: 8px;
-    }
-
-    .content {
-        padding-top: 14px;
     }
 }

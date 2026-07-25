@@ -10,7 +10,7 @@
 }
 
 /* =========================
-   상단 프로필 배경
+   占쎄낮�� 占쎄쑬以덌옙占� 獄쏄퀗瑗�
 ========================= */
 
 .hero {
@@ -27,7 +27,7 @@
 }
 
 /* =========================
-   프로필 요약 영역
+   占쎄쑬以덌옙占� 占쎈뗄鍮� 占쎄낯肉�
 ========================= */
 
 .summaryCard {
@@ -174,7 +174,7 @@
     white-space: nowrap;
 }
 
-/* 다른 사람 프로필 버튼 */
+/* 占썬끇�� 占싼됱뿺 占쎄쑬以덌옙占� 甕곌쑵�� */
 
 .summaryActions {
     position: absolute;
@@ -200,7 +200,8 @@
 }
 
 .scrapButton,
-.exchangeButton {
+.exchangeButton,
+.ownerMenuButton {
     width: 100%;
     min-height: 44px;
     padding: 0 14px;
@@ -221,12 +222,13 @@
 }
 
 .scrapButton:hover,
-.exchangeButton:hover {
+.exchangeButton:hover,
+.ownerMenuButton:hover {
     background-color: rgba(255, 255, 255, 0.08);
 }
 
 /* =========================
-   상세 내용
+   占쎄낯苑� 占쎈똻��
 ========================= */
 
 .detailCard {
@@ -273,7 +275,7 @@
 }
 
 /* =========================
-   관심 분야 / 스킬
+   �울옙占쏙옙 �브쑴鍮� / 占썬끋沅�
 ========================= */
 
 .tagList {
@@ -309,7 +311,7 @@
 }
 
 /* =========================
-   링크
+   筌띻낱寃�
 ========================= */
 
 .linkList {
@@ -387,7 +389,7 @@
 }
 
 /* =========================
-   경험
+   野껋�肉�
 ========================= */
 
 .experienceGrid {
@@ -545,7 +547,7 @@
 }
 
 /* =========================
-   빈 데이터
+   ��옙 占쎄퀣�좑옙占�
 ========================= */
 
 .emptyText,
@@ -559,7 +561,7 @@
 }
 
 /* =========================
-   스크랩 모달
+   占썬끋寃뺧옙占� 筌뤴뫀��
 ========================= */
 
 .modalBackdrop {
@@ -866,7 +868,7 @@
 }
 
 /* =========================
-   로딩 / 오류
+   嚥≪뮆逾� / 占썬끇履�
 ========================= */
 
 .notFound {
@@ -901,7 +903,7 @@
 
 
 /* =========================
-   상단 뒤로가기 / 더보기
+   占쎄낮�� 占썬끇以덂첎占썸묾占� / 占쎈뗀�ユ묾占�
 ========================= */
 
 .backButton {
@@ -996,7 +998,7 @@
 }
 
 /* =========================
-   태블릿 이상
+   占쎌뮆�앯뵳占� 占쎈똻湲�
 ========================= */
 
 @media (min-width: 769px) {
@@ -1042,7 +1044,7 @@
 
 
 /* =========================
-   모바일
+   筌뤴뫀而�옙占�
 ========================= */
 
 @media (max-width: 768px) {
@@ -1139,5 +1141,466 @@
 
     .experienceDetail {
         padding: 0 16px 16px;
+    }
+}
+/* =========================
+   占쎄퀣�わ옙���: 占쏙옙占쎈똻堉깍옙袁⑥쟿占쏙옙 占쎈뜆�좑옙袁⑹뜍
+========================= */
+@media (min-width: 769px) {
+    .page {
+        position: relative;
+        min-height: calc(100vh - 64px);
+        padding: 108px 0 72px;
+        overflow: hidden;
+        background: #101017;
+    }
+
+    .page::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 220px;
+        background:
+            radial-gradient(
+                circle at 20% 52%,
+                transparent 0 72px,
+                rgb(117 181 255 / 30%) 73px 96px,
+                transparent 97px
+            ),
+            radial-gradient(
+                circle at 33% 58%,
+                transparent 0 124px,
+                rgb(117 181 255 / 22%) 125px 148px,
+                transparent 149px
+            ),
+            linear-gradient(100deg, #5596f7 0%, #70adfa 55%, #d8efd9 100%);
+        pointer-events: none;
+    }
+
+    .layout {
+        position: relative;
+        z-index: 1;
+        width: min(1180px, calc(100% - 80px));
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 280px minmax(0, 1fr);
+        align-items: start;
+        gap: 16px;
+        overflow: visible;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+    }
+
+    .summaryCard {
+        width: 280px;
+        min-height: 342px;
+        padding: 88px 20px 76px;
+        border-radius: 6px;
+        overflow: visible;
+        box-shadow: 0 14px 34px rgb(0 0 0 / 22%);
+    }
+
+    .avatar,
+    .avatarPlaceholder {
+        width: 58px;
+        height: 58px;
+        margin-bottom: 14px;
+    }
+
+    .name {
+        font-size: 18px;
+    }
+
+    .job,
+    .affiliation {
+        font-size: 10px;
+    }
+
+    .strength {
+        margin-top: 16px;
+        padding: 7px 9px;
+    }
+
+    .strengthIcon,
+    .strengthPlaceholder {
+        width: 22px;
+        height: 22px;
+    }
+
+    .strengthText {
+        font-size: 10px;
+    }
+
+    .backButton {
+        display: none;
+    }
+
+    .actionMenuArea {
+        top: 18px;
+        right: 16px;
+    }
+
+    .moreButton {
+        width: 32px;
+        height: 32px;
+        background: transparent;
+    }
+
+    .detailCard {
+        min-height: 620px;
+        padding: 28px 32px;
+        border-radius: 6px;
+        background: #222536;
+        box-shadow: 0 14px 34px rgb(0 0 0 / 18%);
+    }
+
+    .section {
+        padding: 22px 0;
+        border-bottom: 1px solid #3a3f56;
+    }
+
+    .section:first-child {
+        padding-top: 0;
+    }
+
+    .section:last-child {
+        padding-bottom: 0;
+        border-bottom: 0;
+    }
+
+    .sectionTitle {
+        margin-bottom: 12px;
+        font-size: 11px;
+    }
+
+    .introduction {
+        font-size: 12px;
+        line-height: 1.65;
+    }
+
+    .tag {
+        min-height: 28px;
+        padding: 5px 10px;
+        font-size: 10px;
+        line-height: 16px;
+    }
+
+    .linkList {
+        gap: 42px;
+    }
+
+    .linkItem {
+        width: 58px;
+    }
+
+    .linkCircle {
+        width: 46px;
+        height: 46px;
+    }
+
+    .linkIcon {
+        width: 21px;
+        height: 21px;
+    }
+
+    .experienceGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .experienceContent {
+        padding: 15px;
+    }
+}
+
+/* =========================
+   �� �꾨줈�� 愿�由� 硫붾돱 / 怨듦컻 �ㅼ젙
+========================= */
+.ownerMenuButton {
+    width: 100%;
+    min-height: 44px;
+    padding: 0 14px;
+    border: 0;
+    border-radius: 0;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    text-align: left;
+    background: transparent;
+    cursor: pointer;
+}
+
+.deleteMenuButton {
+    color: #ff6269;
+}
+
+.visibilityModal,
+.deleteModal {
+    width: min(440px, 100%);
+    padding: 26px;
+    border: 1px solid #41465c;
+    border-radius: 10px;
+    background: #222536;
+    color: #ffffff;
+    box-shadow: 0 28px 70px rgb(0 0 0 / 45%);
+    box-sizing: border-box;
+}
+
+.settingRow {
+    min-height: 58px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.settingRow + .settingRow {
+    border-top: 1px solid #373b4f;
+}
+
+.settingRow label,
+.settingRow > span {
+    color: #e1e3ea;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.settingRow select {
+    min-width: 150px;
+    max-width: 220px;
+    height: 40px;
+    padding: 0 34px 0 11px;
+    border: 1px solid #52586f;
+    border-radius: 7px;
+    outline: none;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 12px;
+    background-color: #34394f;
+    cursor: pointer;
+}
+
+.toggle {
+    width: 62px;
+    height: 32px;
+    padding: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 0;
+    border-radius: 999px;
+    color: #c7cad4;
+    font-family: inherit;
+    font-size: 9px;
+    font-weight: 700;
+    background: #505568;
+    cursor: pointer;
+}
+
+.toggle span {
+    margin-left: 6px;
+}
+
+.toggle i {
+    width: 26px;
+    height: 26px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 2px 7px rgb(0 0 0 / 20%);
+}
+
+.toggle:not(.toggleOn) {
+    flex-direction: row-reverse;
+}
+
+.toggle:not(.toggleOn) span {
+    margin-right: 4px;
+    margin-left: 0;
+}
+
+.toggleOn {
+    color: #234966;
+    background: #9fd6ff;
+}
+
+.visibilitySaveButton {
+    width: 100%;
+    height: 48px;
+    margin-top: 30px;
+    border: 0;
+    border-radius: 7px;
+    color: #20364a;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    background: #afd8f8;
+    cursor: pointer;
+}
+
+.visibilitySaveButton:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+.ownerActionError {
+    margin: 14px 0 0;
+    color: #ff8c92;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.deleteModal {
+    text-align: center;
+    background: #34394f;
+}
+
+.deleteIcon {
+    width: 22px;
+    height: 22px;
+    margin: 0 auto 16px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    color: #242736;
+    font-size: 15px;
+    font-weight: 700;
+    background: #ff5360;
+}
+
+.deleteModal h2 {
+    margin: 0 0 8px;
+    font-size: 18px;
+}
+
+.deleteModal p {
+    margin: 0;
+    color: #c0c3cd;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.deleteActions {
+    margin-top: 28px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.deleteActions button {
+    height: 46px;
+    border: 0;
+    border-radius: 7px;
+    color: #283544;
+    font-family: inherit;
+    font-weight: 700;
+    background: #eef1f5;
+    cursor: pointer;
+}
+
+.deleteActions button:last-child {
+    background: #afd8f8;
+}
+
+/* �먯깋 �몃� �꾨줈�� 紐⑤컮�� �ш린 蹂댁젙 �� �곗뒪�ы넲�먮뒗 �곹뼢 �놁쓬 */
+@media (max-width: 768px) {
+    .summaryCard {
+        min-height: 304px;
+        padding: 104px 16px 18px;
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+    }
+
+    .avatar,
+    .avatarPlaceholder {
+        width: 58px;
+        height: 58px;
+        margin-bottom: 12px;
+    }
+
+    .nameRow {
+        gap: 7px;
+        margin-bottom: 2px;
+    }
+
+    .name {
+        font-size: 19px;
+        line-height: 1.35;
+    }
+
+    .job,
+    .affiliation {
+        font-size: 11px;
+    }
+
+    .strength {
+        margin-top: 12px;
+        padding: 7px 9px;
+    }
+
+    .strengthIcon,
+    .strengthPlaceholder {
+        width: 22px;
+        height: 22px;
+    }
+
+    .strengthText {
+        font-size: 11px;
+    }
+
+    .actionMenuArea {
+        top: 14px;
+        right: 12px;
+    }
+
+    .backButton {
+        top: 14px;
+        left: 12px;
+    }
+
+    .actionMenuArea .summaryActions {
+        top: 42px;
+        right: 0;
+        width: 174px;
+        padding: 0;
+        border-radius: 10px;
+    }
+
+    .ownerMenuButton,
+    .scrapButton,
+    .exchangeButton {
+        min-height: 54px;
+        padding: 0 18px;
+        font-size: 14px;
+    }
+
+    .ownerMenuButton + .ownerMenuButton,
+    .scrapButton + .exchangeButton {
+        border-top: 1px solid rgb(255 255 255 / 6%);
+    }
+
+    .section {
+        padding: 22px 16px;
+    }
+
+    .sectionTitle {
+        margin-bottom: 11px;
+    }
+
+    .visibilityModal,
+    .deleteModal {
+        width: 100%;
+        max-height: 88vh;
+        padding: 26px 20px 30px;
+        overflow-y: auto;
+        border-right: 0;
+        border-bottom: 0;
+        border-left: 0;
+        border-radius: 16px 16px 0 0;
     }
 }

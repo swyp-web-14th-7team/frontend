@@ -36,6 +36,15 @@ import {
     makeCardBackgroundUrl,
 } from "../../api/cardBackground";
 
+import {
+    deleteProfileCard,
+    updateProfileCard,
+} from "../../api/profile";
+
+import {
+    getPurposes,
+} from "../../api/options";
+
 import usePublicProfile from "../../hooks/usePublicProfile";
 
 import {
@@ -133,6 +142,46 @@ const ProfileDetail = () => {
         isExchangeModalOpen,
         setIsExchangeModalOpen,
     ] = useState(false);
+
+    const [
+        purposes,
+        setPurposes,
+    ] = useState([]);
+
+    const [
+        isVisibilityModalOpen,
+        setIsVisibilityModalOpen,
+    ] = useState(false);
+
+    const [
+        selectedPurposeId,
+        setSelectedPurposeId,
+    ] = useState("");
+
+    const [
+        selectedIsActive,
+        setSelectedIsActive,
+    ] = useState(false);
+
+    const [
+        isSavingVisibility,
+        setIsSavingVisibility,
+    ] = useState(false);
+
+    const [
+        isDeleteModalOpen,
+        setIsDeleteModalOpen,
+    ] = useState(false);
+
+    const [
+        isDeleting,
+        setIsDeleting,
+    ] = useState(false);
+
+    const [
+        ownerActionError,
+        setOwnerActionError,
+    ] = useState("");
 
     const {
         profile,
@@ -249,6 +298,46 @@ useEffect(() => {
         controller.abort();
     };
 }, [loadDrawers]);
+
+    useEffect(() => {
+        const controller =
+            new AbortController();
+
+        const loadPurposes = async () => {
+            try {
+                const result =
+                    await getPurposes({
+                        signal:
+                            controller.signal,
+                    });
+
+                const items =
+                    Array.isArray(result)
+                        ? result
+                        : result?.items ??
+                          result?.data?.items ??
+                          [];
+
+                setPurposes(items);
+            } catch (error) {
+                if (
+                    error?.name !==
+                    "AbortError"
+                ) {
+                    console.error(
+                        "프로필 목적 조회 실패:",
+                        error,
+                    );
+                }
+            }
+        };
+
+        void loadPurposes();
+
+        return () => {
+            controller.abort();
+        };
+    }, []);
 
 
     if (isLoading) {
@@ -398,6 +487,30 @@ useEffect(() => {
             profile.cardImageUrl ||
                 profile.cardImage,
         );
+
+    const storedUserId =
+        localStorage.getItem("userId") ||
+        localStorage.getItem("memberId") ||
+        localStorage.getItem("currentUserId");
+
+    const profileOwnerId =
+        profile.userId ??
+        profile.memberId ??
+        profile.ownerId ??
+        profile.user?.id ??
+        profile.member?.id;
+
+    const isMyProfile = Boolean(
+        profile.isMine ??
+            profile.isOwner ??
+            profile.mine ??
+            (
+                storedUserId &&
+                profileOwnerId &&
+                String(storedUserId) ===
+                    String(profileOwnerId)
+            ),
+    );
 
     const isProfileInDrawer = (
         drawer,
@@ -673,6 +786,135 @@ useEffect(() => {
         );
     };
 
+    const handleEditMyProfile = () => {
+        setIsActionMenuOpen(false);
+
+        navigate(
+            `/my-profile/${profile.id}/detail-edit`,
+        );
+    };
+
+    const handleOpenVisibility = () => {
+        const currentPurposeName =
+            profile.purposes?.[0] ??
+            profile.purpose?.name;
+
+        const currentPurpose =
+            purposes.find(
+                (purpose) =>
+                    purpose.name ===
+                    currentPurposeName,
+            );
+
+        const currentPurposeId =
+            profile.purposeId ??
+            profile.purpose?.id ??
+            currentPurpose?.id ??
+            1;
+
+        setSelectedPurposeId(
+            String(currentPurposeId),
+        );
+
+        setSelectedIsActive(
+            Boolean(profile.isActive),
+        );
+
+        setOwnerActionError("");
+        setIsActionMenuOpen(false);
+        setIsVisibilityModalOpen(true);
+    };
+
+    const handleSaveVisibility =
+        async () => {
+            if (
+                selectedIsActive &&
+                !selectedPurposeId
+            ) {
+                setOwnerActionError(
+                    "공개 목적을 선택해주세요.",
+                );
+                return;
+            }
+
+            try {
+                setIsSavingVisibility(true);
+                setOwnerActionError("");
+
+                const requestBody = {
+                    isActive:
+                        selectedIsActive,
+                };
+
+                if (selectedPurposeId) {
+                    requestBody.purposeId =
+                        Number(
+                            selectedPurposeId,
+                        );
+                }
+
+                await updateProfileCard(
+                    profile.id,
+                    requestBody,
+                );
+
+                setIsVisibilityModalOpen(
+                    false,
+                );
+
+                window.location.reload();
+            } catch (error) {
+                setOwnerActionError(
+                    error?.message ||
+                        "공개 설정을 변경하지 못했습니다.",
+                );
+            } finally {
+                setIsSavingVisibility(
+                    false,
+                );
+            }
+        };
+
+    const handleOpenDelete = () => {
+        setIsActionMenuOpen(false);
+
+        if (profile.isDefault) {
+            window.alert(
+                "기본 프로필 카드는 삭제할 수 없습니다.",
+            );
+            return;
+        }
+
+        setOwnerActionError("");
+        setIsDeleteModalOpen(true);
+    };
+
+    const handleDeleteProfile =
+        async () => {
+            try {
+                setIsDeleting(true);
+                setOwnerActionError("");
+
+                await deleteProfileCard(
+                    profile.id,
+                );
+
+                navigate("/profile", {
+                    replace: true,
+                });
+            } catch (error) {
+                setOwnerActionError(
+                    error?.message ||
+                        "프로필을 삭제하지 못했습니다.",
+                );
+                setIsDeleteModalOpen(
+                    false,
+                );
+            } finally {
+                setIsDeleting(false);
+            }
+        };
+
     return (
         <main className={styles.page}>
             <div className={styles.layout}>
@@ -740,29 +982,69 @@ useEffect(() => {
                                     styles.summaryActions
                                 }
                             >
-                                <button
-                                    type="button"
-                                    className={
-                                        styles.scrapButton
-                                    }
-                                    onClick={
-                                        handleOpenScrap
-                                    }
-                                >
-                                    스크랩하기
-                                </button>
+                                {isMyProfile ? (
+                                    <>
+                                        <button
+                                            type="button"
+                                            className={
+                                                styles.ownerMenuButton
+                                            }
+                                            onClick={
+                                                handleEditMyProfile
+                                            }
+                                        >
+                                            수정하기
+                                        </button>
 
-                                <button
-                                    type="button"
-                                    className={
-                                        styles.exchangeButton
-                                    }
-                                    onClick={
-                                        handleOpenExchangeModal
-                                    }
-                                >
-                                    카드 교환 요청
-                                </button>
+                                        <button
+                                            type="button"
+                                            className={
+                                                styles.ownerMenuButton
+                                            }
+                                            onClick={
+                                                handleOpenVisibility
+                                            }
+                                        >
+                                            공개설정 변경
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            className={`${styles.ownerMenuButton} ${styles.deleteMenuButton}`}
+                                            onClick={
+                                                handleOpenDelete
+                                            }
+                                        >
+                                            이 프로필 삭제
+                                        </button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <button
+                                            type="button"
+                                            className={
+                                                styles.scrapButton
+                                            }
+                                            onClick={
+                                                handleOpenScrap
+                                            }
+                                        >
+                                            스크랩하기
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            className={
+                                                styles.exchangeButton
+                                            }
+                                            onClick={
+                                                handleOpenExchangeModal
+                                            }
+                                        >
+                                            카드 교환 요청
+                                        </button>
+                                    </>
+                                )}
                             </div>
                         )}
                     </div>
@@ -1466,6 +1748,244 @@ useEffect(() => {
                                 ? "저장 중..."
                                 : "저장"}
                         </button>
+                    </section>
+                </div>
+            )}
+
+            {isVisibilityModalOpen && (
+                <div
+                    className={
+                        styles.modalBackdrop
+                    }
+                    role="presentation"
+                    onMouseDown={(event) => {
+                        if (
+                            event.target ===
+                            event.currentTarget
+                        ) {
+                            setIsVisibilityModalOpen(
+                                false,
+                            );
+                        }
+                    }}
+                >
+                    <section
+                        className={
+                            styles.visibilityModal
+                        }
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="visibility-modal-title"
+                    >
+                        <div
+                            className={
+                                styles.modalHeader
+                            }
+                        >
+                            <h2 id="visibility-modal-title">
+                                공개 설정 변경
+                            </h2>
+
+                            <button
+                                type="button"
+                                className={
+                                    styles.closeButton
+                                }
+                                onClick={() =>
+                                    setIsVisibilityModalOpen(
+                                        false,
+                                    )
+                                }
+                                aria-label="공개 설정 창 닫기"
+                            >
+                                ×
+                            </button>
+                        </div>
+
+                        <div
+                            className={
+                                styles.settingRow
+                            }
+                        >
+                            <label htmlFor="profile-purpose">
+                                프로필 목적
+                            </label>
+
+                            <select
+                                id="profile-purpose"
+                                value={
+                                    selectedPurposeId
+                                }
+                                onChange={(event) =>
+                                    setSelectedPurposeId(
+                                        event.target.value,
+                                    )
+                                }
+                            >
+                                <option value="">
+                                    목적 선택
+                                </option>
+
+                                {purposes.map(
+                                    (purpose) => (
+                                        <option
+                                            key={
+                                                purpose.id
+                                            }
+                                            value={
+                                                purpose.id
+                                            }
+                                        >
+                                            {
+                                                purpose.name
+                                            }
+                                        </option>
+                                    ),
+                                )}
+                            </select>
+                        </div>
+
+                        <div
+                            className={
+                                styles.settingRow
+                            }
+                        >
+                            <span>
+                                프로필 공개
+                            </span>
+
+                            <button
+                                type="button"
+                                className={`${styles.toggle} ${
+                                    selectedIsActive
+                                        ? styles.toggleOn
+                                        : ""
+                                }`}
+                                onClick={() =>
+                                    setSelectedIsActive(
+                                        (current) =>
+                                            !current,
+                                    )
+                                }
+                                aria-pressed={
+                                    selectedIsActive
+                                }
+                            >
+                                <span>
+                                    {selectedIsActive
+                                        ? "ON"
+                                        : "OFF"}
+                                </span>
+                                <i aria-hidden="true" />
+                            </button>
+                        </div>
+
+                        {ownerActionError && (
+                            <p
+                                className={
+                                    styles.ownerActionError
+                                }
+                                role="alert"
+                            >
+                                {ownerActionError}
+                            </p>
+                        )}
+
+                        <button
+                            type="button"
+                            className={
+                                styles.visibilitySaveButton
+                            }
+                            onClick={
+                                handleSaveVisibility
+                            }
+                            disabled={
+                                isSavingVisibility
+                            }
+                        >
+                            {isSavingVisibility
+                                ? "저장 중..."
+                                : "저장"}
+                        </button>
+                    </section>
+                </div>
+            )}
+
+            {isDeleteModalOpen && (
+                <div
+                    className={
+                        styles.modalBackdrop
+                    }
+                    role="presentation"
+                    onMouseDown={(event) => {
+                        if (
+                            event.target ===
+                            event.currentTarget
+                        ) {
+                            setIsDeleteModalOpen(
+                                false,
+                            );
+                        }
+                    }}
+                >
+                    <section
+                        className={
+                            styles.deleteModal
+                        }
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="delete-modal-title"
+                    >
+                        <span
+                            className={
+                                styles.deleteIcon
+                            }
+                            aria-hidden="true"
+                        >
+                            !
+                        </span>
+
+                        <h2 id="delete-modal-title">
+                            프로필을 삭제할까요?
+                        </h2>
+
+                        <p>
+                            삭제한 프로필은 다시 복구할 수 없습니다.
+                        </p>
+
+                        <div
+                            className={
+                                styles.deleteActions
+                            }
+                        >
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    setIsDeleteModalOpen(
+                                        false,
+                                    )
+                                }
+                                disabled={
+                                    isDeleting
+                                }
+                            >
+                                취소
+                            </button>
+
+                            <button
+                                type="button"
+                                onClick={
+                                    handleDeleteProfile
+                                }
+                                disabled={
+                                    isDeleting
+                                }
+                            >
+                                {isDeleting
+                                    ? "삭제 중..."
+                                    : "삭제"}
+                            </button>
+                        </div>
                     </section>
                 </div>
             )}

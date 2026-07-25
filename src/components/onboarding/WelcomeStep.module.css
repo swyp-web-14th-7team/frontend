@@ -36,17 +36,36 @@
     line-height: 1.6;
     }
 
-    .logoBox {
-    width: 140px;
-    height: 140px;
+.animationBox {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-    margin: 120px auto 0;
+    width: min(360px, 80vw);
+    aspect-ratio: 1 / 1;
 
-    opacity: 0.3;
-    background-color: var(--600, #676d82);
+    margin: 0 auto;
 
-    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.animationVideo {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+
+    pointer-events: none;
+}
+
+@media (max-width: 767px) {
+    .animationBox {
+        width: min(280px, 76vw);
     }
+}
+
 
     .nextButton {
     width: 100%;
