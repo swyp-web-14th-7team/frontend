@@ -24,20 +24,20 @@ import styles from "./Saved.module.css";
 
 const JOB_FILTERS = [
     {
-        id: "planner",
-        label: "기획자",
-    },
-    {
         id: "designer",
         label: "디자이너",
     },
     {
         id: "frontend",
-        label: "프론트엔드 개발자",
+        label: "프론트엔드",
     },
     {
         id: "backend",
-        label: "백엔드 개발자",
+        label: "백엔드",
+    },
+    {
+        id: "planner",
+        label: "기획자",
     },
 ];
 

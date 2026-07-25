@@ -1,4 +1,5 @@
     import {
+    useCallback,
     useEffect,
     useState,
     } from "react";
@@ -9,10 +10,19 @@
     import MobileExploreHeader from "../../components/explore/MobileExploreHeader";
     import BottomNavigation from "../../components/common/BottomNavigation/BottomNavigation";
     import LoginModal from "../../components/common/LoginModal/LoginModal";
+    import NotificationPanel from "../../components/common/NotificationPanel/NotificationPanel";
+    import ReceivedExchangeModal from "../../components/exchange/ReceivedExchangeModal";
 
     import {
+    getMyProfileCards,
     getPublicProfileCards,
     } from "../../api/profile";
+
+    import {
+    acceptConnectionRequest,
+    getReceivedConnectionRequests,
+    rejectConnectionRequest,
+    } from "../../api/connectionRequests";
 
     import {
     getAffiliationStatuses,
@@ -20,6 +30,7 @@
     } from "../../api/options";
 
     import {
+    mapProfileCard,
     mapProfileCards,
     } from "../../utils/profileMapper";
 
@@ -172,6 +183,26 @@
     ] = useState(false);
 
     const [
+        exchangeRequests,
+        setExchangeRequests,
+    ] = useState([]);
+
+    const [
+        exchangeError,
+        setExchangeError,
+    ] = useState("");
+
+    const [
+        isNotificationOpen,
+        setIsNotificationOpen,
+    ] = useState(false);
+
+    const [
+        selectedRequest,
+        setSelectedRequest,
+    ] = useState(null);
+
+    const [
         profiles,
         setProfiles,
     ] = useState([]);
@@ -218,6 +249,122 @@
 
     const isUserLoggedIn =
         isLoggedIn();
+
+    const hasUnreadNotification =
+        exchangeRequests.some(
+        (request) =>
+            request.status === "pending" &&
+            !request.isRead,
+        );
+
+    const loadReceivedRequests =
+        useCallback(
+        async (signal) => {
+            if (!isLoggedIn()) {
+            setExchangeRequests([]);
+            setExchangeError("");
+            return;
+            }
+
+            try {
+            const cardData =
+                await getMyProfileCards({
+                page: 1,
+                limit: 100,
+                sort: "createdAt",
+                order: "desc",
+                signal,
+                });
+
+            const myCards =
+                cardData?.items || [];
+
+            const requestResponses =
+                await Promise.all(
+                myCards.map((card) =>
+                    getReceivedConnectionRequests({
+                    cardId: card.id,
+                    page: 1,
+                    limit: 100,
+                    sort: "createdAt",
+                    order: "desc",
+                    signal,
+                    }),
+                ),
+                );
+
+            const requestMap = new Map();
+
+            requestResponses.forEach((response) => {
+                const items = response?.items || [];
+
+                items.forEach((item) => {
+                const receivedCard =
+                    mapProfileCard(item.card || {});
+
+                requestMap.set(item.id, {
+                    id: item.id,
+                    status:
+                    item.status === 0
+                        ? "pending"
+                        : item.status === 1
+                        ? "accepted"
+                        : item.status === 2
+                            ? "rejected"
+                            : "cancelled",
+                    isRead: false,
+                    createdAt:
+                    item.createdAt?.isoString ||
+                    item.createdAt,
+                    sender: {
+                    id: receivedCard.id,
+                    name: receivedCard.name,
+                    profileImage:
+                        receivedCard.profileImage,
+                    },
+                    receivedCard,
+                    message:
+                    item.message ||
+                    "전달된 메시지가 없습니다.",
+                });
+                });
+            });
+
+            const requests =
+                Array.from(requestMap.values()).sort(
+                (first, second) =>
+                    new Date(second.createdAt) -
+                    new Date(first.createdAt),
+                );
+
+            setExchangeRequests(requests);
+            setExchangeError("");
+            } catch (error) {
+            if (error?.name !== "AbortError") {
+                console.error(
+                "받은 교환 요청 조회 실패:",
+                error,
+                );
+
+                setExchangeError(
+                error.message ||
+                    "교환 요청을 불러오지 못했습니다.",
+                );
+            }
+            }
+        },
+        [],
+        );
+
+    useEffect(() => {
+        const controller = new AbortController();
+
+        loadReceivedRequests(controller.signal);
+
+        return () => {
+        controller.abort();
+        };
+    }, [loadReceivedRequests]);
 
     const hasSearchKeyword =
         keyword.trim().length >
@@ -698,10 +845,70 @@
         );
         };
 
+    const handleNotificationToggle = () => {
+        if (!isUserLoggedIn) {
+        setIsLoginModalOpen(true);
+        return;
+        }
+
+        setIsNotificationOpen((previous) => !previous);
+    };
+
+    const handleRequestClick = (request) => {
+        setSelectedRequest({
+            ...request,
+            id: request?.id ?? Date.now(),
+        });
+
+        setIsNotificationOpen(false);
+    };
+
+
+    const handleRejectRequest = async (requestId) => {
+        try {
+        await rejectConnectionRequest(requestId);
+
+        setExchangeRequests((currentRequests) =>
+            currentRequests.filter(
+            (request) => request.id !== requestId,
+            ),
+        );
+
+        setSelectedRequest(null);
+        window.alert("카드 교환 요청을 거절했습니다.");
+        } catch (error) {
+        console.error("교환 요청 거절 실패:", error);
+        window.alert(
+            error.message ||
+            "교환 요청을 거절하지 못했습니다.",
+        );
+        }
+    };
+
+    const handleAcceptRequest = async (requestId) => {
+        try {
+        await acceptConnectionRequest(requestId);
+
+        setExchangeRequests((currentRequests) =>
+            currentRequests.filter(
+            (request) => request.id !== requestId,
+            ),
+        );
+
+        setSelectedRequest(null);
+        window.alert("카드 교환이 완료되었습니다.");
+        } catch (error) {
+        console.error("교환 요청 수락 실패:", error);
+        window.alert(
+            error.message ||
+            "교환 요청을 수락하지 못했습니다.",
+        );
+        }
+    };
+
     const handleMobileLogoClick = () => {
         setActiveTab("전체보기");
         setCurrentPage(1);
-
         setKeyword("");
         setAffiliation("");
         setSelectedJobType(null);
@@ -726,6 +933,19 @@
             isSearchOpen={isMobileSearchOpen}
             onSearchClose={handleMobileSearchClose}
             onLogoClick={handleMobileLogoClick}
+            onNotificationClick={handleNotificationToggle}
+            isNotificationOpen={isNotificationOpen}
+            hasUnreadNotification={hasUnreadNotification}
+            notificationPanel={
+                <NotificationPanel
+                requests={exchangeRequests}
+                errorMessage={exchangeError}
+                onRequestClick={handleRequestClick}
+                onClose={() =>
+                    setIsNotificationOpen(false)
+                }
+                />
+            }
             />
         </div>
 
@@ -917,6 +1137,18 @@
             isOpen={isLoginModalOpen}
             onClose={handleLoginModalClose}
         />
+
+        {selectedRequest && (
+    <ReceivedExchangeModal
+        key={selectedRequest.id}
+        request={selectedRequest}
+        onClose={() =>
+            setSelectedRequest(null)
+        }
+        onReject={handleRejectRequest}
+        onAccept={handleAcceptRequest}
+    />
+)}
         </>
     );
     };

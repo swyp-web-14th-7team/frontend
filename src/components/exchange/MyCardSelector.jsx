@@ -23,6 +23,115 @@ const MyCardSelector = ({
         });
     };
 
+    /*
+     * 공개 여부를 확인합니다.
+     *
+     * API 응답에 공개 여부 필드가 없으면
+     * 기본적으로 공개 카드로 처리합니다.
+     *
+     * 명확한 비공개 값이 있을 때만
+     * 비공개로 표시합니다.
+     */
+    const getIsPublic = (card) => {
+        if (!card) {
+            return true;
+        }
+
+        /*
+         * Boolean 형태
+         */
+        if (
+            typeof card.isPublic ===
+            "boolean"
+        ) {
+            return card.isPublic;
+        }
+
+        if (
+            typeof card.isPrivate ===
+            "boolean"
+        ) {
+            return !card.isPrivate;
+        }
+
+        if (
+            typeof card.public ===
+            "boolean"
+        ) {
+            return card.public;
+        }
+
+        if (
+            typeof card.isVisible ===
+            "boolean"
+        ) {
+            return card.isVisible;
+        }
+
+        /*
+         * 문자열 형태
+         */
+        const visibilityValue =
+            card.visibility ??
+            card.cardVisibility ??
+            card.visibilityType ??
+            card.publicStatus ??
+            card.status;
+
+        if (
+            visibilityValue !==
+                undefined &&
+            visibilityValue !== null
+        ) {
+            const normalizedValue =
+                String(
+                    visibilityValue,
+                )
+                    .trim()
+                    .toLowerCase();
+
+            const privateValues = [
+                "private",
+                "비공개",
+                "closed",
+                "hidden",
+                "false",
+                "0",
+            ];
+
+            const publicValues = [
+                "public",
+                "공개",
+                "open",
+                "visible",
+                "true",
+                "1",
+            ];
+
+            if (
+                privateValues.includes(
+                    normalizedValue,
+                )
+            ) {
+                return false;
+            }
+
+            if (
+                publicValues.includes(
+                    normalizedValue,
+                )
+            ) {
+                return true;
+            }
+        }
+
+        /*
+         * 공개 여부 필드가 없는 경우에는
+         * 공개 카드로 표시합니다.
+         */
+        return true;
+    };
+
     if (cards.length === 0) {
         return (
             <div className={styles.empty}>
@@ -41,12 +150,13 @@ const MyCardSelector = ({
             >
                 {cards.map((card) => {
                     const isSelected =
-                        selectedCardId ===
-                        card.id;
+                        String(
+                            selectedCardId,
+                        ) ===
+                        String(card.id);
 
                     const isPublic =
-                        card.visibility ===
-                        "public";
+                        getIsPublic(card);
 
                     return (
                         <div
@@ -115,8 +225,10 @@ const MyCardSelector = ({
             >
                 {cards.map((card) => {
                     const isActive =
-                        selectedCardId ===
-                        card.id;
+                        String(
+                            selectedCardId,
+                        ) ===
+                        String(card.id);
 
                     return (
                         <button
