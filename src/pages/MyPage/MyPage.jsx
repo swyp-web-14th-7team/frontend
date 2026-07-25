@@ -13,7 +13,7 @@ import {
 } from "qrcode.react";
 
 import {
-    getMyProfileCard,
+    getDefaultProfileCard,
     getMyProfileCards,
     updateProfileCard,
 } from "../../api/profile";
@@ -81,9 +81,38 @@ const getPurposeName = (
 
 const getProfilePurposeName = (
     profile,
+    purposeOptions = [],
 ) => {
-    return getPurposeName(
-        profile?.purposes?.[0],
+    const purposeName =
+        getPurposeName(
+            profile?.purpose,
+        ) ||
+        getPurposeName(
+            profile?.purposes?.[0],
+        );
+
+    if (purposeName) {
+        return purposeName;
+    }
+
+    const purposeId =
+        profile?.purposeId ??
+        profile?.purpose?.id ??
+        1;
+
+    return (
+        purposeOptions.find(
+            (purpose) =>
+                Number(
+                    purpose.id,
+                ) ===
+                Number(
+                    purposeId,
+                ),
+        )?.name ||
+        (Number(purposeId) === 1
+            ? "공개"
+            : "")
     );
 };
 
@@ -98,6 +127,11 @@ const MyPage = () => {
         profiles,
         setProfiles,
     ] = useState([]);
+
+    const [
+        defaultProfileId,
+        setDefaultProfileId,
+    ] = useState(null);
 
     const [
         purposes,
@@ -174,6 +208,16 @@ const MyPage = () => {
             selectedIndex
         ] || null;
 
+    const isSelectedProfileDefault =
+        Boolean(
+            selectedProfile &&
+                (
+                    selectedProfile.isDefault ||
+                    selectedProfile.id ===
+                        defaultProfileId
+                ),
+        );
+
     const previousProfile =
         selectedIndex > 0
             ? profiles[
@@ -213,11 +257,13 @@ const MyPage = () => {
                     const [
                         profileResult,
                         purposeResult,
+                        defaultProfileResult,
                     ] =
                         await Promise.all(
                             [
                                 getMyProfileCards(),
                                 getPurposes(),
+                                getDefaultProfileCard(),
                             ],
                         );
 
@@ -249,9 +295,35 @@ const MyPage = () => {
                                   ?.items ??
                               [];
 
+                    const resolvedDefaultProfile =
+                        defaultProfileResult
+                            ?.data ??
+                        defaultProfileResult
+                            ?.profileCard ??
+                        defaultProfileResult;
+
+                    const resolvedDefaultProfileId =
+                        resolvedDefaultProfile
+                            ?.id ??
+                        resolvedDefaultProfile
+                            ?.profileCardId ??
+                        null;
+
+                    setDefaultProfileId(
+                        resolvedDefaultProfileId,
+                    );
+
                     const mappedProfiles =
                         mapProfileCards(
                             profileItems,
+                        ).map(
+                            (profile) => ({
+                                ...profile,
+                                isDefault:
+                                    profile.isDefault ||
+                                    profile.id ===
+                                        resolvedDefaultProfileId,
+                            }),
                         );
 
                     setProfiles(
@@ -497,6 +569,7 @@ const MyPage = () => {
             const currentPurposeName =
                 getProfilePurposeName(
                     selectedProfile,
+                    purposes,
                 );
 
             const currentPurpose =
@@ -507,11 +580,17 @@ const MyPage = () => {
                 );
 
             setSelectedPurposeId(
-                currentPurpose?.id
+                selectedProfile
+                    .purposeId
+                    ? String(
+                          selectedProfile
+                              .purposeId,
+                      )
+                    : currentPurpose?.id
                     ? String(
                           currentPurpose.id,
                       )
-                    : "",
+                    : "1",
             );
 
             setSelectedIsActive(
@@ -549,6 +628,7 @@ const MyPage = () => {
             }
 
             if (
+                !isSelectedProfileDefault &&
                 selectedIsActive &&
                 !selectedPurposeId
             ) {
@@ -572,6 +652,7 @@ const MyPage = () => {
                 };
 
                 if (
+                    !isSelectedProfileDefault &&
                     selectedPurposeId
                 ) {
                     requestBody.purposeId =
@@ -596,57 +677,29 @@ const MyPage = () => {
                             ),
                     );
 
-                const updatedProfileResult =
-                    await getMyProfileCard(
-                        selectedProfile.id,
-                    );
-
-                const mappedUpdatedProfile =
-                    mapProfileCards([
-                        updatedProfileResult,
-                    ])[0];
-
                 setProfiles(
                     (
                         currentProfiles,
                     ) =>
                         currentProfiles.map(
-                            (profile) => {
-                                if (
-                                    profile.id !==
-                                    selectedProfile.id
-                                ) {
-                                    return profile;
-                                }
+                            (profile) =>
+                                profile.id ===
+                                selectedProfile.id
+                                    ? {
+                                          ...profile,
 
-                                if (
-                                    mappedUpdatedProfile
-                                ) {
-                                    return mappedUpdatedProfile;
-                                }
+                                          isActive:
+                                              selectedIsActive,
 
-                                return {
-                                    ...profile,
-
-                                    isActive:
-                                        selectedIsActive,
-
-                                    purposeId:
-                                        selectedPurpose?.id ??
-                                        profile.purposeId,
-
-                                    purpose:
-                                        selectedPurpose ||
-                                        profile.purpose,
-
-                                    purposes:
-                                        selectedPurpose
-                                            ? [
-                                                  selectedPurpose.name,
-                                              ]
-                                            : profile.purposes,
-                                };
-                            },
+                                          purposes:
+                                              !isSelectedProfileDefault &&
+                                              selectedPurpose
+                                                  ? [
+                                                        selectedPurpose.name,
+                                                    ]
+                                                  : profile.purposes,
+                                      }
+                                    : profile,
                         ),
                 );
 
@@ -860,23 +913,134 @@ const MyPage = () => {
                                 }
                             >
                                 <div
-                                    className={`${styles.cardShell} ${
-                                        isSelectedCardFlipped
-                                            ? styles.cardShellFlipped
-                                            : ""
-                                    }`}
+                                    className={
+                                        styles.cardShell
+                                    }
                                 >
-                                    <div
-                                        className={
-                                            styles.cardFlipInner
-                                        }
-                                    >
-                                        <div
-                                            className={`${styles.cardFace} ${styles.cardFront}`}
-                                            aria-hidden={
-                                                isSelectedCardFlipped
-                                            }
+                                    {isSelectedCardFlipped ? (
+                                        <article
+                                            className={`${cardStyles.card} ${styles.qrCard}`}
+                                            style={{
+                                                backgroundImage:
+                                                    selectedProfile
+                                                        .cardImageUrl ||
+                                                    selectedProfile
+                                                        .cardImage
+                                                        ? `linear-gradient(
+                                                            rgba(17, 16, 23, 0.08),
+                                                            rgba(17, 16, 23, 0.08)
+                                                        ),
+                                                        url("${makeCardBackgroundUrl(
+                                                            selectedProfile.cardImageUrl ||
+                                                                selectedProfile.cardImage,
+                                                        )}")`
+                                                        : undefined,
+                                            }}
                                         >
+                                            <div
+                                                className={
+                                                    styles.qrHeader
+                                                }
+                                            >
+                                                <span>
+                                                    {getJobLabel(
+                                                        selectedProfile
+                                                            .job,
+                                                    )}
+                                                </span>
+
+                                                <button
+                                                    type="button"
+                                                    className={
+                                                        styles.flipButton
+                                                    }
+                                                    onClick={
+                                                        handleFlipCard
+                                                    }
+                                                    aria-label="카드 앞면 보기"
+                                                >
+                                                    <img
+                                                        src={
+                                                            shareIcon
+                                                        }
+                                                        alt=""
+                                                    />
+                                                </button>
+                                            </div>
+
+                                            <div
+                                                ref={
+                                                    qrCodeRef
+                                                }
+                                                className={
+                                                    styles.qrContainer
+                                                }
+                                            >
+                                                <QRCodeSVG
+                                                    value={
+                                                        profileShareUrl
+                                                    }
+                                                    size={
+                                                        205
+                                                    }
+                                                    level="H"
+                                                    includeMargin
+                                                    fgColor="#5b9cff"
+                                                    bgColor="#ffffff"
+                                                />
+                                            </div>
+
+                                            <div
+                                                className={
+                                                    styles.qrActions
+                                                }
+                                            >
+                                                <button
+                                                    type="button"
+                                                    onClick={
+                                                        handleCopyLink
+                                                    }
+                                                >
+                                                    <span
+                                                        aria-hidden="true"
+                                                    >
+                                                        ⧉
+                                                    </span>
+
+                                                    링크 복사
+                                                </button>
+
+                                                <button
+                                                    type="button"
+                                                    onClick={
+                                                        handleDownloadQr
+                                                    }
+                                                >
+                                                    <span
+                                                        aria-hidden="true"
+                                                    >
+                                                        ⇩
+                                                    </span>
+
+                                                    다운로드
+                                                </button>
+                                            </div>
+
+                                            {copyMessage && (
+                                                <p
+                                                    className={
+                                                        styles.copyMessage
+                                                    }
+                                                    role="status"
+                                                >
+                                                    {
+                                                        copyMessage
+                                                    }
+                                                </p>
+                                            )}
+                                        </article>
+                                    ) : (
+                                        <>
                                             <ExploreProfileCard
                                                 profile={
                                                     selectedProfile
@@ -941,137 +1105,8 @@ const MyPage = () => {
                                                     </button>
                                                 </div>
                                             )}
-                                        </div>
-
-                                        <div
-                                            className={`${styles.cardFace} ${styles.cardBack}`}
-                                            aria-hidden={
-                                                !isSelectedCardFlipped
-                                            }
-                                        >
-                                            <article
-                                                className={`${cardStyles.card} ${styles.qrCard}`}
-                                                style={{
-                                                    backgroundImage:
-                                                        selectedProfile
-                                                            .cardImageUrl ||
-                                                        selectedProfile
-                                                            .cardImage
-                                                            ? `linear-gradient(
-                                                                rgba(17, 16, 23, 0.08),
-                                                                rgba(17, 16, 23, 0.08)
-                                                            ),
-                                                            url("${makeCardBackgroundUrl(
-                                                                selectedProfile.cardImageUrl ||
-                                                                    selectedProfile.cardImage,
-                                                            )}")`
-                                                            : undefined,
-                                                }}
-                                            >
-                                                <div
-                                                    className={
-                                                        styles.qrHeader
-                                                    }
-                                                >
-                                                    <span>
-                                                        {getJobLabel(
-                                                            selectedProfile
-                                                                .job,
-                                                        )}
-                                                    </span>
-
-                                                    <button
-                                                        type="button"
-                                                        className={
-                                                            styles.flipButton
-                                                        }
-                                                        onClick={
-                                                            handleFlipCard
-                                                        }
-                                                        aria-label="카드 앞면 보기"
-                                                    >
-                                                        <img
-                                                            src={
-                                                                shareIcon
-                                                            }
-                                                            alt=""
-                                                        />
-                                                    </button>
-                                                </div>
-
-                                                <div
-                                                    ref={
-                                                        qrCodeRef
-                                                    }
-                                                    className={
-                                                        styles.qrContainer
-                                                    }
-                                                >
-                                                    <QRCodeSVG
-                                                        value={
-                                                            profileShareUrl
-                                                        }
-                                                        size={
-                                                            205
-                                                        }
-                                                        level="H"
-                                                        includeMargin
-                                                        fgColor="#5b9cff"
-                                                        bgColor="#ffffff"
-                                                    />
-                                                </div>
-
-                                                <div
-                                                    className={
-                                                        styles.qrActions
-                                                    }
-                                                >
-                                                    <button
-                                                        type="button"
-                                                        onClick={
-                                                            handleCopyLink
-                                                        }
-                                                    >
-                                                        <span
-                                                            aria-hidden="true"
-                                                        >
-                                                            ⧉
-                                                        </span>
-
-                                                        링크 복사
-                                                    </button>
-
-                                                    <button
-                                                        type="button"
-                                                        onClick={
-                                                            handleDownloadQr
-                                                        }
-                                                    >
-                                                        <span
-                                                            aria-hidden="true"
-                                                        >
-                                                            ⇩
-                                                        </span>
-
-                                                        다운로드
-                                                    </button>
-                                                </div>
-
-                                                {copyMessage && (
-                                                    <p
-                                                        className={
-                                                            styles.copyMessage
-                                                        }
-                                                        role="status"
-                                                    >
-                                                        {
-                                                            copyMessage
-                                                        }
-                                                    </p>
-                                                )}
-                                            </article>
-                                        </div>
-                                    </div>
+                                        </>
+                                    )}
                                 </div>
                             </div>
 
@@ -1086,67 +1121,32 @@ const MyPage = () => {
                             </div>
                         </div>
 
-                        <div
-                            className={
-                                styles.badgeRow
-                            }
-                            onClick={
-                                handleOpenVisibilityModal
-                            }
-                            role="button"
-                            tabIndex={0}
-                            onKeyDown={(
-                                event,
-                            ) => {
-                                if (
-                                    event.key ===
-                                        "Enter" ||
-                                    event.key ===
-                                        " "
-                                ) {
-                                    event.preventDefault();
+<div className={styles.badgeRow}>
+    <span
+        className={`${styles.statusBadge} ${
+            selectedProfile.isActive
+                ? styles.activeStatusBadge
+                : styles.inactiveStatusBadge
+        }`}
+    >
+        {selectedProfile.isActive
+            ? "공개"
+            : "비공개"}
+    </span>
 
-                                    handleOpenVisibilityModal();
-                                }
-                            }}
-                            aria-label="카드 공개 상태 및 목적 변경"
-                        >
-                            <span
-                                className={`${styles.statusBadge} ${
-                                    selectedProfile
-                                        .isActive
-                                        ? styles.activeStatusBadge
-                                        : styles.inactiveStatusBadge
-                                }`}
-                            >
-                                {selectedProfile
-                                    .isActive
-                                    ? "공개"
-                                    : "비공개"}
-                            </span>
-
-                            <button
-                                type="button"
-                                className={
-                                    styles.purposeBadge
-                                }
-                                onClick={
-                                    (
-                                        event,
-                                    ) => {
-                                        event.stopPropagation();
-
-                                        handleOpenVisibilityModal();
-                                    }
-                                }
-                                aria-label="카드 목적 변경"
-                            >
-                                {getProfilePurposeName(
-                                    selectedProfile,
-                                ) ||
-                                    "목적 미설정"}
-                            </button>
-                        </div>
+    {!isSelectedProfileDefault && (
+        <span
+            className={
+                styles.purposeBadge
+            }
+        >
+            {getProfilePurposeName(
+                selectedProfile,
+                purposes,
+            ) || "목적 미설정"}
+        </span>
+    )}
+</div>                      
 
                         <div
                             className={
@@ -1236,56 +1236,54 @@ const MyPage = () => {
                                 styles.modalBody
                             }
                         >
-                            <div
-                                className={
-                                    styles.settingRow
-                                }
-                            >
-                                <label
-                                    htmlFor="profile-purpose"
-                                >
-                                    목적
-                                </label>
-
-                                <select
-                                    id="profile-purpose"
-                                    value={
-                                        selectedPurposeId
-                                    }
-                                    onChange={(
-                                        event,
-                                    ) =>
-                                        setSelectedPurposeId(
-                                            event
-                                                .target
-                                                .value,
-                                        )
+                            {!isSelectedProfileDefault && (
+                                <div
+                                    className={
+                                        styles.settingRow
                                     }
                                 >
-                                    <option value="">
-                                        목적 선택
-                                    </option>
+                                    <label
+                                        htmlFor="profile-purpose"
+                                    >
+                                        목적
+                                    </label>
 
-                                    {purposes.map(
-                                        (
-                                            purpose,
-                                        ) => (
-                                            <option
-                                                key={
-                                                    purpose.id
-                                                }
-                                                value={
-                                                    purpose.id
-                                                }
-                                            >
-                                                {
-                                                    purpose.name
-                                                }
-                                            </option>
-                                        ),
-                                    )}
-                                </select>
-                            </div>
+                                    <select
+                                        id="profile-purpose"
+                                        value={
+                                            selectedPurposeId
+                                        }
+                                        onChange={(
+                                            event,
+                                        ) =>
+                                            setSelectedPurposeId(
+                                                event
+                                                    .target
+                                                    .value,
+                                            )
+                                        }
+                                    >
+                                        {purposes.map(
+                                            (
+                                                purpose,
+                                            ) => (
+                                                <option
+                                                    key={
+                                                        purpose.id
+                                                    }
+                                                    value={
+                                                        purpose.id
+                                                    }
+                                                >
+                                                    {
+                                                        purpose.name
+                                                    }
+                                                </option>
+                                            ),
+                                        )}
+                                    </select>
+                                </div>
+                            )}
 
                             <div
                                 className={

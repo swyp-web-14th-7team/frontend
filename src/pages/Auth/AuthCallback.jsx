@@ -8,6 +8,7 @@ import {
 } from "react-router-dom";
 
 import {
+    getMyInfo,
     loginWithSocialCode,
 } from "../../api/auth";
 
@@ -17,6 +18,7 @@ import {
 
 import {
     saveAccessToken,
+    saveUserName,
 } from "../../utils/auth";
 
 const AuthCallback = ({
@@ -60,7 +62,7 @@ const AuthCallback = ({
                         );
                     }
 
-                    const data =
+                    const loginData =
                         await loginWithSocialCode(
                             {
                                 provider,
@@ -69,8 +71,14 @@ const AuthCallback = ({
                             },
                         );
 
+                    console.log(
+                        "로그인 API 응답:",
+                        loginData,
+                    );
+
                     if (
-                        !data?.accessToken
+                        !loginData
+                            ?.accessToken
                     ) {
                         throw new Error(
                             "액세스 토큰을 받지 못했습니다.",
@@ -78,13 +86,28 @@ const AuthCallback = ({
                     }
 
                     saveAccessToken(
-                        data.accessToken,
+                        loginData.accessToken,
                     );
 
-                    /*
-                     * 로그인한 사용자의
-                     * 기존 프로필 카드 확인
-                     */
+                    const myInfo =
+                        await getMyInfo();
+
+                    console.log(
+                        "내 정보 조회 응답:",
+                        myInfo,
+                    );
+
+                    const userName =
+                        myInfo?.name ||
+                        myInfo?.nickname ||
+                        "";
+
+                    if (userName) {
+                        saveUserName(
+                            userName,
+                        );
+                    }
+
                     const profileData =
                         await getMyProfileCards(
                             {
@@ -101,11 +124,6 @@ const AuthCallback = ({
                         profileData?.items ||
                         [];
 
-                    /*
-                     * 프로필 카드가 없으면
-                     * 최초 사용자로 판단하여
-                     * 온보딩으로 이동
-                     */
                     if (
                         profileCards.length ===
                         0
@@ -121,10 +139,6 @@ const AuthCallback = ({
                         return;
                     }
 
-                    /*
-                     * 이미 프로필 카드가 있으면
-                     * 탐색 화면으로 이동
-                     */
                     navigate(
                         "/explore",
                         {

@@ -62,6 +62,35 @@
     flex-shrink: 0;
     }
 
+        /*
+    * 현 소속을 선택하면 화살표를 숨기고
+    * 선택된 값을 칩 형태로 표시한다.
+    */
+    .selectedAffiliationDropdown {
+    width: auto;
+    min-width: 82px;
+    max-width: 150px;
+    }
+
+    .selectedAffiliationDropdown > button {
+    width: auto;
+    min-width: 82px;
+    padding: 0 14px;
+
+    justify-content: center;
+
+    border-color: #8a91aa;
+    background-color: #34394f;
+    }
+
+    .selectedAffiliationDropdown > button img {
+    display: none;
+    }
+
+    .selectedAffiliationDropdown > ul {
+    width: 142px;
+    }
+
     /* 직군·스킬 버튼 */
     .filterButton {
     width: 132px;

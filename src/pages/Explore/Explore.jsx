@@ -15,6 +15,7 @@
     } from "../../api/profile";
 
     import {
+    getAffiliationStatuses,
     getPurposes,
     } from "../../api/options";
 
@@ -37,15 +38,6 @@
     "교류/네트워킹",
     ];
 
-    /*
-    * 프론트 탭 이름과 백엔드 목적 이름을
-    * 비교하기 위해 공백과 구분 기호를 제거한다.
-    *
-    * 예:
-    * 팀 빌딩 -> 팀빌딩
-    * 교류/네트워킹 -> 교류네트워킹
-    * 교류·네트워킹 -> 교류네트워킹
-    */
     const normalizePurposeName = (
     value = "",
     ) => {
@@ -54,6 +46,18 @@
         .toLowerCase()
         .replace(
         /[\s/·ㆍ_-]/g,
+        "",
+        );
+    };
+
+    const normalizeAffiliationName = (
+    value = "",
+    ) => {
+    return String(value)
+        .trim()
+        .toLowerCase()
+        .replace(
+        /\s/g,
         "",
         );
     };
@@ -92,21 +96,27 @@
     switch (sort) {
         case "오래된 등록순":
         return {
-            sort: "createdAt",
-            order: "asc",
+            sort:
+            "createdAt",
+            order:
+            "asc",
         };
 
         case "가나다순":
         return {
-            sort: "nickname",
-            order: "asc",
+            sort:
+            "nickname",
+            order:
+            "asc",
         };
 
         case "최근 등록순":
         default:
         return {
-            sort: "createdAt",
-            order: "desc",
+            sort:
+            "createdAt",
+            order:
+            "desc",
         };
     }
     };
@@ -139,11 +149,6 @@
         setSelectedTags,
     ] = useState([]);
 
-    /*
-    * 직군 선택값은 스킬 모달 내부에서
-    * 직군별 스킬 목록을 보여주기 위해서만 사용한다.
-    * 프로필 목록 API 필터에는 전달하지 않는다.
-    */
     const [
         selectedJobType,
         setSelectedJobType,
@@ -186,9 +191,6 @@
         setErrorMessage,
     ] = useState("");
 
-    /*
-    * 백엔드에서 조회한 목적 목록
-    */
     const [
         purposes,
         setPurposes,
@@ -204,6 +206,16 @@
         setPurposeError,
     ] = useState("");
 
+    const [
+        affiliationStatuses,
+        setAffiliationStatuses,
+    ] = useState([]);
+
+    const [
+        isAffiliationLoading,
+        setIsAffiliationLoading,
+    ] = useState(true);
+
     const isUserLoggedIn =
         isLoggedIn();
 
@@ -216,10 +228,6 @@
         activeTab !==
         "전체보기";
 
-    /*
-    * 선택한 탭 이름과 같은
-    * 백엔드 목적 데이터를 찾는다.
-    */
     const selectedPurpose =
         activeTab ===
         "전체보기"
@@ -238,7 +246,36 @@
         selectedPurpose?.id ??
         null;
 
-    /*
+    const selectedAffiliationStatus =
+        !affiliation ||
+        affiliation === "모두"
+        ? null
+        : affiliationStatuses.find(
+            (status) =>
+                normalizeAffiliationName(
+                status?.name,
+                ) ===
+                normalizeAffiliationName(
+                affiliation,
+                ),
+            );
+
+    const selectedAffiliationStatusId =
+        selectedAffiliationStatus
+        ?.id ?? null;
+
+    const affiliationOptions = [
+        "모두",
+
+        ...affiliationStatuses
+        .map(
+            (status) =>
+            status?.name,
+        )
+        .filter(Boolean),
+    ];
+
+        /*
     * 목적 목록 조회
     */
     useEffect(() => {
@@ -318,6 +355,74 @@
     }, []);
 
     /*
+    * 현 소속 목록 조회
+    */
+    useEffect(() => {
+        const controller =
+        new AbortController();
+
+        const fetchAffiliationStatuses =
+        async () => {
+            try {
+            setIsAffiliationLoading(
+                true,
+            );
+
+            const result =
+                await getAffiliationStatuses(
+                {
+                    page: 1,
+                    limit: 100,
+                    sort: "name",
+                    order: "asc",
+
+                    signal:
+                    controller.signal,
+                },
+                );
+
+            setAffiliationStatuses(
+                getItems(
+                result,
+                ),
+            );
+            } catch (error) {
+            if (
+                error.name ===
+                "AbortError"
+            ) {
+                return;
+            }
+
+            console.error(
+                "현 소속 목록 조회 실패:",
+                error,
+            );
+
+            setAffiliationStatuses(
+                [],
+            );
+            } finally {
+            if (
+                !controller
+                .signal
+                .aborted
+            ) {
+                setIsAffiliationLoading(
+                false,
+                );
+            }
+            }
+        };
+
+        fetchAffiliationStatuses();
+
+        return () => {
+        controller.abort();
+        };
+    }, []);
+
+    /*
     * 공개 프로필 카드 목록 조회
     */
     useEffect(() => {
@@ -326,21 +431,13 @@
 
         const fetchProfiles =
         async () => {
-            /*
-            * 목적 목록 조회가 완료된 뒤
-            * 프로필을 조회한다.
-            */
             if (
-            isPurposeLoading
+            isPurposeLoading ||
+            isAffiliationLoading
             ) {
             return;
             }
 
-            /*
-            * 전체보기가 아닌데 목적 데이터를
-            * 찾지 못했다면 전체 카드가 표시되지
-            * 않도록 API 호출을 중단한다.
-            */
             if (
             activeTab !==
                 "전체보기" &&
@@ -394,10 +491,6 @@
                     order:
                     sortParams.order,
 
-                    /*
-                    * 전체보기에서는
-                    * purposeId를 보내지 않는다.
-                    */
                     purposeId:
                     activeTab ===
                     "전체보기"
@@ -405,9 +498,19 @@
                         : selectedPurposeId,
 
                     /*
-                    * 직군 ID는 보내지 않고
-                    * 사용자가 선택한 스킬만
-                    * 실제 탐색 필터로 전달한다.
+                    * 선택한 현 소속 ID를
+                    * 탐색 API에 전달한다.
+                    */
+                    affiliationStatusId:
+                    !affiliation ||
+                    affiliation ===
+                        "모두"
+                        ? undefined
+                        : selectedAffiliationStatusId,
+
+                    /*
+                    * 직군은 보내지 않고
+                    * 선택한 스킬만 전달한다.
                     */
                     skillIds:
                     selectedTags.map(
@@ -510,7 +613,10 @@
         sort,
         selectedPurposeId,
         isPurposeLoading,
+        isAffiliationLoading,
         purposeError,
+        affiliation,
+        selectedAffiliationStatusId,
         selectedTags,
     ]);
 
@@ -539,7 +645,8 @@
 
         window.scrollTo({
         top: 0,
-        behavior: "smooth",
+        behavior:
+            "smooth",
         });
     };
 
@@ -590,130 +697,61 @@
             1,
         );
         };
-        
-        const handleMobileLogoClick =
-        () => {
-        setActiveTab(
-            "전체보기",
-        );
 
-        setCurrentPage(
-            1,
-        );
+    const handleMobileLogoClick = () => {
+        setActiveTab("전체보기");
+        setCurrentPage(1);
 
-        setKeyword(
-            "",
-        );
+        setKeyword("");
+        setAffiliation("");
+        setSelectedJobType(null);
+        setSelectedTags([]);
 
-        setAffiliation(
-            "",
-        );
+        setSort("최근 등록순");
 
-        setSelectedJobType(
-            null,
-        );
-
-        setSelectedTags(
-            [],
-        );
-
-        setSort(
-            "최근 등록순",
-        );
-
-        setIsMobileSearchOpen(
-            false,
-        );
-
-        setIsLoginModalOpen(
-            false,
-        );
-
-        setErrorMessage(
-            "",
-        );
+        setIsMobileSearchOpen(false);
+        setIsLoginModalOpen(false);
+        setErrorMessage("");
 
         window.scrollTo({
-            top: 0,
-            behavior: "auto",
+        top: 0,
+        behavior: "auto",
         });
-        };
+    };
 
     return (
         <>
-        <div
-            className={
-            styles.mobileOnly
-            }
-        >
+        <div className={styles.mobileOnly}>
             <MobileExploreHeader
-            isSearchOpen={
-                isMobileSearchOpen
-            }
-            onSearchClose={
-                handleMobileSearchClose
-            }
-            onLogoClick={
-                handleMobileLogoClick
-            }
+            isSearchOpen={isMobileSearchOpen}
+            onSearchClose={handleMobileSearchClose}
+            onLogoClick={handleMobileLogoClick}
             />
         </div>
 
-        <main
-            className={
-            styles.main
-            }
-        >
-            <section
-            className={
-                styles.hero
-            }
-            >
-            <h1
-                className={
-                styles.title
-                }
-            >
+        <main className={styles.main}>
+            <section className={styles.hero}>
+            <h1 className={styles.title}>
                 나와 맞는 사람 찾기
             </h1>
 
-            <div
-                className={
-                styles.mobileOnly
-                }
-            >
+            <div className={styles.mobileOnly}>
                 {!isMobileSearchOpen && (
-                <div
-                    className={
-                    styles.mobileTitleRow
-                    }
-                >
-                    <h1
-                    className={
-                        styles.mobileTitle
-                    }
-                    >
+                <div className={styles.mobileTitleRow}>
+                    <h1 className={styles.mobileTitle}>
                     둘러보기
                     </h1>
 
                     <button
                     type="button"
-                    className={
-                        styles.mobileSearchButton
-                    }
-                    onClick={
-                        handleMobileSearchOpen
-                    }
+                    className={styles.mobileSearchButton}
+                    onClick={handleMobileSearchOpen}
                     aria-label="검색창 열기"
                     >
                     <img
-                        src={
-                        searchIcon
-                        }
+                        src={searchIcon}
                         alt=""
-                        className={
-                        styles.mobileSearchIcon
-                        }
+                        className={styles.mobileSearchIcon}
                     />
                     </button>
                 </div>
@@ -721,131 +759,70 @@
             </div>
 
             <ExploreSearch
-                keyword={
-                keyword
-                }
-                affiliation={
-                affiliation
-                }
-                selectedTags={
-                selectedTags
-                }
-                selectedJobType={
-                selectedJobType
-                }
+                keyword={keyword}
+                affiliation={affiliation}
+                affiliationOptions={affiliationOptions}
+                selectedTags={selectedTags}
+                selectedJobType={selectedJobType}
                 sort={sort}
-                isMobileSearchOpen={
-                isMobileSearchOpen
-                }
-                onKeywordChange={(
-                value,
-                ) => {
-                setKeyword(
-                    value,
-                );
-
-                setCurrentPage(
-                    1,
-                );
+                isMobileSearchOpen={isMobileSearchOpen}
+                onKeywordChange={(value) => {
+                setKeyword(value);
+                setCurrentPage(1);
                 }}
-                onAffiliationChange={(
-                value,
-                ) => {
-                setAffiliation(
-                    value,
-                );
-
-                setCurrentPage(
-                    1,
-                );
+                onAffiliationChange={(value) => {
+                setAffiliation(value);
+                setCurrentPage(1);
                 }}
-                onTagsChange={(
-                value,
-                ) => {
+                onTagsChange={(value) => {
+                setSelectedTags(value);
+                setCurrentPage(1);
+                }}
+                onJobTypeChange={(value) => {
                 /*
-                * 실제 탐색 결과에는
-                * 선택한 스킬만 적용한다.
+                * 직군은 관련 스킬 목록을
+                * 좁히는 용도로만 저장한다.
                 */
-                setSelectedTags(
-                    value,
-                );
-
-                setCurrentPage(
-                    1,
-                );
+                setSelectedJobType(value);
                 }}
-                onJobTypeChange={(
-                value,
-                ) => {
-                /*
-                * 직군은 스킬 모달 내부에서
-                * 스킬 목록을 좁히기 위해서만 저장한다.
-                */
-                setSelectedJobType(
-                    value,
-                );
-                }}
-                onSortChange={(
-                value,
-                ) => {
-                setSort(
-                    value,
-                );
-
-                setCurrentPage(
-                    1,
-                );
+                onSortChange={(value) => {
+                setSort(value);
+                setCurrentPage(1);
                 }}
             />
             </section>
 
-            {(!isMobileSearchOpen ||
-            hasSearchKeyword) && (
-            <section
-                className={
-                styles.exploreSection
-                }
-            >
+            {(!isMobileSearchOpen || hasSearchKeyword) && (
+            <section className={styles.exploreSection}>
                 {!isMobileSearchOpen && (
                 <div
-                    className={
-                    styles.tabList
-                    }
+                    className={styles.tabList}
                     role="tablist"
                     aria-label="탐색 카테고리"
                 >
-                    {TABS.map(
-                    (tab) => {
-                        const isActive =
-                        activeTab ===
-                        tab;
+                    {TABS.map((tab) => {
+                    const isActive =
+                        activeTab === tab;
 
-                        return (
+                    return (
                         <button
-                            key={
-                            tab
-                            }
-                            type="button"
-                            role="tab"
-                            aria-selected={
+                        key={tab}
+                        type="button"
+                        role="tab"
+                        aria-selected={isActive}
+                        className={`${styles.tabButton} ${
                             isActive
-                            }
-                            className={`${styles.tabButton} ${
-                            isActive
-                                ? styles.activeTab
-                                : ""
-                            }`}
-                            onClick={() =>
-                            handleTabClick(
-                                tab,
-                            )
-                            }
+                            ? styles.activeTab
+                            : ""
+                        }`}
+                        onClick={() =>
+                            handleTabClick(tab)
+                        }
                         >
-                            {tab}
+                        {tab}
                         </button>
-                        );
-                    },
-                    )}
+                    );
+                    })}
                 </div>
                 )}
 
@@ -857,72 +834,51 @@
                 }`}
                 >
                 <ExploreCardList
-                    profiles={
-                    profiles
-                    }
-                    activeTab={
-                    activeTab
-                    }
-                    keyword={
-                    keyword
-                    }
-                    isUserLoggedIn={
-                    isUserLoggedIn
-                    }
+                    profiles={profiles}
+                    activeTab={activeTab}
+                    keyword={keyword}
+                    isUserLoggedIn={isUserLoggedIn}
                     isLoading={
                     isLoading ||
-                    isPurposeLoading
+                    isPurposeLoading ||
+                    isAffiliationLoading
                     }
-                    errorMessage={
-                    errorMessage
-                    }
+                    errorMessage={errorMessage}
                 />
 
                 {!isRestrictedTab &&
                     !isMobileSearchOpen &&
                     !isLoading &&
                     !isPurposeLoading &&
+                    !isAffiliationLoading &&
                     !errorMessage && (
                     <Pagination
-                        currentPage={
-                        currentPage
-                        }
-                        totalPages={
-                        totalPages
-                        }
-                        onChange={
-                        handlePageChange
-                        }
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onChange={handlePageChange}
                     />
                     )}
 
                 {isRestrictedTab &&
                     !isMobileSearchOpen &&
                     !isLoading &&
-                    !isPurposeLoading && (
+                    !isPurposeLoading &&
+                    !isAffiliationLoading && (
                     <>
                         <div
-                        className={
-                            styles.maskGradient
-                        }
+                        className={styles.maskGradient}
                         aria-hidden="true"
                         />
 
-                        <div
-                        className={
-                            styles.loginGuide
-                        }
-                        >
+                        <div className={styles.loginGuide}>
                         <h2
                             className={
                             styles.loginGuideTitle
                             }
                         >
-                            로그인하고 더
-                            편리하게
+                            로그인하고 더 편리하게
                             <br />
-                            프로필을
-                            탐색하세요
+                            프로필을 탐색하세요
                         </h2>
 
                         <p
@@ -930,21 +886,16 @@
                             styles.loginGuideDescription
                             }
                         >
-                            나를 소개하는 가장
-                            쉬운 방법,
+                            나를 소개하는 가장 쉬운 방법,
                             <br />
-                            Nodi와 함께 새로운
-                            연결을 시작해요.
+                            Nodi와 함께 새로운 연결을
+                            시작해요.
                         </p>
 
                         <button
                             type="button"
-                            className={
-                            styles.startButton
-                            }
-                            onClick={
-                            handleStartClick
-                            }
+                            className={styles.startButton}
+                            onClick={handleStartClick}
                         >
                             시작하기
                         </button>
@@ -957,22 +908,14 @@
         </main>
 
         {!isMobileSearchOpen && (
-            <div
-            className={
-                styles.mobileOnly
-            }
-            >
+            <div className={styles.mobileOnly}>
             <BottomNavigation />
             </div>
         )}
 
         <LoginModal
-            isOpen={
-            isLoginModalOpen
-            }
-            onClose={
-            handleLoginModalClose
-            }
+            isOpen={isLoginModalOpen}
+            onClose={handleLoginModalClose}
         />
         </>
     );
