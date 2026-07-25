@@ -14,6 +14,7 @@
     import ProfileDetail from "./pages/Profile/ProfileDetail";
     import ProfileDetailEdit from "./pages/ProfileDetailEdit/ProfileDetailEdit";
     import MyProfileDetail from "./pages/MyProfileDetail/MyProfileDetail";
+
     import Scrap from "./pages/Scrap/Scrap";
     import Saved from "./pages/Saved/Saved";
     import Settings from "./pages/Settings/Settings";
@@ -169,6 +170,7 @@
             </ProtectedRoute>
             }
         />
+        
         </Routes>
     );
     }

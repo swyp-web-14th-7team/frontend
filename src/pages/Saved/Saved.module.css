@@ -51,12 +51,11 @@
     align-items: center;
     justify-content: center;
 
-    color: #ffffff;
+    width: 22px;
+    height: 22px;
 
-    font-size: 22px;
-    line-height: 1;
-
-    transform: rotate(180deg);
+    flex-shrink: 0;
+    object-fit: contain;
 }
 
 .jobFilters {
@@ -232,8 +231,7 @@
 
     background-color: #222435;
 
-    box-shadow: 0 16px 40px
-        rgba(0, 0, 0, 0.35);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
 
     box-sizing: border-box;
 }
@@ -310,9 +308,7 @@
     margin-top: 24px;
 
     display: grid;
-    grid-template-columns:
-        90px
-        minmax(0, 1fr);
+    grid-template-columns: 90px minmax(0, 1fr);
     gap: 8px;
 }
 
@@ -353,10 +349,7 @@
 
 .cardGrid {
     display: grid;
-    grid-template-columns: repeat(
-        4,
-        minmax(0, 282px)
-    );
+    grid-template-columns: repeat(4, minmax(0, 282px));
     justify-content: space-between;
     gap: 32px 20px;
 }
@@ -392,6 +385,27 @@
     font-size: 13px;
 }
 
+.statusMessage,
+.errorMessage {
+    margin: 18px 0;
+    padding: 14px 16px;
+
+    border-radius: 10px;
+
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.statusMessage {
+    color: #555d6d;
+    background-color: #f5f6f8;
+}
+
+.errorMessage {
+    color: #d92d20;
+    background-color: #fff1f0;
+}
+
 @media (max-width: 1320px) {
     .page {
         padding-right: 40px;
@@ -407,80 +421,186 @@
     }
 
     .cardGrid {
-        grid-template-columns: repeat(
-            3,
-            minmax(0, 282px)
-        );
+        grid-template-columns: repeat(3, minmax(0, 282px));
         justify-content: center;
     }
 }
 
 @media (max-width: 960px) {
     .cardGrid {
-        grid-template-columns: repeat(
-            2,
-            minmax(0, 282px)
-        );
+        grid-template-columns: repeat(2, minmax(0, 282px));
     }
 }
 
 @media (max-width: 768px) {
     .page {
         min-height: 100vh;
-        padding: 32px 20px 100px;
+        padding: 28px 0 112px 20px;
+
+        overflow: hidden;
+    }
+
+    .container {
+        max-width: none;
+        margin: 0;
     }
 
     .title {
-        margin-bottom: 32px;
+        margin: 0 20px 18px 0;
 
         font-size: 22px;
+        line-height: 1.45;
     }
 
     .filterArea {
-        display: block;
+        min-height: 0;
+        margin-right: 0;
+        padding: 0 0 14px;
+
+        display: flex;
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 10px;
+
+        border-bottom: 0;
     }
 
     .filterLeft {
         width: 100%;
 
+        display: flex;
+        align-items: center;
         flex-wrap: wrap;
+        gap: 10px;
     }
 
-    .filterSymbol,
+    .filterSymbol {
+        width: 20px;
+        height: 20px;
+        margin: 0 8px 0 0;
+
+        display: block;
+    }
+
+    .jobFilters {
+        width: calc(100% - 48px);
+        padding-right: 20px;
+
+        display: flex;
+        gap: 8px;
+
+        overflow-x: auto;
+        scrollbar-width: none;
+    }
+
+    .jobFilters::-webkit-scrollbar {
+        display: none;
+    }
+
+    .filterButton {
+        width: auto;
+        height: 42px;
+        padding: 0 14px;
+
+        flex: 0 0 auto;
+
+        border-radius: 8px;
+
+        font-size: 14px;
+    }
+
     .divider {
         display: none;
     }
 
-    .jobFilters {
-        width: 100%;
-
-        display: grid;
-        grid-template-columns: repeat(
-            2,
-            minmax(0, 1fr)
-        );
-    }
-
-    .filterButton {
-        width: 100%;
-    }
-
     .selectWrapper,
-    .dropdownButton,
-    .interestFilter {
-        flex: 1;
+    .dropdownButton {
+        height: 42px;
+
+        flex: 0 0 auto;
+    }
+
+    .selectWrapper {
+        margin-left: 0;
     }
 
     .selectWrapper select,
     .dropdownButton {
-        width: 100%;
+        width: auto;
+        height: 42px;
+        padding: 0 34px 0 14px;
+
+        border-radius: 8px;
+
+        font-size: 14px;
+    }
+
+    .selectWrapper select {
+        min-width: 100px;
+    }
+
+    .dropdownButton {
+        min-width: 94px;
+    }
+
+    .filterSummary {
+        max-width: 105px;
     }
 
     .sortWrapper {
-        width: 100%;
-        margin-top: 12px;
+        width: auto;
+        margin: 0;
 
-        justify-content: flex-end;
+        justify-content: flex-start;
+    }
+
+    .sortWrapper select {
+        min-width: 128px;
+        height: 34px;
+        padding-left: 0;
+
+        font-size: 14px;
+    }
+
+    .sortWrapper .selectArrow {
+        right: 10px;
+    }
+
+    .resultHeader {
+        display: none;
+    }
+
+    .cardGrid {
+        width: 100%;
+        padding: 8px 20px 8px 0;
+
+        display: flex;
+        justify-content: flex-start;
+        gap: 16px;
+
+        overflow-x: auto;
+        overflow-y: hidden;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none;
+
+        box-sizing: border-box;
+    }
+
+    .cardGrid::-webkit-scrollbar {
+        display: none;
+    }
+
+    .cardGrid > button {
+        width: min(82vw, 320px);
+        max-width: none;
+
+        flex: 0 0 min(82vw, 320px);
+        scroll-snap-align: start;
+    }
+
+    .cardGrid > button > article {
+        width: 100%;
+        max-width: none;
     }
 
     .interestPopover {
@@ -493,53 +613,43 @@
         width: auto;
     }
 
-    .cardGrid {
-        grid-template-columns: minmax(
-            0,
-            282px
-        );
-        justify-content: center;
+    .emptyResult {
+        min-height: 300px;
+        margin-right: 20px;
     }
 
-    .cardGrid > button,
-    .cardGrid > button > article {
-        width: 282px;
+    .statusMessage,
+    .errorMessage {
+        margin-right: 20px;
     }
 }
 
 @media (max-width: 360px) {
     .page {
-        padding-right: 16px;
         padding-left: 16px;
     }
 
+    .title {
+        margin-right: 16px;
+    }
+
+    .jobFilters {
+        padding-right: 16px;
+    }
+
     .cardGrid {
-        grid-template-columns: minmax(
-            0,
-            1fr
-        );
+        padding-right: 16px;
     }
 
-    .cardGrid > button,
-    .cardGrid > button > article {
-        width: 100%;
+    .cardGrid > button {
+        width: 84vw;
+
+        flex-basis: 84vw;
     }
-}
-.statusMessage,
-.errorMessage {
-    margin: 18px 0;
-    padding: 14px 16px;
-    border-radius: 10px;
-    font-size: 14px;
-    line-height: 1.5;
-}
 
-.statusMessage {
-    color: #555d6d;
-    background-color: #f5f6f8;
-}
-
-.errorMessage {
-    color: #d92d20;
-    background-color: #fff1f0;
+    .emptyResult,
+    .statusMessage,
+    .errorMessage {
+        margin-right: 16px;
+    }
 }
