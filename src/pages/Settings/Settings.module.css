@@ -1,17 +1,25 @@
-    .page {
-    display: grid;
-    grid-template-columns: 252px minmax(0, 1fr);
+.page {
     min-height: calc(100vh - 72px);
     color: #f5f6fa;
     background: #0e0e16;
-    }
+}
 
-    .sidebar {
+.desktopSettings {
+    display: grid;
+    grid-template-columns: 252px minmax(0, 1fr);
+    min-height: calc(100vh - 72px);
+}
+
+.mobileSettings {
+    display: none;
+}
+
+.sidebar {
     padding: 34px 16px;
     border-right: 1px solid #343747;
-    }
+}
 
-    .backButton {
+.backButton {
     display: flex;
     align-items: center;
     gap: 12px;
@@ -24,21 +32,21 @@
     font-weight: 600;
     background: transparent;
     cursor: pointer;
-    }
+}
 
-    .backButton span {
+.backButton span {
     font-size: 28px;
     font-weight: 300;
     line-height: 1;
-    }
+}
 
-    .sideNav {
+.sideNav {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    }
+}
 
-    .sideNav button {
+.sideNav button {
     width: 100%;
     padding: 14px 16px;
     border: 0;
@@ -49,66 +57,66 @@
     text-align: left;
     background: transparent;
     cursor: pointer;
-    }
+}
 
-    .sideNav button:hover {
+.sideNav button:hover {
     background: #1b1e2c;
-    }
+}
 
-    .sideNav .activeSideItem {
+.sideNav .activeSideItem {
     color: #ffffff;
     background: #25293b;
-    }
+}
 
-    .sideNav .logoutButton {
+.sideNav .logoutButton {
     margin-top: 10px;
     color: #c7c9d2;
-    }
+}
 
-    .content {
+.content {
     padding: 56px 48px 80px;
-    }
+}
 
-    .contentInner {
+.contentInner {
     width: min(620px, 100%);
     margin-left: 96px;
-    }
+}
 
-    .contentHeader {
+.contentHeader {
     margin-bottom: 34px;
-    }
+}
 
-    .contentHeader h1 {
+.contentHeader h1 {
     margin: 0 0 10px;
     font-size: 22px;
     font-weight: 700;
-    }
+}
 
-    .contentHeader p {
+.contentHeader p {
     margin: 0;
     color: #858a9d;
     font-size: 14px;
     line-height: 1.5;
-    }
+}
 
-    .form {
+.form {
     display: flex;
     flex-direction: column;
     gap: 24px;
-    }
+}
 
-    .field {
+.field {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    }
+}
 
-    .field label {
+.field label {
     color: #aeb2c1;
     font-size: 13px;
-    }
+}
 
-    .field input {
+.field input {
     width: 100%;
     height: 48px;
     box-sizing: border-box;
@@ -120,24 +128,24 @@
     font-size: 14px;
     background: #353a50;
     outline: none;
-    }
+}
 
-    .field input:focus {
+.field input:focus {
     border-color: #acd9fa;
-    }
+}
 
-    .field input:disabled {
+.field input:disabled {
     color: #71768b;
     cursor: not-allowed;
-    }
+}
 
-    .jobRow {
+.jobRow {
     display: grid;
     grid-template-columns: 74px minmax(0, 1fr);
     gap: 8px;
-    }
+}
 
-    .jobSelectButton {
+.jobSelectButton {
     display: flex;
     height: 48px;
     align-items: center;
@@ -148,33 +156,33 @@
     color: #9ca1b2;
     font-family: inherit;
     background: #353a50;
-    }
+}
 
-    .fieldDescription {
+.fieldDescription {
     margin: 0;
     color: #777c90;
     font-size: 12px;
-    }
+}
 
-    .error,
-    .success {
+.error,
+.success {
     margin: -6px 0 0;
     padding: 10px 12px;
     border-radius: 7px;
     font-size: 13px;
-    }
+}
 
-    .error {
+.error {
     color: #ffb9bd;
     background: rgb(195 50 63 / 16%);
-    }
+}
 
-    .success {
+.success {
     color: #b8eed0;
     background: rgb(42 151 92 / 16%);
-    }
+}
 
-    .submitButton {
+.submitButton {
     width: 100%;
     height: 50px;
     margin-top: 8px;
@@ -186,18 +194,18 @@
     font-weight: 700;
     background: #b4dcfa;
     cursor: pointer;
-    }
+}
 
-    .submitButton:hover:not(:disabled) {
+.submitButton:hover:not(:disabled) {
     background: #c8e7ff;
-    }
+}
 
-    .submitButton:disabled {
+.submitButton:disabled {
     opacity: 0.65;
     cursor: wait;
-    }
+}
 
-    .emptySection {
+.emptySection {
     display: grid;
     min-height: 260px;
     place-items: center;
@@ -205,19 +213,19 @@
     border-radius: 12px;
     color: #818697;
     font-size: 14px;
-    }
+}
 
-    .statusText {
+.statusText {
     color: #9da1af;
-    }
+}
 
-    .requestList {
+.requestList {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    }
+}
 
-    .requestItem {
+.requestItem {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -226,63 +234,70 @@
     border: 1px solid #343747;
     border-radius: 10px;
     background: #171822;
-    }
+}
 
-    .requestProfile,
-    .requestActions {
+.requestProfile,
+.requestActions {
     display: flex;
     align-items: center;
     gap: 12px;
-    }
+}
 
-    .requestAvatar,
-    .requestAvatarFallback {
+.requestProfile {
+    min-width: 0;
+}
+
+.requestProfile > div:last-child {
+    min-width: 0;
+}
+
+.requestAvatar,
+.requestAvatarFallback {
     width: 48px;
     height: 48px;
     flex: 0 0 48px;
     border-radius: 50%;
     object-fit: cover;
-    }
+}
 
-    .requestAvatarFallback {
+.requestAvatarFallback {
     display: grid;
     place-items: center;
     color: #26384a;
     font-weight: 700;
     background: #b4dcfa;
-    }
+}
 
-    .requestProfile strong {
+.requestProfile strong {
+    display: block;
+    overflow: hidden;
     font-size: 14px;
-    }
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 
-    .requestProfile p {
+.requestProfile p {
     margin: 5px 0 0;
     color: #858a9d;
     font-size: 12px;
-    }
+}
 
-    .requestStatus {
+.requestStatus {
     padding: 6px 9px;
     border-radius: 999px;
     color: #b8c0d3;
     font-size: 12px;
+    white-space: nowrap;
     background: #292c3b;
-    }
+}
 
-    .status0 {
-    color: #f8d98d;
-    }
-    .status1 {
-    color: #a9e7c5;
-    }
-    .status2,
-    .status3 {
-    color: #a2a6b4;
-    }
+.status0 { color: #f8d98d; }
+.status1 { color: #a9e7c5; }
+.status2,
+.status3 { color: #a2a6b4; }
 
-    .requestActions button,
-    .dangerSection button {
+.requestActions button,
+.dangerSection button {
     padding: 9px 12px;
     border: 1px solid #646a7e;
     border-radius: 7px;
@@ -290,14 +305,14 @@
     font-family: inherit;
     background: transparent;
     cursor: pointer;
-    }
+}
 
-    .requestActions button:disabled {
+.requestActions button:disabled {
     opacity: 0.55;
     cursor: wait;
-    }
+}
 
-    .dangerSection {
+.dangerSection {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -306,28 +321,26 @@
     border: 1px solid rgb(218 79 91 / 45%);
     border-radius: 10px;
     background: rgb(195 50 63 / 8%);
-    }
+}
 
-    .dangerSection strong {
-    font-size: 15px;
-    }
+.dangerSection strong { font-size: 15px; }
 
-    .dangerSection p {
+.dangerSection p {
     margin: 7px 0 0;
     color: #9da1af;
     font-size: 13px;
     line-height: 1.5;
-    }
+}
 
-    .dangerSection button,
-    .withdrawConfirmButton {
+.dangerSection button,
+.withdrawConfirmButton {
     flex: 0 0 auto;
     color: #ffd8db;
     border-color: #b74d58;
     background: #85333b;
-    }
+}
 
-    .modalBackdrop {
+.modalBackdrop {
     position: fixed;
     z-index: 1000;
     inset: 0;
@@ -335,9 +348,9 @@
     place-items: center;
     padding: 20px;
     background: rgb(5 6 12 / 68%);
-    }
+}
 
-    .leaveModal {
+.leaveModal {
     width: min(420px, 100%);
     box-sizing: border-box;
     padding: 26px;
@@ -346,52 +359,458 @@
     color: #ffffff;
     background: #34394f;
     box-shadow: 0 28px 70px rgb(0 0 0 / 45%);
-    }
+}
 
-    .leaveModal h2 {
+.leaveModal h2 {
     margin: 0 0 8px;
     font-size: 18px;
-    }
+}
 
-    .leaveModal p {
+.leaveModal p {
     margin: 0;
     color: #c4c7d1;
     font-size: 14px;
-    }
+}
 
-    .modalActions {
+.modalActions {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
     margin-top: 30px;
-    }
+}
 
-    .modalActions button {
+.modalActions button {
     height: 48px;
     border: 0;
     border-radius: 7px;
     font-family: inherit;
     font-weight: 700;
     cursor: pointer;
-    }
+}
 
-    .continueButton {
+.continueButton {
     color: #303547;
     background: #e1e4eb;
-    }
+}
 
-    .discardButton {
+.discardButton {
     color: #26384a;
     background: #b4dcfa;
-    }
+}
 
-    .modalActions .withdrawConfirmButton {
+.modalActions .withdrawConfirmButton {
     color: #ffffff;
     background: #a43d47;
-    }
+}
 
-    @media (max-width: 900px) {
-    .page {
+.mobileTopHeader {
+    display: flex;
+    height: 72px;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.mobileBackButton {
+    display: grid;
+    width: 38px;
+    height: 38px;
+    place-items: center;
+    padding: 0;
+    border: 0;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 38px;
+    font-weight: 200;
+    line-height: 1;
+    background: transparent;
+    cursor: pointer;
+    transform: translateX(-8px);
+}
+
+.mobileMenuContent {
+    padding: 48px 36px 120px;
+}
+
+.mobileMenuSection {
+    margin-bottom: 58px;
+}
+
+.mobileMenuSection:last-of-type {
+    margin-bottom: 0;
+}
+
+.mobileMenuSection h1 {
+    margin: 0 0 22px;
+    color: #f7f7fb;
+    font-size: 21px;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+.mobileMenuButton,
+.mobileLogoutButton {
+    width: 100%;
+    min-height: 48px;
+    padding: 0;
+    border: 0;
+    color: #d9dae3;
+    font-family: inherit;
+    font-size: 16px;
+    text-align: left;
+    background: transparent;
+    cursor: pointer;
+}
+
+.mobileMenuButton {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.mobileMenuArrow {
+    color: #ffffff;
+    font-size: 38px;
+    font-weight: 200;
+    line-height: 1;
+}
+
+.mobileLogoutButton {
+    margin-top: 2px;
+    color: #a8abb8;
+}
+
+.mobileLogoutButton:disabled {
+    opacity: 0.55;
+    cursor: wait;
+}
+
+.mobileDetailContent {
+    min-height: calc(100vh - 72px);
+    box-sizing: border-box;
+    padding: 42px 14px 120px;
+}
+
+.mobilePageHeader {
+    margin-bottom: 38px;
+}
+
+.mobilePageHeader h1 {
+    margin: 0 0 10px;
+    color: #f8f8fb;
+    font-size: 25px;
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+.mobilePageHeader p {
+    margin: 0;
+    color: #898d9e;
+    font-size: 16px;
+    line-height: 1.65;
+    word-break: keep-all;
+}
+
+.mobileForm {
+    display: flex;
+    min-height: calc(100vh - 265px);
+    flex-direction: column;
+    gap: 23px;
+}
+
+.mobileField {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.mobileField label {
+    color: #9ea2b2;
+    font-size: 14px;
+}
+
+.mobileField input {
+    width: 100%;
+    height: 52px;
+    box-sizing: border-box;
+    padding: 0 16px;
+    border: 1px solid #c8d2e4;
+    border-radius: 9px;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 16px;
+    background: #343a50;
+    outline: none;
+}
+
+.mobileField input:focus {
+    border-color: #b4dcfa;
+}
+
+.mobileJobRow {
+    position: relative;
+    display: grid;
+    grid-template-columns: 78px minmax(0, 1fr);
+    gap: 8px;
+}
+
+.mobileJobSelectWrapper {
+    position: relative;
+}
+
+.mobileJobSelectButton {
+    display: flex;
+    width: 100%;
+    height: 52px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px;
+    border: 1px solid #737b93;
+    border-radius: 9px;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 15px;
+    background: #343a50;
+    cursor: pointer;
+}
+
+.mobileJobArrow,
+.mobileJobArrowOpen {
+    display: inline-block;
+    font-size: 18px;
+    transition: transform 0.18s ease;
+}
+
+.mobileJobArrowOpen {
+    transform: rotate(180deg);
+}
+
+.mobileJobDropdown {
+    position: absolute;
+    z-index: 20;
+    top: calc(100% + 6px);
+    left: 0;
+    display: flex;
+    width: 120px;
+    overflow: hidden;
+    flex-direction: column;
+    border: 1px solid #626a82;
+    border-radius: 8px;
+    background: #343a50;
+    box-shadow: 0 10px 30px rgb(0 0 0 / 30%);
+}
+
+.mobileJobDropdown button {
+    height: 48px;
+    padding: 0 16px;
+    border: 0;
+    color: #e6e7ed;
+    font-family: inherit;
+    font-size: 14px;
+    text-align: left;
+    background: transparent;
+    cursor: pointer;
+}
+
+.mobileJobDropdown button:hover {
+    background: #424960;
+}
+
+.mobileJobRow > input {
+    border-color: transparent;
+    color: #74798b;
+}
+
+.mobileSubmitButton {
+    width: 100%;
+    height: 57px;
+    margin-top: auto;
+    border: 0;
+    border-radius: 9px;
+    color: #203247;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 700;
+    background: #b4dcfa;
+    cursor: pointer;
+}
+
+.mobileSubmitButton:hover:not(:disabled) {
+    background: #c5e5fd;
+}
+
+.mobileSubmitButton:disabled {
+    opacity: 0.65;
+    cursor: wait;
+}
+
+.mobileError,
+.mobileSuccess {
+    margin: 0;
+    padding: 11px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.mobileError {
+    color: #ffb9bd;
+    background: rgb(195 50 63 / 16%);
+}
+
+.mobileSuccess {
+    color: #b8eed0;
+    background: rgb(42 151 92 / 16%);
+}
+
+.mobileStatusText {
+    margin: 0;
+    padding: 40px 14px;
+    color: #9da1af;
+    font-size: 14px;
+}
+
+.mobileEmptySection {
+    display: grid;
+    min-height: 220px;
+    place-items: center;
+    padding: 24px;
+    border: 1px dashed #343747;
+    border-radius: 12px;
+    color: #838899;
+    font-size: 14px;
+    text-align: center;
+}
+
+.mobileRequestGroups {
+    display: flex;
+    flex-direction: column;
+    gap: 42px;
+}
+
+.mobileRequestGroup h2 {
+    margin: 0 0 18px;
+    color: #8c91a3;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.mobileRequestList {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.mobileRequestItem {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+.mobileRequestProfile {
+    display: flex;
+    min-width: 0;
+    flex: 1;
+    align-items: center;
+    gap: 14px;
+}
+
+.mobileRequestAvatar,
+.mobileRequestAvatarFallback {
+    width: 52px;
+    height: 52px;
+    flex: 0 0 52px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.mobileRequestAvatarFallback {
+    display: grid;
+    place-items: center;
+    color: #26384a;
+    font-weight: 700;
+    background: #b4dcfa;
+}
+
+.mobileRequestText {
+    min-width: 0;
+}
+
+.mobileRequestStatus {
+    display: block;
+    margin-bottom: 4px;
+    color: #bbc0d1;
+    font-size: 14px;
+    line-height: 1.35;
+}
+
+.mobileRequestText strong {
+    display: block;
+    overflow: hidden;
+    color: #f1f2f7;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.45;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.mobileCancelButton {
+    min-width: 62px;
+    height: 42px;
+    flex: 0 0 auto;
+    border: 0;
+    border-radius: 8px;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 14px;
+    background: #565d77;
+    cursor: pointer;
+}
+
+.mobileCancelButton:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+.mobileAccountSection {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 20px;
+    border: 1px solid rgb(218 79 91 / 45%);
+    border-radius: 10px;
+    background: rgb(195 50 63 / 8%);
+}
+
+.mobileAccountSection strong {
+    color: #ffffff;
+    font-size: 15px;
+}
+
+.mobileAccountSection p {
+    margin: 8px 0 0;
+    color: #9da1af;
+    font-size: 13px;
+    line-height: 1.55;
+    word-break: keep-all;
+}
+
+.mobileAccountSection button {
+    flex: 0 0 auto;
+    padding: 10px 12px;
+    border: 1px solid #b74d58;
+    border-radius: 7px;
+    color: #ffd8db;
+    font-family: inherit;
+    background: #85333b;
+    cursor: pointer;
+}
+
+@media (max-width: 900px) and (min-width: 681px) {
+    .desktopSettings {
         grid-template-columns: 210px minmax(0, 1fr);
     }
 
@@ -402,58 +821,82 @@
     .contentInner {
         margin-left: 0;
     }
-    }
+}
 
-    @media (max-width: 680px) {
+@media (max-width: 680px) {
     .page {
-        display: block;
+        min-height: 100vh;
+        background: #0e0e16;
     }
 
-    .sidebar {
-        padding: 20px 16px;
-        border-right: 0;
-        border-bottom: 1px solid #343747;
-    }
-
-    .backButton {
-        margin-bottom: 16px;
-    }
-
-    .sideNav {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-    }
-
-    .sideNav button {
-        padding: 11px 8px;
-        font-size: 12px;
-        text-align: center;
-    }
-
-    .sideNav .logoutButton {
+    .desktopSettings {
         display: none;
     }
 
-    .content {
-        padding: 32px 16px 60px;
+    .mobileSettings {
+        display: block;
+        min-height: 100vh;
     }
 
-    .jobRow {
-        grid-template-columns: 1fr;
+    .modalBackdrop {
+        align-items: center;
+        padding: 8px;
+    }
+
+    .leaveModal {
+        width: 100%;
+        max-width: 384px;
+        padding: 36px 21px 28px;
+        border: 0;
+        border-radius: 9px;
+        background: #343a50;
+        box-shadow: none;
+    }
+
+    .leaveModal h2 {
+        margin-bottom: 12px;
+        font-size: 21px;
+        line-height: 1.4;
+        text-align: center;
+        word-break: keep-all;
+    }
+
+    .leaveModal p {
+        font-size: 15px;
+        line-height: 1.5;
+        text-align: center;
+        word-break: keep-all;
     }
 
     .modalActions {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-top: 36px;
     }
 
-    .requestItem,
-    .dangerSection {
-        align-items: flex-start;
-        flex-direction: column;
+    .modalActions button {
+        height: 55px;
+        border-radius: 9px;
+        font-size: 15px;
+    }
+}
+
+@media (max-width: 380px) {
+    .mobileMenuContent {
+        padding-right: 24px;
+        padding-left: 24px;
     }
 
-    .requestActions {
-        width: 100%;
-        justify-content: space-between;
+    .mobileDetailContent {
+        padding-right: 12px;
+        padding-left: 12px;
     }
+
+    .mobilePageHeader h1 {
+        font-size: 23px;
     }
+
+    .mobileRequestText strong {
+        font-size: 14px;
+    }
+}
