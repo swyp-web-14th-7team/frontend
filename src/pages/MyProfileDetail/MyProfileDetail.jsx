@@ -331,6 +331,78 @@ const MyProfileDetail = () => {
         profile.introduction ||
         "등록된 한 줄 소개가 없습니다.";
 
+    const hasIntroduction = Boolean(
+        (
+            profile.description ||
+            profile.introduction ||
+            ""
+        ).trim(),
+    );
+
+    const completionItems = [
+        {
+            category: "한 줄 소개",
+            field: "introduction",
+            title: "소개 작성",
+            description:
+                "나를 더 자세히 설명하고 인사를 건네보세요",
+            completed: hasIntroduction,
+        },
+        {
+            category: "관심분야",
+            field: "interests",
+            title: "관심 분야 선택",
+            description:
+                "관심 있는 도메인을 보여주세요",
+            completed: interests.length > 0,
+        },
+        {
+            category: "스킬",
+            field: "skills",
+            title: "스킬 추가",
+            description:
+                "나의 사용 툴, 역량을 어필해보세요",
+            completed: skills.length > 0,
+        },
+        {
+            category: "링크",
+            field: "links",
+            title: "링크 첨부",
+            description:
+                "내 이메일, 포트폴리오를 첨부해보세요",
+            completed: links.some(
+                (link) =>
+                    Boolean(
+                        link?.url?.trim?.(),
+                    ),
+            ),
+        },
+        {
+            category: "경험",
+            field: "experiences",
+            title: "경험 추가",
+            description:
+                "내가 쌓아온 활동을 보여주세요",
+            completed: experiences.some(
+                (experience) =>
+                    Boolean(
+                        experience?.title?.trim?.() ||
+                            experience?.description?.trim?.() ||
+                            experience?.summary?.trim?.() ||
+                            experience?.url?.trim?.(),
+                    ),
+            ),
+        },
+    ];
+
+    const completedDetailCount =
+        completionItems.filter(
+            (item) => item.completed,
+        ).length;
+
+    const isDetailIncomplete =
+        completedDetailCount < 5;
+
     const affiliationText = [
         profile.affiliationType,
         profile.affiliation,
@@ -361,11 +433,21 @@ const MyProfileDetail = () => {
         navigate(-1);
     };
 
-    const handleEdit = () => {
+    const handleEdit = (field) => {
         setIsMenuOpen(false);
 
+        const editPath =
+            `/my-profile/${profileId}/detail-edit`;
+
         navigate(
-            `/my-profile/${profileId}/detail-edit`,
+            field
+                ? `${editPath}?field=${field}#${field}`
+                : editPath,
+            {
+                state: field
+                    ? { focusField: field }
+                    : undefined,
+            },
         );
     };
 
@@ -406,12 +488,14 @@ const MyProfileDetail = () => {
                         currentPurposeName,
                 );
 
+            const currentPurposeId =
+                profile.purposeId ??
+                profile.purpose?.id ??
+                currentPurpose?.id ??
+                1;
+
             setSelectedPurposeId(
-                currentPurpose?.id
-                    ? String(
-                          currentPurpose.id,
-                      )
-                    : "",
+                String(currentPurposeId),
             );
 
             setSelectedIsActive(
@@ -568,14 +652,10 @@ const MyProfileDetail = () => {
 
     return (
         <main
-            className={
-                detailStyles.page
-            }
+            className={`${detailStyles.page} ${styles.page}`}
         >
             <div
-                className={
-                    detailStyles.layout
-                }
+                className={`${detailStyles.layout} ${styles.layout}`}
             >
                 <aside
                     className={`${detailStyles.summaryCard} ${styles.summaryCard}`}
@@ -601,9 +681,7 @@ const MyProfileDetail = () => {
                 >
                     <button
                         type="button"
-                        className={
-                            detailStyles.backButton
-                        }
+                        className={`${detailStyles.backButton} ${styles.backButton}`}
                         onClick={
                             handleBack
                         }
@@ -613,9 +691,7 @@ const MyProfileDetail = () => {
                     </button>
 
                     <div
-                        className={
-                            detailStyles.actionMenuArea
-                        }
+                        className={`${detailStyles.actionMenuArea} ${styles.actionMenuArea}`}
                     >
                         <button
                             type="button"
@@ -640,17 +716,15 @@ const MyProfileDetail = () => {
 
                         {isMenuOpen && (
                             <div
-                                className={
-                                    detailStyles.summaryActions
-                                }
+                                className={`${detailStyles.summaryActions} ${styles.profileMenu}`}
                             >
                                 <button
                                     type="button"
                                     className={
                                         detailStyles.scrapButton
                                     }
-                                    onClick={
-                                        handleEdit
+                                    onClick={() =>
+                                        handleEdit()
                                     }
                                 >
                                     수정하기
@@ -658,9 +732,17 @@ const MyProfileDetail = () => {
 
                                 <button
                                     type="button"
-                                    className={
-                                        detailStyles.exchangeButton
+                                    className={styles.mobileVisibilityButton}
+                                    onClick={
+                                        handleOpenVisibility
                                     }
+                                >
+                                    공개설정 변경
+                                </button>
+
+                                <button
+                                    type="button"
+                                    className={`${detailStyles.exchangeButton} ${styles.deleteMenuButton}`}
                                     onClick={
                                         handleOpenDelete
                                     }
@@ -671,21 +753,22 @@ const MyProfileDetail = () => {
                         )}
                     </div>
 
+                    <div
+                        className={
+                            styles.summaryContent
+                        }
+                    >
                     {profile.profileImage ? (
                         <img
                             src={
                                 profile.profileImage
                             }
                             alt={`${profile.name || "사용자"} 프로필`}
-                            className={
-                                detailStyles.avatar
-                            }
+                            className={`${detailStyles.avatar} ${styles.avatar}`}
                         />
                     ) : (
                         <div
-                            className={
-                                detailStyles.avatarPlaceholder
-                            }
+                            className={`${detailStyles.avatarPlaceholder} ${styles.avatar}`}
                             aria-hidden="true"
                         >
                             {profile.name
@@ -696,23 +779,17 @@ const MyProfileDetail = () => {
                     )}
 
                     <div
-                        className={
-                            detailStyles.nameRow
-                        }
+                        className={`${detailStyles.nameRow} ${styles.nameRow}`}
                     >
                         <strong
-                            className={
-                                detailStyles.name
-                            }
+                            className={`${detailStyles.name} ${styles.name}`}
                         >
                             {profile.name ||
                                 "이름 없음"}
                         </strong>
 
                         <span
-                            className={
-                                detailStyles.job
-                            }
+                            className={`${detailStyles.job} ${styles.job}`}
                         >
                             {JOB_LABELS[
                                 profile.job
@@ -723,9 +800,7 @@ const MyProfileDetail = () => {
                     </div>
 
                     <p
-                        className={
-                            detailStyles.affiliation
-                        }
+                        className={`${detailStyles.affiliation} ${styles.affiliation}`}
                     >
                         {affiliationText ||
                             "소속 정보 없음"}
@@ -733,9 +808,7 @@ const MyProfileDetail = () => {
 
                     {profile.strength && (
                         <div
-                            className={
-                                detailStyles.strength
-                            }
+                            className={`${detailStyles.strength} ${styles.strength}`}
                         >
                             {profile
                                 .strength
@@ -775,6 +848,7 @@ const MyProfileDetail = () => {
                             </span>
                         </div>
                     )}
+                    </div>
 
                     <div
                         className={
@@ -812,6 +886,85 @@ const MyProfileDetail = () => {
                     )}
                 </aside>
 
+                {isDetailIncomplete ? (
+                    <article
+                        className={`${detailStyles.detailCard} ${styles.completionCard}`}
+                    >
+                        <div
+                            className={
+                                styles.completionHeader
+                            }
+                        >
+                            <h1>
+                                세부 프로필 완성하기
+                            </h1>
+
+                            <span>
+                                {completedDetailCount}/5
+                                완료
+                            </span>
+                        </div>
+
+                        <div
+                            className={
+                                styles.completionList
+                            }
+                        >
+                            {completionItems.map(
+                                (item) => (
+                                    <div
+                                        key={
+                                            item.category
+                                        }
+                                        className={
+                                            styles.completionItem
+                                        }
+                                    >
+                                        <div>
+                                            <span
+                                                className={
+                                                    styles.completionCategory
+                                                }
+                                            >
+                                                {
+                                                    item.category
+                                                }
+                                            </span>
+
+                                            <strong>
+                                                {item.title}
+                                            </strong>
+
+                                            <p>
+                                                {
+                                                    item.description
+                                                }
+                                            </p>
+                                        </div>
+
+                                        <button
+                                            type="button"
+                                            className={
+                                                item.completed
+                                                    ? styles.completedButton
+                                                    : styles.configureButton
+                                            }
+                                            onClick={() =>
+                                                handleEdit(
+                                                    item.field,
+                                                )
+                                            }
+                                        >
+                                            {item.completed
+                                                ? "수정하기"
+                                                : "설정하기"}
+                                        </button>
+                                    </div>
+                                ),
+                            )}
+                        </div>
+                    </article>
+                ) : (
                 <article
                     className={
                         detailStyles.detailCard
@@ -1153,6 +1306,22 @@ const MyProfileDetail = () => {
                         )}
                     </section>
                 </article>
+                )}
+            </div>
+
+            <div
+                className={
+                    styles.backArea
+                }
+            >
+                <button
+                    type="button"
+                    onClick={() =>
+                        navigate("/profile")
+                    }
+                >
+                    ‹ 메인으로 돌아가기
+                </button>
             </div>
 
             {error && (

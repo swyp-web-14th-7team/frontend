@@ -2,16 +2,165 @@ import { useRef } from "react";
 
 import ExploreProfileCard from "../profile/ExploreProfileCard";
 
+import defaultProfileImage from "../../assets/images/avatarPlaceholder_default.png";
+
 import styles from "./MyCardSelector.module.css";
+
+const getCardId = (card) => {
+    return (
+        card?.id ??
+        card?.profileCardId ??
+        card?.cardId ??
+        null
+    );
+};
+
+const getIsPublic = (card) => {
+    if (
+        typeof card?.isPublic ===
+        "boolean"
+    ) {
+        return card.isPublic;
+    }
+
+    if (
+        typeof card?.isPrivate ===
+        "boolean"
+    ) {
+        return !card.isPrivate;
+    }
+
+    if (
+        typeof card?.isActive ===
+        "boolean"
+    ) {
+        return card.isActive;
+    }
+
+    if (card?.visibility) {
+        return (
+            String(card.visibility)
+                .trim()
+                .toLowerCase() ===
+            "public"
+        );
+    }
+
+    return true;
+};
+
+const normalizeCard = (card) => {
+    const cardId =
+        getCardId(card);
+
+    const profileImage =
+        card?.profileImageUrl ||
+        card?.profileImage ||
+        card?.imageUrl ||
+        card?.image ||
+        defaultProfileImage;
+
+    return {
+        ...card,
+
+        id: cardId,
+
+        name:
+            card?.name ||
+            card?.nickname ||
+            card?.userName ||
+            "이름 없음",
+
+        nickname:
+            card?.nickname ||
+            card?.name ||
+            card?.userName ||
+            "이름 없음",
+
+        profileImageUrl:
+            profileImage,
+
+        profileImage:
+            profileImage,
+
+        imageUrl:
+            profileImage,
+
+        image:
+            profileImage,
+
+        job:
+            card?.job ||
+            card?.jobTypeName ||
+            card?.jobName ||
+            card?.jobType ||
+            "",
+
+        jobType:
+            card?.jobType ||
+            card?.jobTypeName ||
+            card?.jobName ||
+            card?.job ||
+            "",
+
+        introduction:
+            card?.introduction ||
+            card?.description ||
+            "",
+
+        description:
+            card?.description ||
+            card?.introduction ||
+            "",
+
+        cardImageUrl:
+            card?.cardImageUrl ||
+            card?.backgroundImageUrl ||
+            card?.backgroundImage ||
+            "",
+
+        backgroundImage:
+            card?.backgroundImage ||
+            card?.backgroundImageUrl ||
+            card?.cardImageUrl ||
+            "",
+    };
+};
 
 const MyCardSelector = ({
     cards = [],
     selectedCardId,
     onSelect,
 }) => {
-    const cardRefs = useRef({});
+    const cardRefs =
+        useRef({});
 
-    const handleSelect = (cardId) => {
+    const normalizedCards =
+        Array.isArray(cards)
+            ? cards
+                  .map(normalizeCard)
+                  .filter(
+                      (card) =>
+                          card.id !==
+                              null &&
+                          card.id !==
+                              undefined,
+                  )
+            : [];
+
+    console.log(
+        "MyCardSelector 원본 cards:",
+        cards,
+    );
+
+    console.log(
+        "MyCardSelector 변환 cards:",
+        normalizedCards,
+    );
+
+    const handleSelect = (
+        cardId,
+    ) => {
         onSelect?.(cardId);
 
         cardRefs.current[
@@ -23,118 +172,16 @@ const MyCardSelector = ({
         });
     };
 
-    /*
-     * 공개 여부를 확인합니다.
-     *
-     * API 응답에 공개 여부 필드가 없으면
-     * 기본적으로 공개 카드로 처리합니다.
-     *
-     * 명확한 비공개 값이 있을 때만
-     * 비공개로 표시합니다.
-     */
-    const getIsPublic = (card) => {
-        if (!card) {
-            return true;
-        }
-
-        /*
-         * Boolean 형태
-         */
-        if (
-            typeof card.isPublic ===
-            "boolean"
-        ) {
-            return card.isPublic;
-        }
-
-        if (
-            typeof card.isPrivate ===
-            "boolean"
-        ) {
-            return !card.isPrivate;
-        }
-
-        if (
-            typeof card.public ===
-            "boolean"
-        ) {
-            return card.public;
-        }
-
-        if (
-            typeof card.isVisible ===
-            "boolean"
-        ) {
-            return card.isVisible;
-        }
-
-        /*
-         * 문자열 형태
-         */
-        const visibilityValue =
-            card.visibility ??
-            card.cardVisibility ??
-            card.visibilityType ??
-            card.publicStatus ??
-            card.status;
-
-        if (
-            visibilityValue !==
-                undefined &&
-            visibilityValue !== null
-        ) {
-            const normalizedValue =
-                String(
-                    visibilityValue,
-                )
-                    .trim()
-                    .toLowerCase();
-
-            const privateValues = [
-                "private",
-                "비공개",
-                "closed",
-                "hidden",
-                "false",
-                "0",
-            ];
-
-            const publicValues = [
-                "public",
-                "공개",
-                "open",
-                "visible",
-                "true",
-                "1",
-            ];
-
-            if (
-                privateValues.includes(
-                    normalizedValue,
-                )
-            ) {
-                return false;
-            }
-
-            if (
-                publicValues.includes(
-                    normalizedValue,
-                )
-            ) {
-                return true;
-            }
-        }
-
-        /*
-         * 공개 여부 필드가 없는 경우에는
-         * 공개 카드로 표시합니다.
-         */
-        return true;
-    };
-
-    if (cards.length === 0) {
+    if (
+        normalizedCards.length ===
+        0
+    ) {
         return (
-            <div className={styles.empty}>
+            <div
+                className={
+                    styles.empty
+                }
+            >
                 보낼 수 있는 프로필 카드가
                 없습니다.
             </div>
@@ -143,78 +190,95 @@ const MyCardSelector = ({
 
     return (
         <div
-            className={styles.selector}
+            className={
+                styles.selector
+            }
         >
             <div
-                className={styles.carousel}
+                className={
+                    styles.carousel
+                }
             >
-                {cards.map((card) => {
-                    const isSelected =
-                        String(
-                            selectedCardId,
-                        ) ===
-                        String(card.id);
+                {normalizedCards.map(
+                    (card) => {
+                        const isSelected =
+                            String(
+                                selectedCardId,
+                            ) ===
+                            String(
+                                card.id,
+                            );
 
-                    const isPublic =
-                        getIsPublic(card);
+                        const isPublic =
+                            getIsPublic(
+                                card,
+                            );
 
-                    return (
-                        <div
-                            key={card.id}
-                            ref={(element) => {
-                                cardRefs.current[
+                        return (
+                            <div
+                                key={
                                     card.id
-                                ] = element;
-                            }}
-                            className={
-                                styles.cardOption
-                            }
-                        >
-                            <div
-                                className={`${styles.cardWrapper} ${
-                                    isSelected
-                                        ? styles.selectedCard
-                                        : styles.unselectedCard
-                                }`}
-                            >
-                                <ExploreProfileCard
-                                    profile={card}
-                                    onClick={() =>
-                                        handleSelect(
-                                            card.id,
-                                        )
-                                    }
-                                />
-                            </div>
-
-                            <div
+                                }
+                                ref={(
+                                    element,
+                                ) => {
+                                    cardRefs.current[
+                                        card.id
+                                    ] =
+                                        element;
+                                }}
                                 className={
-                                    styles.cardMeta
+                                    styles.cardOption
                                 }
                             >
-                                <span
-                                    className={`${styles.badge} ${
-                                        isPublic
-                                            ? styles.publicBadge
-                                            : styles.privateBadge
+                                <div
+                                    className={`${styles.cardWrapper} ${
+                                        isSelected
+                                            ? styles.selectedCard
+                                            : styles.unselectedCard
                                     }`}
                                 >
-                                    {isPublic
-                                        ? "공개"
-                                        : "비공개"}
-                                </span>
+                                    <ExploreProfileCard
+                                        profile={
+                                            card
+                                        }
+                                        onClick={() =>
+                                            handleSelect(
+                                                card.id,
+                                            )
+                                        }
+                                    />
+                                </div>
 
-                                {card.isDefault && (
+                                <div
+                                    className={
+                                        styles.cardMeta
+                                    }
+                                >
                                     <span
-                                        className={`${styles.badge} ${styles.defaultBadge}`}
+                                        className={`${styles.badge} ${
+                                            isPublic
+                                                ? styles.publicBadge
+                                                : styles.privateBadge
+                                        }`}
                                     >
-                                        기본
+                                        {isPublic
+                                            ? "공개"
+                                            : "비공개"}
                                     </span>
-                                )}
+
+                                    {card.isDefault && (
+                                        <span
+                                            className={`${styles.badge} ${styles.defaultBadge}`}
+                                        >
+                                            기본
+                                        </span>
+                                    )}
+                                </div>
                             </div>
-                        </div>
-                    );
-                })}
+                        );
+                    },
+                )}
             </div>
 
             <div
@@ -223,36 +287,47 @@ const MyCardSelector = ({
                 }
                 aria-label="카드 선택"
             >
-                {cards.map((card) => {
-                    const isActive =
-                        String(
-                            selectedCardId,
-                        ) ===
-                        String(card.id);
+                {normalizedCards.map(
+                    (card) => {
+                        const isActive =
+                            String(
+                                selectedCardId,
+                            ) ===
+                            String(
+                                card.id,
+                            );
 
-                    return (
-                        <button
-                            key={card.id}
-                            type="button"
-                            className={`${styles.dot} ${
-                                isActive
-                                    ? styles.activeDot
-                                    : ""
-                            }`}
-                            onClick={() =>
-                                handleSelect(
-                                    card.id,
-                                )
-                            }
-                            aria-label={`${card.cardName || "프로필 카드"} 선택`}
-                            aria-current={
-                                isActive
-                                    ? "true"
-                                    : undefined
-                            }
-                        />
-                    );
-                })}
+                        return (
+                            <button
+                                key={
+                                    card.id
+                                }
+                                type="button"
+                                className={`${styles.dot} ${
+                                    isActive
+                                        ? styles.activeDot
+                                        : ""
+                                }`}
+                                onClick={() =>
+                                    handleSelect(
+                                        card.id,
+                                    )
+                                }
+                                aria-label={`${
+                                    card.cardName ||
+                                    card.nickname ||
+                                    card.name ||
+                                    "프로필 카드"
+                                } 선택`}
+                                aria-current={
+                                    isActive
+                                        ? "true"
+                                        : undefined
+                                }
+                            />
+                        );
+                    },
+                )}
             </div>
         </div>
     );
