@@ -1,9 +1,12 @@
 import OnboardingLayout from "../common/OnboardingLayout";
-import styles from "./WelcomeStep.module.css";
+
+import loadingAnimation from "../../assets/animations/loading.webm";
 
 import {
     getUserName,
 } from "../../utils/auth";
+
+import styles from "./WelcomeStep.module.css";
 
 const WelcomeStep = ({
     onNext,
@@ -30,7 +33,9 @@ const WelcomeStep = ({
                             className={
                                 styles.mobileBr
                             }
-                        /><br/>
+                        />
+                        <br />
+
                         카드를 만들어볼까요?
                     </h1>
 
@@ -40,15 +45,32 @@ const WelcomeStep = ({
                         기본 카드를 만들어서
                         공유하고
                         <br />
+
                         다른 사람의 카드를
                         구경할 수 있어요.
                     </p>
                 </div>
 
                 <div
-                    className={styles.logoBox}
+                    className={
+                        styles.animationBox
+                    }
                     aria-hidden="true"
-                />
+                >
+                    <video
+                        className={
+                            styles.animationVideo
+                        }
+                        src={
+                            loadingAnimation
+                        }
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        preload="auto"
+                    />
+                </div>
 
                 <button
                     type="button"

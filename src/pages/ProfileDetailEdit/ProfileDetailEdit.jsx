@@ -931,7 +931,7 @@ const ProfileDetailEdit = () => {
                                     experience.relatedUrl.trim(),
 
                                 sortOrder:
-                                    index,
+                                    index + 1,
 
                                 isRepresentative:
                                     Boolean(

@@ -34,6 +34,10 @@ import {
     saveOnboardingDraft,
 } from "../../utils/onboardingDraft";
 
+import {
+    getUserName,
+} from "../../utils/auth";
+
 import CardBasicStep from "../../components/onboarding/CardBasicStep";
 import CardPreviewStep from "../../components/onboarding/CardPreviewStep";
 import CompleteStep from "../../components/onboarding/CompleteStep";
@@ -137,17 +141,14 @@ const INITIAL_ONBOARDING_DATA = {
 const getDefaultCardData = (
     profileCard,
 ) => {
-    if (!profileCard) {
-        return {};
-    }
-
     const nickname =
-        profileCard.nickname ||
-        profileCard.name ||
+        profileCard?.nickname ||
+        profileCard?.name ||
+        getUserName() ||
         "";
 
     const profileImageUrl =
-        profileCard.profileImageUrl ||
+        profileCard?.profileImageUrl ||
         "";
 
     return {
@@ -158,7 +159,7 @@ const getDefaultCardData = (
         profileImageUrl,
         links:
             Array.isArray(
-                profileCard.links,
+                profileCard?.links,
             )
                 ? profileCard.links
                 : [],
@@ -202,9 +203,16 @@ const Onboarding = () => {
     const [
         onboardingData,
         setOnboardingData,
-    ] = useState(
-        INITIAL_ONBOARDING_DATA,
-    );
+    ] = useState(() => {
+        const userName =
+            getUserName() || "";
+
+        return {
+            ...INITIAL_ONBOARDING_DATA,
+            name: userName,
+            nickname: userName,
+        };
+    });
 
     const [
         optionData,

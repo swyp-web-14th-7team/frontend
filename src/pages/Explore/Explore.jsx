@@ -42,13 +42,6 @@
 
     import styles from "./Explore.module.css";
 
-    const TABS = [
-    "전체보기",
-    "팀 빌딩",
-    "커피챗",
-    "교류/네트워킹",
-    ];
-
     const normalizePurposeName = (
     value = "",
     ) => {
@@ -246,6 +239,13 @@
         isAffiliationLoading,
         setIsAffiliationLoading,
     ] = useState(true);
+
+    const purposeTabs = [
+        "전체보기",
+        ...purposes
+        .map((purpose) => purpose?.name)
+        .filter(Boolean),
+    ];
 
     const isUserLoggedIn =
         isLoggedIn();
@@ -1020,7 +1020,7 @@
                     role="tablist"
                     aria-label="탐색 카테고리"
                 >
-                    {TABS.map((tab) => {
+                    {purposeTabs.map((tab) => {
                     const isActive =
                         activeTab === tab;
 
