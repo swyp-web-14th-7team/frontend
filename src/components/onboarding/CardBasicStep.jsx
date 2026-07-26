@@ -17,6 +17,32 @@ import StrengthTypeModal from "./StrengthTypeModal";
 
 import styles from "./CardBasicStep.module.css";
 
+const getProfileImagePreviewUrl = (
+    imageUrl,
+) => {
+    const normalizedUrl = (
+        imageUrl || ""
+    ).trim();
+
+    if (!normalizedUrl) {
+        return "";
+    }
+
+    const isImageFileUrl =
+        /\.(?:avif|gif|jpe?g|png|webp)(?:\?.*)?$/i.test(
+            normalizedUrl,
+        );
+
+    if (isImageFileUrl) {
+        return normalizedUrl;
+    }
+
+    return `${normalizedUrl.replace(
+        /\/+$/,
+        "",
+    )}/72.webp`;
+};
+
 const createSkillSections = (
     skills,
 ) => {
@@ -265,10 +291,9 @@ const CardBasicStep = ({
 
                 handleChange(
                     "profileImagePreview",
-                    `${uploadData.url.replace(
-                        /\/$/,
-                        "",
-                    )}/72.webp`,
+                    getProfileImagePreviewUrl(
+                        uploadData.url,
+                    ),
                 );
 
                 URL.revokeObjectURL(
