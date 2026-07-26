@@ -115,7 +115,7 @@
     border: 1px solid #62677b;
     border-radius: 8px;
 
-    background-color: #4e5368;
+    background-color: #32374c;
     color: #ffffff;
 
     font-family: inherit;
@@ -284,22 +284,33 @@
         width: 90px;
     }
 
-    .affiliationDropdown > button,
-    .selectedAffiliationDropdown > button {
-        height: 40px;
-    }
+/* 현 소속과 직군·스킬 공통 색상 */
+.affiliationDropdown > button,
+.filterButton {
+    border: 1px solid #62677b;
+    background-color: #32374c;
+    color: #ffffff;
+}
 
-    .filterButton,
-    .activeFilterButton {
-        width: auto;
-        min-width: 82px;
-        max-width: 160px;
-        height: 40px;
-        padding: 0 14px;
+/* 스킬 적용 후에도 동일한 색상 유지 */
+.activeFilterButton {
+    width: auto;
+    min-width: 132px;
+    max-width: 190px;
+    padding: 0 16px;
 
-        border-color: #7c8299;
-        background-color: #34394f;
-    }
+    justify-content: center;
+
+    border-color: #878fa1;
+    background-color: #32374c;
+}
+
+.affiliationDropdown > button:hover,
+.filterButton:hover,
+.activeFilterButton:hover {
+    border-color: #878fa1;
+    background-color: #32374c;
+}
 
     .sortArea {
         width: 100%;
