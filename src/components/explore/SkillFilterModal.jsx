@@ -415,32 +415,23 @@
             aria-modal="true"
             aria-labelledby="skill-filter-title"
         >
-            <div
-            className={
-                styles.header
-            }
-            >
-            <h2
-                id="skill-filter-title"
-                className={
-                styles.title
-                }
-            >
-                직군·스킬
-            </h2>
+            <div className={styles.header}>
+                <h2
+                    id="skill-filter-title"
+                    className={styles.title}
+                >
+                    검색 필터
+                </h2>
 
-            <button
-                type="button"
-                className={
-                styles.closeButton
-                }
-                onClick={onClose}
-                aria-label="직군·스킬 필터 닫기"
-            >
-                ×
-            </button>
+                <button
+                    type="button"
+                    className={styles.closeButton}
+                    onClick={onClose}
+                    aria-label="검색 필터 닫기"
+                >
+                    ×
+                </button>
             </div>
-
             <div
             className={
                 styles.jobArea
@@ -789,33 +780,21 @@
                 </div>
             </div>
 
-            <div
-                className={
-                styles.footer
-                }
-            >
+            <div className={styles.footer}>
                 <button
-                type="button"
-                className={
-                    styles.resetButton
-                }
-                onClick={
-                    handleReset
-                }
+                    type="button"
+                    className={styles.resetButton}
+                    onClick={handleReset}
                 >
-                초기화
+                    초기화
                 </button>
 
                 <button
-                type="button"
-                className={
-                    styles.applyButton
-                }
-                onClick={
-                    handleApply
-                }
+                    type="button"
+                    className={styles.applyButton}
+                    onClick={handleApply}
                 >
-                적용하기
+                    적용하기
                 </button>
             </div>
             </div>

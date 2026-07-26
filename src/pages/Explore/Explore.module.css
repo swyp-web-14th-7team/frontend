@@ -1,43 +1,47 @@
-    .main {
-    min-height: calc(100vh - 64px);
-    padding: 48px 80px 80px;
+.main {
+    min-height: calc(100vh - 76px);
+    padding: 60px 0 58px;
 
     background-color: #111017;
     color: #ffffff;
 
     box-sizing: border-box;
-    }
+}
 
-    .hero {
-    width: 100%;
-    max-width: 720px;
+.hero {
+    width: min(820px, calc(100% - 40px));
     margin: 0 auto;
-    }
+}
 
-    .title {
+.title {
     margin: 0 0 20px;
 
-    color: #ffffff;
+    color: #fdfeff;
     font-size: 24px;
-    font-weight: 700;
-    line-height: 1.4;
-    }
+    font-weight: 600;
+    line-height: 138%;
+    letter-spacing: 0.552px;
+}
 
-    .exploreSection {
+.exploreSection {
+    width: min(1240px, 100%);
+    margin: 60px auto 0;
+}
+
+.tabList {
     width: 100%;
-    max-width: 1280px;
-    margin: 56px auto 0;
-    }
+    padding: 0 24px;
 
-    .tabList {
     display: flex;
     align-items: center;
     gap: 28px;
 
     border-bottom: 1px solid #303344;
-    }
 
-    .tabButton {
+    box-sizing: border-box;
+}
+
+.tabButton {
     position: relative;
 
     padding: 0 0 14px;
@@ -51,18 +55,18 @@
     font-weight: 500;
 
     cursor: pointer;
-    }
+}
 
-    .tabButton:hover {
+.tabButton:hover {
     color: #ffffff;
-    }
+}
 
-    .activeTab {
+.activeTab {
     color: #ffffff;
     font-weight: 600;
-    }
+}
 
-    .activeTab::after {
+.activeTab::after {
     position: absolute;
     right: 0;
     bottom: -1px;
@@ -73,28 +77,23 @@
     background-color: #ffffff;
 
     content: "";
-    }
+}
 
-    .cardArea {
+.cardArea {
     position: relative;
-    }
+}
 
-    /*
-    * 비로그인 제한 탭에서 카드가 없어도
-    * 로그인 유도 문구가 화면 아래쪽에
-    * 배치될 수 있도록 높이를 확보한다.
-    */
-    .restrictedCardArea {
+.restrictedCardArea {
     min-height: 520px;
-    }
+}
 
-    .maskGradient {
+.maskGradient {
     position: absolute;
     right: 0;
     bottom: 0;
     left: 0;
-
     z-index: 1;
+
     height: 65%;
 
     background: linear-gradient(
@@ -105,14 +104,13 @@
     );
 
     pointer-events: none;
-    }
+}
 
-    .loginGuide {
+.loginGuide {
     position: absolute;
     right: 0;
     bottom: 0;
     left: 0;
-
     z-index: 2;
 
     display: flex;
@@ -120,26 +118,26 @@
     flex-direction: column;
 
     text-align: center;
-    }
+}
 
-    .loginGuideTitle {
+.loginGuideTitle {
     margin: 0;
 
     color: #ffffff;
     font-size: 24px;
     font-weight: 700;
     line-height: 1.4;
-    }
+}
 
-    .loginGuideDescription {
+.loginGuideDescription {
     margin: 16px 0 24px;
 
     color: #9ca0b2;
     font-size: 14px;
     line-height: 1.6;
-    }
+}
 
-    .startButton {
+.startButton {
     width: 220px;
     height: 44px;
 
@@ -154,26 +152,28 @@
     font-weight: 600;
 
     cursor: pointer;
-    }
+}
 
-    .startButton:hover {
+.startButton:hover {
     opacity: 0.9;
-    }
+}
 
-    .mobileOnly {
+.mobileOnly {
     display: none;
-    }
+}
 
-    @media (max-width: 768px) {
+@media (max-width: 768px) {
     .mobileOnly {
         display: block;
     }
 
     .main {
+        min-height: 100vh;
         padding: 0 20px 120px;
     }
 
     .hero {
+        width: 100%;
         margin-top: 24px;
     }
 
@@ -220,6 +220,7 @@
     }
 
     .exploreSection {
+        width: 100%;
         margin-top: 28px;
     }
 
@@ -228,14 +229,11 @@
         margin-left: -20px;
         padding: 0 20px;
 
-        display: flex;
         gap: 28px;
-
         overflow-x: auto;
 
         border-bottom: 1px solid #34384b;
 
-        box-sizing: border-box;
         scrollbar-width: none;
     }
 
@@ -247,50 +245,18 @@
         flex-shrink: 0;
     }
 
-    .cardArea {
-        position: relative;
-    }
-
     .restrictedCardArea {
-        min-height:
-        calc(100vh - 340px);
+        min-height: calc(100vh - 340px);
     }
 
     .loginGuide {
-        position: absolute;
-        right: 0;
-        bottom: 0;
-        left: 0;
-
         z-index: 500;
-
-        display: flex;
-        align-items: center;
-        flex-direction: column;
-
-        text-align: center;
-
-        pointer-events: auto;
     }
 
     .startButton {
         position: relative;
         z-index: 501;
 
-        width: 220px;
-        height: 44px;
-
-        border: 0;
-        border-radius: 6px;
-
-        background-color: #cceaff;
-        color: #111017;
-
-        font-family: inherit;
-        font-size: 14px;
-        font-weight: 600;
-
-        cursor: pointer;
         pointer-events: auto;
     }
-    }
+}
