@@ -95,6 +95,39 @@
     isRepresentative,
     });
 
+    /*
+     * 프로필 이미지 API는 이미지의 기본 경로를 반환하고,
+     * 실제 표시용 이미지는 크기별 파일 경로를 사용합니다.
+     *
+     * 이미 완성된 이미지 파일 URL을 받은 경우에는
+     * 같은 경로를 그대로 사용합니다.
+     */
+    const getProfileImagePreviewUrl = (
+    imageUrl,
+    ) => {
+    const normalizedUrl = (
+        imageUrl || ""
+    ).trim();
+
+    if (!normalizedUrl) {
+        return "";
+    }
+
+    const isImageFileUrl =
+        /\.(?:avif|gif|jpe?g|png|webp)(?:\?.*)?$/i.test(
+        normalizedUrl,
+        );
+
+    if (isImageFileUrl) {
+        return normalizedUrl;
+    }
+
+    return `${normalizedUrl.replace(
+        /\/+$/,
+        "",
+    )}/72.webp`;
+    };
+
     const getItems = (response) => {
     if (Array.isArray(response)) {
         return response;
@@ -246,6 +279,11 @@
         profileCard.profileImageUrl ||
         "";
 
+    const profileImagePreview =
+        getProfileImagePreviewUrl(
+        profileImageUrl,
+        );
+
     return {
         name: nickname,
         nickname,
@@ -255,8 +293,7 @@
 
         profileImageUrl,
 
-        profileImagePreview:
-        profileImageUrl,
+        profileImagePreview,
 
         links: normalizeLinks(
         profileCard.links,

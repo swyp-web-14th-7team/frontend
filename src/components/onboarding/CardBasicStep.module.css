@@ -1,4 +1,4 @@
-    .container {
+.container {
     width: 100%;
     min-height: calc(100vh - 180px);
     display: flex;
@@ -33,11 +33,13 @@
     }
 
     .profileCircle {
-    width: 96px;
-    height: 96px;
-    padding: 64px 0 0 64px;
+    position: relative;
+    width: 72px;
+    height: 72px;
+    overflow: hidden;
     border-radius: 50%;
     background-color: var(--gray-600);
+    flex-shrink: 0;
     }
 
     .editButton {
@@ -53,9 +55,9 @@
     align-items: center;
     justify-content: center;
 
-    border-radius: 18px;
-    border: 2px solid var(--gray900, #222435);
-    background: var(--blue400, #5397FA);
+    border: none;
+    border-radius: 50%;
+    background-color: var(--gray-700);
     color: var(--white);
 
     cursor: pointer;
@@ -207,7 +209,7 @@
     border-radius: 50%;
 }
 
-    /* 390px 모바일 */
+    /* 390px 紐⑤컮�� */
     @media (max-width: 768px) {
     .container {
         min-height: auto;

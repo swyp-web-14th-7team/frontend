@@ -297,6 +297,39 @@ const getPersonalityIcon = (
     )}/36.webp`;
 };
 
+/*
+ * 프로필 이미지 API는 이미지의 기본 경로를 반환할 수 있으므로
+ * 탐색 카드에서 사용하는 72px 이미지 경로로 변환합니다.
+ *
+ * 이미 이미지 확장자가 포함된 완성 URL이라면 그대로 사용합니다.
+ */
+const getProfileImageUrl = (
+    imageUrl,
+) => {
+    const normalizedUrl =
+        String(
+            imageUrl || "",
+        ).trim();
+
+    if (!normalizedUrl) {
+        return "";
+    }
+
+    const isImageFileUrl =
+        /\.(?:avif|gif|jpe?g|png|webp)(?:\?.*)?$/i.test(
+            normalizedUrl,
+        );
+
+    if (isImageFileUrl) {
+        return normalizedUrl;
+    }
+
+    return `${normalizedUrl.replace(
+        /\/+$/,
+        "",
+    )}/72.webp`;
+};
+
 export const mapProfileCard = (
     profile = {},
 ) => {
@@ -354,8 +387,10 @@ export const mapProfileCard = (
             normalizedJob,
 
         profileImage:
-            profile.profileImageUrl ||
-            profile.profileImageUri ||
+            getProfileImageUrl(
+                profile.profileImageUrl ||
+                    profile.profileImageUri,
+            ) ||
             avatarPlaceholderDefault,
 
         cardImage:
