@@ -25,8 +25,8 @@ const RestrictedCardWrapper = ({
 
             {isRestricted && (
                 <div
-                    title="로그인 후 이용할 수 있습니다."
-                    aria-label="로그인 후 이용할 수 있는 프로필입니다."
+                    title="로그인 후 이용할 수 있어요."
+                    aria-label="로그인 후 이용할 수 있는 프로필이에요."
                     style={{
                         position:
                             "absolute",
@@ -126,7 +126,7 @@ const ExploreCardList = ({
                 }
             >
                 프로필을 불러오는
-                중입니다.
+                중이에요.
             </p>
         );
     }
@@ -153,7 +153,7 @@ const ExploreCardList = ({
                 }
             >
                 조건에 맞는 프로필이
-                없습니다.
+                아직 없어요.
             </p>
         );
     }

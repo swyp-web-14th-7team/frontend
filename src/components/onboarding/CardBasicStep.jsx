@@ -307,9 +307,6 @@ const CardBasicStep = ({
             data.affiliationStatusId,
         ) &&
         (
-            data.affiliation || ""
-        ).trim() !== "" &&
-        (
             data.introduction || ""
         ).trim() !== "" &&
         Boolean(data.strength);

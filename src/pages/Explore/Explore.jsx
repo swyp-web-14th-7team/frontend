@@ -442,7 +442,7 @@ const Explore = () => {
 
                                             message:
                                                 item.message ||
-                                                "전달된 메시지가 없습니다.",
+                                                "전달된 메시지가 없어요.",
                                         },
                                     );
                                 },
@@ -488,7 +488,7 @@ const Explore = () => {
 
                     setExchangeError(
                         error.message ||
-                            "교환 요청을 불러오지 못했습니다.",
+                            "교환 요청을 불러오지 못했어요.",
                     );
                 }
             },
@@ -566,7 +566,7 @@ const Explore = () => {
                     );
 
                     setPurposeError(
-                        "목적 목록을 불러오지 못했습니다.",
+                        "목적 목록을 불러오지 못했어요.",
                     );
                 } finally {
                     if (
@@ -695,7 +695,7 @@ const Explore = () => {
 
                     setErrorMessage(
                         purposeError ||
-                            `${activeTab} 목적 데이터가 등록되어 있지 않습니다.`,
+                            `${activeTab} 목적 데이터가 등록되어 있지 않아요.`,
                     );
 
                     return;
@@ -818,7 +818,7 @@ const Explore = () => {
                     );
 
                     setErrorMessage(
-                        "프로필을 불러오지 못했습니다.",
+                        "프로필을 불러오지 못했어요.",
                     );
                 } finally {
                     if (
@@ -991,7 +991,7 @@ const Explore = () => {
                 );
 
                 window.alert(
-                    "카드 교환 요청을 거절했습니다.",
+                    "카드 교환 요청을 거절했어요.",
                 );
             } catch (error) {
                 console.error(
@@ -1001,7 +1001,7 @@ const Explore = () => {
 
                 window.alert(
                     error.message ||
-                        "교환 요청을 거절하지 못했습니다.",
+                        "교환 요청을 거절하지 못했어요.",
                 );
             }
         };
@@ -1031,7 +1031,7 @@ const Explore = () => {
                 );
 
                 window.alert(
-                    "카드 교환이 완료되었습니다.",
+                    "카드 교환이 완료되었어요.",
                 );
             } catch (error) {
                 console.error(
@@ -1041,7 +1041,7 @@ const Explore = () => {
 
                 window.alert(
                     error.message ||
-                        "교환 요청을 수락하지 못했습니다.",
+                        "교환 요청을 수락하지 못했어요.",
                 );
             }
         };
