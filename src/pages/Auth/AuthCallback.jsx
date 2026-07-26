@@ -13,7 +13,7 @@ import {
 } from "../../api/auth";
 
 import {
-    getMyProfileCards,
+    getDefaultProfileCard,
 } from "../../api/profile";
 
 import {
@@ -108,43 +108,41 @@ const AuthCallback = ({
                         );
                     }
 
-                    const profileData =
-                        await getMyProfileCards(
-                            {
-                                page: 1,
-                                limit: 1,
-                                sort:
-                                    "createdAt",
-                                order:
-                                    "desc",
-                            },
-                        );
+try {
+    const defaultProfile =
+        await getDefaultProfileCard();
 
-                    const profileCards =
-                        profileData?.items ||
-                        [];
+    const defaultProfileId =
+        defaultProfile?.id ??
+        defaultProfile?.profileCardId ??
+        defaultProfile?.profileCard?.id ??
+        null;
 
-                    if (
-                        profileCards.length ===
-                        0
-                    ) {
-                        navigate(
-                            "/onboarding",
-                            {
-                                replace:
-                                    true,
-                            },
-                        );
+    if (!defaultProfileId) {
+        navigate("/onboarding", {
+            replace: true,
+        });
 
-                        return;
-                    }
+        return;
+    }
 
-                    navigate(
-                        "/explore",
-                        {
-                            replace: true,
-                        },
-                    );
+    navigate("/explore", {
+        replace: true,
+    });
+} catch (profileError) {
+    if (
+        profileError?.status === 404
+    ) {
+        navigate("/onboarding", {
+            replace: true,
+        });
+
+        return;
+    }
+
+    throw profileError;
+}
+
                 } catch (error) {
                     console.error(
                         "로그인 처리 실패:",
