@@ -1,4 +1,8 @@
 import {
+    useLayoutEffect,
+} from "react";
+
+import {
     Outlet,
     useLocation,
 } from "react-router-dom";
@@ -8,31 +12,47 @@ import BottomNavigation from "../components/common/BottomNavigation/BottomNaviga
 
 import styles from "./MainLayout.module.css";
 
+const ScrollToTop = () => {
+    const location =
+        useLocation();
+
+    useLayoutEffect(() => {
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: "auto",
+        });
+
+        // 브라우저별 스크롤 컨테이너 대응
+        document.documentElement.scrollTop =
+            0;
+
+        document.body.scrollTop =
+            0;
+    }, [
+        location.pathname,
+    ]);
+
+    return null;
+};
+
 const MainLayout = () => {
-    const location = useLocation();
-
-    const isExplorePage =
-        location.pathname === "/explore";
-
-    const isProfileCarouselPage =
-        location.pathname.startsWith(
-            "/profile-carousel/",
-        );
-
-    const shouldHideMobileHeader =
-        isExplorePage ||
-        isProfileCarouselPage;
+    const location =
+        useLocation();
 
     /*
-     * 탐색 화면은 자체 하단 내비게이션을 사용하고,
-     * 캐러셀 화면에서는 하단 내비게이션을 사용하지 않는다.
+     * 탐색 화면은 페이지 내부에
+     * 별도의 모바일 헤더가 있으므로
+     * 공통 헤더를 모바일에서 숨깁니다.
      */
-    const shouldHideLayoutBottomNavigation =
-        isExplorePage ||
-        isProfileCarouselPage;
+    const shouldHideMobileHeader =
+        location.pathname ===
+        "/explore";
 
     return (
         <>
+            <ScrollToTop />
+
             <div
                 className={
                     shouldHideMobileHeader
@@ -45,9 +65,7 @@ const MainLayout = () => {
 
             <Outlet />
 
-            {!shouldHideLayoutBottomNavigation && (
-                <BottomNavigation />
-            )}
+            <BottomNavigation />
         </>
     );
 };

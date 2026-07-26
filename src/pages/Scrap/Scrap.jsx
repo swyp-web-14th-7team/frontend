@@ -15,9 +15,8 @@ import {
     updateCollectionGroup,
 } from "../../api/collections";
 
-import HorizontalProfileCard from "../../components/profile/HorizontalProfileCard";
 import ExploreProfileCard from "../../components/profile/ExploreProfileCard";
-
+import HorizontalProfileCard from "../../components/profile/HorizontalProfileCard";
 import MobileScrap from "./MobileScrap";
 
 import { mapProfileCard } from "../../utils/profileMapper";
@@ -39,6 +38,70 @@ const getArrayData = (data) => {
     );
 };
 
+const PencilIcon = () => (
+    <svg
+        viewBox="0 0 20 20"
+        aria-hidden="true"
+    >
+        <path
+            d="M13.8 3.2a1.7 1.7 0 0 1 2.4 2.4L7.1 14.7 3.8 16l1.3-3.3 8.7-9.5Z"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        />
+    </svg>
+);
+
+const TrashIcon = () => (
+    <svg
+        viewBox="0 0 20 20"
+        aria-hidden="true"
+    >
+        <path
+            d="M4.5 6h11M8 3.5h4M6 6l.6 10h6.8L14 6M8.4 9v4.5M11.6 9v4.5"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        />
+    </svg>
+);
+
+const ChevronLeftIcon = () => (
+    <svg
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+    >
+        <path
+            d="m15 18-6-6 6-6"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        />
+    </svg>
+);
+
+const ChevronRightIcon = () => (
+    <svg
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+    >
+        <path
+            d="m9 6 6 6-6 6"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        />
+    </svg>
+);
+
 const Scrap = () => {
     const navigate = useNavigate();
 
@@ -48,11 +111,15 @@ const Scrap = () => {
     const [isLoading, setIsLoading] =
         useState(true);
 
-    const [errorMessage, setErrorMessage] =
-        useState("");
+    const [
+        errorMessage,
+        setErrorMessage,
+    ] = useState("");
 
-    const [hoveredProfile, setHoveredProfile] =
-        useState(null);
+    const [
+        hoveredProfile,
+        setHoveredProfile,
+    ] = useState(null);
 
     const [isManaging, setIsManaging] =
         useState(false);
@@ -61,6 +128,11 @@ const Scrap = () => {
         selectedProfiles,
         setSelectedProfiles,
     ] = useState([]);
+
+    const [
+        sliderStates,
+        setSliderStates,
+    ] = useState({});
 
     const [
         isCreateModalOpen,
@@ -103,7 +175,9 @@ const Scrap = () => {
                                 const itemData =
                                     await getCollectionGroupItems(
                                         group.id,
-                                        { signal },
+                                        {
+                                            signal,
+                                        },
                                     );
 
                                 const items =
@@ -113,19 +187,20 @@ const Scrap = () => {
 
                                 return {
                                     id: group.id,
+
                                     name:
                                         group.name ||
                                         "이름 없는 서랍",
+
                                     profiles:
                                         items.map(
-                                            (
-                                                item,
-                                            ) => ({
+                                            (item) => ({
                                                 ...mapProfileCard(
                                                     item.card ||
                                                         item.profile ||
                                                         item,
                                                 ),
+
                                                 collectionId:
                                                     item.collectionId ??
                                                     item.id,
@@ -141,18 +216,21 @@ const Scrap = () => {
                 );
             } catch (error) {
                 if (
-                    error?.name !==
+                    error?.name ===
                     "AbortError"
                 ) {
-                    console.error(
-                        "스크랩 조회 실패:",
-                        error,
-                    );
-                    setErrorMessage(
-                        error.message ||
-                            "스크랩을 불러오지 못했습니다.",
-                    );
+                    return;
                 }
+
+                console.error(
+                    "스크랩 조회 실패:",
+                    error,
+                );
+
+                setErrorMessage(
+                    error.message ||
+                        "스크랩을 불러오지 못했습니다.",
+                );
             } finally {
                 if (!signal?.aborted) {
                     setIsLoading(false);
@@ -163,113 +241,253 @@ const Scrap = () => {
     );
 
     useEffect(() => {
-        const controller = new AbortController();
+        const controller =
+            new AbortController();
 
-        const fetchDrawers = async () => {
-            await loadDrawers(controller.signal);
-        };
-
-        fetchDrawers();
+        loadDrawers(
+            controller.signal,
+        );
 
         return () => {
             controller.abort();
         };
     }, [loadDrawers]);
 
+    const updateSliderState =
+        useCallback(
+            (drawerId) => {
+                const element =
+                    cardListRefs.current[
+                        drawerId
+                    ];
+
+                if (!element) {
+                    return;
+                }
+
+                const maxScrollLeft =
+                    Math.max(
+                        0,
+                        element.scrollWidth -
+                            element.clientWidth,
+                    );
+
+                const nextState = {
+                    canPrevious:
+                        element.scrollLeft >
+                        2,
+
+                    canNext:
+                        element.scrollLeft <
+                        maxScrollLeft - 2,
+                };
+
+                setSliderStates(
+                    (
+                        currentStates,
+                    ) => {
+                        const currentState =
+                            currentStates[
+                                drawerId
+                            ];
+
+                        if (
+                            currentState
+                                ?.canPrevious ===
+                                nextState.canPrevious &&
+                            currentState
+                                ?.canNext ===
+                                nextState.canNext
+                        ) {
+                            return currentStates;
+                        }
+
+                        return {
+                            ...currentStates,
+
+                            [drawerId]:
+                                nextState,
+                        };
+                    },
+                );
+            },
+            [],
+        );
+
+    useEffect(() => {
+        const updateAllSliders =
+            () => {
+                drawers.forEach(
+                    (drawer) => {
+                        updateSliderState(
+                            drawer.id,
+                        );
+                    },
+                );
+            };
+
+        const frame =
+            window.requestAnimationFrame(
+                updateAllSliders,
+            );
+
+        window.addEventListener(
+            "resize",
+            updateAllSliders,
+        );
+
+        return () => {
+            window.cancelAnimationFrame(
+                frame,
+            );
+
+            window.removeEventListener(
+                "resize",
+                updateAllSliders,
+            );
+        };
+    }, [
+        drawers,
+        updateSliderState,
+    ]);
+
     const getSelectionKey = (
         drawerId,
         profile,
-    ) =>
-        String(
+    ) => {
+        return String(
             profile.collectionId ??
                 `${drawerId}-${profile.id}`,
         );
+    };
 
     const isProfileSelected = (
         drawerId,
         profile,
     ) => {
-        const selectionKey = getSelectionKey(
-            drawerId,
-            profile,
-        );
+        const selectionKey =
+            getSelectionKey(
+                drawerId,
+                profile,
+            );
 
         return selectedProfiles.includes(
             selectionKey,
         );
     };
 
-    const handleNext = (drawerId) => {
+    const handleNext = (
+        drawerId,
+    ) => {
         cardListRefs.current[
             drawerId
         ]?.scrollBy({
-            left: CARD_SCROLL_DISTANCE,
-            behavior: "smooth",
+            left:
+                CARD_SCROLL_DISTANCE,
+
+            behavior:
+                "smooth",
         });
     };
 
-    const handlePrevious = (drawerId) => {
+    const handlePrevious = (
+        drawerId,
+    ) => {
         cardListRefs.current[
             drawerId
         ]?.scrollBy({
-            left: -CARD_SCROLL_DISTANCE,
-            behavior: "smooth",
+            left:
+                -CARD_SCROLL_DISTANCE,
+
+            behavior:
+                "smooth",
         });
     };
 
-    const handleStartManaging = () => {
-        setSelectedProfiles([]);
-        setHoveredProfile(null);
-        setIsManaging(true);
+    const handleOpenProfile = (
+        profileId,
+    ) => {
+        if (!profileId) {
+            return;
+        }
+
+        navigate(
+            `/profile/${profileId}`,
+        );
     };
 
-    const handleFinishManaging = () => {
-        setSelectedProfiles([]);
-        setHoveredProfile(null);
-        setIsManaging(false);
-    };
+    const handleStartManaging =
+        () => {
+            setSelectedProfiles(
+                [],
+            );
+
+            setHoveredProfile(
+                null,
+            );
+
+            setIsManaging(
+                true,
+            );
+        };
+
+    const handleFinishManaging =
+        () => {
+            setSelectedProfiles(
+                [],
+            );
+
+            setHoveredProfile(
+                null,
+            );
+
+            setIsManaging(
+                false,
+            );
+        };
 
     const handleSelectProfile = (
         drawerId,
         profile,
     ) => {
-        const selectionKey = getSelectionKey(
-            drawerId,
-            profile,
-        );
+        const selectionKey =
+            getSelectionKey(
+                drawerId,
+                profile,
+            );
 
         setSelectedProfiles(
-            (previousSelected) => {
+            (
+                currentSelected,
+            ) => {
                 if (
-                    previousSelected.includes(
+                    currentSelected.includes(
                         selectionKey,
                     )
                 ) {
-                    return previousSelected.filter(
+                    return currentSelected.filter(
                         (key) =>
-                            key !== selectionKey,
+                            key !==
+                            selectionKey,
                     );
                 }
 
                 return [
-                    ...previousSelected,
+                    ...currentSelected,
                     selectionKey,
                 ];
             },
         );
     };
 
-    /*
-     * 일반 모드:
-     * 세부 프로필 화면으로 이동
-     *
-     * 관리 모드:
-     * 프로필 선택 또는 선택 해제
-     */
     const handleProfileClick = (
         drawerId,
         profile,
     ) => {
+        setHoveredProfile(
+            profile,
+        );
+
         if (isManaging) {
             handleSelectProfile(
                 drawerId,
@@ -279,7 +497,9 @@ const Scrap = () => {
             return;
         }
 
-        navigate(`/profile/${profile.id}`);
+        handleOpenProfile(
+            profile.id,
+        );
     };
 
     const handlePreviewProfileClick = (
@@ -289,13 +509,16 @@ const Scrap = () => {
             return;
         }
 
-        navigate(`/profile/${profileId}`);
+        handleOpenProfile(
+            profileId,
+        );
     };
 
     const handleDeleteSelectedProfiles =
         async () => {
             if (
-                selectedProfiles.length === 0
+                selectedProfiles.length ===
+                0
             ) {
                 return;
             }
@@ -314,12 +537,14 @@ const Scrap = () => {
 
                 setSelectedProfiles([]);
                 setHoveredProfile(null);
+
                 await loadDrawers();
             } catch (error) {
                 console.error(
                     "스크랩 삭제 실패:",
                     error,
                 );
+
                 setErrorMessage(
                     error.message ||
                         "선택한 스크랩을 삭제하지 못했습니다.",
@@ -327,146 +552,170 @@ const Scrap = () => {
             }
         };
 
-    /* 새 서랍 생성 */
+    const handleOpenCreateModal =
+        () => {
+            setDrawerName("");
 
-    const handleOpenCreateModal = () => {
-        setDrawerName("");
-        setIsCreateModalOpen(true);
-    };
-
-    const handleCloseCreateModal = () => {
-        setDrawerName("");
-        setIsCreateModalOpen(false);
-    };
-
-    const handleCreateDrawer = async (event) => {
-        event.preventDefault();
-
-        const trimmedName =
-            drawerName.trim();
-
-        if (
-            !trimmedName
-        ) {
-            return;
-        }
-
-        setErrorMessage("");
-
-        try {
-            await createCollectionGroup(
-                trimmedName,
+            setIsCreateModalOpen(
+                true,
             );
-            handleCloseCreateModal();
-            await loadDrawers();
-        } catch (error) {
-            console.error(
-                "서랍 생성 실패:",
-                error,
-            );
-            setErrorMessage(
-                error.message ||
-                    "서랍을 만들지 못했습니다.",
-            );
-        }
-    };
+        };
 
-    /* 서랍 이름 수정 */
+    const handleCloseCreateModal =
+        () => {
+            setDrawerName("");
+
+            setIsCreateModalOpen(
+                false,
+            );
+        };
+
+    const handleCreateDrawer =
+        async (event) => {
+            event.preventDefault();
+
+            const trimmedName =
+                drawerName.trim();
+
+            if (!trimmedName) {
+                return;
+            }
+
+            setErrorMessage("");
+
+            try {
+                await createCollectionGroup(
+                    trimmedName,
+                );
+
+                handleCloseCreateModal();
+
+                await loadDrawers();
+            } catch (error) {
+                console.error(
+                    "서랍 생성 실패:",
+                    error,
+                );
+
+                setErrorMessage(
+                    error.message ||
+                        "서랍을 만들지 못했습니다.",
+                );
+            }
+        };
 
     const handleOpenEditDrawer = (
         drawer,
     ) => {
-        setEditingDrawerId(drawer.id);
-        setEditingDrawerName(drawer.name);
+        setEditingDrawerId(
+            drawer.id,
+        );
+
+        setEditingDrawerName(
+            drawer.name,
+        );
     };
 
-    const handleCloseEditDrawer = () => {
-        setEditingDrawerId(null);
-        setEditingDrawerName("");
-    };
-
-    const handleUpdateDrawerName = async (
-        event,
-    ) => {
-        event.preventDefault();
-
-        const trimmedName =
-            editingDrawerName.trim();
-
-        if (
-            !trimmedName ||
-            editingDrawerId === null
-        ) {
-            return;
-        }
-
-        setErrorMessage("");
-
-        try {
-            await updateCollectionGroup(
-                editingDrawerId,
-                trimmedName,
-            );
-            handleCloseEditDrawer();
-            await loadDrawers();
-        } catch (error) {
-            console.error(
-                "서랍 이름 수정 실패:",
-                error,
-            );
-            setErrorMessage(
-                error.message ||
-                    "서랍 이름을 수정하지 못했습니다.",
-            );
-        }
-    };
-
-    /* 서랍 삭제 */
-
-    const handleDeleteDrawer = async (
-        drawer,
-    ) => {
-        const shouldDelete =
-            window.confirm(
-                `"${drawer.name}" 서랍을 삭제하시겠습니까?\n서랍에 저장된 프로필도 함께 제거됩니다.`,
+    const handleCloseEditDrawer =
+        () => {
+            setEditingDrawerId(
+                null,
             );
 
-        if (
-            !shouldDelete
-        ) {
-            return;
-        }
+            setEditingDrawerName(
+                "",
+            );
+        };
 
-        setErrorMessage("");
+    const handleUpdateDrawerName =
+        async (event) => {
+            event.preventDefault();
 
-        try {
-            await deleteCollectionGroup(
-                drawer.id,
-            );
-            setSelectedProfiles([]);
-            setHoveredProfile(null);
-            await loadDrawers();
-        } catch (error) {
-            console.error(
-                "서랍 삭제 실패:",
-                error,
-            );
-            setErrorMessage(
-                error.message ||
-                    "서랍을 삭제하지 못했습니다.",
-            );
-        }
-    };
+            const trimmedName =
+                editingDrawerName.trim();
+
+            if (
+                !trimmedName ||
+                editingDrawerId ===
+                    null
+            ) {
+                return;
+            }
+
+            setErrorMessage("");
+
+            try {
+                await updateCollectionGroup(
+                    editingDrawerId,
+                    trimmedName,
+                );
+
+                handleCloseEditDrawer();
+
+                await loadDrawers();
+            } catch (error) {
+                console.error(
+                    "서랍 이름 수정 실패:",
+                    error,
+                );
+
+                setErrorMessage(
+                    error.message ||
+                        "서랍 이름을 수정하지 못했습니다.",
+                );
+            }
+        };
+
+    const handleDeleteDrawer =
+        async (drawer) => {
+            const shouldDelete =
+                window.confirm(
+                    `"${drawer.name}" 서랍을 삭제하시겠습니까?\n서랍에 저장된 프로필도 함께 제거됩니다.`,
+                );
+
+            if (!shouldDelete) {
+                return;
+            }
+
+            setErrorMessage("");
+
+            try {
+                await deleteCollectionGroup(
+                    drawer.id,
+                );
+
+                setSelectedProfiles([]);
+                setHoveredProfile(null);
+
+                await loadDrawers();
+            } catch (error) {
+                console.error(
+                    "서랍 삭제 실패:",
+                    error,
+                );
+
+                setErrorMessage(
+                    error.message ||
+                        "서랍을 삭제하지 못했습니다.",
+                );
+            }
+        };
 
     return (
         <>
-            {/* 데스크톱 스크랩 화면 */}
-
-            <main className={styles.page}>
+            <main
+                className={
+                    styles.page
+                }
+            >
                 <div
-                    className={styles.header}
+                    className={
+                        styles.header
+                    }
                 >
-                    <h1>스크랩</h1>
+                    <h1>
+                        스크랩
+                    </h1>
 
                     {isManaging ? (
                         <div
@@ -487,10 +736,14 @@ const Scrap = () => {
                                     0
                                 }
                             >
-                                {
-                                    selectedProfiles.length
-                                }
-                                개 삭제
+                                <TrashIcon />
+
+                                <span>
+                                    {
+                                        selectedProfiles.length
+                                    }
+                                    개 삭제
+                                </span>
                             </button>
 
                             <button
@@ -521,13 +774,22 @@ const Scrap = () => {
                 </div>
 
                 {isLoading && (
-                    <p className={styles.statusMessage}>
+                    <p
+                        className={
+                            styles.statusMessage
+                        }
+                    >
                         스크랩을 불러오는 중입니다.
                     </p>
                 )}
 
                 {errorMessage && (
-                    <p className={styles.errorMessage}>
+                    <p
+                        className={
+                            styles.errorMessage
+                        }
+                        role="alert"
+                    >
                         {errorMessage}
                     </p>
                 )}
@@ -543,231 +805,238 @@ const Scrap = () => {
                         }
                     >
                         {drawers.map(
-                            (drawer) => (
-                                <section
-                                    key={
+                            (drawer) => {
+                                const sliderState =
+                                    sliderStates[
                                         drawer.id
-                                    }
-                                    className={
-                                        styles.drawer
-                                    }
-                                >
-                                    <div
+                                    ];
+
+                                const canPrevious =
+                                    sliderState
+                                        ?.canPrevious ??
+                                    false;
+
+                                const canNext =
+                                    sliderState
+                                        ?.canNext ??
+                                    drawer.profiles
+                                        .length >
+                                        4;
+
+                                return (
+                                    <section
+                                        key={
+                                            drawer.id
+                                        }
                                         className={
-                                            styles.drawerHeader
+                                            styles.drawer
                                         }
                                     >
                                         <div
                                             className={
-                                                styles.drawerTitle
+                                                styles.drawerHeader
                                             }
                                         >
-                                            <h2>
-                                                {
-                                                    drawer.name
-                                                }
-                                            </h2>
-
-                                            {isManaging ? (
-                                                <button
-                                                    type="button"
-                                                    className={
-                                                        styles.editNameButton
-                                                    }
-                                                    onClick={() =>
-                                                        handleOpenEditDrawer(
-                                                            drawer,
-                                                        )
-                                                    }
-                                                    aria-label={`${drawer.name} 이름 수정`}
-                                                >
-                                                    ✎
-                                                </button>
-                                            ) : (
-                                                <span>
-                                                    저장된
-                                                    사람{" "}
-                                                    {
-                                                        drawer
-                                                            .profiles
-                                                            .length
-                                                    }
-                                                    명
-                                                </span>
-                                            )}
-                                        </div>
-
-                                        {isManaging && (
-                                            <button
-                                                type="button"
-                                                className={
-                                                    styles.deleteDrawerButton
-                                                }
-                                                onClick={() =>
-                                                    handleDeleteDrawer(
-                                                        drawer,
-                                                    )
-                                                }
-                                            >
-                                                서랍
-                                                삭제
-                                            </button>
-                                        )}
-                                    </div>
-
-                                    {drawer
-                                        .profiles
-                                        .length >
-                                    0 ? (
-                                        <div
-                                            className={
-                                                styles.cardSlider
-                                            }
-                                        >
-                                            <button
-                                                type="button"
-                                                className={`${styles.slideButton} ${styles.previousButton}`}
-                                                onClick={() =>
-                                                    handlePrevious(
-                                                        drawer.id,
-                                                    )
-                                                }
-                                                aria-label={`${drawer.name} 이전 프로필 보기`}
-                                            >
-                                                ‹
-                                            </button>
-
                                             <div
-                                                ref={(
-                                                    element,
-                                                ) => {
-                                                    cardListRefs.current[
-                                                        drawer.id
-                                                    ] =
-                                                        element;
-                                                }}
                                                 className={
-                                                    styles.cardList
+                                                    styles.drawerTitle
                                                 }
                                             >
-                                                {drawer.profiles.map(
-                                                    (
-                                                        profile,
-                                                    ) => {
-                                                        const selected =
-                                                            isProfileSelected(
-                                                                drawer.id,
-                                                                profile,
-                                                            );
+                                                <h2>
+                                                    {
+                                                        drawer.name
+                                                    }
+                                                </h2>
 
-                                                        return (
-                                                            <button
-                                                                key={
-                                                                    profile.id
-                                                                }
-                                                                type="button"
-                                                                className={`${styles.cardItem} ${
-                                                                    selected
-                                                                        ? styles.selectedCard
-                                                                        : ""
-                                                                }`}
-                                                                onClick={() =>
-                                                                    handleProfileClick(
-                                                                        drawer.id,
-                                                                        profile,
-                                                                    )
-                                                                }
-                                                                onMouseEnter={() => {
-                                                                    if (
-                                                                        !isManaging
-                                                                    ) {
-                                                                        setHoveredProfile(
-                                                                            profile,
-                                                                        );
-                                                                    }
-                                                                }}
-                                                                onMouseLeave={() => {
-                                                                    if (
-                                                                        !isManaging
-                                                                    ) {
-                                                                        setHoveredProfile(
-                                                                            null,
-                                                                        );
-                                                                    }
-                                                                }}
-                                                                onFocus={() => {
-                                                                    if (
-                                                                        !isManaging
-                                                                    ) {
-                                                                        setHoveredProfile(
-                                                                            profile,
-                                                                        );
-                                                                    }
-                                                                }}
-                                                                onBlur={() => {
-                                                                    if (
-                                                                        !isManaging
-                                                                    ) {
-                                                                        setHoveredProfile(
-                                                                            null,
-                                                                        );
-                                                                    }
-                                                                }}
-                                                                aria-pressed={
-                                                                    isManaging
-                                                                        ? selected
-                                                                        : undefined
-                                                                }
-                                                                aria-label={
-                                                                    isManaging
-                                                                        ? `${profile.name} 선택`
-                                                                        : `${profile.name} 세부 프로필 보기`
-                                                                }
-                                                            >
-                                                                <HorizontalProfileCard
-                                                                    data={
-                                                                        profile
-                                                                    }
-                                                                    name={
-                                                                        profile.name
-                                                                    }
-                                                                    profileImage={
-                                                                        profile.profileImage
-                                                                    }
-                                                                />
-                                                            </button>
-                                                        );
-                                                    },
+                                                {isManaging ? (
+                                                    <button
+                                                        type="button"
+                                                        className={
+                                                            styles.editNameButton
+                                                        }
+                                                        onClick={() =>
+                                                            handleOpenEditDrawer(
+                                                                drawer,
+                                                            )
+                                                        }
+                                                        aria-label={`${drawer.name} 이름 수정`}
+                                                    >
+                                                        <PencilIcon />
+                                                    </button>
+                                                ) : (
+                                                    <span>
+                                                        저장된 사람{" "}
+                                                        {
+                                                            drawer
+                                                                .profiles
+                                                                .length
+                                                        }
+                                                        명
+                                                    </span>
                                                 )}
                                             </div>
 
-                                            <button
-                                                type="button"
-                                                className={`${styles.slideButton} ${styles.nextButton}`}
-                                                onClick={() =>
-                                                    handleNext(
-                                                        drawer.id,
-                                                    )
+                                            {isManaging && (
+                                                <button
+                                                    type="button"
+                                                    className={
+                                                        styles.deleteDrawerButton
+                                                    }
+                                                    onClick={() =>
+                                                        handleDeleteDrawer(
+                                                            drawer,
+                                                        )
+                                                    }
+                                                >
+                                                    서랍 삭제
+                                                </button>
+                                            )}
+                                        </div>
+
+                                        {drawer
+                                            .profiles
+                                            .length >
+                                        0 ? (
+                                            <div
+                                                className={
+                                                    styles.cardSlider
                                                 }
-                                                aria-label={`${drawer.name} 다음 프로필 보기`}
                                             >
-                                                ›
-                                            </button>
-                                        </div>
-                                    ) : (
-                                        <div
-                                            className={
-                                                styles.emptyDrawer
-                                            }
-                                        >
-                                            아직
-                                            저장된
-                                            프로필이
-                                            없습니다.
-                                        </div>
-                                    )}
-                                </section>
-                            ),
+                                                {canPrevious && (
+                                                    <button
+                                                        type="button"
+                                                        className={`${styles.slideButton} ${styles.previousButton}`}
+                                                        onClick={() =>
+                                                            handlePrevious(
+                                                                drawer.id,
+                                                            )
+                                                        }
+                                                        aria-label={`${drawer.name} 이전 프로필 보기`}
+                                                    >
+                                                        <ChevronLeftIcon />
+                                                    </button>
+                                                )}
+
+                                                <div
+                                                    ref={(
+                                                        element,
+                                                    ) => {
+                                                        if (
+                                                            element
+                                                        ) {
+                                                            cardListRefs.current[
+                                                                drawer.id
+                                                            ] =
+                                                                element;
+                                                        } else {
+                                                            delete cardListRefs
+                                                                .current[
+                                                                drawer.id
+                                                            ];
+                                                        }
+                                                    }}
+                                                    className={
+                                                        styles.cardList
+                                                    }
+                                                    onScroll={() =>
+                                                        updateSliderState(
+                                                            drawer.id,
+                                                        )
+                                                    }
+                                                >
+                                                    {drawer.profiles.map(
+                                                        (
+                                                            profile,
+                                                        ) => {
+                                                            const selected =
+                                                                isProfileSelected(
+                                                                    drawer.id,
+                                                                    profile,
+                                                                );
+
+                                                            return (
+                                                                <button
+                                                                    key={
+                                                                        profile.collectionId ??
+                                                                        profile.id
+                                                                    }
+                                                                    type="button"
+                                                                    className={`${styles.cardItem} ${
+                                                                        selected
+                                                                            ? styles.selectedCard
+                                                                            : ""
+                                                                    }`}
+                                                                    onClick={() =>
+                                                                        handleProfileClick(
+                                                                            drawer.id,
+                                                                            profile,
+                                                                        )
+                                                                    }
+                                                                    onMouseEnter={() =>
+                                                                        setHoveredProfile(
+                                                                            profile,
+                                                                        )
+                                                                    }
+                                                                    onFocus={() =>
+                                                                        setHoveredProfile(
+                                                                            profile,
+                                                                        )
+                                                                    }
+                                                                    aria-pressed={
+                                                                        isManaging
+                                                                            ? selected
+                                                                            : undefined
+                                                                    }
+                                                                    aria-label={
+                                                                        isManaging
+                                                                            ? `${profile.name} 선택`
+                                                                            : `${profile.name} 세부 프로필 보기`
+                                                                    }
+                                                                >
+                                                                    <HorizontalProfileCard
+                                                                        data={
+                                                                            profile
+                                                                        }
+                                                                        name={
+                                                                            profile.name
+                                                                        }
+                                                                        profileImage={
+                                                                            profile.profileImage
+                                                                        }
+                                                                    />
+                                                                </button>
+                                                            );
+                                                        },
+                                                    )}
+                                                </div>
+
+                                                {canNext && (
+                                                    <button
+                                                        type="button"
+                                                        className={`${styles.slideButton} ${styles.nextButton}`}
+                                                        onClick={() =>
+                                                            handleNext(
+                                                                drawer.id,
+                                                            )
+                                                        }
+                                                        aria-label={`${drawer.name} 다음 프로필 보기`}
+                                                    >
+                                                        <ChevronRightIcon />
+                                                    </button>
+                                                )}
+                                            </div>
+                                        ) : (
+                                            <div
+                                                className={
+                                                    styles.emptyDrawer
+                                                }
+                                            >
+                                                아직 저장된 프로필이 없습니다.
+                                            </div>
+                                        )}
+                                    </section>
+                                );
+                            },
                         )}
 
                         {!isManaging && (
@@ -786,16 +1055,17 @@ const Scrap = () => {
                                     ＋
                                 </span>
 
-                                새 스크랩 서랍
-                                만들기
+                                새 스크랩 서랍 만들기
                             </button>
                         )}
                     </div>
 
                     <aside
-                        className={
-                            styles.preview
-                        }
+                        className={`${styles.preview} ${
+                            isManaging
+                                ? styles.previewManaging
+                                : ""
+                        }`}
                     >
                         {hoveredProfile ? (
                             <ExploreProfileCard
@@ -812,14 +1082,11 @@ const Scrap = () => {
                                     styles.previewGuide
                                 }
                             >
-                                카드에 커서를
-                                올려보세요.
+                                카드에 커서를 올려보세요
                             </p>
                         )}
                     </aside>
                 </div>
-
-                {/* 새 서랍 만들기 모달 */}
 
                 {isCreateModalOpen && (
                     <div
@@ -848,7 +1115,9 @@ const Scrap = () => {
                                     styles.modalHeader
                                 }
                             >
-                                <h2 id="create-drawer-title">
+                                <h2
+                                    id="create-drawer-title"
+                                >
                                     서랍 만들기
                                 </h2>
 
@@ -926,8 +1195,6 @@ const Scrap = () => {
                     </div>
                 )}
 
-                {/* 서랍 이름 수정 모달 */}
-
                 {editingDrawerId !==
                     null && (
                     <div
@@ -956,7 +1223,9 @@ const Scrap = () => {
                                     styles.modalHeader
                                 }
                             >
-                                <h2 id="edit-drawer-title">
+                                <h2
+                                    id="edit-drawer-title"
+                                >
                                     서랍 이름 수정
                                 </h2>
 
@@ -1034,8 +1303,6 @@ const Scrap = () => {
                     </div>
                 )}
             </main>
-
-            {/* 모바일 스크랩 화면 */}
 
             <MobileScrap
                 drawers={drawers}

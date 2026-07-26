@@ -702,6 +702,35 @@
     cursor: not-allowed;
 }
 
+.actionArea {
+    width: 100%;
+    margin: 8px 0 24px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.exchangedStatus {
+    min-width: 88px;
+    height: 44px;
+    padding: 0 20px;
+    box-sizing: border-box;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid #525dff;
+    border-radius: 999px;
+
+    background-color: #525dff;
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 600;
+}
 /* 태블릿 */
 
 @media (max-width: 1280px) {
@@ -845,8 +874,34 @@
     }
 
     .actionArea {
-        margin-top: 28px;
-    }
+    width: 100%;
+    margin: 8px 0 24px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.exchangedStatus {
+    min-width: 88px;
+    height: 44px;
+    padding: 0 20px;
+    box-sizing: border-box;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid #525dff;
+    border-radius: 999px;
+
+    background-color: #525dff;
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 600;
+}
 
     .scrapButton {
         min-width: 94px;
