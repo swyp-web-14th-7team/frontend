@@ -1,52 +1,49 @@
-import {
+    import {
     useEffect,
     useState,
-} from "react";
+    } from "react";
 
-import {
+    import {
     useNavigate,
     useSearchParams,
-} from "react-router-dom";
+    } from "react-router-dom";
 
-import {
+    import {
     createProfileCard,
     getDefaultProfileCard,
     updateProfileCard,
-} from "../../api/profile";
+    } from "../../api/profile";
 
-import {
+    import {
     getAffiliationStatuses,
     getInterests,
     getJobTypes,
     getPersonalities,
     getPurposes,
     getSkills,
-} from "../../api/options";
+    } from "../../api/options";
 
-import {
+    import {
     getCardBackgroundImages,
-} from "../../api/cardBackground";
+    } from "../../api/cardBackground";
 
-import {
+    import {
     createDraftId,
     getOnboardingDraft,
     removeOnboardingDraft,
     saveOnboardingDraft,
-} from "../../utils/onboardingDraft";
+    } from "../../utils/onboardingDraft";
 
-import {
-    getUserName,
-} from "../../utils/auth";
+    import CardBasicStep from "../../components/onboarding/CardBasicStep";
+    import CardDetailStep from "../../components/onboarding/CardDetailStep";
+    import CardPreviewStep from "../../components/onboarding/CardPreviewStep";
+    import CompleteStep from "../../components/onboarding/CompleteStep";
+    import JobSelectStep from "../../components/onboarding/JobSelectStep";
+    import LoadingStep from "../../components/onboarding/LoadingStep";
+    import PurposeSelectStep from "../../components/onboarding/PurposeSelectStep";
+    import WelcomeStep from "../../components/onboarding/WelcomeStep";
 
-import CardBasicStep from "../../components/onboarding/CardBasicStep";
-import CardPreviewStep from "../../components/onboarding/CardPreviewStep";
-import CompleteStep from "../../components/onboarding/CompleteStep";
-import JobSelectStep from "../../components/onboarding/JobSelectStep";
-import LoadingStep from "../../components/onboarding/LoadingStep";
-import PurposeSelectStep from "../../components/onboarding/PurposeSelectStep";
-import WelcomeStep from "../../components/onboarding/WelcomeStep";
-
-const JOB_UI_MAP = {
+    const JOB_UI_MAP = {
     PM: {
         id: "planner",
         name: "Planner",
@@ -67,48 +64,66 @@ const JOB_UI_MAP = {
 
     "프론트 개발자": {
         id: "frontend",
-        name:
-            "Frontend Developer",
-        label:
-            "프론트엔드 개발자",
+        name: "Frontend Developer",
+        label: "프론트엔드 개발자",
     },
 
     "프론트엔드 개발자": {
         id: "frontend",
-        name:
-            "Frontend Developer",
-        label:
-            "프론트엔드 개발자",
+        name: "Frontend Developer",
+        label: "프론트엔드 개발자",
     },
 
     "백엔드 개발자": {
         id: "backend",
-        name:
-            "Backend Developer",
-        label:
-            "백엔드 개발자",
+        name: "Backend Developer",
+        label: "백엔드 개발자",
     },
-};
+    };
 
-const getItems = (
-    response,
-) => {
+    const createEmptyLink = () => ({
+    type: 6,
+    value: "",
+    });
+
+    const createEmptyExperience = (
+    isRepresentative = false,
+    ) => ({
+    title: "",
+    description: "",
+    relatedUrl: "",
+    isRepresentative,
+    });
+
+    const getItems = (response) => {
     if (Array.isArray(response)) {
         return response;
     }
 
     if (
-        Array.isArray(
-            response?.items,
-        )
+        Array.isArray(response?.items)
     ) {
         return response.items;
     }
 
-    return [];
-};
+    if (
+        Array.isArray(
+        response?.data?.items,
+        )
+    ) {
+        return response.data.items;
+    }
 
-const INITIAL_ONBOARDING_DATA = {
+    if (
+        Array.isArray(response?.data)
+    ) {
+        return response.data;
+    }
+
+    return [];
+    };
+
+    const INITIAL_ONBOARDING_DATA = {
     purposeId: null,
     purposeName: "",
 
@@ -130,97 +145,185 @@ const INITIAL_ONBOARDING_DATA = {
     profileImageUrl: "",
     profileImagePreview: "",
 
-    cardBackgroundImageId:
-        null,
+    links: [
+        createEmptyLink(),
+    ],
+
+    experiences: [
+        createEmptyExperience(true),
+    ],
+
+    cardBackgroundImageId: null,
     cardImageUrl: "",
 
     profileCardId: null,
     createdProfile: null,
-};
+    };
 
-const getDefaultCardData = (
+    const normalizeLinks = (links) => {
+    if (
+        !Array.isArray(links) ||
+        links.length === 0
+    ) {
+        return [
+        createEmptyLink(),
+        ];
+    }
+
+    return links.map((link) => ({
+        id: link?.id,
+
+        type: Number(
+        link?.type ?? 6,
+        ),
+
+        value:
+        link?.value ??
+        link?.url ??
+        "",
+    }));
+    };
+
+    const normalizeExperiences = (
+    experiences,
+    ) => {
+    if (
+        !Array.isArray(experiences) ||
+        experiences.length === 0
+    ) {
+        return [
+        createEmptyExperience(true),
+        ];
+    }
+
+    return [...experiences]
+        .sort(
+        (first, second) =>
+            (first?.sortOrder ?? 0) -
+            (second?.sortOrder ?? 0),
+        )
+        .map(
+        (
+            experience,
+            index,
+        ) => ({
+            id: experience?.id,
+
+            title:
+            experience?.title ?? "",
+
+            description:
+            experience?.description ??
+            experience?.summary ??
+            "",
+
+            relatedUrl:
+            experience?.relatedUrl ??
+            experience?.url ??
+            "",
+
+            isRepresentative:
+            experience
+                ?.isRepresentative ??
+            index === 0,
+        }),
+        );
+    };
+
+    const getDefaultCardData = (
     profileCard,
-) => {
+    ) => {
+    if (!profileCard) {
+        return {};
+    }
+
     const nickname =
-        profileCard?.nickname ||
-        profileCard?.name ||
-        getUserName() ||
+        profileCard.nickname ||
+        profileCard.name ||
         "";
 
     const profileImageUrl =
-        profileCard?.profileImageUrl ||
+        profileCard.profileImageUrl ||
         "";
 
     return {
         name: nickname,
         nickname,
+
         profileImage:
-            profileImageUrl,
         profileImageUrl,
-        links:
-            Array.isArray(
-                profileCard?.links,
-            )
-                ? profileCard.links
-                : [],
+
+        profileImageUrl,
+
+        profileImagePreview:
+        profileImageUrl,
+
+        links: normalizeLinks(
+        profileCard.links,
+        ),
+
+        experiences:
+        normalizeExperiences(
+            profileCard.experiences,
+        ),
     };
-};
+    };
 
-const Onboarding = () => {
-    const navigate =
-        useNavigate();
+    const Onboarding = () => {
+    const navigate = useNavigate();
 
-    const [
-        searchParams,
-    ] = useSearchParams();
+    const [searchParams] =
+        useSearchParams();
 
     const mode =
-        searchParams.get(
-            "mode",
-        );
+        searchParams.get("mode");
 
     const queryDraftId =
-        searchParams.get(
-            "draftId",
-        );
+        searchParams.get("draftId");
 
     const isCardCreationFlow =
         mode === "create" ||
         mode === "resume";
 
-    const [draftId] =
-        useState(
-            () =>
-                queryDraftId ||
-                createDraftId(),
-        );
+    /*
+    * 최초 온보딩: 6단계
+    * 새 카드 만들기: 7단계
+    */
+    const totalSteps =
+        isCardCreationFlow ? 7 : 6;
 
-    const [
-        step,
-        setStep,
-    ] = useState(0);
+    /*
+    * 최초 온보딩에서는 미리보기가 3번,
+    * 새 카드 생성에서는 상세 정보가 추가되어 4번입니다.
+    */
+    const previewStepIndex =
+        isCardCreationFlow ? 4 : 3;
+
+    const loadingStepIndex =
+        previewStepIndex + 1;
+
+    const [draftId] = useState(
+        () =>
+        queryDraftId ||
+        createDraftId(),
+    );
+
+    const [step, setStep] =
+        useState(0);
 
     const [
         onboardingData,
         setOnboardingData,
-    ] = useState(() => {
-        const userName =
-            getUserName() || "";
-
-        return {
-            ...INITIAL_ONBOARDING_DATA,
-            name: userName,
-            nickname: userName,
-        };
-    });
+    ] = useState(
+        INITIAL_ONBOARDING_DATA,
+    );
 
     const [
         optionData,
         setOptionData,
     ] = useState({
         jobOptions: [],
-        affiliationStatuses:
-            [],
+        affiliationStatuses: [],
         skills: [],
         interests: [],
         personalities: [],
@@ -282,491 +385,462 @@ const Onboarding = () => {
         setLoadedSkillJobTypeId,
     ] = useState(null);
 
-    const totalSteps = 6;
-
+    /*
+    * 직군, 소속 상태, 관심 분야,
+    * 성향, 카드 목적 조회
+    */
     useEffect(() => {
         const controller =
-            new AbortController();
+        new AbortController();
 
         const fetchOptions =
-            async () => {
-                try {
-                    setIsOptionLoading(
-                        true,
-                    );
+        async () => {
+            try {
+            setIsOptionLoading(true);
+            setOptionError("");
 
-                    setOptionError("");
+            const [
+                jobTypeResult,
+                affiliationResult,
+                interestResult,
+                personalityResult,
+                purposeResult,
+            ] = await Promise.all([
+                getJobTypes({
+                signal:
+                    controller.signal,
+                }),
 
-                    const [
-                        jobTypeResult,
-                        affiliationResult,
-                        interestResult,
-                        personalityResult,
-                        purposeResult,
-                    ] =
-                        await Promise.all(
-                            [
-                                getJobTypes({
-                                    signal:
-                                        controller
-                                            .signal,
-                                }),
+                getAffiliationStatuses({
+                signal:
+                    controller.signal,
+                }),
 
-                                getAffiliationStatuses(
-                                    {
-                                        signal:
-                                            controller
-                                                .signal,
-                                    },
-                                ),
+                getInterests({
+                signal:
+                    controller.signal,
+                }),
 
-                                getInterests({
-                                    signal:
-                                        controller
-                                            .signal,
-                                }),
+                getPersonalities({
+                signal:
+                    controller.signal,
+                }),
 
-                                getPersonalities(
-                                    {
-                                        signal:
-                                            controller
-                                                .signal,
-                                    },
-                                ),
+                getPurposes({
+                signal:
+                    controller.signal,
+                }),
+            ]);
 
-                                getPurposes({
-                                    signal:
-                                        controller
-                                            .signal,
-                                }),
-                            ],
-                        );
+            const jobOptions =
+                getItems(jobTypeResult)
+                .map((jobType) => {
+                    const uiJob =
+                    JOB_UI_MAP[
+                        jobType.name
+                    ];
 
-                    const jobOptions =
-                        getItems(
-                            jobTypeResult,
-                        )
-                            .map(
-                                (
-                                    jobType,
-                                ) => {
-                                    const uiJob =
-                                        JOB_UI_MAP[
-                                            jobType
-                                                .name
-                                        ];
-
-                                    if (
-                                        !uiJob
-                                    ) {
-                                        return null;
-                                    }
-
-                                    return {
-                                        ...uiJob,
-
-                                        jobTypeId:
-                                            jobType.id,
-
-                                        apiName:
-                                            jobType.name,
-                                    };
-                                },
-                            )
-                            .filter(
-                                Boolean,
-                            );
-
-                    setOptionData(
-                        (
-                            previousData,
-                        ) => ({
-                            ...previousData,
-
-                            jobOptions,
-
-                            affiliationStatuses:
-                                getItems(
-                                    affiliationResult,
-                                ),
-
-                            interests:
-                                getItems(
-                                    interestResult,
-                                ),
-
-                            personalities:
-                                getItems(
-                                    personalityResult,
-                                ),
-
-                            purposes:
-                                getItems(
-                                    purposeResult,
-                                ),
-                        }),
-                    );
-                } catch (error) {
-                    if (
-                        error.name ===
-                        "AbortError"
-                    ) {
-                        return;
+                    if (!uiJob) {
+                    return null;
                     }
 
-                    console.error(
-                        "온보딩 옵션 조회 실패:",
-                        error,
-                    );
+                    return {
+                    ...uiJob,
 
-                    setOptionError(
-                        error.message ||
-                            "선택 항목을 불러오지 못했습니다.",
-                    );
-                } finally {
-                    if (
-                        !controller
-                            .signal
-                            .aborted
-                    ) {
-                        setIsOptionLoading(
-                            false,
-                        );
-                    }
-                }
-            };
+                    jobTypeId:
+                        jobType.id,
+
+                    apiName:
+                        jobType.name,
+                    };
+                })
+                .filter(Boolean);
+
+            setOptionData(
+                (previousData) => ({
+                ...previousData,
+
+                jobOptions,
+
+                affiliationStatuses:
+                    getItems(
+                    affiliationResult,
+                    ),
+
+                interests:
+                    getItems(
+                    interestResult,
+                    ),
+
+                personalities:
+                    getItems(
+                    personalityResult,
+                    ),
+
+                purposes:
+                    getItems(
+                    purposeResult,
+                    ),
+                }),
+            );
+            } catch (error) {
+            if (
+                error?.name ===
+                "AbortError"
+            ) {
+                return;
+            }
+
+            console.error(
+                "온보딩 옵션 조회 실패:",
+                error,
+            );
+
+            setOptionError(
+                error?.message ||
+                "선택 항목을 불러오지 못했습니다.",
+            );
+            } finally {
+            if (
+                !controller.signal
+                .aborted
+            ) {
+                setIsOptionLoading(
+                false,
+                );
+            }
+            }
+        };
 
         fetchOptions();
 
         return () => {
-            controller.abort();
+        controller.abort();
         };
     }, []);
 
+    /*
+    * 임시 저장 데이터 불러오기
+    */
     useEffect(() => {
         if (
-            isOptionLoading ||
-            hasLoadedDraft
+        isOptionLoading ||
+        hasLoadedDraft
         ) {
-            return undefined;
+        return undefined;
         }
 
         let isMounted = true;
 
         const loadSavedDraft =
-            async () => {
-                await Promise.resolve();
+        async () => {
+            await Promise.resolve();
 
-                if (!isMounted) {
-                    return;
-                }
+            if (!isMounted) {
+            return;
+            }
 
-                const savedDraft =
-                    getOnboardingDraft(
-                        draftId,
-                    );
+            const savedDraft =
+            getOnboardingDraft(
+                draftId,
+            );
 
-                if (savedDraft) {
-                    setOnboardingData(
-                        (
-                            previousData,
-                        ) => ({
-                            ...previousData,
-                            ...savedDraft.data,
+            if (savedDraft) {
+            setOnboardingData(
+                (previousData) => ({
+                ...previousData,
+                ...savedDraft.data,
 
-                            profileCardId:
-                                null,
+                links:
+                    normalizeLinks(
+                    savedDraft.data
+                        ?.links,
+                    ),
 
-                            createdProfile:
-                                null,
-                        }),
-                    );
+                experiences:
+                    normalizeExperiences(
+                    savedDraft.data
+                        ?.experiences,
+                    ),
 
-                    const savedStep =
-                        Number.isInteger(
-                            savedDraft.step,
-                        )
-                            ? savedDraft.step
-                            : 0;
+                /*
+                * 임시 저장한 카드 ID는
+                * 새 생성에서 재사용하지 않습니다.
+                */
+                profileCardId: null,
+                createdProfile: null,
+                }),
+            );
 
-                    setStep(
-                        Math.min(
-                            Math.max(
-                                savedStep,
-                                0,
-                            ),
-                            3,
-                        ),
-                    );
-                }
+            const savedStep =
+                Number.isInteger(
+                savedDraft.step,
+                )
+                ? savedDraft.step
+                : 0;
 
-                setHasLoadedDraft(
-                    true,
-                );
-            };
+            setStep(
+                Math.min(
+                Math.max(
+                    savedStep,
+                    0,
+                ),
+                previewStepIndex,
+                ),
+            );
+            }
+
+            setHasLoadedDraft(true);
+        };
 
         loadSavedDraft();
 
         return () => {
-            isMounted = false;
+        isMounted = false;
         };
     }, [
         draftId,
-        isOptionLoading,
         hasLoadedDraft,
+        isOptionLoading,
+        previewStepIndex,
     ]);
 
+    /*
+    * 로딩 화면 이전까지 입력값 임시 저장
+    */
     useEffect(() => {
         if (
-            !hasLoadedDraft ||
-            step >= 4
+        !hasLoadedDraft ||
+        step >= loadingStepIndex
         ) {
-            return;
+        return;
         }
 
         if (
-            isCardCreationFlow &&
-            step === 0 &&
-            !onboardingData.purposeId
+        isCardCreationFlow &&
+        step === 0 &&
+        !onboardingData.purposeId
         ) {
-            return;
+        return;
         }
 
         if (
-            !isCardCreationFlow &&
-            step === 0
+        !isCardCreationFlow &&
+        step === 0
         ) {
-            return;
+        return;
         }
 
         saveOnboardingDraft({
-            id: draftId,
-            step,
-            data: onboardingData,
+        id: draftId,
+        step,
+        data: onboardingData,
         });
     }, [
         draftId,
-        step,
-        onboardingData,
         hasLoadedDraft,
         isCardCreationFlow,
+        loadingStepIndex,
+        onboardingData,
+        step,
     ]);
 
+    /*
+    * 임시 저장으로 돌아온 경우에도
+    * 선택한 직군의 스킬을 다시 불러옵니다.
+    *
+    * 상세 단계에서 기획자·디자이너도
+    * 스킬을 선택하므로 모든 직군에 적용합니다.
+    */
     useEffect(() => {
-        const isDeveloper =
-            onboardingData.job ===
-                "frontend" ||
-            onboardingData.job ===
-                "backend";
+        const jobTypeId =
+        onboardingData.jobTypeId;
 
         const alreadyLoaded =
-            String(
-                loadedSkillJobTypeId,
-            ) ===
-            String(
-                onboardingData
-                    .jobTypeId,
-            );
+        String(
+            loadedSkillJobTypeId,
+        ) === String(jobTypeId);
 
         if (
-            !hasLoadedDraft ||
-            !isDeveloper ||
-            !onboardingData
-                .jobTypeId ||
-            alreadyLoaded
+        !hasLoadedDraft ||
+        !jobTypeId ||
+        alreadyLoaded
         ) {
-            return undefined;
+        return undefined;
         }
 
         const controller =
-            new AbortController();
+        new AbortController();
 
         const loadSkills =
-            async () => {
-                try {
-                    const skillResult =
-                        await getSkills({
-                            jobTypeId:
-                                onboardingData
-                                    .jobTypeId,
+        async () => {
+            try {
+            const skillResult =
+                await getSkills({
+                jobTypeId,
 
-                            signal:
-                                controller
-                                    .signal,
-                        });
+                signal:
+                    controller.signal,
+                });
 
-                    setOptionData(
-                        (
-                            previousData,
-                        ) => ({
-                            ...previousData,
+            setOptionData(
+                (previousData) => ({
+                ...previousData,
 
-                            skills:
-                                getItems(
-                                    skillResult,
-                                ),
-                        }),
-                    );
+                skills:
+                    getItems(
+                    skillResult,
+                    ),
+                }),
+            );
 
-                    setLoadedSkillJobTypeId(
-                        onboardingData
-                            .jobTypeId,
-                    );
-                } catch (error) {
-                    if (
-                        error.name !==
-                        "AbortError"
-                    ) {
-                        setOptionError(
-                            error.message ||
-                                "스킬을 불러오지 못했습니다.",
-                        );
-                    }
-                }
-            };
+            setLoadedSkillJobTypeId(
+                jobTypeId,
+            );
+            } catch (error) {
+            if (
+                error?.name !==
+                "AbortError"
+            ) {
+                setOptionError(
+                error?.message ||
+                    "스킬을 불러오지 못했습니다.",
+                );
+            }
+            }
+        };
 
         loadSkills();
 
         return () => {
-            controller.abort();
+        controller.abort();
         };
     }, [
         hasLoadedDraft,
-        onboardingData.job,
-        onboardingData.jobTypeId,
         loadedSkillJobTypeId,
+        onboardingData.jobTypeId,
     ]);
 
+    /*
+    * 카드 미리보기 단계에서 배경 이미지 조회
+    */
     useEffect(() => {
-        if (step !== 3) {
-            return undefined;
+        if (
+        step !== previewStepIndex
+        ) {
+        return undefined;
         }
 
         const controller =
-            new AbortController();
+        new AbortController();
 
         const fetchBackgrounds =
-            async () => {
-                try {
-                    setIsBackgroundLoading(
-                        true,
-                    );
+        async () => {
+            try {
+            setIsBackgroundLoading(
+                true,
+            );
 
-                    setBackgroundError(
-                        "",
-                    );
+            setBackgroundError("");
 
-                    const result =
-                        await getCardBackgroundImages(
-                            {
-                                page: 1,
-                                limit: 10,
-                                sort:
-                                    "createdAt",
-                                order: "desc",
-                                signal:
-                                    controller
-                                        .signal,
-                            },
-                        );
+            const result =
+                await getCardBackgroundImages({
+                page: 1,
+                limit: 10,
+                sort: "createdAt",
+                order: "desc",
 
-                    const items =
-                        getItems(
-                            result,
-                        );
+                signal:
+                    controller.signal,
+                });
 
-                    setCardBackgrounds(
-                        items,
-                    );
+            const items =
+                getItems(result);
 
-                    if (
-                        items.length ===
-                        0
-                    ) {
-                        setBackgroundError(
-                            "등록된 카드 배경이 없습니다.",
-                        );
+            setCardBackgrounds(items);
 
-                        return;
-                    }
+            if (items.length === 0) {
+                setBackgroundError(
+                "등록된 카드 배경이 없습니다.",
+                );
 
-                    setOnboardingData(
-                        (
-                            previousData,
-                        ) => {
-                            if (
-                                previousData.cardImageUrl
-                            ) {
-                                return previousData;
-                            }
+                return;
+            }
 
-                            return {
-                                ...previousData,
-
-                                cardBackgroundImageId:
-                                    items[0]
-                                        .id,
-
-                                cardImageUrl:
-                                    items[0]
-                                        .imageUrl,
-                            };
-                        },
-                    );
-                } catch (error) {
-                    if (
-                        error.name ===
-                        "AbortError"
-                    ) {
-                        return;
-                    }
-
-                    console.error(
-                        "카드 배경 조회 실패:",
-                        error,
-                    );
-
-                    setBackgroundError(
-                        error.message ||
-                            "카드 배경을 불러오지 못했습니다.",
-                    );
-                } finally {
-                    if (
-                        !controller
-                            .signal
-                            .aborted
-                    ) {
-                        setIsBackgroundLoading(
-                            false,
-                        );
-                    }
+            setOnboardingData(
+                (previousData) => {
+                if (
+                    previousData
+                    .cardImageUrl
+                ) {
+                    return previousData;
                 }
-            };
+
+                return {
+                    ...previousData,
+
+                    cardBackgroundImageId:
+                    items[0].id,
+
+                    cardImageUrl:
+                    items[0].imageUrl,
+                };
+                },
+            );
+            } catch (error) {
+            if (
+                error?.name ===
+                "AbortError"
+            ) {
+                return;
+            }
+
+            console.error(
+                "카드 배경 조회 실패:",
+                error,
+            );
+
+            setBackgroundError(
+                error?.message ||
+                "카드 배경을 불러오지 못했습니다.",
+            );
+            } finally {
+            if (
+                !controller.signal
+                .aborted
+            ) {
+                setIsBackgroundLoading(
+                false,
+                );
+            }
+            }
+        };
 
         fetchBackgrounds();
 
         return () => {
-            controller.abort();
+        controller.abort();
         };
-    }, [step]);
+    }, [
+        previewStepIndex,
+        step,
+    ]);
 
     const nextStep = () => {
-        setStep(
-            (previousStep) =>
-                Math.min(
-                    previousStep + 1,
-                    totalSteps - 1,
-                ),
+        setStep((previousStep) =>
+        Math.min(
+            previousStep + 1,
+            totalSteps - 1,
+        ),
         );
     };
 
     const prevStep = () => {
-        setStep(
-            (previousStep) =>
-                Math.max(
-                    previousStep - 1,
-                    0,
-                ),
+        setStep((previousStep) =>
+        Math.max(
+            previousStep - 1,
+            0,
+        ),
         );
     };
 
@@ -774,10 +848,10 @@ const Onboarding = () => {
         newData,
     ) => {
         setOnboardingData(
-            (previousData) => ({
-                ...previousData,
-                ...newData,
-            }),
+        (previousData) => ({
+            ...previousData,
+            ...newData,
+        }),
         );
     };
 
@@ -785,546 +859,596 @@ const Onboarding = () => {
         background,
     ) => {
         updateOnboardingData({
-            cardBackgroundImageId:
-                background.id,
+        cardBackgroundImageId:
+            background.id,
 
-            cardImageUrl:
-                background.imageUrl,
+        cardImageUrl:
+            background.imageUrl,
         });
 
         setBackgroundError("");
     };
 
-    const handleJobNext =
-        async (
-            selectedJobOption,
-        ) => {
-            const selectedJob =
-                selectedJobOption ||
-                optionData.jobOptions.find(
-                    (jobOption) =>
-                        jobOption.id ===
-                        onboardingData.job,
-                );
+    const handleJobNext = async (
+        selectedJobOption,
+    ) => {
+        const selectedJob =
+        selectedJobOption ||
+        optionData.jobOptions.find(
+            (jobOption) =>
+            jobOption.id ===
+            onboardingData.job,
+        );
 
-            const selectedJobTypeId =
-                selectedJob?.jobTypeId;
+        const selectedJobTypeId =
+        selectedJob?.jobTypeId;
 
-            if (!selectedJobTypeId) {
-                setBasicCardError(
-                    "직군을 선택해주세요.",
-                );
+        if (!selectedJobTypeId) {
+        setBasicCardError(
+            "직군을 선택해주세요.",
+        );
 
-                return;
-            }
+        return;
+        }
 
+        try {
+        setIsCreatingBasicCard(true);
+        setBasicCardError("");
+
+        const skillResult =
+            await getSkills({
+            jobTypeId:
+                selectedJobTypeId,
+            });
+
+        const skillItems =
+            getItems(skillResult);
+
+        setLoadedSkillJobTypeId(
+            selectedJobTypeId,
+        );
+
+        setOptionData(
+            (previousData) => ({
+            ...previousData,
+
+            skills: skillItems,
+            }),
+        );
+
+        let basicProfileCard = null;
+
+        /*
+        * 최초 온보딩에서는 기본 카드가
+        * 없을 때 먼저 기본 카드를 생성합니다.
+        *
+        * 새 카드 만들기에서는 최종 등록 시
+        * 생성하므로 여기서 생성하지 않습니다.
+        */
+        if (!isCardCreationFlow) {
             try {
-                setIsCreatingBasicCard(
-                    true,
-                );
-
-                setBasicCardError("");
-
-                const skillResult =
-                    await getSkills({
-                        jobTypeId:
-                            selectedJobTypeId,
-                    });
-
-                const skillItems =
-                    getItems(
-                        skillResult,
-                    );
-
-                setLoadedSkillJobTypeId(
-                    selectedJobTypeId,
-                );
-
-                setOptionData(
-                    (
-                        previousData,
-                    ) => ({
-                        ...previousData,
-
-                        skills:
-                            skillItems,
-                    }),
-                );
-
-                let basicProfileCard =
-                    null;
-
-                if (
-                    !isCardCreationFlow
-                ) {
-                    try {
-                        basicProfileCard =
-                            await getDefaultProfileCard();
-                    } catch (error) {
-                        if (
-                            error?.status !==
-                            404
-                        ) {
-                            throw error;
-                        }
-
-                        basicProfileCard =
-                            await createProfileCard(
-                                {
-                                    jobTypeId:
-                                        selectedJobTypeId,
-                                },
-                            );
-                    }
-                }
-
-                updateOnboardingData({
-                    job:
-                        selectedJob.id,
-
-                    jobTypeId:
-                        selectedJobTypeId,
-
-                    jobLabel:
-                        selectedJob.label,
-
-                    techStacks: [],
-                    interests: [],
-                    strength: null,
-
-                    cardBackgroundImageId:
-                        null,
-
-                    cardImageUrl: "",
-
-                    profileCardId:
-                        basicProfileCard
-                            ?.id ||
-                        null,
-
-                    createdProfile:
-                        basicProfileCard,
-
-                    ...getDefaultCardData(
-                        basicProfileCard,
-                    ),
-                });
-
-                nextStep();
+            basicProfileCard =
+                await getDefaultProfileCard();
             } catch (error) {
-                console.error(
-                    "직군 정보 조회 실패:",
-                    error,
-                );
-
-                setBasicCardError(
-                    error.message ||
-                        "직군 정보를 불러오지 못했습니다.",
-                );
-            } finally {
-                setIsCreatingBasicCard(
-                    false,
-                );
+            if (
+                error?.status !== 404
+            ) {
+                throw error;
             }
-        };
 
-    const handleBasicNext =
-        () => {
-            setSubmitError("");
-            nextStep();
-        };
+            basicProfileCard =
+                await createProfileCard({
+                jobTypeId:
+                    selectedJobTypeId,
+                });
+            }
+        }
+
+        updateOnboardingData({
+            job: selectedJob.id,
+
+            jobTypeId:
+            selectedJobTypeId,
+
+            jobLabel:
+            selectedJob.label,
+
+            techStacks: [],
+            interests: [],
+            strength: null,
+
+            links: [
+            createEmptyLink(),
+            ],
+
+            experiences: [
+            createEmptyExperience(
+                true,
+            ),
+            ],
+
+            cardBackgroundImageId:
+            null,
+
+            cardImageUrl: "",
+
+            profileCardId:
+            basicProfileCard?.id ||
+            null,
+
+            createdProfile:
+            basicProfileCard,
+
+            ...getDefaultCardData(
+            basicProfileCard,
+            ),
+        });
+
+        nextStep();
+        } catch (error) {
+        console.error(
+            "직군 정보 조회 실패:",
+            error,
+        );
+
+        setBasicCardError(
+            error?.message ||
+            "직군 정보를 불러오지 못했습니다.",
+        );
+        } finally {
+        setIsCreatingBasicCard(
+            false,
+        );
+        }
+    };
+
+    const handleBasicNext = () => {
+        setSubmitError("");
+        nextStep();
+    };
 
     const handleUpdateProfile =
         async () => {
-            if (
-                isCardCreationFlow &&
-                !onboardingData.purposeId
-            ) {
-                setSubmitError(
-                    "카드 목적을 선택해주세요.",
-                );
+        if (
+            isCardCreationFlow &&
+            !onboardingData.purposeId
+        ) {
+            setSubmitError(
+            "카드 목적을 선택해주세요.",
+            );
 
-                return;
-            }
+            return;
+        }
 
-            if (
-                !onboardingData
-                    .jobTypeId
-            ) {
-                setSubmitError(
-                    "선택한 직군을 확인하지 못했습니다.",
-                );
+        if (
+            !onboardingData.jobTypeId
+        ) {
+            setSubmitError(
+            "선택한 직군을 확인하지 못했습니다.",
+            );
 
-                return;
-            }
+            return;
+        }
 
-            if (
-                !onboardingData
-                    .affiliationStatusId
-            ) {
-                setSubmitError(
-                    "현재 상태를 선택해주세요.",
-                );
+        if (
+            !onboardingData
+            .affiliationStatusId
+        ) {
+            setSubmitError(
+            "현재 상태를 선택해주세요.",
+            );
 
-                return;
-            }
+            return;
+        }
 
-            if (
-                !onboardingData.strength
-                    ?.id
-            ) {
-                setSubmitError(
-                    "성향을 선택해주세요.",
-                );
+        if (
+            !onboardingData
+            .strength?.id
+        ) {
+            setSubmitError(
+            "성향을 선택해주세요.",
+            );
 
-                return;
-            }
+            return;
+        }
 
-            if (
-                !onboardingData.cardImageUrl
-            ) {
-                setBackgroundError(
-                    "카드 배경을 선택해주세요.",
-                );
+        if (
+            !onboardingData.cardImageUrl
+        ) {
+            setBackgroundError(
+            "카드 배경을 선택해주세요.",
+            );
 
-                return;
-            }
+            return;
+        }
 
-            try {
-                setIsSubmitting(true);
-                setSubmitError("");
-                setBackgroundError("");
+        try {
+            setIsSubmitting(true);
+            setSubmitError("");
+            setBackgroundError("");
 
-                const isDeveloper =
-                    onboardingData.job ===
-                        "frontend" ||
-                    onboardingData.job ===
-                        "backend";
+            const profilePayload = {
+            affiliationStatusId:
+                Number(
+                onboardingData
+                    .affiliationStatusId,
+                ),
 
-                const profilePayload = {
-                    affiliationStatusId:
-                        Number(
-                            onboardingData
-                                .affiliationStatusId,
+            affiliation: (
+                onboardingData
+                .affiliation || ""
+            ).trim(),
+
+            personalityId:
+                Number(
+                onboardingData
+                    .strength.id,
+                ),
+
+            description: (
+                onboardingData
+                .introduction || ""
+            ).trim(),
+
+            cardImageUrl:
+                onboardingData
+                .cardImageUrl,
+
+            skillIds: (
+                onboardingData
+                .techStacks || []
+            ).map((item) =>
+                Number(item.id),
+            ),
+
+            interestIds: (
+                onboardingData
+                .interests || []
+            ).map((item) =>
+                Number(item.id),
+            ),
+            };
+
+            /*
+            * 상세 정보 단계는 새 카드 생성에서만
+            * 사용하므로 새 카드일 때만 전달합니다.
+            */
+            if (isCardCreationFlow) {
+            profilePayload.links = (
+                onboardingData.links ||
+                []
+            )
+                .filter((link) =>
+                (
+                    link.value || ""
+                ).trim(),
+                )
+                .map((link) => ({
+                type: Number(
+                    link.type,
+                ),
+
+                value: (
+                    link.value || ""
+                ).trim(),
+                }));
+
+            profilePayload.experiences =
+                (
+                onboardingData
+                    .experiences || []
+                )
+                .filter(
+                    (experience) =>
+                    (
+                        experience.title ||
+                        ""
+                    ).trim() ||
+                    (
+                        experience
+                        .description ||
+                        ""
+                    ).trim() ||
+                    (
+                        experience
+                        .relatedUrl ||
+                        ""
+                    ).trim(),
+                )
+                .map(
+                    (
+                    experience,
+                    index,
+                    ) => ({
+                    title: (
+                        experience.title ||
+                        ""
+                    ).trim(),
+
+                    description: (
+                        experience
+                        .description ||
+                        ""
+                    ).trim(),
+
+                    relatedUrl: (
+                        experience
+                        .relatedUrl ||
+                        ""
+                    ).trim(),
+
+                    sortOrder: index,
+
+                    isRepresentative:
+                        Boolean(
+                        experience
+                            .isRepresentative,
                         ),
-
-                    affiliation:
-                        onboardingData
-                            .affiliation
-                            .trim(),
-
-                    personalityId:
-                        Number(
-                            onboardingData
-                                .strength
-                                .id,
-                        ),
-
-                    description:
-                        onboardingData
-                            .introduction
-                            .trim(),
-
-                    cardImageUrl:
-                        onboardingData
-                            .cardImageUrl,
-                };
-
-                if (isDeveloper) {
-                    profilePayload.skillIds =
-                        onboardingData.techStacks.map(
-                            (item) =>
-                                Number(
-                                    item.id,
-                                ),
-                        );
-
-                    profilePayload.interestIds =
-                        [];
-                } else {
-                    profilePayload.skillIds =
-                        onboardingData.techStacks.map(
-                            (item) =>
-                                Number(
-                                    item.id,
-                                ),
-                        );
-
-                    profilePayload.interestIds =
-                        onboardingData.interests.map(
-                            (item) =>
-                                Number(
-                                    item.id,
-                                ),
-                        );
-                }
-
-                if (
-                    onboardingData
-                        .profileImageUrl
-                ) {
-                    profilePayload.profileImageUrl =
-                        onboardingData
-                            .profileImageUrl;
-                }
-
-                let profileCardId =
-                    onboardingData
-                        .profileCardId;
-
-                let createdCard =
-                    onboardingData
-                        .createdProfile;
-
-                if (!profileCardId) {
-                    createdCard =
-                        await createProfileCard(
-                            {
-                                jobTypeId:
-                                    onboardingData
-                                        .jobTypeId,
-
-                                purposeId:
-                                    onboardingData
-                                        .purposeId,
-                            },
-                        );
-
-                    profileCardId =
-                        createdCard?.id;
-                }
-
-                if (!profileCardId) {
-                    throw new Error(
-                        "생성된 프로필 카드 ID를 받지 못했습니다.",
-                    );
-                }
-
-                const updatedCard =
-                    await updateProfileCard(
-                        profileCardId,
-                        {
-                            ...profilePayload,
-                            isActive: true,
-                        },
-                    );
-
-                removeOnboardingDraft(
-                    draftId,
-                );
-
-                updateOnboardingData({
-                    profileCardId:
-                        profileCardId,
-
-                    createdProfile:
-                        updatedCard,
-                });
-
-                nextStep();
-            } catch (error) {
-                console.error(
-                    "프로필 카드 생성 실패:",
-                    error,
-                );
-
-                setBackgroundError(
-                    error.message ||
-                        "프로필 카드 생성에 실패했습니다.",
-                );
-            } finally {
-                setIsSubmitting(
-                    false,
+                    }),
                 );
             }
+
+            if (
+            onboardingData
+                .profileImageUrl
+            ) {
+            profilePayload.profileImageUrl =
+                onboardingData
+                .profileImageUrl;
+            }
+
+            let profileCardId =
+            onboardingData
+                .profileCardId;
+
+            let createdCard =
+            onboardingData
+                .createdProfile;
+
+            if (!profileCardId) {
+            const createPayload = {
+                jobTypeId:
+                onboardingData
+                    .jobTypeId,
+            };
+
+            if (
+                onboardingData.purposeId
+            ) {
+                createPayload.purposeId =
+                onboardingData
+                    .purposeId;
+            }
+
+            createdCard =
+                await createProfileCard(
+                createPayload,
+                );
+
+            profileCardId =
+                createdCard?.id;
+            }
+
+            if (!profileCardId) {
+            throw new Error(
+                "생성된 프로필 카드 ID를 받지 못했습니다.",
+            );
+            }
+
+            const updatedCard =
+            await updateProfileCard(
+                profileCardId,
+                {
+                ...profilePayload,
+                isActive: true,
+                },
+            );
+
+            removeOnboardingDraft(
+            draftId,
+            );
+
+            updateOnboardingData({
+            profileCardId,
+
+            createdProfile:
+                updatedCard,
+            });
+
+            nextStep();
+        } catch (error) {
+            console.error(
+            "프로필 카드 생성 실패:",
+            error,
+            );
+
+            setBackgroundError(
+            error?.message ||
+                "프로필 카드 생성에 실패했습니다.",
+            );
+        } finally {
+            setIsSubmitting(false);
+        }
         };
 
     const firstStep =
         isCardCreationFlow ? (
-            <PurposeSelectStep
-                key="purpose"
-                data={
-                    onboardingData
-                }
-                purposeOptions={
-                    optionData.purposes
-                }
-                isLoading={
-                    isOptionLoading
-                }
-                errorMessage={
-                    optionError
-                }
-                onChange={
-                    updateOnboardingData
-                }
-                onNext={
-                    nextStep
-                }
-                onBack={() =>
-                    navigate(
-                        "/profile",
-                    )
-                }
-                currentStep={
-                    step
-                }
-                totalSteps={
-                    totalSteps
-                }
-            />
+        <PurposeSelectStep
+            key="purpose"
+            data={onboardingData}
+            purposeOptions={
+            optionData.purposes
+            }
+            isLoading={
+            isOptionLoading
+            }
+            errorMessage={
+            optionError
+            }
+            onChange={
+            updateOnboardingData
+            }
+            onNext={nextStep}
+            onBack={() =>
+            navigate("/profile")
+            }
+            currentStep={step}
+            totalSteps={totalSteps}
+        />
         ) : (
-            <WelcomeStep
-                key="welcome"
-                onNext={
-                    nextStep
-                }
-                currentStep={
-                    step
-                }
-                totalSteps={
-                    totalSteps
-                }
-            />
+        <WelcomeStep
+            key="welcome"
+            onNext={nextStep}
+            currentStep={step}
+            totalSteps={totalSteps}
+        />
         );
 
-    const steps = [
-        firstStep,
-
+    const jobStep = (
         <JobSelectStep
-            key="job"
-            data={onboardingData}
-            jobOptions={
-                optionData.jobOptions
-            }
-            isLoading={
-                isOptionLoading
-            }
-            isCreating={
-                isCreatingBasicCard
-            }
-            errorMessage={
-                optionError ||
-                basicCardError
-            }
-            onChange={
-                updateOnboardingData
-            }
-            onNext={
-                handleJobNext
-            }
-            onBack={
-                prevStep
-            }
-            currentStep={
-                step
-            }
-            totalSteps={
-                totalSteps
-            }
-        />,
-
-        <CardBasicStep
-            key="basic"
-            data={onboardingData}
-            skills={
-                optionData.skills
-            }
-            interests={
-                optionData.interests
-            }
-            personalities={
-                optionData.personalities
-            }
-            affiliationStatuses={
-                optionData
-                    .affiliationStatuses
-            }
-            isSubmitting={
-                false
-            }
-            submitError={
-                submitError
-            }
-            onChange={
-                updateOnboardingData
-            }
-            onSubmit={
-                handleBasicNext
-            }
-            onBack={
-                prevStep
-            }
-            currentStep={
-                step
-            }
-            totalSteps={
-                totalSteps
-            }
-        />,
-
-        <CardPreviewStep
-            key="preview"
-            data={onboardingData}
-            backgrounds={
-                cardBackgrounds
-            }
-            isLoading={
-                isBackgroundLoading
-            }
-            isSubmitting={
-                isSubmitting
-            }
-            errorMessage={
-                backgroundError
-            }
-            onSelect={
-                handleSelectBackground
-            }
-            onSubmit={
-                handleUpdateProfile
-            }
-            onBack={
-                prevStep
-            }
-            currentStep={
-                step
-            }
-            totalSteps={
-                totalSteps
-            }
-        />,
-
-        <LoadingStep
-            key="loading"
-            onComplete={
-                nextStep
-            }
-            currentStep={
-                step
-            }
-            totalSteps={
-                totalSteps
-            }
-        />,
-
-        <CompleteStep
-            key="complete"
-            data={onboardingData}
-            currentStep={
-                step
-            }
-            totalSteps={
-                totalSteps
-            }
-        />,
-    ];
-
-    return (
-        <>
-            {steps[step]}
-        </>
+        key="job"
+        data={onboardingData}
+        jobOptions={
+            optionData.jobOptions
+        }
+        isLoading={
+            isOptionLoading
+        }
+        isCreating={
+            isCreatingBasicCard
+        }
+        errorMessage={
+            optionError ||
+            basicCardError
+        }
+        onChange={
+            updateOnboardingData
+        }
+        onNext={handleJobNext}
+        onBack={prevStep}
+        currentStep={step}
+        totalSteps={totalSteps}
+        />
     );
-};
 
-export default Onboarding;
+    const basicStep = (
+        <CardBasicStep
+        key="basic"
+        data={onboardingData}
+        skills={optionData.skills}
+        interests={
+            optionData.interests
+        }
+        personalities={
+            optionData.personalities
+        }
+        affiliationStatuses={
+            optionData
+            .affiliationStatuses
+        }
+        isSubmitting={false}
+        submitError={submitError}
+        onChange={
+            updateOnboardingData
+        }
+        onSubmit={
+            handleBasicNext
+        }
+        onBack={prevStep}
+        currentStep={step}
+        totalSteps={totalSteps}
+        />
+    );
+
+    const detailStep = (
+        <CardDetailStep
+        key="detail"
+        data={onboardingData}
+        skills={optionData.skills}
+        interests={
+            optionData.interests
+        }
+        onChange={
+            updateOnboardingData
+        }
+        onNext={nextStep}
+        onBack={prevStep}
+        currentStep={step}
+        totalSteps={totalSteps}
+        />
+    );
+
+    const previewStep = (
+        <CardPreviewStep
+        key="preview"
+        data={onboardingData}
+        backgrounds={
+            cardBackgrounds
+        }
+        isLoading={
+            isBackgroundLoading
+        }
+        isSubmitting={
+            isSubmitting
+        }
+        errorMessage={
+            backgroundError
+        }
+        onSelect={
+            handleSelectBackground
+        }
+        onSubmit={
+            handleUpdateProfile
+        }
+        onBack={prevStep}
+        currentStep={step}
+        totalSteps={totalSteps}
+        />
+    );
+
+    const loadingStep = (
+        <LoadingStep
+        key="loading"
+        onComplete={nextStep}
+        currentStep={step}
+        totalSteps={totalSteps}
+        />
+    );
+
+    const completeStep = (
+        <CompleteStep
+        key="complete"
+        data={onboardingData}
+        currentStep={step}
+        totalSteps={totalSteps}
+        />
+    );
+
+    /*
+    * 새 카드 만들기에서만
+    * 기본 정보 다음에 상세 정보 단계를 추가합니다.
+    */
+    const steps =
+        isCardCreationFlow
+        ? [
+            firstStep,
+            jobStep,
+            basicStep,
+            detailStep,
+            previewStep,
+            loadingStep,
+            completeStep,
+            ]
+        : [
+            firstStep,
+            jobStep,
+            basicStep,
+            previewStep,
+            loadingStep,
+            completeStep,
+            ];
+
+    return <>{steps[step]}</>;
+    };
+
+    export default Onboarding;

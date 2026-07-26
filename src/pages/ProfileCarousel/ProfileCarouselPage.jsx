@@ -14,6 +14,8 @@
     moveCollection,
     } from "../../api/collections";
 
+    import { getConnections } from "../../api/connections";
+
     import LoginModal from "../../components/common/LoginModal/LoginModal";
     import ExploreProfileCard from "../../components/profile/ExploreProfileCard";
 
@@ -98,6 +100,7 @@
     const navigate = useNavigate();
 
     const [drawers, setDrawers] = useState([]);
+    const [exchangedProfileIds, setExchangedProfileIds] = useState([]);
     const [scrapError, setScrapError] = useState("");
     const [isSavingScrap, setIsSavingScrap] = useState(false);
 
@@ -115,47 +118,31 @@
     const headerText = PURPOSE_HEADER_TEXT[purpose] ?? "";
 
     /*
-     * 탐색 화면에서 선택한 섹션의 purpose가
-     * 쿼리스트링으로 전달되면 해당 목적의 카드만 표시합니다.
-     *
-     * 전체보기에서는 purpose가 없으므로 모든 카드를 표시합니다.
-     */
+    * 탐색 화면에서 선택한 섹션의 purpose가
+    * 쿼리스트링으로 전달되면 해당 목적의 카드만 표시합니다.
+    *
+    * 전체보기에서는 purpose가 없으므로 모든 카드를 표시합니다.
+    */
     const normalizePurposeName = (value = "") =>
-        String(value)
-            .replace(/\s+/g, "")
-            .replace(/[·/]/g, "")
-            .toLowerCase();
+        String(value).replace(/\s+/g, "").replace(/[·/]/g, "").toLowerCase();
 
-    const normalizedPurpose =
-        normalizePurposeName(purpose);
+    const normalizedPurpose = normalizePurposeName(purpose);
 
     const carouselProfiles = purpose
         ? profiles.filter((profile) => {
-              const purposeNames = Array.isArray(
-                  profile.purposes,
-              )
-                  ? profile.purposes
-                  : [];
+            const purposeNames = Array.isArray(profile.purposes)
+            ? profile.purposes
+            : [];
 
-              return purposeNames.some(
-                  (item) => {
-                      const purposeName =
-                          typeof item ===
-                          "string"
-                              ? item
-                              : item?.name ||
-                                item?.purposeName ||
-                                "";
+            return purposeNames.some((item) => {
+            const purposeName =
+                typeof item === "string"
+                ? item
+                : item?.name || item?.purposeName || "";
 
-                      return (
-                          normalizePurposeName(
-                              purposeName,
-                          ) ===
-                          normalizedPurpose
-                      );
-                  },
-              );
-          })
+            return normalizePurposeName(purposeName) === normalizedPurpose;
+            });
+        })
         : profiles;
 
     const selectedIndex = carouselProfiles.findIndex(
@@ -207,9 +194,7 @@
         if (error?.name !== "AbortError") {
             console.error("스크랩 서랍 조회 실패:", error);
 
-            setScrapError(
-            error.message || "스크랩 서랍을 불러오지 못했습니다.",
-            );
+            setScrapError(error.message || "스크랩 서랍을 불러오지 못했습니다.");
         }
         }
     }, []);
@@ -235,20 +220,70 @@
         };
     }, [loadScrapDrawers]);
 
+    useEffect(() => {
+        if (!isLoggedIn()) {
+        setExchangedProfileIds([]);
+        return undefined;
+        }
+
+        const controller = new AbortController();
+
+        const loadConnections = async () => {
+        try {
+            const data = await getConnections({
+            page: 1,
+            limit: 100,
+            sort: "createdAt",
+            order: "desc",
+            signal: controller.signal,
+            });
+
+            if (controller.signal.aborted) {
+            return;
+            }
+
+            const connections = getArrayData(data);
+
+            const profileIds = connections
+            .map((connection) => connection?.card?.id)
+            .filter((id) => id !== null && id !== undefined)
+            .map(String);
+
+            setExchangedProfileIds([...new Set(profileIds)]);
+        } catch (error) {
+            if (error?.name === "AbortError") {
+            return;
+            }
+
+            console.error("교환 완료 카드 조회 실패:", error);
+
+            setExchangedProfileIds([]);
+        }
+        };
+
+        loadConnections();
+
+        return () => {
+        controller.abort();
+        };
+    }, []);
+
     const activeProfile = carouselProfiles[activeIndex];
 
     const isFirstSlide = activeIndex === 0;
 
-    const isLastSlide =
-        activeIndex === carouselProfiles.length - 1;
+    const isLastSlide = activeIndex === carouselProfiles.length - 1;
 
     const isActiveProfileScrapped = activeProfile
         ? drawers.some((drawer) =>
             drawer.profiles.some(
-            (profile) =>
-                String(profile.id) === String(activeProfile.id),
+            (profile) => String(profile.id) === String(activeProfile.id),
             ),
         )
+        : false;
+
+    const isActiveProfileExchanged = activeProfile
+        ? exchangedProfileIds.includes(String(activeProfile.id))
         : false;
 
     const indicatorProgress =
@@ -292,8 +327,7 @@
         const savedDrawerIds = drawers
         .filter((drawer) =>
             drawer.profiles.some(
-            (profile) =>
-                String(profile.id) === String(activeProfile.id),
+            (profile) => String(profile.id) === String(activeProfile.id),
             ),
         )
         .map((drawer) => drawer.id);
@@ -336,16 +370,19 @@
         return;
         }
 
+        if (drawers.length === 0) {
+        setScrapError("서랍을 먼저 만들어주세요.");
+        return;
+        }
+
         const savedDrawer = drawers.find((drawer) =>
         drawer.profiles.some(
-            (profile) =>
-            String(profile.id) === String(activeProfile.id),
+            (profile) => String(profile.id) === String(activeProfile.id),
         ),
         );
 
         const savedProfile = savedDrawer?.profiles.find(
-        (profile) =>
-            String(profile.id) === String(activeProfile.id),
+        (profile) => String(profile.id) === String(activeProfile.id),
         );
 
         const selectedDrawerId = selectedDrawerIds[0] ?? null;
@@ -359,20 +396,14 @@
             cardId: activeProfile.id,
             groupId: selectedDrawerId,
             });
-        } else if (
-            savedProfile?.collectionId &&
-            !selectedDrawerId
-        ) {
+        } else if (savedProfile?.collectionId && !selectedDrawerId) {
             await deleteCollection(savedProfile.collectionId);
         } else if (
             savedProfile?.collectionId &&
             selectedDrawerId &&
             String(savedDrawer.id) !== String(selectedDrawerId)
         ) {
-            await moveCollection(
-            savedProfile.collectionId,
-            selectedDrawerId,
-            );
+            await moveCollection(savedProfile.collectionId, selectedDrawerId);
         }
 
         await loadScrapDrawers();
@@ -380,9 +411,7 @@
         } catch (error) {
         console.error("스크랩 저장 실패:", error);
 
-        setScrapError(
-            error.message || "스크랩을 저장하지 못했습니다.",
-        );
+        setScrapError(error.message || "스크랩을 저장하지 못했습니다.");
         } finally {
         setIsSavingScrap(false);
         }
@@ -416,8 +445,7 @@
         setScrapError("");
 
         try {
-        const createdGroup =
-            await createCollectionGroup(trimmedName);
+        const createdGroup = await createCollectionGroup(trimmedName);
 
         await loadScrapDrawers();
 
@@ -430,29 +458,18 @@
         } catch (error) {
         console.error("스크랩 서랍 생성 실패:", error);
 
-        setScrapError(
-            error.message || "새 서랍을 만들지 못했습니다.",
-        );
+        setScrapError(error.message || "새 서랍을 만들지 못했습니다.");
         }
     };
 
-    const getProgressFromPointer = (
-        event,
-        indicatorElement,
-    ) => {
-        const rect =
-        indicatorElement.getBoundingClientRect();
+    const getProgressFromPointer = (event, indicatorElement) => {
+        const rect = indicatorElement.getBoundingClientRect();
 
-        const pointerX =
-        event.clientX - rect.left;
+        const pointerX = event.clientX - rect.left;
 
-        const rawProgress =
-        pointerX / rect.width;
+        const rawProgress = pointerX / rect.width;
 
-        return Math.max(
-        0,
-        Math.min(1, rawProgress),
-        );
+        return Math.max(0, Math.min(1, rawProgress));
     };
 
     const moveCarouselByProgress = (progress) => {
@@ -483,8 +500,7 @@
 
         indicatorElement.setPointerCapture(event.pointerId);
 
-        const progress =
-        getProgressFromPointer(event, indicatorElement);
+        const progress = getProgressFromPointer(event, indicatorElement);
 
         dragProgressRef.current = progress;
         setDragProgress(progress);
@@ -499,11 +515,7 @@
 
         event.preventDefault();
 
-        const progress =
-        getProgressFromPointer(
-            event,
-            event.currentTarget,
-        );
+        const progress = getProgressFromPointer(event, event.currentTarget);
 
         dragProgressRef.current = progress;
         setDragProgress(progress);
@@ -520,34 +532,23 @@
 
         isDraggingRef.current = false;
 
-            setIsDragging(false);
+        setIsDragging(false);
 
-        const currentProgress =
-        dragProgressRef.current ?? indicatorProgress;
+        const currentProgress = dragProgressRef.current ?? indicatorProgress;
 
         const nextIndex = Math.round(
-        currentProgress *
-            (carouselProfiles.length - 1),
+        currentProgress * (carouselProfiles.length - 1),
         );
 
-        swiperRef.current?.slideTo(
-        nextIndex,
-        180,
-        );
+        swiperRef.current?.slideTo(nextIndex, 180);
 
         setActiveIndex(nextIndex);
 
         dragProgressRef.current = null;
         setDragProgress(null);
 
-        if (
-        indicatorElement.hasPointerCapture(
-            event.pointerId,
-        )
-        ) {
-        indicatorElement.releasePointerCapture(
-            event.pointerId,
-        );
+        if (indicatorElement.hasPointerCapture(event.pointerId)) {
+        indicatorElement.releasePointerCapture(event.pointerId);
         }
     };
 
@@ -559,17 +560,11 @@
         let nextIndex = activeIndex;
 
         if (event.key === "ArrowLeft") {
-        nextIndex = Math.max(
-            activeIndex - 1,
-            0,
-        );
+        nextIndex = Math.max(activeIndex - 1, 0);
         }
 
         if (event.key === "ArrowRight") {
-        nextIndex = Math.min(
-            activeIndex + 1,
-            carouselProfiles.length - 1,
-        );
+        nextIndex = Math.min(activeIndex + 1, carouselProfiles.length - 1);
         }
 
         if (event.key === "Home") {
@@ -577,8 +572,7 @@
         }
 
         if (event.key === "End") {
-        nextIndex =
-            carouselProfiles.length - 1;
+        nextIndex = carouselProfiles.length - 1;
         }
 
         if (nextIndex === activeIndex) {
@@ -587,341 +581,186 @@
 
         event.preventDefault();
 
-        swiperRef.current?.slideTo(
-        nextIndex,
-        180,
-        );
+        swiperRef.current?.slideTo(nextIndex, 180);
 
         setActiveIndex(nextIndex);
     };
 
     if (isLoading) {
         return (
-        <main
-            className={
-            styles.container
-            }
-        >
-            <div
-            className={
-                styles.pageHeader
-            }
-            >
+        <main className={styles.container}>
+            <div className={styles.pageHeader}>
             <button
                 type="button"
-                className={
-                styles.backButton
-                }
-                onClick={
-                handleBackClick
-                }
+                className={styles.backButton}
+                onClick={handleBackClick}
                 aria-label="이전 화면으로 돌아가기"
             >
                 <BackIcon />
             </button>
             </div>
 
-            <p
-            className={
-                styles.emptyMessage
-            }
-            >
-            프로필을 불러오는 중입니다.
-            </p>
+            <p className={styles.emptyMessage}>프로필을 불러오는 중입니다.</p>
         </main>
         );
     }
 
     if (errorMessage) {
         return (
-        <main
-            className={
-            styles.container
-            }
-        >
-            <div
-            className={
-                styles.pageHeader
-            }
-            >
+        <main className={styles.container}>
+            <div className={styles.pageHeader}>
             <button
                 type="button"
-                className={
-                styles.backButton
-                }
-                onClick={
-                handleBackClick
-                }
+                className={styles.backButton}
+                onClick={handleBackClick}
                 aria-label="이전 화면으로 돌아가기"
             >
                 <BackIcon />
             </button>
             </div>
 
-            <p
-            className={
-                styles.emptyMessage
-            }
-            >
-            {errorMessage}
-            </p>
+            <p className={styles.emptyMessage}>{errorMessage}</p>
         </main>
         );
     }
 
-    if (
-        carouselProfiles.length === 0
-    ) {
+    if (carouselProfiles.length === 0) {
         return (
-        <main
-            className={
-            styles.container
-            }
-        >
-            <div
-            className={
-                styles.pageHeader
-            }
-            >
+        <main className={styles.container}>
+            <div className={styles.pageHeader}>
             <button
                 type="button"
-                className={
-                styles.backButton
-                }
-                onClick={
-                handleBackClick
-                }
+                className={styles.backButton}
+                onClick={handleBackClick}
                 aria-label="이전 화면으로 돌아가기"
             >
                 <BackIcon />
 
-                {headerText && (
-                <span>
-                    {headerText}
-                </span>
-                )}
+                {headerText && <span>{headerText}</span>}
             </button>
             </div>
 
-            <p
-            className={
-                styles.emptyMessage
-            }
-            >
-            해당 목적의 프로필이 없습니다.
-            </p>
+            <p className={styles.emptyMessage}>해당 목적의 프로필이 없습니다.</p>
         </main>
         );
     }
 
     return (
         <>
-        <main
-            className={
-            styles.container
-            }
-        >
-            <div
-            className={
-                styles.pageHeader
-            }
-            >
+        <main className={styles.container}>
+            <div className={styles.pageHeader}>
             <button
                 type="button"
-                className={
-                styles.backButton
-                }
-                onClick={
-                handleBackClick
-                }
+                className={styles.backButton}
+                onClick={handleBackClick}
                 aria-label="이전 화면으로 돌아가기"
             >
                 <BackIcon />
 
-                {headerText && (
-                <span>
-                    {headerText}
-                </span>
-                )}
+                {headerText && <span>{headerText}</span>}
             </button>
             </div>
 
-            <section
-            className={
-                styles.carouselSection
-            }
-            >
-            <div
-                className={
-                styles.carouselArea
-                }
-            >
+            <section className={styles.carouselSection}>
+            <div className={styles.carouselArea}>
                 <button
                 type="button"
                 className={`${styles.arrowButton} ${styles.leftArrow}`}
-                onClick={
-                    handlePrevSlide
-                }
-                disabled={
-                    isFirstSlide
-                }
+                onClick={handlePrevSlide}
+                disabled={isFirstSlide}
                 aria-label="이전 프로필 보기"
                 >
                 <ChevronLeftIcon />
                 </button>
 
                 <Swiper
-                    centeredSlides
-                    slidesPerView="auto"
-                    initialSlide={initialSlide}
-                    spaceBetween={20}
-                    speed={400}
-                    grabCursor
-                    slideToClickedSlide
-                    watchSlidesProgress
-                    onSwiper={(swiper) => {
-                        swiperRef.current = swiper;
-                    }}
-                    onSlideChange={(swiper) => {
-                        if (!isDraggingRef.current) {
-                            setActiveIndex(swiper.activeIndex);
-                        }
-                    }}
-                    className={styles.swiper}
+                centeredSlides
+                slidesPerView="auto"
+                initialSlide={initialSlide}
+                spaceBetween={20}
+                speed={400}
+                grabCursor
+                slideToClickedSlide
+                watchSlidesProgress
+                onSwiper={(swiper) => {
+                    swiperRef.current = swiper;
+                }}
+                onSlideChange={(swiper) => {
+                    if (!isDraggingRef.current) {
+                    setActiveIndex(swiper.activeIndex);
+                    }
+                }}
+                className={styles.swiper}
                 >
-                {carouselProfiles.map(
-                    (profile) => (
-                    <SwiperSlide
-                        key={
-                        profile.id
-                        }
-                        className={
-                        styles.slide
-                        }
-                    >
-                        <ExploreProfileCard
-                        profile={
-                            profile
-                        }
-                        onClick={
-                            handleProfileClick
-                        }
-                        />
+                {carouselProfiles.map((profile) => (
+                    <SwiperSlide key={profile.id} className={styles.slide}>
+                    <ExploreProfileCard
+                        profile={profile}
+                        onClick={handleProfileClick}
+                    />
                     </SwiperSlide>
-                    ),
-                )}
+                ))}
                 </Swiper>
 
                 <button
                 type="button"
                 className={`${styles.arrowButton} ${styles.rightArrow}`}
-                onClick={
-                    handleNextSlide
-                }
-                disabled={
-                    isLastSlide
-                }
+                onClick={handleNextSlide}
+                disabled={isLastSlide}
                 aria-label="다음 프로필 보기"
                 >
                 <ChevronRightIcon />
                 </button>
             </div>
 
-            <div
-                className={
-                styles.actionArea
-                }
-            >
+            <div className={styles.actionArea}>
                 <button
                 type="button"
                 className={`${styles.scrapButton} ${
-                    isActiveProfileScrapped
-                    ? styles.scrapped
-                    : ""
+                    isActiveProfileScrapped ? styles.scrapped : ""
                 }`}
-                onClick={
-                    handleOpenScrapSheet
-                }
-                aria-pressed={
-                    isActiveProfileScrapped
-                }
+                onClick={handleOpenScrapSheet}
+                aria-pressed={isActiveProfileScrapped}
                 >
-                <img
-                    src={
-                    scrapIcon
-                    }
-                    alt=""
-                    className={
-                    styles.scrapIcon
-                    }
-                />
+                <img src={scrapIcon} alt="" className={styles.scrapIcon} />
 
-                <span>
-                    {isActiveProfileScrapped
-                    ? "스크랩됨"
-                    : "스크랩"}
-                </span>
+                <span>{isActiveProfileScrapped ? "스크랩됨" : "스크랩"}</span>
                 </button>
+
+                {isActiveProfileExchanged && (
+                <span
+                    className={styles.exchangedStatus}
+                    aria-label="교환이 완료된 카드"
+                >
+                    교환됨
+                </span>
+                )}
             </div>
 
-            <div
-                className={
-                styles.indicatorContainer
-                }
-            >
+            <div className={styles.indicatorContainer}>
                 <div
-                className={
-                    styles.indicator
-                }
+                className={styles.indicator}
                 role="slider"
-                tabIndex={
-                    0
-                }
+                tabIndex={0}
                 aria-label="프로필 카드 이동"
-                aria-valuemin={
-                    1
-                }
-                aria-valuemax={Math.max(
-                    carouselProfiles.length,
-                    1,
-                )}
-                aria-valuenow={
-                    activeIndex + 1
-                }
-                onPointerDown={
-                    handleIndicatorPointerDown
-                }
-                onPointerMove={
-                    handleIndicatorPointerMove
-                }
-                onPointerUp={
-                    finishIndicatorDrag
-                }
-                onPointerCancel={
-                    finishIndicatorDrag
-                }
-                onKeyDown={
-                    handleIndicatorKeyDown
-                }
+                aria-valuemin={1}
+                aria-valuemax={Math.max(carouselProfiles.length, 1)}
+                aria-valuenow={activeIndex + 1}
+                onPointerDown={handleIndicatorPointerDown}
+                onPointerMove={handleIndicatorPointerMove}
+                onPointerUp={finishIndicatorDrag}
+                onPointerCancel={finishIndicatorDrag}
+                onKeyDown={handleIndicatorKeyDown}
                 style={{
-                    cursor:
-                    isDragging
-                        ? "grabbing"
-                        : "grab",
+                    cursor: isDragging ? "grabbing" : "grab",
                 }}
                 >
                 <div
-                    className={
-                    styles.indicatorThumb
-                    }
+                    className={styles.indicatorThumb}
                     style={{
-                    "--indicator-progress":
-                        displayedProgress,
+                    "--indicator-progress": displayedProgress,
 
-                    transition:
-                        isDragging
-                        ? "none"
-                        : undefined,
+                    transition: isDragging ? "none" : undefined,
                     }}
                 />
                 </div>
@@ -931,47 +770,25 @@
 
         {isScrapSheetOpen && (
             <div
-            className={
-                styles.scrapSheetBackdrop
-            }
-            onMouseDown={
-                handleCloseScrapSheet
-            }
+            className={styles.scrapSheetBackdrop}
+            onMouseDown={handleCloseScrapSheet}
             >
             <section
-                className={
-                styles.scrapSheet
-                }
+                className={styles.scrapSheet}
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="scrap-sheet-title"
-                onMouseDown={(
-                event,
-                ) =>
-                event.stopPropagation()
-                }
+                onMouseDown={(event) => event.stopPropagation()}
             >
-                <div
-                className={
-                    styles.scrapSheetHeader
-                }
-                >
-                <h2
-                    id="scrap-sheet-title"
-                >
-                    {isCreatingDrawer
-                    ? "새 서랍 만들기"
-                    : "어디에 스크랩할까요?"}
+                <div className={styles.scrapSheetHeader}>
+                <h2 id="scrap-sheet-title">
+                    {isCreatingDrawer ? "새 서랍 만들기" : "어디에 스크랩할까요?"}
                 </h2>
 
                 <button
                     type="button"
-                    className={
-                    styles.sheetCloseButton
-                    }
-                    onClick={
-                    handleCloseScrapSheet
-                    }
+                    className={styles.sheetCloseButton}
+                    onClick={handleCloseScrapSheet}
                     aria-label="스크랩 선택 닫기"
                 >
                     ×
@@ -980,28 +797,14 @@
 
                 {isCreatingDrawer ? (
                 <form
-                    className={
-                    styles.createDrawerForm
-                    }
-                    onSubmit={
-                    handleCreateDrawer
-                    }
+                    className={styles.createDrawerForm}
+                    onSubmit={handleCreateDrawer}
                 >
-                    <div
-                    className={
-                        styles.createDrawerInputHeader
-                    }
-                    >
-                    <label
-                        htmlFor="carousel-drawer-name"
-                    >
-                        서랍 이름
-                    </label>
+                    <div className={styles.createDrawerInputHeader}>
+                    <label htmlFor="carousel-drawer-name">서랍 이름</label>
 
                     <span>
-                        {
-                        newDrawerName.length
-                        }
+                        {newDrawerName.length}
                         /20
                     </span>
                     </div>
@@ -1009,49 +812,26 @@
                     <input
                     id="carousel-drawer-name"
                     type="text"
-                    value={
-                        newDrawerName
-                    }
-                    onChange={(
-                        event,
-                    ) =>
-                        setNewDrawerName(
-                        event.target
-                            .value,
-                        )
-                    }
-                    maxLength={
-                        20
-                    }
+                    value={newDrawerName}
+                    onChange={(event) => setNewDrawerName(event.target.value)}
+                    maxLength={20}
                     placeholder="스크랩 목적, 분류 등을 작성해보세요"
                     autoFocus
                     />
 
-                    <div
-                    className={
-                        styles.createDrawerActions
-                    }
-                    >
+                    <div className={styles.createDrawerActions}>
                     <button
                         type="button"
-                        className={
-                        styles.cancelCreateButton
-                        }
-                        onClick={
-                        handleCancelCreateDrawer
-                        }
+                        className={styles.cancelCreateButton}
+                        onClick={handleCancelCreateDrawer}
                     >
                         취소
                     </button>
 
                     <button
                         type="submit"
-                        className={
-                        styles.createDrawerButton
-                        }
-                        disabled={
-                        !newDrawerName.trim()
-                        }
+                        className={styles.createDrawerButton}
+                        disabled={!newDrawerName.trim()}
                     >
                         만들기
                     </button>
@@ -1063,119 +843,76 @@
                     <p
                         role="alert"
                         style={{
-                        margin:
-                            "0 0 12px",
+                        margin: "0 0 12px",
 
-                        color:
-                            "#d92d20",
+                        color: "#d92d20",
 
-                        fontSize:
-                            "14px",
+                        fontSize: "14px",
                         }}
                     >
-                        {
-                        scrapError
-                        }
+                        {scrapError}
                     </p>
                     )}
 
-                    <div
-                    className={
-                        styles.collectionSummary
-                    }
-                    >
-                    <span>
-                        컬렉션{" "}
-                        {
-                        drawers.length
-                        }
-                        개
-                    </span>
+                    <div className={styles.collectionSummary}>
+                    <span>컬렉션 {drawers.length}개</span>
 
                     <button
                         type="button"
-                        className={
-                        styles.addDrawerButton
-                        }
-                        onClick={
-                        handleOpenCreateDrawer
-                        }
+                        className={styles.addDrawerButton}
+                        onClick={handleOpenCreateDrawer}
                     >
                         서랍 추가
                     </button>
                     </div>
 
-                    <div
-                    className={
-                        styles.collectionList
-                    }
-                    >
-                    {drawers.map(
-                        (
-                        drawer,
-                        ) => {
-                        const selected =
-                            selectedDrawerIds.includes(
-                            drawer.id,
-                            );
+                    <div className={styles.collectionList}>
+                    {drawers.length > 0 ? (
+                        drawers.map((drawer) => {
+                        const selected = selectedDrawerIds.includes(drawer.id);
 
                         return (
                             <button
-                            key={
-                                drawer.id
-                            }
+                            key={drawer.id}
                             type="button"
-                            className={
-                                styles.collectionItem
-                            }
-                            onClick={() =>
-                                handleToggleDrawer(
-                                drawer.id,
-                                )
-                            }
-                            aria-pressed={
-                                selected
-                            }
+                            className={styles.collectionItem}
+                            onClick={() => handleToggleDrawer(drawer.id)}
+                            aria-pressed={selected}
                             >
-                            <span>
-                                {
-                                drawer.name
-                                }
-                            </span>
+                            <span>{drawer.name}</span>
 
                             <span
                                 className={`${styles.selectionIcon} ${
-                                selected
-                                    ? styles.selectedIcon
-                                    : ""
+                                selected ? styles.selectedIcon : ""
                                 }`}
                                 aria-hidden="true"
                             >
-                                {selected
-                                ? "✓"
-                                : "+"}
+                                {selected ? "✓" : "+"}
                             </span>
                             </button>
                         );
-                        },
+                        })
+                    ) : (
+                        <p
+                        style={{
+                            margin: 0,
+                            color: "#9298ab",
+                            fontSize: "14px",
+                            textAlign: "center",
+                        }}
+                        >
+                        생성된 서랍이 없습니다. 서랍을 먼저 추가해 주세요.
+                        </p>
                     )}
                     </div>
 
                     <button
                     type="button"
-                    className={
-                        styles.saveScrapButton
-                    }
-                    onClick={
-                        handleSaveScrap
-                    }
-                    disabled={
-                        isSavingScrap
-                    }
+                    className={styles.saveScrapButton}
+                    onClick={handleSaveScrap}
+                    disabled={isSavingScrap || drawers.length === 0}
                     >
-                    {isSavingScrap
-                        ? "저장 중..."
-                        : "저장"}
+                    {isSavingScrap ? "저장 중..." : "저장"}
                     </button>
                 </>
                 )}
@@ -1184,14 +921,8 @@
         )}
 
         <LoginModal
-            isOpen={
-            isLoginModalOpen
-            }
-            onClose={() =>
-            setIsLoginModalOpen(
-                false,
-            )
-            }
+            isOpen={isLoginModalOpen}
+            onClose={() => setIsLoginModalOpen(false)}
         />
         </>
     );

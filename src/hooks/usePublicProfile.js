@@ -8,11 +8,16 @@ import {
 } from "../api/profile";
 
 import {
+    getConnection,
+} from "../api/connections";
+
+import {
     mapProfileCard,
 } from "../utils/profileMapper";
 
 const usePublicProfile = (
     profileId,
+    connectionId = null,
 ) => {
     const [
         profile,
@@ -30,7 +35,12 @@ const usePublicProfile = (
     ] = useState("");
 
     useEffect(() => {
-        if (!profileId) {
+        if (
+            !profileId &&
+            !connectionId
+        ) {
+            setProfile(null);
+            setIsLoading(false);
             return undefined;
         }
 
@@ -39,16 +49,40 @@ const usePublicProfile = (
 
         const fetchProfile =
             async () => {
+                setIsLoading(true);
+                setErrorMessage("");
+
                 try {
-                    const data =
-                        await getPublicProfileCard(
-                            profileId,
-                            {
-                                signal:
-                                    controller
-                                        .signal,
-                            },
-                        );
+                    let profileData;
+
+                    if (connectionId) {
+                        const connectionData =
+                            await getConnection(
+                                connectionId,
+                                {
+                                    signal:
+                                        controller
+                                            .signal,
+                                },
+                            );
+
+                        /*
+                         * 보관함에서는 현재 프로필이 아닌
+                         * 교환 당시 저장된 카드를 사용합니다.
+                         */
+                        profileData =
+                            connectionData?.card;
+                    } else {
+                        profileData =
+                            await getPublicProfileCard(
+                                profileId,
+                                {
+                                    signal:
+                                        controller
+                                            .signal,
+                                },
+                            );
+                    }
 
                     if (
                         controller.signal
@@ -57,13 +91,19 @@ const usePublicProfile = (
                         return;
                     }
 
+                    if (!profileData) {
+                        throw new Error(
+                            connectionId
+                                ? "보관된 카드를 찾을 수 없습니다."
+                                : "프로필을 찾을 수 없습니다.",
+                        );
+                    }
+
                     setProfile(
                         mapProfileCard(
-                            data,
+                            profileData,
                         ),
                     );
-
-                    setErrorMessage("");
                 } catch (error) {
                     if (
                         error.name ===
@@ -88,9 +128,7 @@ const usePublicProfile = (
                         !controller.signal
                             .aborted
                     ) {
-                        setIsLoading(
-                            false,
-                        );
+                        setIsLoading(false);
                     }
                 }
             };
@@ -100,7 +138,10 @@ const usePublicProfile = (
         return () => {
             controller.abort();
         };
-    }, [profileId]);
+    }, [
+        profileId,
+        connectionId,
+    ]);
 
     return {
         profile,

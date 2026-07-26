@@ -36,15 +36,6 @@ import {
     makeCardBackgroundUrl,
 } from "../../api/cardBackground";
 
-import {
-    deleteProfileCard,
-    updateProfileCard,
-} from "../../api/profile";
-
-import {
-    getPurposes,
-} from "../../api/options";
-
 import usePublicProfile from "../../hooks/usePublicProfile";
 
 import {
@@ -92,31 +83,54 @@ const getTagName = (tag) => {
     return tag?.name || "";
 };
 
+const getLinkLabel = (link) => {
+    if (link?.type === "email") {
+        return "email";
+    }
+
+    const labels = {
+        blog: "Blog",
+        github: "Github",
+        behance: "Behance",
+        instagram: "Instagram",
+        notion: "Notion",
+        linkedin: "LinkedIn",
+        website: "Website",
+    };
+
+    return (
+        labels[link?.type] ||
+        link?.label ||
+        link?.type ||
+        "링크"
+    );
+};
+
+const getExperienceLinkLabel = (experience) => {
+    if (!experience?.url) {
+        return "";
+    }
+
+    try {
+        return new URL(experience.url)
+            .hostname
+            .replace(/^www\./, "");
+    } catch {
+        return experience.url;
+    }
+};
+
 const ProfileDetail = () => {
-    const { profileId } = useParams();
+   const {
+    profileId,
+    connectionId,
+} = useParams();
+    const navigate = useNavigate();
 
-    const navigate =
-        useNavigate();
-
-    const [
-        drawers,
-        setDrawers,
-    ] = useState([]);
-
-    const [
-        scrapError,
-        setScrapError,
-    ] = useState("");
-
-    const [
-        isSavingScrap,
-        setIsSavingScrap,
-    ] = useState(false);
-
-    const [
-        isScrapOpen,
-        setIsScrapOpen,
-    ] = useState(false);
+    const [drawers, setDrawers] = useState([]);
+    const [scrapError, setScrapError] = useState("");
+    const [isSavingScrap, setIsSavingScrap] = useState(false);
+    const [isScrapOpen, setIsScrapOpen] = useState(false);
 
     const [
         selectedDrawerIds,
@@ -128,251 +142,107 @@ const ProfileDetail = () => {
         setIsAddingDrawer,
     ] = useState(false);
 
-    const [
-        newDrawerName,
-        setNewDrawerName,
-    ] = useState("");
-
-    const [
-        isActionMenuOpen,
-        setIsActionMenuOpen,
-    ] = useState(false);
+    const [newDrawerName, setNewDrawerName] = useState("");
 
     const [
         isExchangeModalOpen,
         setIsExchangeModalOpen,
     ] = useState(false);
 
-    const [
-        purposes,
-        setPurposes,
-    ] = useState([]);
+   const {
+    profile,
+    isLoading,
+    errorMessage,
+} = usePublicProfile(
+    profileId,
+    connectionId,
+);
 
-    const [
-        isVisibilityModalOpen,
-        setIsVisibilityModalOpen,
-    ] = useState(false);
+    const loadDrawers = useCallback(async (signal) => {
+        try {
+            const groupData = await getCollectionGroups({
+                signal,
+            });
 
-    const [
-        selectedPurposeId,
-        setSelectedPurposeId,
-    ] = useState("");
+            const groups = getArrayData(groupData);
 
-    const [
-        selectedIsActive,
-        setSelectedIsActive,
-    ] = useState(false);
+            const loadedDrawers = await Promise.all(
+                groups.map(async (group) => {
+                    const itemData =
+                        await getCollectionGroupItems(
+                            group.id,
+                            { signal },
+                        );
 
-    const [
-        isSavingVisibility,
-        setIsSavingVisibility,
-    ] = useState(false);
+                    const items = getArrayData(itemData);
 
-    const [
-        isDeleteModalOpen,
-        setIsDeleteModalOpen,
-    ] = useState(false);
+                    return {
+                        id: group.id,
+                        name: group.name,
 
-    const [
-        isDeleting,
-        setIsDeleting,
-    ] = useState(false);
+                        profiles: items.map((item) => ({
+                            ...mapProfileCard(
+                                item.card ||
+                                    item.profile ||
+                                    item,
+                            ),
 
-    const [
-        ownerActionError,
-        setOwnerActionError,
-    ] = useState("");
-
-    const {
-        profile,
-        isLoading,
-        errorMessage,
-    } = usePublicProfile(
-        profileId,
-    );
-
-    const loadDrawers = useCallback(
-        async (signal) => {
-            try {
-                const groupData =
-                    await getCollectionGroups({
-                        signal,
-                    });
-
-                const groups =
-                    getArrayData(
-                        groupData,
-                    );
-
-                const loadedDrawers =
-                    await Promise.all(
-                        groups.map(
-                            async (
-                                group,
-                            ) => {
-                                const itemData =
-                                    await getCollectionGroupItems(
-                                        group.id,
-                                        {
-                                            signal,
-                                        },
-                                    );
-
-                                const items =
-                                    getArrayData(
-                                        itemData,
-                                    );
-
-                                return {
-                                    id:
-                                        group.id,
-
-                                    name:
-                                        group.name,
-
-                                    profiles:
-                                        items.map(
-                                            (
-                                                item,
-                                            ) => ({
-                                                ...mapProfileCard(
-                                                    item.card ||
-                                                        item.profile ||
-                                                        item,
-                                                ),
-
-                                                collectionId:
-                                                    item.collectionId ??
-                                                    item.id,
-                                            }),
-                                        ),
-                                };
-                            },
-                        ),
-                    );
-
-                setDrawers(
-                    loadedDrawers,
-                );
-
-                setScrapError("");
-            } catch (error) {
-                if (
-                    error?.name ===
-                    "AbortError"
-                ) {
-                    return;
-                }
-
-                console.error(
-                    "스크랩 서랍 조회 실패:",
-                    error,
-                );
-
-                setScrapError(
-                    error?.message ||
-                        "스크랩 서랍을 불러오지 못했습니다.",
-                );
-            }
-        },
-        [],
-    );
-
-
-useEffect(() => {
-    const controller =
-        new AbortController();
-
-    const timerId =
-        window.setTimeout(() => {
-            void loadDrawers(
-                controller.signal,
+                            collectionId:
+                                item.collectionId ??
+                                item.id,
+                        })),
+                    };
+                }),
             );
-        }, 0);
 
-    return () => {
-        window.clearTimeout(
-            timerId,
-        );
-
-        controller.abort();
-    };
-}, [loadDrawers]);
-
-    useEffect(() => {
-        const controller =
-            new AbortController();
-
-        const loadPurposes = async () => {
-            try {
-                const result =
-                    await getPurposes({
-                        signal:
-                            controller.signal,
-                    });
-
-                const items =
-                    Array.isArray(result)
-                        ? result
-                        : result?.items ??
-                          result?.data?.items ??
-                          [];
-
-                setPurposes(items);
-            } catch (error) {
-                if (
-                    error?.name !==
-                    "AbortError"
-                ) {
-                    console.error(
-                        "프로필 목적 조회 실패:",
-                        error,
-                    );
-                }
+            setDrawers(loadedDrawers);
+            setScrapError("");
+        } catch (error) {
+            if (error?.name === "AbortError") {
+                return;
             }
-        };
 
-        void loadPurposes();
+            console.error(
+                "스크랩 서랍 조회 실패:",
+                error,
+            );
 
-        return () => {
-            controller.abort();
-        };
+            setScrapError(
+                error?.message ||
+                    "스크랩 서랍을 불러오지 못했습니다.",
+            );
+        }
     }, []);
 
+    useEffect(() => {
+        const controller = new AbortController();
+
+        const timerId = window.setTimeout(() => {
+            void loadDrawers(controller.signal);
+        }, 0);
+
+        return () => {
+            window.clearTimeout(timerId);
+            controller.abort();
+        };
+    }, [loadDrawers]);
 
     if (isLoading) {
         return (
-            <main
-                className={
-                    styles.notFound
-                }
-            >
-                <p>
-                    프로필을 불러오는
-                    중입니다.
-                </p>
+            <main className={styles.notFound}>
+                <p>프로필을 불러오는 중입니다.</p>
             </main>
         );
     }
 
     if (errorMessage) {
         return (
-            <main
-                className={
-                    styles.notFound
-                }
-            >
-                <p>
-                    {errorMessage}
-                </p>
+            <main className={styles.notFound}>
+                <p>{errorMessage}</p>
 
                 <button
                     type="button"
-                    onClick={() =>
-                        navigate(
-                            "/explore",
-                        )
-                    }
+                    onClick={() => navigate("/explore")}
                 >
                     탐색으로 돌아가기
                 </button>
@@ -382,23 +252,12 @@ useEffect(() => {
 
     if (!profile) {
         return (
-            <main
-                className={
-                    styles.notFound
-                }
-            >
-                <p>
-                    프로필을 찾을 수
-                    없습니다.
-                </p>
+            <main className={styles.notFound}>
+                <p>프로필을 찾을 수 없습니다.</p>
 
                 <button
                     type="button"
-                    onClick={() =>
-                        navigate(
-                            "/explore",
-                        )
-                    }
+                    onClick={() => navigate("/explore")}
                 >
                     탐색으로 돌아가기
                 </button>
@@ -406,59 +265,32 @@ useEffect(() => {
         );
     }
 
-    const interests = (
-        profile.interests || []
-    )
-        .map(
-            (
-                interest,
-                index,
-            ) => ({
-                id:
-                    interest?.id ??
-                    `interest-${index}`,
+    const interests = (profile.interests || [])
+        .map((interest, index) => ({
+            id:
+                interest?.id ??
+                `interest-${index}`,
 
-                name:
-                    getTagName(
-                        interest,
-                    ),
-            }),
-        )
-        .filter(
-            (interest) =>
-                interest.name,
-        );
+            name: getTagName(interest),
+        }))
+        .filter((interest) => interest.name);
 
     const skills = (
         profile.techStacks ||
         profile.skills ||
         []
     )
-        .map(
-            (
-                skill,
-                index,
-            ) => ({
-                id:
-                    skill?.id ??
-                    `skill-${index}`,
+        .map((skill, index) => ({
+            id:
+                skill?.id ??
+                `skill-${index}`,
 
-                name:
-                    getTagName(
-                        skill,
-                    ),
-            }),
-        )
-        .filter(
-            (skill) =>
-                skill.name,
-        );
+            name: getTagName(skill),
+        }))
+        .filter((skill) => skill.name);
 
-    const links =
-        profile.links || [];
-
-    const experiences =
-        profile.experiences || [];
+    const links = profile.links || [];
+    const experiences = profile.experiences || [];
 
     const introduction =
         profile.introduction ||
@@ -470,15 +302,9 @@ useEffect(() => {
         profile.affiliation,
     ]
         .filter(
-            (
-                value,
-                index,
-                values,
-            ) =>
+            (value, index, values) =>
                 Boolean(value) &&
-                values.indexOf(
-                    value,
-                ) === index,
+                values.indexOf(value) === index,
         )
         .join(" | ");
 
@@ -488,640 +314,266 @@ useEffect(() => {
                 profile.cardImage,
         );
 
-    const storedUserId =
-        localStorage.getItem("userId") ||
-        localStorage.getItem("memberId") ||
-        localStorage.getItem("currentUserId");
-
-    const profileOwnerId =
-        profile.userId ??
-        profile.memberId ??
-        profile.ownerId ??
-        profile.user?.id ??
-        profile.member?.id;
-
-    const isMyProfile = Boolean(
-        profile.isMine ??
-            profile.isOwner ??
-            profile.mine ??
-            (
-                storedUserId &&
-                profileOwnerId &&
-                String(storedUserId) ===
-                    String(profileOwnerId)
-            ),
-    );
-
-    const isProfileInDrawer = (
-        drawer,
-    ) =>
+    const isProfileInDrawer = (drawer) =>
         drawer.profiles?.some(
             (item) =>
                 String(item.id) ===
                 String(profile.id),
         );
 
-    const handleBack = () => {
-        navigate(-1);
-    };
-
-    const handleActionMenuToggle =
-        () => {
-            setIsActionMenuOpen(
-                (
-                    currentValue,
-                ) =>
-                    !currentValue,
-            );
-        };
-
     const handleOpenScrap = () => {
-        const savedDrawerIds =
-            drawers
-                .filter(
-                    isProfileInDrawer,
-                )
-                .map(
-                    (drawer) =>
-                        drawer.id,
-                );
+        const savedDrawerIds = drawers
+            .filter(isProfileInDrawer)
+            .map((drawer) => drawer.id);
 
-        setSelectedDrawerIds(
-            savedDrawerIds,
-        );
-
+        setSelectedDrawerIds(savedDrawerIds);
         setNewDrawerName("");
-        setIsAddingDrawer(
-            false,
-        );
-        setIsActionMenuOpen(
-            false,
-        );
+        setIsAddingDrawer(false);
         setIsScrapOpen(true);
     };
 
     const handleCloseScrap = () => {
         setIsScrapOpen(false);
-        setSelectedDrawerIds(
-            [],
-        );
+        setSelectedDrawerIds([]);
         setNewDrawerName("");
-        setIsAddingDrawer(
-            false,
-        );
+        setIsAddingDrawer(false);
     };
 
-    const handleDrawerToggle = (
-        drawerId,
-    ) => {
-        setSelectedDrawerIds(
-            (currentIds) => {
-                if (
-                    currentIds.includes(
-                        drawerId,
-                    )
-                ) {
-                    return currentIds.filter(
-                        (id) =>
-                            id !==
-                            drawerId,
-                    );
-                }
+    const handleDrawerToggle = (drawerId) => {
+        setSelectedDrawerIds((currentIds) => {
+            if (currentIds.includes(drawerId)) {
+                return currentIds.filter(
+                    (id) => id !== drawerId,
+                );
+            }
 
-                /*
-                 * 하나의 프로필은 한 서랍에만
-                 * 저장할 수 있으므로 단일 선택
-                 */
-                return [drawerId];
-            },
-        );
+            // 프로필 하나는 하나의 서랍에 저장
+            return [drawerId];
+        });
     };
 
-    const handleOpenAddDrawer =
-        () => {
+    const handleOpenAddDrawer = () => {
+        setNewDrawerName("");
+        setIsAddingDrawer(true);
+    };
+
+    const handleCancelAddDrawer = () => {
+        setNewDrawerName("");
+        setIsAddingDrawer(false);
+    };
+
+    const handleCreateDrawer = async (event) => {
+        event.preventDefault();
+
+        const trimmedName = newDrawerName.trim();
+
+        if (!trimmedName) {
+            return;
+        }
+
+        setScrapError("");
+
+        try {
+            const createdGroup =
+                await createCollectionGroup(
+                    trimmedName,
+                );
+
+            await loadDrawers();
+
+            if (createdGroup?.id) {
+                setSelectedDrawerIds([
+                    createdGroup.id,
+                ]);
+            }
+
             setNewDrawerName("");
-            setIsAddingDrawer(
-                true,
-            );
-        };
-
-    const handleCancelAddDrawer =
-        () => {
-            setNewDrawerName("");
-            setIsAddingDrawer(
-                false,
-            );
-        };
-
-    const handleCreateDrawer =
-        async (event) => {
-            event.preventDefault();
-
-            const trimmedName =
-                newDrawerName.trim();
-
-            if (!trimmedName) {
-                return;
-            }
-
-            setScrapError("");
-
-            try {
-                const createdGroup =
-                    await createCollectionGroup(
-                        trimmedName,
-                    );
-
-                await loadDrawers();
-
-                if (
-                    createdGroup?.id
-                ) {
-                    setSelectedDrawerIds(
-                        [
-                            createdGroup.id,
-                        ],
-                    );
-                }
-
-                setNewDrawerName("");
-
-                setIsAddingDrawer(
-                    false,
-                );
-            } catch (error) {
-                console.error(
-                    "서랍 생성 실패:",
-                    error,
-                );
-
-                setScrapError(
-                    error?.message ||
-                        "새 서랍을 만들지 못했습니다.",
-                );
-            }
-        };
-
-    const handleScrapSave =
-        async () => {
-            if (
-                isSavingScrap
-            ) {
-                return;
-            }
-
-            const savedDrawer =
-                drawers.find(
-                    isProfileInDrawer,
-                );
-
-            const savedProfile =
-                savedDrawer?.profiles.find(
-                    (item) =>
-                        String(
-                            item.id,
-                        ) ===
-                        String(
-                            profile.id,
-                        ),
-                );
-
-            const selectedDrawerId =
-                selectedDrawerIds[0] ??
-                null;
-
-            setIsSavingScrap(
-                true,
+            setIsAddingDrawer(false);
+        } catch (error) {
+            console.error(
+                "서랍 생성 실패:",
+                error,
             );
 
-            setScrapError("");
-
-            try {
-                if (
-                    !savedProfile &&
-                    selectedDrawerId
-                ) {
-                    await createCollection({
-                        cardId:
-                            profile.id,
-
-                        groupId:
-                            selectedDrawerId,
-                    });
-                } else if (
-                    savedProfile?.collectionId &&
-                    !selectedDrawerId
-                ) {
-                    await deleteCollection(
-                        savedProfile.collectionId,
-                    );
-                } else if (
-                    savedProfile?.collectionId &&
-                    selectedDrawerId &&
-                    String(
-                        savedDrawer.id,
-                    ) !==
-                        String(
-                            selectedDrawerId,
-                        )
-                ) {
-                    await moveCollection(
-                        savedProfile.collectionId,
-                        selectedDrawerId,
-                    );
-                }
-
-                await loadDrawers();
-
-                handleCloseScrap();
-            } catch (error) {
-                console.error(
-                    "스크랩 저장 실패:",
-                    error,
-                );
-
-                setScrapError(
-                    error?.message ||
-                        "스크랩을 저장하지 못했습니다.",
-                );
-            } finally {
-                setIsSavingScrap(
-                    false,
-                );
-            }
-        };
-
-    const handleOpenExchangeModal =
-        () => {
-            setIsActionMenuOpen(
-                false,
+            setScrapError(
+                error?.message ||
+                    "새 서랍을 만들지 못했습니다.",
             );
+        }
+    };
 
-            setIsExchangeModalOpen(
-                true,
+const handleScrapSave = async () => {
+    if (isSavingScrap) {
+        return;
+    }
+
+    if (drawers.length === 0) {
+        setScrapError(
+            "서랍을 먼저 만들어주세요.",
+        );
+        return;
+    }
+
+    const savedDrawer =
+        drawers.find(
+            isProfileInDrawer,
+        );
+
+    const savedProfile =
+        savedDrawer?.profiles.find(
+            (item) =>
+                String(item.id) ===
+                String(profile.id),
+        );
+
+    const selectedDrawerId =
+        selectedDrawerIds[0] ??
+        null;
+
+    setIsSavingScrap(true);
+    setScrapError("");
+
+    try {
+        if (
+            !savedProfile &&
+            selectedDrawerId
+        ) {
+            await createCollection({
+                cardId: profile.id,
+                groupId:
+                    selectedDrawerId,
+            });
+        } else if (
+            savedProfile?.collectionId &&
+            !selectedDrawerId
+        ) {
+            await deleteCollection(
+                savedProfile.collectionId,
             );
-        };
-
-    const handleCloseExchangeModal =
-        () => {
-            setIsExchangeModalOpen(
-                false,
+        } else if (
+            savedProfile?.collectionId &&
+            selectedDrawerId &&
+            String(savedDrawer.id) !==
+                String(
+                    selectedDrawerId,
+                )
+        ) {
+            await moveCollection(
+                savedProfile.collectionId,
+                selectedDrawerId,
             );
-        };
+        }
 
-    const handleSendExchange = (
-        requestData,
-    ) => {
+        await loadDrawers();
+        handleCloseScrap();
+    } catch (error) {
+        console.error(
+            "스크랩 저장 실패:",
+            error,
+        );
+
+        setScrapError(
+            error?.message ||
+                "스크랩을 저장하지 못했습니다.",
+        );
+    } finally {
+        setIsSavingScrap(false);
+    }
+};
+
+    const handleOpenExchangeModal = () => {
+        setIsExchangeModalOpen(true);
+    };
+
+    const handleCloseExchangeModal = () => {
+        setIsExchangeModalOpen(false);
+    };
+
+    const handleSendExchange = (requestData) => {
         console.log(
             "카드 교환 요청:",
             requestData,
         );
 
-        setIsExchangeModalOpen(
-            false,
-        );
+        setIsExchangeModalOpen(false);
 
         window.alert(
             `${profile.name}님에게 카드 교환 요청을 보냈습니다.`,
         );
     };
 
-    const handleEditMyProfile = () => {
-        setIsActionMenuOpen(false);
-
-        navigate(
-            `/my-profile/${profile.id}/detail-edit`,
-        );
-    };
-
-    const handleOpenVisibility = () => {
-        const currentPurposeName =
-            profile.purposes?.[0] ??
-            profile.purpose?.name;
-
-        const currentPurpose =
-            purposes.find(
-                (purpose) =>
-                    purpose.name ===
-                    currentPurposeName,
-            );
-
-        const currentPurposeId =
-            profile.purposeId ??
-            profile.purpose?.id ??
-            currentPurpose?.id ??
-            1;
-
-        setSelectedPurposeId(
-            String(currentPurposeId),
-        );
-
-        setSelectedIsActive(
-            Boolean(profile.isActive),
-        );
-
-        setOwnerActionError("");
-        setIsActionMenuOpen(false);
-        setIsVisibilityModalOpen(true);
-    };
-
-    const handleSaveVisibility =
-        async () => {
-            if (
-                selectedIsActive &&
-                !selectedPurposeId
-            ) {
-                setOwnerActionError(
-                    "공개 목적을 선택해주세요.",
-                );
-                return;
-            }
-
-            try {
-                setIsSavingVisibility(true);
-                setOwnerActionError("");
-
-                const requestBody = {
-                    isActive:
-                        selectedIsActive,
-                };
-
-                if (selectedPurposeId) {
-                    requestBody.purposeId =
-                        Number(
-                            selectedPurposeId,
-                        );
-                }
-
-                await updateProfileCard(
-                    profile.id,
-                    requestBody,
-                );
-
-                setIsVisibilityModalOpen(
-                    false,
-                );
-
-                window.location.reload();
-            } catch (error) {
-                setOwnerActionError(
-                    error?.message ||
-                        "공개 설정을 변경하지 못했습니다.",
-                );
-            } finally {
-                setIsSavingVisibility(
-                    false,
-                );
-            }
-        };
-
-    const handleOpenDelete = () => {
-        setIsActionMenuOpen(false);
-
-        if (profile.isDefault) {
-            window.alert(
-                "기본 프로필 카드는 삭제할 수 없습니다.",
-            );
-            return;
-        }
-
-        setOwnerActionError("");
-        setIsDeleteModalOpen(true);
-    };
-
-    const handleDeleteProfile =
-        async () => {
-            try {
-                setIsDeleting(true);
-                setOwnerActionError("");
-
-                await deleteProfileCard(
-                    profile.id,
-                );
-
-                navigate("/profile", {
-                    replace: true,
-                });
-            } catch (error) {
-                setOwnerActionError(
-                    error?.message ||
-                        "프로필을 삭제하지 못했습니다.",
-                );
-                setIsDeleteModalOpen(
-                    false,
-                );
-            } finally {
-                setIsDeleting(false);
-            }
-        };
-
     return (
         <main className={styles.page}>
+            <div
+                className={styles.hero}
+                style={
+                    cardBackgroundUrl
+                        ? {
+                              backgroundImage: `
+                                  linear-gradient(
+                                      90deg,
+                                      rgba(79, 145, 247, 0.08),
+                                      rgba(226, 232, 213, 0.12)
+                                  ),
+                                  url("${cardBackgroundUrl}")
+                              `,
+                          }
+                        : undefined
+                }
+                aria-hidden="true"
+            />
+
             <div className={styles.layout}>
-                <aside
-                    className={
-                        styles.summaryCard
-                    }
-                    style={
-                        cardBackgroundUrl
-                            ? {
-                                  backgroundImage: `
-                                      linear-gradient(
-                                          rgba(22, 25, 38, 0.12),
-                                          rgba(22, 25, 38, 0.24)
-                                      ),
-                                      url("${cardBackgroundUrl}")
-                                  `,
-                                  backgroundPosition:
-                                      "center",
-                                  backgroundSize:
-                                      "cover",
-                                  backgroundRepeat:
-                                      "no-repeat",
-                              }
-                            : undefined
-                    }
-                >
-                    <button
-                        type="button"
-                        className={
-                            styles.backButton
-                        }
-                        onClick={
-                            handleBack
-                        }
-                        aria-label="이전 화면으로 돌아가기"
-                    >
-                        ‹
-                    </button>
-
-                    <div
-                        className={
-                            styles.actionMenuArea
-                        }
-                    >
-                        <button
-                            type="button"
-                            className={
-                                styles.moreButton
-                            }
-                            onClick={
-                                handleActionMenuToggle
-                            }
-                            aria-label="프로필 메뉴 열기"
-                            aria-expanded={
-                                isActionMenuOpen
-                            }
-                        >
-                            •••
-                        </button>
-
-                        {isActionMenuOpen && (
+                <aside className={styles.summaryCard}>
+                    <div className={styles.profileBlock}>
+                        {profile.profileImage ? (
+                            <img
+                                src={profile.profileImage}
+                                alt={`${profile.name || "사용자"} 프로필`}
+                                className={styles.avatar}
+                            />
+                        ) : (
                             <div
                                 className={
-                                    styles.summaryActions
+                                    styles.avatarPlaceholder
                                 }
+                                aria-hidden="true"
                             >
-                                {isMyProfile ? (
-                                    <>
-                                        <button
-                                            type="button"
-                                            className={
-                                                styles.ownerMenuButton
-                                            }
-                                            onClick={
-                                                handleEditMyProfile
-                                            }
-                                        >
-                                            수정하기
-                                        </button>
-
-                                        <button
-                                            type="button"
-                                            className={
-                                                styles.ownerMenuButton
-                                            }
-                                            onClick={
-                                                handleOpenVisibility
-                                            }
-                                        >
-                                            공개설정 변경
-                                        </button>
-
-                                        <button
-                                            type="button"
-                                            className={`${styles.ownerMenuButton} ${styles.deleteMenuButton}`}
-                                            onClick={
-                                                handleOpenDelete
-                                            }
-                                        >
-                                            이 프로필 삭제
-                                        </button>
-                                    </>
-                                ) : (
-                                    <>
-                                        <button
-                                            type="button"
-                                            className={
-                                                styles.scrapButton
-                                            }
-                                            onClick={
-                                                handleOpenScrap
-                                            }
-                                        >
-                                            스크랩하기
-                                        </button>
-
-                                        <button
-                                            type="button"
-                                            className={
-                                                styles.exchangeButton
-                                            }
-                                            onClick={
-                                                handleOpenExchangeModal
-                                            }
-                                        >
-                                            카드 교환 요청
-                                        </button>
-                                    </>
-                                )}
+                                {profile.name
+                                    ?.trim()
+                                    ?.charAt(0) || "N"}
                             </div>
                         )}
-                    </div>
 
-                    {profile.profileImage ? (
-                        <img
-                            src={
-                                profile.profileImage
-                            }
-                            alt={`${profile.name || "사용자"} 프로필`}
-                            className={
-                                styles.avatar
-                            }
-                        />
-                    ) : (
-                        <div
-                            className={
-                                styles.avatarPlaceholder
-                            }
-                            aria-hidden="true"
-                        >
-                            {profile.name
-                                ?.trim()
-                                ?.charAt(0) ||
-                                "N"}
+                        <div className={styles.identity}>
+                            <div className={styles.nameRow}>
+                                <strong className={styles.name}>
+                                    {profile.name ||
+                                        "이름 없음"}
+                                </strong>
+
+                                <span className={styles.job}>
+                                    {JOB_LABELS[
+                                        profile.job
+                                    ] ||
+                                        profile.jobTypeName ||
+                                        "직군 미선택"}
+                                </span>
+                            </div>
+
+                            <p className={styles.affiliation}>
+                                {affiliationText ||
+                                    "소속 정보 없음"}
+                            </p>
                         </div>
-                    )}
-
-                    <div
-                        className={
-                            styles.nameRow
-                        }
-                    >
-                        <strong
-                            className={
-                                styles.name
-                            }
-                        >
-                            {profile.name ||
-                                "이름 없음"}
-                        </strong>
-
-                        <span
-                            className={
-                                styles.job
-                            }
-                        >
-                            {JOB_LABELS[
-                                profile.job
-                            ] ||
-                                profile.jobTypeName ||
-                                "직군 미선택"}
-                        </span>
                     </div>
 
-                    <p
-                        className={
-                            styles.affiliation
-                        }
-                    >
-                        {affiliationText ||
-                            "소속 정보 없음"}
-                    </p>
-
-                    {profile.strength && (
-                        <div
-                            className={
-                                styles.strength
-                            }
-                        >
-                            {profile
-                                .strength
-                                .icon ? (
+                    {profile.strength ? (
+                        <div className={styles.strength}>
+                            {profile.strength.icon ? (
                                 <img
                                     src={
-                                        profile
-                                            .strength
+                                        profile.strength
                                             .icon
                                     }
                                     alt=""
@@ -1143,69 +595,61 @@ useEffect(() => {
                                     styles.strengthText
                                 }
                             >
-                                {profile
-                                    .strength
-                                    .title ||
-                                    profile
-                                        .strength
-                                        .name ||
+                                {profile.strength.title ||
+                                    profile.strength.name ||
                                     "성향 정보 없음"}
                             </span>
                         </div>
-                    )}
-                </aside>
-
-                <article
-                    className={
-                        styles.detailCard
-                    }
-                >
-                    <section
-                        className={
-                            styles.section
-                        }
-                    >
-                        <h2
+                    ) : (
+                        <div
                             className={
-                                styles.sectionTitle
+                                styles.strengthEmpty
+                            }
+                            aria-hidden="true"
+                        />
+                    )}
+
+                    <div className={styles.summaryActions}>
+                        <button
+                            type="button"
+                            className={styles.exchangeButton}
+                            onClick={
+                                handleOpenExchangeModal
                             }
                         >
+                            카드 교환 요청
+                        </button>
+
+                        <button
+                            type="button"
+                            className={styles.scrapButton}
+                            onClick={handleOpenScrap}
+                        >
+                            스크랩하기
+                        </button>
+                    </div>
+                </aside>
+
+                <article className={styles.detailCard}>
+                    <section className={styles.section}>
+                        <h2 className={styles.sectionTitle}>
                             한 줄 소개
                         </h2>
 
-                        <p
-                            className={
-                                styles.introduction
-                            }
-                        >
+                        <p className={styles.introduction}>
                             {introduction}
                         </p>
                     </section>
 
-                    <section
-                        className={
-                            styles.section
-                        }
-                    >
-                        <h2
-                            className={
-                                styles.sectionTitle
-                            }
-                        >
-                            관심 분야
+                    <section className={styles.section}>
+                        <h2 className={styles.sectionTitle}>
+                            관심분야
                         </h2>
 
-                        {interests.length >
-                        0 ? (
-                            <div
-                                className={
-                                    styles.tagList
-                                }
-                            >
+                        {interests.length > 0 ? (
+                            <div className={styles.tagList}>
                                 {interests.map(
-                                    (
-                                        interest,
-                                    ) => (
+                                    (interest) => (
                                         <span
                                             key={
                                                 interest.id
@@ -1214,103 +658,53 @@ useEffect(() => {
                                                 styles.tag
                                             }
                                         >
-                                            {
-                                                interest.name
-                                            }
+                                            {interest.name}
                                         </span>
                                     ),
                                 )}
                             </div>
                         ) : (
-                            <p
-                                className={
-                                    styles.emptyText
-                                }
-                            >
-                                등록된 관심 분야가
-                                없습니다.
+                            <p className={styles.emptyText}>
+                                등록된 관심 분야가 없습니다.
                             </p>
                         )}
                     </section>
 
-                    <section
-                        className={
-                            styles.section
-                        }
-                    >
-                        <h2
-                            className={
-                                styles.sectionTitle
-                            }
-                        >
+                    <section className={styles.section}>
+                        <h2 className={styles.sectionTitle}>
                             스킬
                         </h2>
 
-                        {skills.length >
-                        0 ? (
-                            <div
-                                className={
-                                    styles.tagList
-                                }
-                            >
-                                {skills.map(
-                                    (skill) => (
-                                        <span
-                                            key={
-                                                skill.id
-                                            }
-                                            className={
-                                                styles.tag
-                                            }
-                                        >
-                                            {
-                                                skill.name
-                                            }
-                                        </span>
-                                    ),
-                                )}
+                        {skills.length > 0 ? (
+                            <div className={styles.tagList}>
+                                {skills.map((skill) => (
+                                    <span
+                                        key={skill.id}
+                                        className={styles.tag}
+                                    >
+                                        {skill.name}
+                                    </span>
+                                ))}
                             </div>
                         ) : (
-                            <p
-                                className={
-                                    styles.emptyText
-                                }
-                            >
-                                등록된 스킬이
-                                없습니다.
+                            <p className={styles.emptyText}>
+                                등록된 스킬이 없습니다.
                             </p>
                         )}
                     </section>
 
-                    <section
-                        className={
-                            styles.section
-                        }
-                    >
-                        <h2
-                            className={
-                                styles.sectionTitle
-                            }
-                        >
+                    <section className={styles.section}>
+                        <h2 className={styles.sectionTitle}>
                             링크
                         </h2>
 
-                        {links.length >
-                        0 ? (
-                            <div
-                                className={
-                                    styles.linkList
-                                }
-                            >
+                        {links.length > 0 ? (
+                            <div className={styles.linkList}>
                                 {links.map(
-                                    (
-                                        link,
-                                        index,
-                                    ) => {
+                                    (link, index) => {
                                         const LinkIcon =
                                             LINK_ICONS[
-                                                link
-                                                    .type
+                                                link.type
                                             ] ||
                                             MdLanguage;
 
@@ -1327,9 +721,7 @@ useEffect(() => {
                                                     link.id ??
                                                     `${link.type}-${index}`
                                                 }
-                                                href={
-                                                    link.url
-                                                }
+                                                href={link.url}
                                                 target={
                                                     isEmail
                                                         ? undefined
@@ -1343,7 +735,7 @@ useEffect(() => {
                                                 className={
                                                     styles.linkItem
                                                 }
-                                                aria-label={`${link.label || link.type || "링크"} 열기`}
+                                                aria-label={`${getLinkLabel(link)} 열기`}
                                             >
                                                 <span
                                                     className={
@@ -1363,9 +755,9 @@ useEffect(() => {
                                                         styles.linkLabel
                                                     }
                                                 >
-                                                    {link.label ||
-                                                        link.type ||
-                                                        "링크"}
+                                                    {getLinkLabel(
+                                                        link,
+                                                    )}
                                                 </span>
                                             </a>
                                         );
@@ -1373,32 +765,18 @@ useEffect(() => {
                                 )}
                             </div>
                         ) : (
-                            <p
-                                className={
-                                    styles.emptyText
-                                }
-                            >
-                                등록된 링크가
-                                없습니다.
+                            <p className={styles.emptyText}>
+                                등록된 링크가 없습니다.
                             </p>
                         )}
                     </section>
 
-                    <section
-                        className={
-                            styles.section
-                        }
-                    >
-                        <h2
-                            className={
-                                styles.sectionTitle
-                            }
-                        >
+                    <section className={styles.section}>
+                        <h2 className={styles.sectionTitle}>
                             경험
                         </h2>
 
-                        {experiences.length >
-                        0 ? (
+                        {experiences.length > 0 ? (
                             <div
                                 className={
                                     styles.experienceGrid
@@ -1420,80 +798,62 @@ useEffect(() => {
                                         >
                                             <div
                                                 className={
-                                                    styles.experienceContent
+                                                    styles.experienceTitleRow
                                                 }
                                             >
-                                                <div
-                                                    className={
-                                                        styles.experienceTitleRow
-                                                    }
-                                                >
-                                                    {experience.isRepresentative && (
-                                                        <span
-                                                            className={
-                                                                styles.representativeBadge
-                                                            }
-                                                        >
-                                                            대표
-                                                        </span>
-                                                    )}
-
-                                                    <strong
+                                                {experience.isRepresentative && (
+                                                    <span
                                                         className={
-                                                            styles.experienceTitle
+                                                            styles.representativeBadge
                                                         }
                                                     >
-                                                        {experience.title ||
-                                                            "프로젝트 경험"}
-                                                    </strong>
-                                                </div>
-
-                                                <p
-                                                    className={
-                                                        styles.experienceDescription
-                                                    }
-                                                >
-                                                    {experience.description ||
-                                                        experience.summary ||
-                                                        "등록된 경험 설명이 없습니다."}
-                                                </p>
-
-                                                {experience.url && (
-                                                    <a
-                                                        href={
-                                                            experience.url
-                                                        }
-                                                        target="_blank"
-                                                        rel="noreferrer"
-                                                        className={
-                                                            styles.experienceLink
-                                                        }
-                                                    >
-                                                        <span>
-                                                            {experience.linkLabel ||
-                                                                "관련 링크"}
-                                                        </span>
-
-                                                        <span
-                                                            aria-hidden="true"
-                                                        >
-                                                            ↗
-                                                        </span>
-                                                    </a>
+                                                        대표
+                                                    </span>
                                                 )}
+
+                                                <strong
+                                                    className={
+                                                        styles.experienceTitle
+                                                    }
+                                                >
+                                                    {experience.title ||
+                                                        "프로젝트 경험"}
+                                                </strong>
                                             </div>
+
+                                            <p
+                                                className={
+                                                    styles.experienceDescription
+                                                }
+                                            >
+                                                {experience.description ||
+                                                    experience.summary ||
+                                                    "등록된 경험 설명이 없습니다."}
+                                            </p>
+
+                                            {experience.url && (
+                                                <a
+                                                    href={
+                                                        experience.url
+                                                    }
+                                                    target="_blank"
+                                                    rel="noreferrer"
+                                                    className={
+                                                        styles.experienceLink
+                                                    }
+                                                >
+                                                    {getExperienceLinkLabel(
+                                                        experience,
+                                                    )}
+                                                </a>
+                                            )}
                                         </article>
                                     ),
                                 )}
                             </div>
                         ) : (
-                            <p
-                                className={
-                                    styles.emptyText
-                                }
-                            >
-                                등록된 경험이
-                                없습니다.
+                            <p className={styles.emptyText}>
+                                등록된 경험이 없습니다.
                             </p>
                         )}
                     </section>
@@ -1502,13 +862,9 @@ useEffect(() => {
 
             {isScrapOpen && (
                 <div
-                    className={
-                        styles.modalBackdrop
-                    }
+                    className={styles.modalBackdrop}
                     role="presentation"
-                    onMouseDown={(
-                        event,
-                    ) => {
+                    onMouseDown={(event) => {
                         if (
                             event.target ===
                             event.currentTarget
@@ -1518,21 +874,14 @@ useEffect(() => {
                     }}
                 >
                     <section
-                        className={
-                            styles.scrapModal
-                        }
+                        className={styles.scrapModal}
                         role="dialog"
                         aria-modal="true"
                         aria-labelledby="scrap-modal-title"
                     >
-                        <div
-                            className={
-                                styles.modalHeader
-                            }
-                        >
+                        <div className={styles.modalHeader}>
                             <h2 id="scrap-modal-title">
-                                어디에
-                                스크랩할까요?
+                                어디에 스크랩할까요?
                             </h2>
 
                             <button
@@ -1549,14 +898,9 @@ useEffect(() => {
                             </button>
                         </div>
 
-                        <div
-                            className={
-                                styles.scrapSummary
-                            }
-                        >
+                        <div className={styles.scrapSummary}>
                             <span>
-                                컬렉션{" "}
-                                {drawers.length}개
+                                컬렉션 {drawers.length}개
                             </span>
 
                             <button
@@ -1595,14 +939,11 @@ useEffect(() => {
                                             event,
                                         ) =>
                                             setNewDrawerName(
-                                                event
-                                                    .target
+                                                event.target
                                                     .value,
                                             )
                                         }
-                                        maxLength={
-                                            20
-                                        }
+                                        maxLength={20}
                                         placeholder="새 서랍 이름을 입력해 주세요"
                                         aria-label="새 서랍 이름"
                                         autoFocus
@@ -1650,9 +991,7 @@ useEffect(() => {
 
                         {scrapError && (
                             <p
-                                className={
-                                    styles.scrapError
-                                }
+                                className={styles.scrapError}
                                 role="alert"
                             >
                                 {scrapError}
@@ -1664,343 +1003,88 @@ useEffect(() => {
                                 styles.scrapDrawerList
                             }
                         >
-                            {drawers.length >
-                            0 ? (
-                                drawers.map(
-                                    (
-                                        drawer,
-                                    ) => {
-                                        const isSelected =
-                                            selectedDrawerIds.includes(
-                                                drawer.id,
-                                            );
+                            {drawers.length > 0 ? (
+                                drawers.map((drawer) => {
+                                    const isSelected =
+                                        selectedDrawerIds.includes(
+                                            drawer.id,
+                                        );
 
-                                        return (
-                                            <button
-                                                key={
-                                                    drawer.id
-                                                }
-                                                type="button"
+                                    return (
+                                        <button
+                                            key={drawer.id}
+                                            type="button"
+                                            className={
+                                                styles.scrapDrawerButton
+                                            }
+                                            onClick={() =>
+                                                handleDrawerToggle(
+                                                    drawer.id,
+                                                )
+                                            }
+                                            aria-pressed={
+                                                isSelected
+                                            }
+                                        >
+                                            <span
                                                 className={
-                                                    styles.scrapDrawerButton
-                                                }
-                                                onClick={() =>
-                                                    handleDrawerToggle(
-                                                        drawer.id,
-                                                    )
-                                                }
-                                                aria-pressed={
-                                                    isSelected
+                                                    styles.scrapDrawerName
                                                 }
                                             >
-                                                <span
-                                                    className={
-                                                        styles.scrapDrawerName
-                                                    }
-                                                >
-                                                    {
-                                                        drawer.name
-                                                    }
-                                                </span>
+                                                {drawer.name}
+                                            </span>
 
-                                                <span
-                                                    className={`${styles.scrapStatusIcon} ${
-                                                        isSelected
-                                                            ? styles.selectedStatusIcon
-                                                            : ""
-                                                    }`}
-                                                    aria-hidden="true"
-                                                >
-                                                    {isSelected
-                                                        ? "✓"
-                                                        : "+"}
-                                                </span>
-                                            </button>
-                                        );
-                                    },
-                                )
+                                            <span
+                                                className={`${styles.scrapStatusIcon} ${
+                                                    isSelected
+                                                        ? styles.selectedStatusIcon
+                                                        : ""
+                                                }`}
+                                                aria-hidden="true"
+                                            >
+                                                {isSelected
+                                                    ? "✓"
+                                                    : "+"}
+                                            </span>
+                                        </button>
+                                    );
+                                })
                             ) : (
                                 <p
                                     className={
                                         styles.emptyDrawerText
                                     }
                                 >
-                                    생성된 서랍이
-                                    없습니다. 서랍을
-                                    먼저 추가해 주세요.
+                                    생성된 서랍이 없습니다.
+                                    서랍을 먼저 추가해 주세요.
                                 </p>
                             )}
                         </div>
 
                         <button
-                            type="button"
-                            className={
-                                styles.saveButton
-                            }
-                            onClick={
-                                handleScrapSave
-                            }
-                            disabled={
-                                isSavingScrap
-                            }
-                        >
-                            {isSavingScrap
-                                ? "저장 중..."
-                                : "저장"}
-                        </button>
-                    </section>
-                </div>
-            )}
-
-            {isVisibilityModalOpen && (
-                <div
-                    className={
-                        styles.modalBackdrop
-                    }
-                    role="presentation"
-                    onMouseDown={(event) => {
-                        if (
-                            event.target ===
-                            event.currentTarget
-                        ) {
-                            setIsVisibilityModalOpen(
-                                false,
-                            );
-                        }
-                    }}
-                >
-                    <section
-                        className={
-                            styles.visibilityModal
-                        }
-                        role="dialog"
-                        aria-modal="true"
-                        aria-labelledby="visibility-modal-title"
-                    >
-                        <div
-                            className={
-                                styles.modalHeader
-                            }
-                        >
-                            <h2 id="visibility-modal-title">
-                                공개 설정 변경
-                            </h2>
-
-                            <button
-                                type="button"
-                                className={
-                                    styles.closeButton
-                                }
-                                onClick={() =>
-                                    setIsVisibilityModalOpen(
-                                        false,
-                                    )
-                                }
-                                aria-label="공개 설정 창 닫기"
-                            >
-                                ×
-                            </button>
-                        </div>
-
-                        <div
-                            className={
-                                styles.settingRow
-                            }
-                        >
-                            <label htmlFor="profile-purpose">
-                                프로필 목적
-                            </label>
-
-                            <select
-                                id="profile-purpose"
-                                value={
-                                    selectedPurposeId
-                                }
-                                onChange={(event) =>
-                                    setSelectedPurposeId(
-                                        event.target.value,
-                                    )
-                                }
-                            >
-                                <option value="">
-                                    목적 선택
-                                </option>
-
-                                {purposes.map(
-                                    (purpose) => (
-                                        <option
-                                            key={
-                                                purpose.id
-                                            }
-                                            value={
-                                                purpose.id
-                                            }
-                                        >
-                                            {
-                                                purpose.name
-                                            }
-                                        </option>
-                                    ),
-                                )}
-                            </select>
-                        </div>
-
-                        <div
-                            className={
-                                styles.settingRow
-                            }
-                        >
-                            <span>
-                                프로필 공개
-                            </span>
-
-                            <button
-                                type="button"
-                                className={`${styles.toggle} ${
-                                    selectedIsActive
-                                        ? styles.toggleOn
-                                        : ""
-                                }`}
-                                onClick={() =>
-                                    setSelectedIsActive(
-                                        (current) =>
-                                            !current,
-                                    )
-                                }
-                                aria-pressed={
-                                    selectedIsActive
-                                }
-                            >
-                                <span>
-                                    {selectedIsActive
-                                        ? "ON"
-                                        : "OFF"}
-                                </span>
-                                <i aria-hidden="true" />
-                            </button>
-                        </div>
-
-                        {ownerActionError && (
-                            <p
-                                className={
-                                    styles.ownerActionError
-                                }
-                                role="alert"
-                            >
-                                {ownerActionError}
-                            </p>
-                        )}
-
-                        <button
-                            type="button"
-                            className={
-                                styles.visibilitySaveButton
-                            }
-                            onClick={
-                                handleSaveVisibility
-                            }
-                            disabled={
-                                isSavingVisibility
-                            }
-                        >
-                            {isSavingVisibility
-                                ? "저장 중..."
-                                : "저장"}
-                        </button>
-                    </section>
-                </div>
-            )}
-
-            {isDeleteModalOpen && (
-                <div
-                    className={
-                        styles.modalBackdrop
-                    }
-                    role="presentation"
-                    onMouseDown={(event) => {
-                        if (
-                            event.target ===
-                            event.currentTarget
-                        ) {
-                            setIsDeleteModalOpen(
-                                false,
-                            );
-                        }
-                    }}
-                >
-                    <section
-                        className={
-                            styles.deleteModal
-                        }
-                        role="dialog"
-                        aria-modal="true"
-                        aria-labelledby="delete-modal-title"
-                    >
-                        <span
-                            className={
-                                styles.deleteIcon
-                            }
-                            aria-hidden="true"
-                        >
-                            !
-                        </span>
-
-                        <h2 id="delete-modal-title">
-                            프로필을 삭제할까요?
-                        </h2>
-
-                        <p>
-                            삭제한 프로필은 다시 복구할 수 없습니다.
-                        </p>
-
-                        <div
-                            className={
-                                styles.deleteActions
-                            }
-                        >
-                            <button
-                                type="button"
-                                onClick={() =>
-                                    setIsDeleteModalOpen(
-                                        false,
-                                    )
-                                }
-                                disabled={
-                                    isDeleting
-                                }
-                            >
-                                취소
-                            </button>
-
-                            <button
-                                type="button"
-                                onClick={
-                                    handleDeleteProfile
-                                }
-                                disabled={
-                                    isDeleting
-                                }
-                            >
-                                {isDeleting
-                                    ? "삭제 중..."
-                                    : "삭제"}
-                            </button>
-                        </div>
+    type="button"
+    className={styles.saveButton}
+    onClick={handleScrapSave}
+    disabled={
+        isSavingScrap ||
+        drawers.length === 0
+    }
+>
+    {isSavingScrap
+        ? "저장 중..."
+        : "저장"}
+</button>
                     </section>
                 </div>
             )}
 
             {isExchangeModalOpen && (
                 <CardExchangeModal
-                    receiver={
-                        profile
-                    }
+                    receiver={profile}
                     onClose={
                         handleCloseExchangeModal
                     }
-                    onSend={
-                        handleSendExchange
-                    }
+                    onSend={handleSendExchange}
                 />
             )}
         </main>

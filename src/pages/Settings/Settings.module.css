@@ -1,36 +1,45 @@
 .page {
-    min-height: calc(100vh - 72px);
-    color: #f5f6fa;
-    background: #0e0e16;
-}
+    width: 100%;
+    min-height: calc(100vh - 76px);
 
-.desktopSettings {
     display: grid;
-    grid-template-columns: 252px minmax(0, 1fr);
-    min-height: calc(100vh - 72px);
-}
+    grid-template-columns: 264px minmax(0, 1fr);
 
-.mobileSettings {
-    display: none;
+    color: #f9fafb;
+    background: #111017;
+
+    box-sizing: border-box;
 }
 
 .sidebar {
-    padding: 34px 16px;
+    min-height: calc(100vh - 76px);
+    padding: 32px 16px;
+
     border-right: 1px solid #343747;
+
+    background: #111017;
+
+    box-sizing: border-box;
 }
 
 .backButton {
+    min-height: 40px;
+    margin: 0 0 36px;
+    padding: 0 10px;
+
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-bottom: 36px;
-    padding: 6px 10px;
+
     border: 0;
+
     color: #f5f6fa;
+    background: transparent;
+
     font-family: inherit;
     font-size: 14px;
     font-weight: 600;
-    background: transparent;
+
     cursor: pointer;
 }
 
@@ -38,9 +47,19 @@
     font-size: 28px;
     font-weight: 300;
     line-height: 1;
+
+    transform: translateY(-1px);
+}
+
+.backButton:focus-visible {
+    border-radius: 8px;
+    outline: 2px solid #afd8f8;
+    outline-offset: 2px;
 }
 
 .sideNav {
+    width: 100%;
+
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -48,18 +67,25 @@
 
 .sideNav button {
     width: 100%;
-    padding: 14px 16px;
+    min-height: 48px;
+    padding: 0 16px;
+
     border: 0;
     border-radius: 8px;
+
     color: #d4d6df;
+    background: transparent;
+
     font-family: inherit;
     font-size: 14px;
+    font-weight: 500;
     text-align: left;
-    background: transparent;
+
     cursor: pointer;
 }
 
 .sideNav button:hover {
+    color: #ffffff;
     background: #1b1e2c;
 }
 
@@ -69,130 +95,243 @@
 }
 
 .sideNav .logoutButton {
-    margin-top: 10px;
+    margin-top: 8px;
     color: #c7c9d2;
 }
 
+/* =========================
+   본문
+========================= */
+
 .content {
-    padding: 56px 48px 80px;
+    min-width: 0;
+    padding: 60px 0 80px;
+
+    background: #111017;
+
+    box-sizing: border-box;
 }
 
 .contentInner {
-    width: min(620px, 100%);
-    margin-left: 96px;
+    width: min(650px, calc(100% - 40px));
+    margin-left: 152px;
 }
 
 .contentHeader {
-    margin-bottom: 34px;
+    width: 100%;
+    min-height: 65px;
+    margin-bottom: 32px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
 }
 
 .contentHeader h1 {
-    margin: 0 0 10px;
-    font-size: 22px;
-    font-weight: 700;
+    margin: 0;
+
+    color: #f9fafb;
+
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 138%;
+    letter-spacing: -0.552px;
 }
 
 .contentHeader p {
     margin: 0;
-    color: #858a9d;
+
+    color: #9297a8;
+
     font-size: 14px;
-    line-height: 1.5;
+    font-weight: 400;
+    line-height: 148%;
 }
 
+/* =========================
+   기본 정보 변경
+========================= */
+
 .form {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+
+    /* 기존에 있다면 제거 */
+    height: auto;
+    min-height: 0;
+    justify-content: flex-start;
+}
+
+.formFields {
+    width: 100%;
+
     display: flex;
     flex-direction: column;
     gap: 24px;
 }
 
 .field {
+    width: 100%;
+
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
 
 .field label {
-    color: #aeb2c1;
+    color: #9297a8;
+
     font-size: 13px;
+    line-height: 148%;
 }
 
 .field input {
     width: 100%;
     height: 48px;
-    box-sizing: border-box;
     padding: 0 16px;
+
     border: 1px solid transparent;
     border-radius: 8px;
+    outline: none;
+
     color: #f7f8fb;
+    background: #353a50;
+
     font-family: inherit;
     font-size: 14px;
-    background: #353a50;
-    outline: none;
+
+    box-sizing: border-box;
 }
 
 .field input:focus {
-    border-color: #acd9fa;
+    border-color: #878fa1;
 }
 
 .field input:disabled {
-    color: #71768b;
-    cursor: not-allowed;
+    color: #73798d;
+    background: #353a50;
+
+    opacity: 1;
 }
 
 .jobRow {
+    width: 100%;
+
     display: grid;
-    grid-template-columns: 74px minmax(0, 1fr);
+    grid-template-columns: 80px minmax(0, 1fr);
     gap: 8px;
 }
 
+.jobSelector {
+    position: relative;
+    z-index: 30;
+
+    width: 80px;
+}
+
 .jobSelectButton {
-    display: flex;
+    width: 80px;
     height: 48px;
+    padding: 0 12px;
+
+    display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 12px;
+
     border: 1px solid #62687e;
     border-radius: 8px;
-    color: #9ca1b2;
+
+    color: #f5f6fa;
+    background: #353a50;
+
     font-family: inherit;
+    font-size: 14px;
+
+    cursor: pointer;
+}
+
+.jobSelectButtonOpen {
+    border-color: #878fa1;
+    background: #3b4057;
+}
+
+.selectChevron {
+    width: 9px;
+    height: 9px;
+
+    border-right: 2px solid #d9dce5;
+    border-bottom: 2px solid #d9dce5;
+
+    transform: rotate(45deg)
+        translateY(-2px);
+}
+
+.selectChevronOpen {
+    transform: rotate(225deg)
+        translate(-2px, -1px);
+}
+
+.jobDropdown {
+    position: absolute;
+    z-index: 40;
+    top: calc(100% + 8px);
+    left: 0;
+
+    width: 124px;
+
+    overflow: hidden;
+
+    border: 1px solid #62687e;
+    border-radius: 8px;
+
     background: #353a50;
 }
 
-.fieldDescription {
-    margin: 0;
-    color: #777c90;
-    font-size: 12px;
+.jobDropdown button {
+    width: 100%;
+    height: 52px;
+    padding: 0 16px;
+
+    display: flex;
+    align-items: center;
+
+    border: 0;
+
+    color: #dfe2ea;
+    background: transparent;
+
+    font-family: inherit;
+    font-size: 14px;
+    text-align: left;
+
+    cursor: pointer;
 }
 
-.error,
-.success {
-    margin: -6px 0 0;
-    padding: 10px 12px;
-    border-radius: 7px;
-    font-size: 13px;
-}
-
-.error {
-    color: #ffb9bd;
-    background: rgb(195 50 63 / 16%);
-}
-
-.success {
-    color: #b8eed0;
-    background: rgb(42 151 92 / 16%);
+.jobDropdown button:hover,
+.jobDropdown .selectedJobOption {
+    color: #ffffff;
+    background: #41465d;
 }
 
 .submitButton {
     width: 100%;
     height: 50px;
     margin-top: 8px;
+
     border: 0;
     border-radius: 8px;
+
     color: #22364a;
+    background: #b4dcfa;
+
     font-family: inherit;
     font-size: 14px;
     font-weight: 700;
-    background: #b4dcfa;
+
     cursor: pointer;
 }
 
@@ -205,186 +344,343 @@
     cursor: wait;
 }
 
-.emptySection {
-    display: grid;
-    min-height: 260px;
-    place-items: center;
-    border: 1px dashed #343747;
-    border-radius: 12px;
-    color: #818697;
-    font-size: 14px;
+/* =========================
+   내 요청 기록
+========================= */
+
+.requestDateGroups {
+    width: 650px;
+    max-width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    gap: 44px;
 }
 
-.statusText {
-    color: #9da1af;
+.requestDateGroup {
+    width: 100%;
+}
+
+.requestDateLabel {
+    margin: 0 0 20px;
+    padding-left: 16px;
+
+    color: #9297a8;
+
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 148%;
 }
 
 .requestList {
+    width: 100%;
+
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
 }
 
 .requestItem {
+    width: 100%;
+    min-height: 78px;
+    padding: 12px 18px;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 20px;
-    padding: 16px;
-    border: 1px solid #343747;
-    border-radius: 10px;
-    background: #171822;
+
+    border: 0;
+    border-radius: 8px;
+
+    background: transparent;
+
+    box-sizing: border-box;
+
+    transition: background-color 0.18s ease;
 }
 
-.requestProfile,
-.requestActions {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+.requestItem:hover {
+    background: #222435;
+}
+
+.requestItemCancelable {
+    background: #222435;
 }
 
 .requestProfile {
     min-width: 0;
-}
 
-.requestProfile > div:last-child {
-    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 16px;
 }
 
 .requestAvatar,
 .requestAvatarFallback {
     width: 48px;
     height: 48px;
+
     flex: 0 0 48px;
+
     border-radius: 50%;
+}
+
+.requestAvatar {
+    display: block;
     object-fit: cover;
 }
 
 .requestAvatarFallback {
     display: grid;
     place-items: center;
+
     color: #26384a;
-    font-weight: 700;
     background: #b4dcfa;
+
+    font-size: 16px;
+    font-weight: 700;
 }
 
-.requestProfile strong {
-    display: block;
+.requestText {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+}
+
+.requestStatus {
+    color: #c9cdd8;
+
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 148%;
+}
+
+.requestText strong {
     overflow: hidden;
+
+    color: #f9fafb;
+
     font-size: 14px;
+    font-weight: 600;
+    line-height: 148%;
+
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-.requestProfile p {
-    margin: 5px 0 0;
-    color: #858a9d;
-    font-size: 12px;
+.status0 {
+    color: #dce0e9;
 }
 
-.requestStatus {
-    padding: 6px 9px;
-    border-radius: 999px;
-    color: #b8c0d3;
-    font-size: 12px;
-    white-space: nowrap;
-    background: #292c3b;
+.status1 {
+    color: #dce0e9;
 }
 
-.status0 { color: #f8d98d; }
-.status1 { color: #a9e7c5; }
-.status2,
-.status3 { color: #a2a6b4; }
+.status2 {
+    color: #dce0e9;
+}
 
-.requestActions button,
-.dangerSection button {
-    padding: 9px 12px;
-    border: 1px solid #646a7e;
-    border-radius: 7px;
-    color: #e7e9ef;
+.status3 {
+    color: #9096a8;
+}
+
+.requestCancelButton {
+    width: 62px;
+    height: 40px;
+    padding: 0;
+
+    flex: 0 0 62px;
+
+    border: 0;
+    border-radius: 8px;
+
+    color: #f4f5f8;
+    background: #555b73;
+
     font-family: inherit;
-    background: transparent;
+    font-size: 13px;
+    font-weight: 500;
+
     cursor: pointer;
 }
 
-.requestActions button:disabled {
+.requestCancelButton:hover:not(:disabled) {
+    background: #626981;
+}
+
+.requestCancelButton:disabled {
     opacity: 0.55;
     cursor: wait;
 }
 
+.emptySection {
+    width: 650px;
+    max-width: 100%;
+    min-height: 260px;
+
+    display: grid;
+    place-items: center;
+
+    border: 1px dashed #343747;
+    border-radius: 12px;
+
+    color: #818697;
+
+    font-size: 14px;
+}
+
+.emptySection p,
+.statusText {
+    margin: 0;
+}
+
+.statusText {
+    color: #9da1af;
+}
+
+/* =========================
+   메시지
+========================= */
+
+.error,
+.success {
+    width: 100%;
+    margin: 0;
+    padding: 10px 12px;
+
+    border-radius: 7px;
+
+    font-size: 13px;
+
+    box-sizing: border-box;
+}
+
+.error {
+    color: #ffb9bd;
+    background: rgb(195 50 63 / 16%);
+}
+
+.success {
+    color: #b8eed0;
+    background: rgb(42 151 92 / 16%);
+}
+
+/* =========================
+   계정 관리
+========================= */
+
 .dangerSection {
+    width: 100%;
+    padding: 22px;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 24px;
-    padding: 22px;
+
     border: 1px solid rgb(218 79 91 / 45%);
     border-radius: 10px;
+
     background: rgb(195 50 63 / 8%);
+
+    box-sizing: border-box;
 }
 
-.dangerSection strong { font-size: 15px; }
+.dangerSection strong {
+    font-size: 15px;
+}
 
 .dangerSection p {
     margin: 7px 0 0;
+
     color: #9da1af;
+
     font-size: 13px;
-    line-height: 1.5;
+    line-height: 150%;
 }
 
 .dangerSection button,
 .withdrawConfirmButton {
+    padding: 9px 12px;
+
     flex: 0 0 auto;
+
+    border: 1px solid #b74d58;
+    border-radius: 7px;
+
     color: #ffd8db;
-    border-color: #b74d58;
     background: #85333b;
+
+    font-family: inherit;
+
+    cursor: pointer;
 }
+
+/* =========================
+   모달
+========================= */
 
 .modalBackdrop {
     position: fixed;
-    z-index: 1000;
     inset: 0;
+    z-index: 1000;
+
+    padding: 20px;
+
     display: grid;
     place-items: center;
-    padding: 20px;
+
     background: rgb(5 6 12 / 68%);
 }
 
 .leaveModal {
     width: min(420px, 100%);
-    box-sizing: border-box;
     padding: 26px;
+
     border: 1px solid #454a5f;
     border-radius: 10px;
+
     color: #ffffff;
     background: #34394f;
-    box-shadow: 0 28px 70px rgb(0 0 0 / 45%);
+
+    box-sizing: border-box;
 }
 
 .leaveModal h2 {
     margin: 0 0 8px;
+
     font-size: 18px;
 }
 
 .leaveModal p {
     margin: 0;
+
     color: #c4c7d1;
+
     font-size: 14px;
 }
 
 .modalActions {
+    margin-top: 30px;
+
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
-    margin-top: 30px;
 }
 
 .modalActions button {
     height: 48px;
+
     border: 0;
     border-radius: 7px;
+
     font-family: inherit;
     font-weight: 700;
+
     cursor: pointer;
 }
 
@@ -403,415 +699,42 @@
     background: #a43d47;
 }
 
-.mobileTopHeader {
-    display: flex;
-    height: 72px;
-    align-items: center;
-    padding: 0 20px;
+    .status0 {
+    color: #f8d98d;
+    }
+
+    /* status 1 = 거절 */
+    .status1 {
+    color: #a2a6b4;
+    }
+
+    /* status 2 = 수락 */
+    .status2 {
+    color: #a9e7c5;
+    }
+
+    /* status 3 = 취소 */
+    .status3 {
+    color: #a2a6b4;
+    }
+
+/* =========================
+   반응형
+========================= */
+
+@media (max-width: 1100px) {
+    .page {
+        grid-template-columns: 230px minmax(0, 1fr);
+    }
+
+    .contentInner {
+        margin-left: 64px;
+    }
 }
 
-.mobileBackButton {
-    display: grid;
-    width: 38px;
-    height: 38px;
-    place-items: center;
-    padding: 0;
-    border: 0;
-    color: #ffffff;
-    font-family: inherit;
-    font-size: 38px;
-    font-weight: 200;
-    line-height: 1;
-    background: transparent;
-    cursor: pointer;
-    transform: translateX(-8px);
-}
-
-.mobileMenuContent {
-    padding: 48px 36px 120px;
-}
-
-.mobileMenuSection {
-    margin-bottom: 58px;
-}
-
-.mobileMenuSection:last-of-type {
-    margin-bottom: 0;
-}
-
-.mobileMenuSection h1 {
-    margin: 0 0 22px;
-    color: #f7f7fb;
-    font-size: 21px;
-    font-weight: 700;
-    line-height: 1.4;
-}
-
-.mobileMenuButton,
-.mobileLogoutButton {
-    width: 100%;
-    min-height: 48px;
-    padding: 0;
-    border: 0;
-    color: #d9dae3;
-    font-family: inherit;
-    font-size: 16px;
-    text-align: left;
-    background: transparent;
-    cursor: pointer;
-}
-
-.mobileMenuButton {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.mobileMenuArrow {
-    color: #ffffff;
-    font-size: 38px;
-    font-weight: 200;
-    line-height: 1;
-}
-
-.mobileLogoutButton {
-    margin-top: 2px;
-    color: #a8abb8;
-}
-
-.mobileLogoutButton:disabled {
-    opacity: 0.55;
-    cursor: wait;
-}
-
-.mobileDetailContent {
-    min-height: calc(100vh - 72px);
-    box-sizing: border-box;
-    padding: 42px 14px 120px;
-}
-
-.mobilePageHeader {
-    margin-bottom: 38px;
-}
-
-.mobilePageHeader h1 {
-    margin: 0 0 10px;
-    color: #f8f8fb;
-    font-size: 25px;
-    font-weight: 700;
-    line-height: 1.35;
-}
-
-.mobilePageHeader p {
-    margin: 0;
-    color: #898d9e;
-    font-size: 16px;
-    line-height: 1.65;
-    word-break: keep-all;
-}
-
-.mobileForm {
-    display: flex;
-    min-height: calc(100vh - 265px);
-    flex-direction: column;
-    gap: 23px;
-}
-
-.mobileField {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.mobileField label {
-    color: #9ea2b2;
-    font-size: 14px;
-}
-
-.mobileField input {
-    width: 100%;
-    height: 52px;
-    box-sizing: border-box;
-    padding: 0 16px;
-    border: 1px solid #c8d2e4;
-    border-radius: 9px;
-    color: #ffffff;
-    font-family: inherit;
-    font-size: 16px;
-    background: #343a50;
-    outline: none;
-}
-
-.mobileField input:focus {
-    border-color: #b4dcfa;
-}
-
-.mobileJobRow {
-    position: relative;
-    display: grid;
-    grid-template-columns: 78px minmax(0, 1fr);
-    gap: 8px;
-}
-
-.mobileJobSelectWrapper {
-    position: relative;
-}
-
-.mobileJobSelectButton {
-    display: flex;
-    width: 100%;
-    height: 52px;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 12px;
-    border: 1px solid #737b93;
-    border-radius: 9px;
-    color: #ffffff;
-    font-family: inherit;
-    font-size: 15px;
-    background: #343a50;
-    cursor: pointer;
-}
-
-.mobileJobArrow,
-.mobileJobArrowOpen {
-    display: inline-block;
-    font-size: 18px;
-    transition: transform 0.18s ease;
-}
-
-.mobileJobArrowOpen {
-    transform: rotate(180deg);
-}
-
-.mobileJobDropdown {
-    position: absolute;
-    z-index: 20;
-    top: calc(100% + 6px);
-    left: 0;
-    display: flex;
-    width: 120px;
-    overflow: hidden;
-    flex-direction: column;
-    border: 1px solid #626a82;
-    border-radius: 8px;
-    background: #343a50;
-    box-shadow: 0 10px 30px rgb(0 0 0 / 30%);
-}
-
-.mobileJobDropdown button {
-    height: 48px;
-    padding: 0 16px;
-    border: 0;
-    color: #e6e7ed;
-    font-family: inherit;
-    font-size: 14px;
-    text-align: left;
-    background: transparent;
-    cursor: pointer;
-}
-
-.mobileJobDropdown button:hover {
-    background: #424960;
-}
-
-.mobileJobRow > input {
-    border-color: transparent;
-    color: #74798b;
-}
-
-.mobileSubmitButton {
-    width: 100%;
-    height: 57px;
-    margin-top: auto;
-    border: 0;
-    border-radius: 9px;
-    color: #203247;
-    font-family: inherit;
-    font-size: 16px;
-    font-weight: 700;
-    background: #b4dcfa;
-    cursor: pointer;
-}
-
-.mobileSubmitButton:hover:not(:disabled) {
-    background: #c5e5fd;
-}
-
-.mobileSubmitButton:disabled {
-    opacity: 0.65;
-    cursor: wait;
-}
-
-.mobileError,
-.mobileSuccess {
-    margin: 0;
-    padding: 11px 12px;
-    border-radius: 8px;
-    font-size: 13px;
-    line-height: 1.5;
-}
-
-.mobileError {
-    color: #ffb9bd;
-    background: rgb(195 50 63 / 16%);
-}
-
-.mobileSuccess {
-    color: #b8eed0;
-    background: rgb(42 151 92 / 16%);
-}
-
-.mobileStatusText {
-    margin: 0;
-    padding: 40px 14px;
-    color: #9da1af;
-    font-size: 14px;
-}
-
-.mobileEmptySection {
-    display: grid;
-    min-height: 220px;
-    place-items: center;
-    padding: 24px;
-    border: 1px dashed #343747;
-    border-radius: 12px;
-    color: #838899;
-    font-size: 14px;
-    text-align: center;
-}
-
-.mobileRequestGroups {
-    display: flex;
-    flex-direction: column;
-    gap: 42px;
-}
-
-.mobileRequestGroup h2 {
-    margin: 0 0 18px;
-    color: #8c91a3;
-    font-size: 15px;
-    font-weight: 600;
-}
-
-.mobileRequestList {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-}
-
-.mobileRequestItem {
-    display: flex;
-    min-width: 0;
-    align-items: center;
-    justify-content: space-between;
-    gap: 14px;
-}
-
-.mobileRequestProfile {
-    display: flex;
-    min-width: 0;
-    flex: 1;
-    align-items: center;
-    gap: 14px;
-}
-
-.mobileRequestAvatar,
-.mobileRequestAvatarFallback {
-    width: 52px;
-    height: 52px;
-    flex: 0 0 52px;
-    border-radius: 50%;
-    object-fit: cover;
-}
-
-.mobileRequestAvatarFallback {
-    display: grid;
-    place-items: center;
-    color: #26384a;
-    font-weight: 700;
-    background: #b4dcfa;
-}
-
-.mobileRequestText {
-    min-width: 0;
-}
-
-.mobileRequestStatus {
-    display: block;
-    margin-bottom: 4px;
-    color: #bbc0d1;
-    font-size: 14px;
-    line-height: 1.35;
-}
-
-.mobileRequestText strong {
-    display: block;
-    overflow: hidden;
-    color: #f1f2f7;
-    font-size: 15px;
-    font-weight: 600;
-    line-height: 1.45;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.mobileCancelButton {
-    min-width: 62px;
-    height: 42px;
-    flex: 0 0 auto;
-    border: 0;
-    border-radius: 8px;
-    color: #ffffff;
-    font-family: inherit;
-    font-size: 14px;
-    background: #565d77;
-    cursor: pointer;
-}
-
-.mobileCancelButton:disabled {
-    opacity: 0.6;
-    cursor: wait;
-}
-
-.mobileAccountSection {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 20px;
-    padding: 20px;
-    border: 1px solid rgb(218 79 91 / 45%);
-    border-radius: 10px;
-    background: rgb(195 50 63 / 8%);
-}
-
-.mobileAccountSection strong {
-    color: #ffffff;
-    font-size: 15px;
-}
-
-.mobileAccountSection p {
-    margin: 8px 0 0;
-    color: #9da1af;
-    font-size: 13px;
-    line-height: 1.55;
-    word-break: keep-all;
-}
-
-.mobileAccountSection button {
-    flex: 0 0 auto;
-    padding: 10px 12px;
-    border: 1px solid #b74d58;
-    border-radius: 7px;
-    color: #ffd8db;
-    font-family: inherit;
-    background: #85333b;
-    cursor: pointer;
-}
-
-@media (max-width: 900px) and (min-width: 681px) {
-    .desktopSettings {
-        grid-template-columns: 210px minmax(0, 1fr);
+@media (max-width: 820px) {
+    .page {
+        grid-template-columns: 200px minmax(0, 1fr);
     }
 
     .content {
@@ -819,84 +742,105 @@
     }
 
     .contentInner {
+        width: 100%;
         margin-left: 0;
+    }
+
+    .form {
+        gap: 100px;
     }
 }
 
 @media (max-width: 680px) {
     .page {
-        min-height: 100vh;
-        background: #0e0e16;
-    }
-
-    .desktopSettings {
-        display: none;
-    }
-
-    .mobileSettings {
         display: block;
         min-height: 100vh;
     }
 
-    .modalBackdrop {
-        align-items: center;
-        padding: 8px;
+    .sidebar {
+        min-height: auto;
+        padding: 20px 16px;
+
+        border-right: 0;
+        border-bottom: 1px solid #343747;
     }
 
-    .leaveModal {
-        width: 100%;
-        max-width: 384px;
-        padding: 36px 21px 28px;
-        border: 0;
-        border-radius: 9px;
-        background: #343a50;
-        box-shadow: none;
+    .backButton {
+        margin-bottom: 16px;
     }
 
-    .leaveModal h2 {
-        margin-bottom: 12px;
-        font-size: 21px;
-        line-height: 1.4;
+    .sideNav {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .sideNav button {
+        min-height: 44px;
+        padding: 0 8px;
+
+        font-size: 12px;
         text-align: center;
-        word-break: keep-all;
     }
 
-    .leaveModal p {
-        font-size: 15px;
-        line-height: 1.5;
-        text-align: center;
-        word-break: keep-all;
+    .sideNav .logoutButton {
+        display: none;
+    }
+
+    .content {
+        padding: 32px 16px 60px;
+    }
+
+    .form {
+        gap: 48px;
+    }
+
+    .requestDateGroups {
+        gap: 32px;
+    }
+
+    .requestDateLabel {
+        padding-left: 0;
+    }
+
+    .requestItem {
+        padding: 12px;
+    }
+
+    .requestProfile {
+        gap: 12px;
+    }
+
+    .requestText strong {
+        white-space: normal;
+    }
+
+    .dangerSection {
+        align-items: flex-start;
+        flex-direction: column;
     }
 
     .modalActions {
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
-        margin-top: 36px;
-    }
-
-    .modalActions button {
-        height: 55px;
-        border-radius: 9px;
-        font-size: 15px;
+        grid-template-columns: 1fr;
     }
 }
 
-@media (max-width: 380px) {
-    .mobileMenuContent {
-        padding-right: 24px;
-        padding-left: 24px;
+@media (max-width: 420px) {
+    .jobRow {
+        grid-template-columns: 1fr;
     }
 
-    .mobileDetailContent {
-        padding-right: 12px;
-        padding-left: 12px;
+    .jobSelector,
+    .jobSelectButton,
+    .jobDropdown {
+        width: 100%;
     }
 
-    .mobilePageHeader h1 {
-        font-size: 23px;
+    .requestItem {
+        align-items: flex-start;
     }
 
-    .mobileRequestText strong {
-        font-size: 14px;
+    .requestCancelButton {
+        width: 52px;
+        flex-basis: 52px;
     }
 }

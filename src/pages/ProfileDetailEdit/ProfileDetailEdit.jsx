@@ -890,77 +890,98 @@ const ProfileDetailEdit = () => {
         );
     };
 
-    const createRequestBody =
-        () => {
-            const requestBody = {
-                links: links
-                    .filter((link) =>
-                        link.value.trim(),
-                    )
-                    .map((link) => ({
-                        type: Number(
-                            link.type,
-                        ),
+   const createRequestBody = () => {
+    const filteredExperiences =
+        experiences
+            .map((experience) => ({
+                title:
+                    experience.title.trim(),
 
-                        value:
-                            link.value.trim(),
-                    })),
+                description:
+                    experience.description.trim(),
 
-                experiences:
-                    experiences
-                        .filter(
-                            (
-                                experience,
-                            ) =>
-                                experience.title.trim() ||
-                                experience.description.trim() ||
-                                experience.relatedUrl.trim(),
-                        )
-                        .map(
-                            (
-                                experience,
-                                index,
-                            ) => ({
-                                title:
-                                    experience.title.trim(),
+                relatedUrl:
+                    experience.relatedUrl.trim(),
 
-                                description:
-                                    experience.description.trim(),
+                isRepresentative:
+                    Boolean(
+                        experience.isRepresentative,
+                    ),
+            }))
+            /*
+             * 제목이 없는 경험은
+             * 작성하지 않은 항목으로 처리합니다.
+             */
+            .filter(
+                (experience) =>
+                    experience.title,
+            );
 
-                                relatedUrl:
-                                    experience.relatedUrl.trim(),
+    const requestBody = {
+        links: links
+            .filter((link) =>
+                link.value.trim(),
+            )
+            .map((link) => ({
+                type: Number(
+                    link.type,
+                ),
 
-                                sortOrder:
-                                    index + 1,
+                value:
+                    link.value.trim(),
+            })),
 
-                                isRepresentative:
-                                    Boolean(
-                                        experience.isRepresentative,
-                                    ),
-                            }),
-                        ),
-            };
+        experiences:
+            filteredExperiences.map(
+                (
+                    experience,
+                    index,
+                ) => ({
+                    title:
+                        experience.title,
 
-            if (isDeveloper) {
-                requestBody.interestIds =
-                    selectedItems.map(
-                        (item) =>
-                            Number(
-                                item.id,
-                            ),
-                    );
-            } else {
-                requestBody.skillIds =
-                    selectedItems.map(
-                        (item) =>
-                            Number(
-                                item.id,
-                            ),
-                    );
-            }
+                    /*
+                     * 빈 선택 필드는 payload에서
+                     * 아예 제외합니다.
+                     */
+                    ...(experience.description
+                        ? {
+                              description:
+                                  experience.description,
+                          }
+                        : {}),
 
-            return requestBody;
-        };
+                    ...(experience.relatedUrl
+                        ? {
+                              relatedUrl:
+                                  experience.relatedUrl,
+                          }
+                        : {}),
+
+                    sortOrder: index,
+
+                    isRepresentative:
+                        experience.isRepresentative,
+                }),
+            ),
+    };
+
+    if (isDeveloper) {
+        requestBody.interestIds =
+            selectedItems.map(
+                (item) =>
+                    Number(item.id),
+            );
+    } else {
+        requestBody.skillIds =
+            selectedItems.map(
+                (item) =>
+                    Number(item.id),
+            );
+    }
+
+    return requestBody;
+};
 
     const handleSave =
         async () => {
