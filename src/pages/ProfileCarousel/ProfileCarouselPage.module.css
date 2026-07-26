@@ -1,21 +1,22 @@
 .container {
     width: 100%;
-    min-height: calc(100vh - 80px);
+    min-height: calc(100vh - 76px);
+    padding-bottom: 105px;
 
     overflow: hidden;
+
+    background-color: #111017;
+    color: #ffffff;
 
     box-sizing: border-box;
 }
 
-/* =========================
-상단
-========================= */
+/* 상단 뒤로 가기 */
 
 .pageHeader {
-    width: 100%;
-    max-width: 1440px;
+    width: min(1240px, 100%);
     margin: 0 auto;
-    padding: 56px 88px 0;
+    padding-top: 56px;
 
     box-sizing: border-box;
 }
@@ -66,35 +67,79 @@
     outline-offset: 5px;
 }
 
-/* =========================
-캐러셀
-========================= */
+/* 캐러셀 */
 
 .carouselSection {
-    width: 100%;
-    margin-top: 22px;
+    width: min(1240px, 100%);
+    margin: 80px auto 0;
+
+    display: flex;
+    align-items: center;
+    flex-direction: column;
 }
 
 .carouselArea {
     position: relative;
 
     width: 100%;
+    height: 400px;
 
     overflow: hidden;
 }
 
+/* 좌우 끝 카드에 적용되는 그라데이션 */
+.carouselArea::before,
+.carouselArea::after {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: 20;
+
+    width: 96px;
+
+    content: "";
+    pointer-events: none;
+}
+
+.carouselArea::before {
+    left: 0;
+
+    background: linear-gradient(
+        90deg,
+        #111017 0%,
+        rgb(17 16 23 / 88%) 35%,
+        rgb(17 16 23 / 0%) 100%
+    );
+}
+
+.carouselArea::after {
+    right: 0;
+
+    background: linear-gradient(
+        270deg,
+        #111017 0%,
+        rgb(17 16 23 / 88%) 35%,
+        rgb(17 16 23 / 0%) 100%
+    );
+}
+
 .swiper {
     width: 100%;
-    padding: 58px 0 32px;
+    height: 400px;
+    padding: 0;
 
     overflow: visible;
 
     box-sizing: border-box;
 }
 
+.swiper :global(.swiper-wrapper) {
+    align-items: center;
+}
+
 .slide {
     width: 282px;
-    height: auto;
+    height: 400px;
 
     display: flex;
     align-items: center;
@@ -102,12 +147,17 @@
 }
 
 .slide > button {
-    width: 100%;
+    width: 282px;
+    height: 400px;
     margin: 0 auto;
 
     opacity: 0.18;
-    filter: blur(2.5px);
+    filter:
+        brightness(0.68)
+        blur(2.5px);
+
     transform: scale(0.78);
+    transform-origin: center;
 
     transition:
         opacity 0.45s ease,
@@ -115,21 +165,22 @@
         filter 0.45s ease;
 }
 
+/* 가운데 활성 카드 */
 .slide:global(.swiper-slide-active) {
     z-index: 10;
 }
 
 .slide:global(.swiper-slide-active) > button {
     opacity: 1;
-    filter: blur(0);
+    filter: none;
     transform: scale(1);
 }
 
 .slide:global(.swiper-slide-active) article {
-    box-shadow:
-        0 24px 50px rgba(0, 0, 0, 0.38);
+    box-shadow: 0 24px 50px rgb(0 0 0 / 38%);
 }
 
+/* 활성 카드 바로 양옆 */
 .slide:global(.swiper-slide-prev),
 .slide:global(.swiper-slide-next) {
     z-index: 5;
@@ -138,51 +189,56 @@
 .slide:global(.swiper-slide-prev) > button,
 .slide:global(.swiper-slide-next) > button {
     opacity: 0.58;
-    filter: blur(0.7px);
+
+    filter:
+        brightness(0.78)
+        blur(0.7px);
 }
 
+/*
+ * 282px 카드의 0.9배는 약 254px이다.
+ * 축소되면서 생기는 14px 여백만큼 중앙으로 이동시켜
+ * 피그마의 카드 간격 20px을 맞춘다.
+ */
 .slide:global(.swiper-slide-prev) > button {
     transform:
-        translateX(-12px)
+        translateX(14px)
         scale(0.9);
 }
 
 .slide:global(.swiper-slide-next) > button {
     transform:
-        translateX(12px)
+        translateX(-14px)
         scale(0.9);
 }
 
-/* =========================
-화살표
-========================= */
+/* 좌우 화살표 */
 
 .arrowButton {
     position: absolute;
     top: 50%;
     z-index: 30;
 
-    width: 48px;
-    height: 48px;
+    width: 46px;
+    height: 46px;
     padding: 0;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    border: 1px solid
-        rgba(255, 255, 255, 0.14);
+    border: 0;
     border-radius: 50%;
 
-    background-color: rgba(30, 34, 50, 0.9);
+    background-color: rgb(20 22 33 / 94%);
     color: #ffffff;
 
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
 
-    backdrop-filter: blur(8px);
     cursor: pointer;
+    backdrop-filter: blur(8px);
 
     transform:
         translateY(-50%)
@@ -196,7 +252,7 @@
 }
 
 .carouselArea:hover
-.arrowButton:not(:disabled) {
+    .arrowButton:not(:disabled) {
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
@@ -220,11 +276,11 @@
 }
 
 .arrowButton:hover {
-    background-color: #343a54;
+    background-color: #32374c;
 
     transform:
         translateY(-50%)
-        scale(1.08);
+        scale(1.06);
 }
 
 .arrowButton:disabled {
@@ -234,20 +290,18 @@
 }
 
 .leftArrow {
-    left: 40px;
+    left: 64px;
 }
 
 .rightArrow {
-    right: 40px;
+    right: 64px;
 }
 
-/* =========================
-스크랩 버튼
-========================= */
+/* 스크랩 버튼 */
 
 .actionArea {
     width: 100%;
-    margin: 8px 0 24px;
+    margin-top: 40px;
 
     display: flex;
     align-items: center;
@@ -255,20 +309,19 @@
 }
 
 .scrapButton {
-    min-width: 112px;
+    min-width: 98px;
     height: 44px;
-    padding: 0 20px;
+    padding: 0 16px;
 
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 4px;
 
-    border: 1px solid
-        rgba(255, 255, 255, 0.16);
-    border-radius: 999px;
+    border: 0;
+    border-radius: 8px;
 
-    background-color: #1e2232;
+    background-color: #32374c;
     color: #ffffff;
 
     font-family: inherit;
@@ -279,29 +332,23 @@
 
     transition:
         background-color 0.2s ease,
-        border-color 0.2s ease,
         transform 0.2s ease;
 }
 
 .scrapIcon {
     display: block;
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
 
     flex-shrink: 0;
 }
 
 .scrapButton:hover {
-    border-color:
-        rgba(255, 255, 255, 0.28);
-
-    background-color: #343a54;
-
+    background-color: #42485f;
     transform: translateY(-2px);
 }
 
 .scrapButton.scrapped {
-    border-color: #525dff;
     background-color: #525dff;
 }
 
@@ -313,13 +360,9 @@
     text-align: center;
 }
 
-/* =========================
-인디케이터
-========================= */
-
 .indicatorContainer {
     width: 100%;
-    padding-bottom: 40px;
+    margin-top: 59px;
 
     display: flex;
     justify-content: center;
@@ -328,7 +371,7 @@
 .indicator {
     position: relative;
 
-    width: 420px;
+    width: 398px;
     height: 20px;
 
     cursor: grab;
@@ -336,6 +379,7 @@
     user-select: none;
 }
 
+/* 어두운 인디케이터 트랙 */
 .indicator::before {
     position: absolute;
     top: 50%;
@@ -345,12 +389,13 @@
     height: 4px;
 
     border-radius: 999px;
-    background-color: #252a40;
+    background-color: #202334;
 
     content: "";
     transform: translateY(-50%);
 }
 
+/* 움직이는 흰색 손잡이 */
 .indicatorThumb {
     position: absolute;
     top: 50%;
@@ -358,29 +403,54 @@
         var(--indicator-progress) *
         (100% - 20px)
     );
-    z-index: 1;
+    z-index: 2;
 
     width: 20px;
-    height: 5px;
+    height: 6px;
 
     border-radius: 999px;
-    background-color: #f5f5f7;
+    background-color: #fdfefe;
 
     pointer-events: none;
 
     transform: translateY(-50%);
 
     box-shadow:
-        0 0 4px rgba(255, 255, 255, 0.45),
-        0 0 12px rgba(211, 217, 255, 0.38),
-        0 0 28px rgba(133, 146, 213, 0.28);
+        0 0 3px rgb(255 255 255 / 90%),
+        0 0 8px rgb(239 244 255 / 75%),
+        0 0 18px rgb(193 205 255 / 48%),
+        0 0 32px rgb(118 133 207 / 30%);
 
     transition: left 0.18s ease-out;
 }
 
-/* =========================
-스크랩 바텀시트
-========================= */
+/* 손잡이 주변의 길게 퍼지는 빛 */
+.indicatorThumb::before {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: -1;
+
+    width: 92px;
+    height: 12px;
+
+    border-radius: 999px;
+
+    background: radial-gradient(
+        ellipse at center,
+        rgb(255 255 255 / 72%) 0%,
+        rgb(197 208 255 / 34%) 32%,
+        rgb(110 126 202 / 14%) 58%,
+        transparent 78%
+    );
+
+    content: "";
+
+    transform: translate(-50%, -50%);
+    filter: blur(3px);
+}
+
+/* 스크랩 바텀시트 */
 
 .scrapSheetBackdrop {
     position: fixed;
@@ -391,7 +461,7 @@
     align-items: flex-end;
     justify-content: center;
 
-    background-color: rgba(10, 10, 16, 0.72);
+    background-color: rgb(10 10 16 / 72%);
     backdrop-filter: blur(7px);
 }
 
@@ -409,11 +479,11 @@
 }
 
 .scrapSheetHeader {
+    margin-bottom: 34px;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
-
-    margin-bottom: 34px;
 }
 
 .scrapSheetHeader h2 {
@@ -440,11 +510,11 @@
 }
 
 .collectionSummary {
+    margin-bottom: 16px;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
-
-    margin-bottom: 16px;
 
     color: #a4a9bb;
     font-size: 15px;
@@ -469,11 +539,11 @@
 }
 
 .collectionList {
+    max-height: 230px;
+
     display: flex;
     flex-direction: column;
     gap: 4px;
-
-    max-height: 230px;
 
     overflow-y: auto;
 }
@@ -542,9 +612,7 @@
     cursor: pointer;
 }
 
-/* =========================
-새 서랍 생성
-========================= */
+/* 새 서랍 만들기 */
 
 .createDrawerForm {
     display: flex;
@@ -552,11 +620,11 @@
 }
 
 .createDrawerInputHeader {
+    margin-bottom: 8px;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
-
-    margin-bottom: 8px;
 }
 
 .createDrawerInputHeader label,
@@ -634,35 +702,53 @@
     cursor: not-allowed;
 }
 
-/* =========================
-태블릿
-========================= */
+/* 태블릿 */
 
-@media (max-width: 1024px) {
+@media (max-width: 1280px) {
     .pageHeader {
-        padding: 44px 48px 0;
+        padding-right: 40px;
+        padding-left: 40px;
     }
 
     .leftArrow {
-        left: 28px;
+        left: 32px;
     }
 
     .rightArrow {
-        right: 28px;
-    }
-
-    .indicator {
-        width: min(380px, 68%);
+        right: 32px;
     }
 }
 
-/* =========================
-모바일
-========================= */
+@media (max-width: 1024px) {
+    .pageHeader {
+        padding-top: 44px;
+        padding-right: 28px;
+        padding-left: 28px;
+    }
+
+    .carouselSection {
+        margin-top: 64px;
+    }
+
+    .leftArrow {
+        left: 20px;
+    }
+
+    .rightArrow {
+        right: 20px;
+    }
+
+    .indicator {
+        width: min(420px, 68%);
+    }
+}
+
+/* 모바일 */
 
 @media (max-width: 768px) {
     .container {
         min-height: 100vh;
+        padding-bottom: 40px;
     }
 
     .pageHeader {
@@ -671,7 +757,6 @@
 
     .backButton {
         gap: 8px;
-
         font-size: 16px;
     }
 
@@ -681,58 +766,92 @@
     }
 
     .carouselSection {
-        margin-top: 10px;
+        margin-top: 36px;
     }
 
+    .carouselArea,
     .swiper {
-        padding: 36px 0 28px;
-        overflow: visible;
+        height: 400px;
     }
 
     .slide {
-        width: min(76vw, 320px);
+        width: 282px;
+        height: 400px;
     }
 
     .slide > button {
         opacity: 0.14;
-        filter: blur(2px);
-        transform: scale(0.82);
-    }
+        filter:
+            brightness(0.65)
+            blur(2px);
 
-    .slide:not(
-            :global(.swiper-slide-active),
-            :global(.swiper-slide-prev),
-            :global(.swiper-slide-next)
-        ) > button {
-            opacity: 0.2;
-            filter: blur(2px);
-            transform: scale(0.78);
+        transform: scale(0.78);
     }
 
     .slide:global(.swiper-slide-prev) > button,
     .slide:global(.swiper-slide-next) > button {
         opacity: 0.45;
-        filter: blur(0.8px);
+
+        filter:
+            brightness(0.75)
+            blur(0.8px);
     }
 
     .slide:global(.swiper-slide-active) > button {
         opacity: 1;
-        filter: blur(0);
+        filter: none;
         transform: scale(1);
     }
 
-    .arrowButton {
-        display: none;
+    .carouselArea::before,
+    .carouselArea::after {
+        width: 38px;
+    }
+
+    /*
+     * 모바일에서는 hover가 없기 때문에
+     * 좌우 화살표를 항상 표시한다.
+     */
+    .arrowButton,
+    .carouselArea:hover
+        .arrowButton:not(:disabled) {
+        width: 40px;
+        height: 40px;
+
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+
+        transform: translateY(-50%);
+    }
+
+    .arrowButton svg {
+        width: 24px;
+        height: 24px;
+    }
+
+    .arrowButton:disabled {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+    }
+
+    .leftArrow {
+        left: 12px;
+    }
+
+    .rightArrow {
+        right: 12px;
     }
 
     .actionArea {
-        margin: 4px 0 20px;
+        margin-top: 28px;
     }
 
     .scrapButton {
-        min-width: 104px;
+        min-width: 94px;
         height: 40px;
-        padding: 0 17px;
+        padding: 0 14px;
 
         font-size: 13px;
     }
@@ -742,6 +861,7 @@
         height: 18px;
     }
 
+    /* 모바일에서는 인디케이터만 숨긴다. */
     .indicatorContainer {
         display: none;
     }
@@ -760,7 +880,6 @@
 
     .collectionItem {
         min-height: 64px;
-
         font-size: 16px;
     }
 
