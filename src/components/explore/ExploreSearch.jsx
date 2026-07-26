@@ -137,7 +137,7 @@ const ExploreSearch = ({
                             event.target.value,
                         )
                     }
-                    placeholder="이름, 직군, 관심분야를 검색해보세요."
+                    placeholder="직군, 관심분야 등을 검색해보세요."
                     className={styles.searchInput}
                     aria-label="프로필 검색"
                 />
