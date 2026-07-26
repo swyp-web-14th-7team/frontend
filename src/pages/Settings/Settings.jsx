@@ -1,40 +1,21 @@
-    import {
-    useCallback,
-    useEffect,
-    useState,
-    } from "react";
+    import { useCallback, useEffect, useState } from "react";
 
-    import {
-    useNavigate,
-    useParams,
-    } from "react-router-dom";
+    import { useNavigate, useParams } from "react-router-dom";
 
-    import {
-    deleteCurrentUser,
-    getMyUser,
-    updateMyUser,
-    } from "../../api/users";
+    import { deleteCurrentUser, getMyUser, updateMyUser } from "../../api/users";
 
-    import {
-    getMyProfileCards,
-    } from "../../api/profile";
+    import { getMyProfileCards } from "../../api/profile";
 
     import {
     cancelConnectionRequest,
     getSentConnectionRequests,
     } from "../../api/connectionRequests";
 
-    import {
-    requestLogout,
-    } from "../../api/auth";
+    import { requestLogout } from "../../api/auth";
 
-    import {
-    removeAccessToken,
-    } from "../../utils/auth";
+    import { removeAccessToken } from "../../utils/auth";
 
-    import {
-    mapProfileCard,
-    } from "../../utils/profileMapper";
+    import { mapProfileCard } from "../../utils/profileMapper";
 
     import styles from "./Settings.module.css";
 
@@ -83,10 +64,7 @@
         request?.status?.id ??
         request?.status;
 
-    if (
-        typeof rawStatus === "number" &&
-        Number.isFinite(rawStatus)
-    ) {
+    if (typeof rawStatus === "number" && Number.isFinite(rawStatus)) {
         return rawStatus;
     }
 
@@ -100,11 +78,7 @@
             return numericStatus;
         }
 
-        return (
-            STRING_STATUS_MAP[
-            trimmedStatus.toUpperCase()
-            ] ?? null
-        );
+        return STRING_STATUS_MAP[trimmedStatus.toUpperCase()] ?? null;
         }
     }
 
@@ -113,14 +87,9 @@
 
     const getItems = (response) => {
     const items =
-        response?.items ??
-        response?.data?.items ??
-        response?.data ??
-        [];
+        response?.items ?? response?.data?.items ?? response?.data ?? [];
 
-    return Array.isArray(items)
-        ? items
-        : [];
+    return Array.isArray(items) ? items : [];
     };
 
     const getRequestDate = (request) => {
@@ -146,96 +115,58 @@
         return "";
     }
 
-    return date.toLocaleDateString(
-        "ko-KR",
-        {
+    return date.toLocaleDateString("ko-KR", {
         year: "numeric",
         month: "2-digit",
         day: "2-digit",
-        },
-    );
+    });
     };
 
     const Settings = () => {
     const navigate = useNavigate();
     const { section } = useParams();
 
-    const activeSection =
-    SECTION_MAP[section] ??
-    "requests";
+    const activeSection = SECTION_MAP[section] ?? "basic";
 
-    const [nickname, setNickname] =
-        useState("");
+    const [nickname, setNickname] = useState("");
 
-    const [
-        initialNickname,
-        setInitialNickname,
-    ] = useState("");
+    const [accountName, setAccountName] = useState("");
 
-    const [isLoading, setIsLoading] =
-        useState(true);
+    const [accountEmail, setAccountEmail] = useState("");
 
-    const [isSaving, setIsSaving] =
-        useState(false);
+    const [initialNickname, setInitialNickname] = useState("");
 
-    const [
-        isLoggingOut,
-        setIsLoggingOut,
-    ] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
-    const [error, setError] =
-        useState("");
+    const [isSaving, setIsSaving] = useState(false);
 
-    const [
-        successMessage,
-        setSuccessMessage,
-    ] = useState("");
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-    const [
-        isLeaveModalOpen,
-        setIsLeaveModalOpen,
-    ] = useState(false);
+    const [error, setError] = useState("");
 
-    const [
-        pendingPath,
-        setPendingPath,
-    ] = useState(null);
+    const [successMessage, setSuccessMessage] = useState("");
 
-    const [
-        sentRequests,
-        setSentRequests,
-    ] = useState([]);
+    const [isLeaveModalOpen, setIsLeaveModalOpen] = useState(false);
 
-    const [
-        isRequestsLoading,
-        setIsRequestsLoading,
-    ] = useState(false);
+    const [pendingPath, setPendingPath] = useState(null);
 
-    const [
-        cancellingRequestId,
-        setCancellingRequestId,
-    ] = useState(null);
+    const [sentRequests, setSentRequests] = useState([]);
 
-    const [
-        isWithdrawModalOpen,
-        setIsWithdrawModalOpen,
-    ] = useState(false);
+    const [isRequestsLoading, setIsRequestsLoading] = useState(false);
 
-    const [
-        isWithdrawing,
-        setIsWithdrawing,
-    ] = useState(false);
+    const [cancellingRequestId, setCancellingRequestId] = useState(null);
 
-    const isDirty =
-        nickname.trim() !==
-        initialNickname.trim();
+    const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
+
+    const [isWithdrawing, setIsWithdrawing] = useState(false);
+
+    const isDirty = nickname.trim() !== initialNickname.trim();
 
     /*
     * 내 회원 정보 조회
     */
     useEffect(() => {
-        const controller =
-        new AbortController();
+        const controller = new AbortController();
 
         const loadUser = async () => {
         try {
@@ -243,25 +174,27 @@
             signal: controller.signal,
             });
 
-            const nextNickname =
-            result?.nickname ??
-            result?.data?.nickname ??
-            "";
+            const nextNickname = result?.nickname ?? result?.data?.nickname ?? "";
+
+            const nextAccountName =
+            result?.name ??
+            result?.data?.name ??
+            result?.username ??
+            result?.data?.username ??
+            nextNickname;
+
+            const nextAccountEmail = result?.email ?? result?.data?.email ?? "";
 
             setNickname(nextNickname);
             setInitialNickname(nextNickname);
+            setAccountName(nextAccountName);
+            setAccountEmail(nextAccountEmail);
         } catch (requestError) {
-            if (
-            requestError?.name ===
-            "AbortError"
-            ) {
+            if (requestError?.name === "AbortError") {
             return;
             }
 
-            setError(
-            requestError?.message ??
-                "회원 정보를 불러오지 못했습니다.",
-            );
+            setError(requestError?.message ?? "회원 정보를 불러오지 못했습니다.");
         } finally {
             if (!controller.signal.aborted) {
             setIsLoading(false);
@@ -279,107 +212,76 @@
     /*
     * 내가 보낸 카드 교환 요청 조회
     */
-    const loadSentRequests =
-        useCallback(async (signal) => {
+    const loadSentRequests = useCallback(async (signal) => {
         setIsRequestsLoading(true);
         setError("");
 
         try {
-            const cardsResponse =
-            await getMyProfileCards({
+        const cardsResponse = await getMyProfileCards({
+            page: 1,
+            limit: 100,
+            signal,
+        });
+
+        const cards = getItems(cardsResponse);
+
+        const responses = await Promise.all(
+            cards.map((card) =>
+            getSentConnectionRequests({
+                cardId: card.id,
                 page: 1,
                 limit: 100,
                 signal,
-            });
+            }),
+            ),
+        );
 
-            const cards =
-            getItems(cardsResponse);
+        const uniqueRequests = Array.from(
+            new Map(
+            responses.flatMap(getItems).map((request) => [request.id, request]),
+            ).values(),
+        ).sort((a, b) => {
+            const dateA = new Date(getRequestDate(a)).getTime();
 
-            const responses =
-            await Promise.all(
-                cards.map((card) =>
-                getSentConnectionRequests({
-                    cardId: card.id,
-                    page: 1,
-                    limit: 100,
-                    signal,
-                }),
-                ),
-            );
+            const dateB = new Date(getRequestDate(b)).getTime();
 
-            const uniqueRequests =
-            Array.from(
-                new Map(
-                responses
-                    .flatMap(getItems)
-                    .map((request) => [
-                    request.id,
-                    request,
-                    ]),
-                ).values(),
-            ).sort((a, b) => {
-                const dateA = new Date(
-                getRequestDate(a),
-                ).getTime();
+            return dateB - dateA;
+        });
 
-                const dateB = new Date(
-                getRequestDate(b),
-                ).getTime();
-
-                return dateB - dateA;
-            });
-
-            if (signal?.aborted) {
+        if (signal?.aborted) {
             return;
-            }
-
-            setSentRequests(uniqueRequests);
-        } catch (requestError) {
-            if (
-            requestError?.name ===
-            "AbortError"
-            ) {
-            return;
-            }
-
-            setError(
-            requestError?.message ??
-                "요청 기록을 불러오지 못했습니다.",
-            );
-        } finally {
-            if (!signal?.aborted) {
-            setIsRequestsLoading(false);
-            }
         }
-        }, []);
+
+        setSentRequests(uniqueRequests);
+        } catch (requestError) {
+        if (requestError?.name === "AbortError") {
+            return;
+        }
+
+        setError(requestError?.message ?? "요청 기록을 불러오지 못했습니다.");
+        } finally {
+        if (!signal?.aborted) {
+            setIsRequestsLoading(false);
+        }
+        }
+    }, []);
 
     useEffect(() => {
-        if (
-        activeSection !== "requests"
-        ) {
+        if (activeSection !== "requests") {
         return undefined;
         }
 
-        const controller =
-        new AbortController();
+        const controller = new AbortController();
 
-        loadSentRequests(
-        controller.signal,
-        );
+        loadSentRequests(controller.signal);
 
         return () => {
         controller.abort();
         };
-    }, [
-        activeSection,
-        loadSentRequests,
-    ]);
+    }, [activeSection, loadSentRequests]);
 
     const moveToPath = (path) => {
-        if (
-        isDirty &&
-        activeSection === "basic"
-        ) {
+        if (isDirty && activeSection === "basic") {
         setPendingPath(path);
         setIsLeaveModalOpen(true);
 
@@ -392,10 +294,7 @@
     };
 
     const handleBack = () => {
-        if (
-        isDirty &&
-        activeSection === "basic"
-        ) {
+        if (isDirty && activeSection === "basic") {
         setPendingPath("/profile");
         setIsLeaveModalOpen(true);
 
@@ -419,14 +318,9 @@
 
         removeAccessToken();
 
-        window.location.replace(
-            "/explore",
-        );
+        window.location.replace("/explore");
         } catch (requestError) {
-        console.error(
-            "로그아웃 실패:",
-            requestError,
-        );
+        console.error("로그아웃 실패:", requestError);
 
         setError(
             requestError?.message ??
@@ -437,42 +331,34 @@
         }
     };
 
-    const handleCancelRequest =
-        async (requestId) => {
+    const handleCancelRequest = async (requestId) => {
         if (cancellingRequestId) {
-            return;
+        return;
         }
 
-        setCancellingRequestId(
-            requestId,
-        );
+        setCancellingRequestId(requestId);
 
         setError("");
 
         try {
-            await cancelConnectionRequest(
-            requestId,
-            );
+        await cancelConnectionRequest(requestId);
 
-            setSentRequests((requests) =>
+        setSentRequests((requests) =>
             requests.map((request) =>
-                request.id === requestId
+            request.id === requestId
                 ? {
                     ...request,
                     status: 3,
-                    }
+                }
                 : request,
             ),
-            );
+        );
         } catch (requestError) {
-            setError(
-            requestError?.message ??
-                "요청을 취소하지 못했습니다.",
-            );
+        setError(requestError?.message ?? "요청을 취소하지 못했습니다.");
         } finally {
-            setCancellingRequestId(null);
+        setCancellingRequestId(null);
         }
-        };
+    };
 
     const handleWithdraw = async () => {
         if (isWithdrawing) {
@@ -487,14 +373,9 @@
 
         removeAccessToken();
 
-        window.location.replace(
-            "/explore",
-        );
+        window.location.replace("/explore");
         } catch (requestError) {
-        setError(
-            requestError?.message ??
-            "회원 탈퇴에 실패했습니다.",
-        );
+        setError(requestError?.message ?? "회원 탈퇴에 실패했습니다.");
 
         setIsWithdrawing(false);
         setIsWithdrawModalOpen(false);
@@ -507,8 +388,7 @@
     };
 
     const handleDiscardChanges = () => {
-        const nextPath =
-        pendingPath ?? "/profile";
+        const nextPath = pendingPath ?? "/profile";
 
         setNickname(initialNickname);
         setIsLeaveModalOpen(false);
@@ -517,18 +397,13 @@
         navigate(nextPath);
     };
 
-    const handleSubmit = async (
-        event,
-    ) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
 
-        const trimmedNickname =
-        nickname.trim();
+        const trimmedNickname = nickname.trim();
 
         if (!trimmedNickname) {
-        setError(
-            "이름을 입력해주세요.",
-        );
+        setError("닉네임을 입력해주세요.");
 
         return;
         }
@@ -536,9 +411,7 @@
         if (!isDirty) {
         setError("");
 
-        setSuccessMessage(
-            "변경된 내용이 없습니다.",
-        );
+        setSuccessMessage("변경된 내용이 없습니다.");
 
         return;
         }
@@ -548,29 +421,19 @@
         setError("");
         setSuccessMessage("");
 
-        const result =
-            await updateMyUser({
+        const result = await updateMyUser({
             nickname: trimmedNickname,
-            });
+        });
 
         const savedNickname =
-            result?.nickname ??
-            result?.data?.nickname ??
-            trimmedNickname;
+            result?.nickname ?? result?.data?.nickname ?? trimmedNickname;
 
         setNickname(savedNickname);
-        setInitialNickname(
-            savedNickname,
-        );
+        setInitialNickname(savedNickname);
 
-        setSuccessMessage(
-            "기본 정보가 변경되었습니다.",
-        );
+        setSuccessMessage("기본 정보가 변경되었습니다.");
         } catch (requestError) {
-        setError(
-            requestError?.message ??
-            "기본 정보를 변경하지 못했습니다.",
-        );
+        setError(requestError?.message ?? "기본 정보를 변경하지 못했습니다.");
         } finally {
         setIsSaving(false);
         }
@@ -579,76 +442,43 @@
     const renderBasicSettings = () => {
         if (isLoading) {
         return (
-            <p className={styles.statusText}>
-            회원 정보를 불러오는
-            중입니다.
-            </p>
+            <p className={styles.statusText}>회원 정보를 불러오는 중입니다.</p>
         );
         }
 
         return (
         <>
-            <div
-            className={
-                styles.contentHeader
-            }
-            >
+            <div className={styles.contentHeader}>
             <h1>기본 정보 변경</h1>
 
-            <p>
-                변경 시점 이후 만드시는
-                카드에만 변경 사항이
-                적용됩니다.
-            </p>
+            <p>변경 시점 이후 만드시는 카드에만 변경 사항이 적용됩니다.</p>
             </div>
 
-            <form
-            className={styles.form}
-            onSubmit={handleSubmit}
-            >
-            <div
-                className={styles.field}
-            >
-                <label htmlFor="nickname">
-                이름
-                </label>
+            <form className={styles.form} onSubmit={handleSubmit}>
+            <div className={styles.field}>
+                <label htmlFor="nickname">닉네임</label>
 
                 <input
                 id="nickname"
                 type="text"
                 value={nickname}
                 onChange={(event) => {
-                    setNickname(
-                    event.target.value,
-                    );
+                    setNickname(event.target.value);
 
                     setError("");
                     setSuccessMessage("");
                 }}
                 maxLength={20}
-                placeholder="이름을 입력해주세요"
+                placeholder="닉네임을 입력해주세요"
                 />
             </div>
 
-            <div
-                className={styles.field}
-            >
-                <label htmlFor="job">
-                직군
-                </label>
+            <div className={styles.field}>
+                <label htmlFor="job">직군</label>
 
-                <div
-                className={styles.jobRow}
-                >
-                <button
-                    type="button"
-                    className={
-                    styles.jobSelectButton
-                    }
-                    disabled
-                >
+                <div className={styles.jobRow}>
+                <button type="button" className={styles.jobSelectButton} disabled>
                     선택
-
                     <span>▾</span>
                 </button>
 
@@ -661,46 +491,29 @@
                 />
                 </div>
 
-                <p
-                className={
-                    styles.fieldDescription
-                }
-                >
-                현재 API에서는 이름만
-                변경할 수 있습니다.
+                <p className={styles.fieldDescription}>
+                현재 API에서는 닉네임만 변경할 수 있습니다.
                 </p>
             </div>
 
             {error && (
-                <p
-                className={styles.error}
-                role="alert"
-                >
+                <p className={styles.error} role="alert">
                 {error}
                 </p>
             )}
 
             {successMessage && (
-                <p
-                className={
-                    styles.success
-                }
-                role="status"
-                >
+                <p className={styles.success} role="status">
                 {successMessage}
                 </p>
             )}
 
             <button
                 type="submit"
-                className={
-                styles.submitButton
-                }
+                className={styles.submitButton}
                 disabled={isSaving}
             >
-                {isSaving
-                ? "변경 중..."
-                : "변경하기"}
+                {isSaving ? "변경 중..." : "변경하기"}
             </button>
             </form>
         </>
@@ -708,9 +521,7 @@
     };
 
     const renderRequests = () => {
-        const getTargetCard = (
-        request,
-        ) => {
+        const getTargetCard = (request) => {
         return (
             request?.receiverCard ??
             request?.receiverProfileCard ??
@@ -723,176 +534,88 @@
 
         return (
         <>
-            <div
-            className={
-                styles.contentHeader
-            }
-            >
+            <div className={styles.contentHeader}>
             <h1>내 요청 기록</h1>
 
-            <p>
-                내가 보낸 카드 교환 요청을
-                관리합니다.
-            </p>
+            <p>내가 보낸 카드 교환 요청을 관리합니다.</p>
             </div>
 
             {error && (
-            <p
-                className={styles.error}
-                role="alert"
-            >
+            <p className={styles.error} role="alert">
                 {error}
             </p>
             )}
 
             {isRequestsLoading ? (
-            <p
-                className={
-                styles.statusText
-                }
-            >
-                요청 기록을 불러오는
-                중입니다.
-            </p>
-            ) : sentRequests.length ===
-            0 ? (
-            <div
-                className={
-                styles.emptySection
-                }
-            >
-                <p>
-                아직 보낸 교환 요청이
-                없습니다.
-                </p>
+            <p className={styles.statusText}>요청 기록을 불러오는 중입니다.</p>
+            ) : sentRequests.length === 0 ? (
+            <div className={styles.emptySection}>
+                <p>아직 보낸 교환 요청이 없습니다.</p>
             </div>
             ) : (
-            <div
-                className={
-                styles.requestList
-                }
-            >
-                {sentRequests.map(
-                (request) => {
-                    const targetCard =
-                    mapProfileCard(
-                        getTargetCard(
-                        request,
-                        ),
-                    );
+            <div className={styles.requestList}>
+                {sentRequests.map((request) => {
+                const targetCard = mapProfileCard(getTargetCard(request));
 
-                    const status =
-                    getRequestStatus(
-                        request,
-                    );
+                const status = getRequestStatus(request);
 
-                    const displayName =
-                    targetCard?.name ??
-                    targetCard?.nickname ??
-                    "프로필 카드";
+                const displayName =
+                    targetCard?.name ?? targetCard?.nickname ?? "프로필 카드";
 
-                    const profileImageUrl =
-                    targetCard
-                        ?.profileImage ??
-                    targetCard
-                        ?.profileImageUrl ??
-                    "";
+                const profileImageUrl =
+                    targetCard?.profileImage ?? targetCard?.profileImageUrl ?? "";
 
-                    return (
-                    <article
-                        className={
-                        styles.requestItem
-                        }
-                        key={request.id}
-                    >
-                        <div
-                        className={
-                            styles.requestProfile
-                        }
-                        >
+                return (
+                    <article className={styles.requestItem} key={request.id}>
+                    <div className={styles.requestProfile}>
                         {profileImageUrl ? (
-                            <img
-                            className={
-                                styles.requestAvatar
-                            }
-                            src={
-                                profileImageUrl
-                            }
+                        <img
+                            className={styles.requestAvatar}
+                            src={profileImageUrl}
                             alt={`${displayName} 프로필`}
-                            />
+                        />
                         ) : (
-                            <div
-                            className={
-                                styles.requestAvatarFallback
-                            }
+                        <div
+                            className={styles.requestAvatarFallback}
                             aria-hidden="true"
-                            >
-                            {displayName.slice(
-                                0,
-                                1,
-                            )}
-                            </div>
+                        >
+                            {displayName.slice(0, 1)}
+                        </div>
                         )}
 
                         <div>
-                            <strong>
-                            {displayName}
-                            </strong>
+                        <strong>{displayName}</strong>
 
-                            <p>
-                            {formatRequestDate(
-                                request,
-                            )}
-                            </p>
+                        <p>{formatRequestDate(request)}</p>
                         </div>
-                        </div>
+                    </div>
 
-                        <div
-                        className={
-                            styles.requestActions
-                        }
-                        >
+                    <div className={styles.requestActions}>
                         <span
-                            className={`${styles.requestStatus} ${
-                            status !== null
-                                ? styles[
-                                    `status${status}`
-                                ] ?? ""
-                                : ""
-                            }`}
+                        className={`${styles.requestStatus} ${
+                            status !== null ? (styles[`status${status}`] ?? "") : ""
+                        }`}
                         >
-                            {status !== null
-                            ? REQUEST_STATUS[
-                                status
-                                ] ??
-                                "상태 확인 중"
+                        {status !== null
+                            ? (REQUEST_STATUS[status] ?? "상태 확인 중")
                             : "상태 확인 중"}
                         </span>
 
                         {status === 0 && (
-                            <button
+                        <button
                             type="button"
-                            onClick={() =>
-                                handleCancelRequest(
-                                request.id,
-                                )
-                            }
-                            disabled={
-                                cancellingRequestId ===
-                                request.id
-                            }
-                            >
-                            {cancellingRequestId ===
-                            request.id
-                                ? "취소 중..."
-                                : "요청 취소"}
-                            </button>
+                            onClick={() => handleCancelRequest(request.id)}
+                            disabled={cancellingRequestId === request.id}
+                        >
+                            {cancellingRequestId === request.id
+                            ? "취소 중..."
+                            : "요청 취소"}
+                        </button>
                         )}
-                        </div>
+                    </div>
                     </article>
-                    );
-                },
-                )}
+                );
+                })}
             </div>
             )}
         </>
@@ -900,53 +623,60 @@
     };
 
     const renderAccount = () => {
+        if (isLoading) {
+        return (
+            <p className={styles.statusText}>회원 정보를 불러오는 중입니다.</p>
+        );
+        }
+
         return (
         <>
-            <div
-            className={
-                styles.contentHeader
-            }
-            >
+            <div className={styles.contentHeader}>
             <h1>계정 관리</h1>
 
-            <p>
-                계정과 관련된 설정을
-                관리합니다.
-            </p>
+            <p>계정과 관련된 설정을 관리합니다.</p>
             </div>
 
             {error && (
-            <p
-                className={styles.error}
-                role="alert"
-            >
+            <p className={styles.error} role="alert">
                 {error}
             </p>
             )}
 
-            <div
-            className={
-                styles.dangerSection
-            }
-            >
+            <div className={styles.form}>
+            <div className={styles.field}>
+                <label htmlFor="account-name">이름</label>
+
+                <input
+                id="account-name"
+                type="text"
+                value={accountName || "등록된 이름이 없습니다."}
+                readOnly
+                aria-readonly="true"
+                />
+            </div>
+
+            <div className={styles.field}>
+                <label htmlFor="account-email">이메일</label>
+
+                <input
+                id="account-email"
+                type="text"
+                value={accountEmail || "등록된 이메일이 없습니다."}
+                readOnly
+                aria-readonly="true"
+                />
+            </div>
+            </div>
+
+            <div className={styles.dangerSection}>
             <div>
                 <strong>회원 탈퇴</strong>
 
-                <p>
-                탈퇴하면 계정과 관련된
-                정보가 삭제되며 되돌릴 수
-                없습니다.
-                </p>
+                <p>탈퇴하면 계정과 관련된 정보가 삭제되며 되돌릴 수 없습니다.</p>
             </div>
 
-            <button
-                type="button"
-                onClick={() =>
-                setIsWithdrawModalOpen(
-                    true,
-                )
-                }
-            >
+            <button type="button" onClick={() => setIsWithdrawModalOpen(true)}>
                 회원 탈퇴
             </button>
             </div>
@@ -956,163 +686,94 @@
 
     return (
         <main className={styles.page}>
-        <aside
-            className={styles.sidebar}
-        >
+        <aside className={styles.sidebar}>
             <button
             type="button"
-            className={
-                styles.backButton
-            }
+            className={styles.backButton}
             onClick={handleBack}
             >
             <span>‹</span>
             돌아가기
             </button>
 
-        <nav className={styles.sideNav}>
-    <button
-        type="button"
-        className={
-            activeSection ===
-            "requests"
-                ? styles.activeSideItem
-                : ""
-        }
-        onClick={() =>
-            moveToPath(
-                "/settings",
-            )
-        }
-    >
-        내 요청 기록
-    </button>
+            <nav className={styles.sideNav}>
+            <button
+                type="button"
+                className={activeSection === "basic" ? styles.activeSideItem : ""}
+                onClick={() => moveToPath("/settings")}
+            >
+                기본 정보 변경
+            </button>
 
-    <button
-        type="button"
-        className={
-            activeSection === "basic"
-                ? styles.activeSideItem
-                : ""
-        }
-        onClick={() =>
-            moveToPath(
-                "/settings/basic",
-            )
-        }
-    >
-        기본 정보 변경
-    </button>
+            <button
+                type="button"
+                className={
+                activeSection === "requests" ? styles.activeSideItem : ""
+                }
+                onClick={() => moveToPath("/settings/requests")}
+            >
+                내 요청 기록
+            </button>
 
-    <button
-        type="button"
-        className={
-            activeSection === "account"
-                ? styles.activeSideItem
-                : ""
-        }
-        onClick={() =>
-            moveToPath(
-                "/settings/account",
-            )
-        }
-    >
-        계정 관리
-    </button>
+            <button
+                type="button"
+                className={activeSection === "account" ? styles.activeSideItem : ""}
+                onClick={() => moveToPath("/settings/account")}
+            >
+                계정 관리
+            </button>
 
-    <button
-        type="button"
-        className={
-            styles.logoutButton
-        }
-        onClick={handleLogout}
-        disabled={isLoggingOut}
-    >
-        {isLoggingOut
-            ? "로그아웃 중..."
-            : "로그아웃"}
-    </button>
-</nav>
+            <button
+                type="button"
+                className={styles.logoutButton}
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+            >
+                {isLoggingOut ? "로그아웃 중..." : "로그아웃"}
+            </button>
+            </nav>
         </aside>
 
-        <section
-            className={styles.content}
-        >
-            <div
-            className={
-                styles.contentInner
-            }
-            >
-            {activeSection ===
-                "basic" &&
-                renderBasicSettings()}
+        <section className={styles.content}>
+            <div className={styles.contentInner}>
+            {activeSection === "basic" && renderBasicSettings()}
 
-            {activeSection ===
-                "requests" &&
-                renderRequests()}
+            {activeSection === "requests" && renderRequests()}
 
-            {activeSection ===
-                "account" &&
-                renderAccount()}
+            {activeSection === "account" && renderAccount()}
             </div>
         </section>
 
         {isLeaveModalOpen && (
             <div
-            className={
-                styles.modalBackdrop
-            }
+            className={styles.modalBackdrop}
             role="presentation"
-            onMouseDown={
-                handleContinueEditing
-            }
+            onMouseDown={handleContinueEditing}
             >
             <section
-                className={
-                styles.leaveModal
-                }
+                className={styles.leaveModal}
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="leave-modal-title"
-                onMouseDown={(event) =>
-                event.stopPropagation()
-                }
+                onMouseDown={(event) => event.stopPropagation()}
             >
-                <h2 id="leave-modal-title">
-                변경 내용을
-                삭제하시겠어요?
-                </h2>
+                <h2 id="leave-modal-title">변경 내용을 삭제하시겠어요?</h2>
 
-                <p>
-                지금 돌아가면 변경
-                내용이 삭제됩니다.
-                </p>
+                <p>지금 돌아가면 변경 내용이 삭제됩니다.</p>
 
-                <div
-                className={
-                    styles.modalActions
-                }
-                >
+                <div className={styles.modalActions}>
                 <button
                     type="button"
-                    className={
-                    styles.continueButton
-                    }
-                    onClick={
-                    handleContinueEditing
-                    }
+                    className={styles.continueButton}
+                    onClick={handleContinueEditing}
                 >
                     수정 계속하기
                 </button>
 
                 <button
                     type="button"
-                    className={
-                    styles.discardButton
-                    }
-                    onClick={
-                    handleDiscardChanges
-                    }
+                    className={styles.discardButton}
+                    onClick={handleDiscardChanges}
                 >
                     변경 사항 삭제
                 </button>
@@ -1123,53 +784,30 @@
 
         {isWithdrawModalOpen && (
             <div
-            className={
-                styles.modalBackdrop
-            }
+            className={styles.modalBackdrop}
             role="presentation"
             onMouseDown={() => {
                 if (!isWithdrawing) {
-                setIsWithdrawModalOpen(
-                    false,
-                );
+                setIsWithdrawModalOpen(false);
                 }
             }}
             >
             <section
-                className={
-                styles.leaveModal
-                }
+                className={styles.leaveModal}
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="withdraw-modal-title"
-                onMouseDown={(event) =>
-                event.stopPropagation()
-                }
+                onMouseDown={(event) => event.stopPropagation()}
             >
-                <h2 id="withdraw-modal-title">
-                정말 탈퇴하시겠어요?
-                </h2>
+                <h2 id="withdraw-modal-title">정말 탈퇴하시겠어요?</h2>
 
-                <p>
-                탈퇴 후에는 계정 정보를
-                복구할 수 없습니다.
-                </p>
+                <p>탈퇴 후에는 계정 정보를 복구할 수 없습니다.</p>
 
-                <div
-                className={
-                    styles.modalActions
-                }
-                >
+                <div className={styles.modalActions}>
                 <button
                     type="button"
-                    className={
-                    styles.continueButton
-                    }
-                    onClick={() =>
-                    setIsWithdrawModalOpen(
-                        false,
-                    )
-                    }
+                    className={styles.continueButton}
+                    onClick={() => setIsWithdrawModalOpen(false)}
                     disabled={isWithdrawing}
                 >
                     취소
@@ -1177,15 +815,11 @@
 
                 <button
                     type="button"
-                    className={
-                    styles.withdrawConfirmButton
-                    }
+                    className={styles.withdrawConfirmButton}
                     onClick={handleWithdraw}
                     disabled={isWithdrawing}
                 >
-                    {isWithdrawing
-                    ? "탈퇴 중..."
-                    : "탈퇴하기"}
+                    {isWithdrawing ? "탈퇴 중..." : "탈퇴하기"}
                 </button>
                 </div>
             </section>

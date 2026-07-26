@@ -575,6 +575,7 @@
 
 .dangerSection {
     width: 100%;
+    margin-top: 30px;
     padding: 22px;
 
     display: flex;
@@ -718,6 +719,79 @@
     color: #a2a6b4;
     }
 
+        .accountContent {
+    width: min(606px, 100%);
+    }
+
+    .accountInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 32px;
+    }
+
+    .accountInfo .field {
+    gap: 8px;
+    }
+
+    .accountInfo .field label {
+    color: #aeb2c1;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 20px;
+    }
+
+    .accountInfo .field input,
+    .accountReadOnlyInput {
+    width: 100%;
+    height: 48px;
+    box-sizing: border-box;
+    padding: 0 16px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    color: #fdfeff;
+    font-family: Pretendard, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    background: #353a50;
+    cursor: default;
+    outline: none;
+    }
+
+    .accountInfo .field input:focus,
+    .accountReadOnlyInput:focus {
+    border-color: transparent;
+    }
+
+    .accountContent .dangerSection {
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 32px;
+    padding: 20px;
+    gap: 20px;
+    }
+
+    .accountContent .dangerSection strong {
+    font-size: 16px;
+    line-height: 24px;
+    }
+
+    .accountContent .dangerSection p {
+    margin: 6px 0 0;
+    font-size: 13px;
+    line-height: 20px;
+    }
+
+    @media (max-width: 680px) {
+    .accountContent {
+        width: 100%;
+    }
+
+    .accountContent .dangerSection {
+        align-items: stretch;
+        flex-direction: column;
+    }
+    }
 /* =========================
    반응형
 ========================= */
