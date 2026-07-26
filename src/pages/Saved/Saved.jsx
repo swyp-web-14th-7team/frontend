@@ -637,12 +637,28 @@ const Saved = () => {
     };
 
     const handleProfileClick = (
-        profileId,
-    ) => {
-        navigate(
-            `/profile/${profileId}`,
+    profileId,
+) => {
+    const clickedProfile =
+        savedProfiles.find(
+            (profile) =>
+                String(profile.id) ===
+                String(profileId),
         );
-    };
+
+    if (
+        !clickedProfile?.connectionId
+    ) {
+        console.error(
+            "보관함 연결 ID가 없습니다.",
+        );
+        return;
+    }
+
+    navigate(
+        `/saved/${clickedProfile.connectionId}`,
+    );
+};
 
     return (
         <main className={styles.page}>
