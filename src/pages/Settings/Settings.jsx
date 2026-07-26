@@ -29,14 +29,14 @@
     * 백엔드 카드 교환 요청 상태값
     *
     * 0: 대기
-    * 1: 거절
-    * 2: 수락
+    * 1: 수락
+    * 2: 거절
     * 3: 취소
     */
     const REQUEST_STATUS = {
     0: "대기중",
-    1: "거절",
-    2: "수락",
+    1: "수락",
+    2: "거절",
     3: "취소",
     };
 
@@ -44,11 +44,11 @@
     PENDING: 0,
     WAITING: 0,
 
-    REJECTED: 1,
-    DECLINED: 1,
+    REJECTED: 2,
+    DECLINED: 2,
 
-    ACCEPTED: 2,
-    APPROVED: 2,
+    ACCEPTED: 1,
+    APPROVED: 1,
 
     CANCELED: 3,
     CANCELLED: 3,
@@ -630,7 +630,7 @@
         }
 
         return (
-        <>
+        <div className={styles.accountContent}>
             <div className={styles.contentHeader}>
             <h1>계정 관리</h1>
 
@@ -643,12 +643,13 @@
             </p>
             )}
 
-            <div className={styles.form}>
+            <div className={styles.accountInfo}>
             <div className={styles.field}>
                 <label htmlFor="account-name">이름</label>
 
                 <input
                 id="account-name"
+                className={styles.accountReadOnlyInput}
                 type="text"
                 value={accountName || "등록된 이름이 없습니다."}
                 readOnly
@@ -661,6 +662,7 @@
 
                 <input
                 id="account-email"
+                className={styles.accountReadOnlyInput}
                 type="text"
                 value={accountEmail || "등록된 이메일이 없습니다."}
                 readOnly
@@ -680,7 +682,7 @@
                 회원 탈퇴
             </button>
             </div>
-        </>
+        </div>
         );
     };
 
