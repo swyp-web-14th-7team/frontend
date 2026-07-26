@@ -1,14 +1,6 @@
-    import {
-    useCallback,
-    useEffect,
-    useState,
-    } from "react";
+    import { useCallback, useEffect, useState } from "react";
 
-    import {
-    NavLink,
-    useLocation,
-    useNavigate,
-    } from "react-router-dom";
+    import { NavLink, useLocation, useNavigate } from "react-router-dom";
 
     import LoginModal from "./LoginModal/LoginModal";
     import NotificationPanel from "./NotificationPanel/NotificationPanel";
@@ -20,17 +12,11 @@
     rejectConnectionRequest,
     } from "../../api/connectionRequests";
 
-    import {
-    getMyProfileCards,
-    } from "../../api/profile";
+    import { getDefaultProfileCard, getMyProfileCards } from "../../api/profile";
 
-    import {
-    mapProfileCard,
-    } from "../../utils/profileMapper";
+    import { mapProfileCard } from "../../utils/profileMapper";
 
-    import {
-    isLoggedIn,
-    } from "../../utils/auth";
+    import { isLoggedIn } from "../../utils/auth";
 
     import styles from "./Header.module.css";
 
@@ -45,206 +31,116 @@
     import bellIcon from "../../assets/icons/알림.svg";
     import settingIcon from "../../assets/icons/설정.svg";
 
-    const Header = ({
-    showNav = false,
-    }) => {
-    const navigate =
-        useNavigate();
+    const Header = ({ showNav = false }) => {
+    const navigate = useNavigate();
 
-    const location =
-        useLocation();
+    const location = useLocation();
 
-    const [
-        exchangeRequests,
-        setExchangeRequests,
-    ] = useState([]);
+    const [exchangeRequests, setExchangeRequests] = useState([]);
 
-    const [
-        exchangeError,
-        setExchangeError,
-    ] = useState("");
+    const [exchangeError, setExchangeError] = useState("");
 
-    const [
-        isNotificationOpen,
-        setIsNotificationOpen,
-    ] = useState(false);
+    const [isNotificationOpen, setIsNotificationOpen] = useState(false);
 
-    const [
-        selectedRequest,
-        setSelectedRequest,
-    ] = useState(null);
+    const [selectedRequest, setSelectedRequest] = useState(null);
 
-    const [
-        isLoginModalOpen,
-        setIsLoginModalOpen,
-    ] = useState(false);
+    const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
-    const isUserLoggedIn =
-        isLoggedIn();
+    const isUserLoggedIn = isLoggedIn();
 
-    const loadReceivedRequests =
-        useCallback(
-        async (signal) => {
-            if (!isLoggedIn()) {
-            setExchangeRequests(
-                [],
-            );
+    const loadReceivedRequests = useCallback(async (signal) => {
+        if (!isLoggedIn()) {
+        setExchangeRequests([]);
 
-            return;
-            }
+        return;
+        }
 
-            try {
-            const cardData =
-                await getMyProfileCards(
-                {
-                    page: 1,
-                    limit: 100,
-                    sort: "createdAt",
-                    order: "desc",
-                    signal,
-                },
-                );
+        try {
+        const cardData = await getMyProfileCards({
+            page: 1,
+            limit: 100,
+            sort: "createdAt",
+            order: "desc",
+            signal,
+        });
 
-            const myCards =
-                cardData?.items ||
-                [];
+        const myCards = cardData?.items || [];
 
-            const requestResponses =
-                await Promise.all(
-                myCards.map(
-                    (card) =>
-                    getReceivedConnectionRequests(
-                        {
-                        cardId:
-                            card.id,
+        const requestResponses = await Promise.all(
+            myCards.map((card) =>
+            getReceivedConnectionRequests({
+                cardId: card.id,
 
-                        page: 1,
-                        limit: 100,
-                        sort: "createdAt",
-                        order: "desc",
-                        signal,
-                        },
-                    ),
-                ),
-                );
-
-            const requestMap =
-                new Map();
-
-            requestResponses.forEach(
-                (response) => {
-                const items =
-                    response?.items ||
-                    [];
-
-                items.forEach(
-                    (item) => {
-                    const receivedCard =
-                        mapProfileCard(
-                        item.card ||
-                            {},
-                        );
-
-                    requestMap.set(
-                        item.id,
-                        {
-                        id: item.id,
-
-                        status:
-                            item.status ===
-                            0
-                            ? "pending"
-                            : item.status ===
-                                1
-                                ? "accepted"
-                                : item.status ===
-                                    2
-                                ? "rejected"
-                                : "cancelled",
-
-                        isRead: false,
-
-                        createdAt:
-                            item
-                            .createdAt
-                            ?.isoString ||
-                            item.createdAt,
-
-                        sender: {
-                            id:
-                            receivedCard.id,
-
-                            name:
-                            receivedCard.name,
-
-                            profileImage:
-                            receivedCard.profileImage,
-                        },
-
-                        receivedCard,
-
-                        message:
-                            item.message ||
-                            "전달된 메시지가 없습니다.",
-                        },
-                    );
-                    },
-                );
-                },
-            );
-
-            const requests =
-                Array.from(
-                requestMap.values(),
-                ).sort(
-                (
-                    first,
-                    second,
-                ) =>
-                    new Date(
-                    second.createdAt,
-                    ) -
-                    new Date(
-                    first.createdAt,
-                    ),
-                );
-
-            setExchangeRequests(
-                requests,
-            );
-
-            setExchangeError(
-                "",
-            );
-            } catch (error) {
-            if (
-                error?.name !==
-                "AbortError"
-            ) {
-                console.error(
-                "받은 교환 요청 조회 실패:",
-                error,
-                );
-
-                setExchangeError(
-                error.message ||
-                    "교환 요청을 불러오지 못했습니다.",
-                );
-            }
-            }
-        },
-        [],
+                page: 1,
+                limit: 100,
+                sort: "createdAt",
+                order: "desc",
+                signal,
+            }),
+            ),
         );
 
-    useEffect(() => {
-        const controller =
-        new AbortController();
+        const requestMap = new Map();
 
-        const fetchRequests =
-        async () => {
-            await loadReceivedRequests(
-            controller.signal,
-            );
+        requestResponses.forEach((response) => {
+            const items = response?.items || [];
+
+            items.forEach((item) => {
+            const receivedCard = mapProfileCard(item.card || {});
+
+            requestMap.set(item.id, {
+                id: item.id,
+
+                status:
+                item.status === 0
+                    ? "pending"
+                    : item.status === 1
+                    ? "accepted"
+                    : item.status === 2
+                        ? "rejected"
+                        : "cancelled",
+
+                isRead: false,
+
+                createdAt: item.createdAt?.isoString || item.createdAt,
+
+                sender: {
+                id: receivedCard.id,
+
+                name: receivedCard.name,
+
+                profileImage: receivedCard.profileImage,
+                },
+
+                receivedCard,
+
+                message: item.message || "전달된 메시지가 없습니다.",
+            });
+            });
+        });
+
+        const requests = Array.from(requestMap.values()).sort(
+            (first, second) =>
+            new Date(second.createdAt) - new Date(first.createdAt),
+        );
+
+        setExchangeRequests(requests);
+
+        setExchangeError("");
+        } catch (error) {
+        if (error?.name !== "AbortError") {
+            console.error("받은 교환 요청 조회 실패:", error);
+
+            setExchangeError(error.message || "교환 요청을 불러오지 못했습니다.");
+        }
+        }
+    }, []);
+
+    useEffect(() => {
+        const controller = new AbortController();
+
+        const fetchRequests = async () => {
+        await loadReceivedRequests(controller.signal);
         };
 
         fetchRequests();
@@ -255,80 +151,93 @@
     }, [loadReceivedRequests]);
 
     const isExploreActive =
-        location.pathname ===
-        "/explore" ||
-        location.pathname.startsWith(
-        "/profile-carousel/",
-        ) ||
-        location.pathname.startsWith(
-        "/profile/",
-        );
+        location.pathname === "/explore" ||
+        location.pathname.startsWith("/profile-carousel/") ||
+        location.pathname.startsWith("/profile/");
 
-    const isScrapActive =
-        location.pathname ===
-        "/scrap";
+    const isScrapActive = location.pathname === "/scrap";
 
-    const hasUnreadNotification =
-        exchangeRequests.some(
-        (request) =>
-            request.status ===
-            "pending" &&
-            !request.isRead,
-        );
+    const hasUnreadNotification = exchangeRequests.some(
+        (request) => request.status === "pending" && !request.isRead,
+    );
 
-    const handleLogoClick =
-        () => {
+    const handleLogoClick = () => {
         navigate("/explore");
-        };
+    };
 
-    const handleLoginClick =
-        () => {
-        setIsLoginModalOpen(
-            true,
-        );
-        };
+    const handleLoginClick = () => {
+        setIsLoginModalOpen(true);
+    };
 
     /*
     * 비로그인 상태에서 보호 메뉴를 누르면
     * 라우터 이동을 완전히 막고 로그인 모달만 연다.
     */
-    const handleProtectedLinkClick =
-        (event) => {
+    const handleProtectedLinkClick = (event) => {
         if (isUserLoggedIn) {
-            return;
+        return;
         }
 
         event.preventDefault();
         event.stopPropagation();
 
-        setIsLoginModalOpen(
-            true,
-        );
-        };
+        setIsLoginModalOpen(true);
+    };
 
-    const handleNotificationToggle =
-        () => {
-        setIsNotificationOpen(
-            (previous) =>
-            !previous,
-        );
-        };
+    const handleMyProfileClick = async (event) => {
+        if (!isUserLoggedIn) {
+        return;
+        }
 
-    const handleRequestClick = (
-        request,
-    ) => {
-        setExchangeRequests(
-        (currentRequests) =>
-            currentRequests.map(
-            (item) =>
-                item.id ===
-                request.id
-                ? {
-                    ...item,
-                    isRead: true,
-                    }
-                : item,
-            ),
+        event.preventDefault();
+
+        try {
+        const defaultProfile = await getDefaultProfileCard();
+
+        const defaultProfileId =
+            defaultProfile?.id ??
+            defaultProfile?.profileCardId ??
+            defaultProfile?.profileCard?.id ??
+            null;
+
+        if (!defaultProfileId) {
+            navigate("/onboarding");
+
+            return;
+        }
+
+        navigate("/profile");
+        } catch (error) {
+        if (error?.status === 404) {
+            navigate("/onboarding");
+
+            return;
+        }
+
+        console.error("기본 카드 확인 실패:", error);
+
+        /*
+        * 일시적인 API 오류로 프로필 접근이
+        * 완전히 막히는 것을 방지합니다.
+        */
+        navigate("/profile");
+        }
+    };
+
+    const handleNotificationToggle = () => {
+        setIsNotificationOpen((previous) => !previous);
+    };
+
+    const handleRequestClick = (request) => {
+        setExchangeRequests((currentRequests) =>
+        currentRequests.map((item) =>
+            item.id === request.id
+            ? {
+                ...item,
+                isRead: true,
+                }
+            : item,
+        ),
         );
 
         setSelectedRequest({
@@ -336,201 +245,94 @@
         isRead: true,
         });
 
-        setIsNotificationOpen(
-        false,
-        );
+        setIsNotificationOpen(false);
     };
 
-    const handleRejectRequest =
-        async (requestId) => {
+    const handleRejectRequest = async (requestId) => {
         try {
-            await rejectConnectionRequest(
-            requestId,
-            );
+        await rejectConnectionRequest(requestId);
 
-            setExchangeRequests(
-            (currentRequests) =>
-                currentRequests.filter(
-                (request) =>
-                    request.id !==
-                    requestId,
-                ),
-            );
+        setExchangeRequests((currentRequests) =>
+            currentRequests.filter((request) => request.id !== requestId),
+        );
 
-            setSelectedRequest(null);
+        setSelectedRequest(null);
 
-            window.alert(
-            "카드 교환 요청을 거절했습니다.",
-            );
+        window.alert("카드 교환 요청을 거절했습니다.");
         } catch (error) {
-            console.error(
-            "교환 요청 거절 실패:",
-            error,
-            );
+        console.error("교환 요청 거절 실패:", error);
 
-            window.alert(
-            error.message ||
-                "교환 요청을 거절하지 못했습니다.",
-            );
+        window.alert(error.message || "교환 요청을 거절하지 못했습니다.");
         }
-        };
+    };
 
-    const handleAcceptRequest =
-        async (requestId) => {
+    const handleAcceptRequest = async (requestId) => {
         try {
-            await acceptConnectionRequest(
-            requestId,
-            );
+        await acceptConnectionRequest(requestId);
 
-            setExchangeRequests(
-            (currentRequests) =>
-                currentRequests.filter(
-                (request) =>
-                    request.id !==
-                    requestId,
-                ),
-            );
+        setExchangeRequests((currentRequests) =>
+            currentRequests.filter((request) => request.id !== requestId),
+        );
 
-            setSelectedRequest(null);
+        setSelectedRequest(null);
 
-            window.alert(
-            "카드 교환이 완료되었습니다.",
-            );
+        window.alert("카드 교환이 완료되었습니다.");
         } catch (error) {
-            console.error(
-            "교환 요청 수락 실패:",
-            error,
-            );
+        console.error("교환 요청 수락 실패:", error);
 
-            window.alert(
-            error.message ||
-                "교환 요청을 수락하지 못했습니다.",
-            );
+        window.alert(error.message || "교환 요청을 수락하지 못했습니다.");
         }
-        };
+    };
 
     return (
         <>
-        <header
-            className={
-            styles.header
-            }
-        >
+        <header className={styles.header}>
             <button
             type="button"
-            className={
-                styles.logoButton
-            }
-            onClick={
-                handleLogoClick
-            }
+            className={styles.logoButton}
+            onClick={handleLogoClick}
             aria-label="Nodi 홈으로 이동"
             >
-            <img
-                src={logo}
-                alt="Nodi"
-                className={
-                styles.logo
-                }
-            />
+            <img src={logo} alt="Nodi" className={styles.logo} />
             </button>
 
             {showNav && (
-            <nav
-                className={
-                styles.nav
-                }
-            >
+            <nav className={styles.nav}>
                 <NavLink
                 to="/profile"
                 end
-                onClickCapture={
-                    handleProtectedLinkClick
-                }
-                aria-disabled={
-                    !isUserLoggedIn
-                }
-                className={({
-                    isActive,
-                }) =>
-                    `${
-                    styles.navItem
-                    } ${
-                    isActive
-                        ? styles.activeNav
-                        : ""
-                    }`
+                onClick={handleMyProfileClick}
+                onClickCapture={handleProtectedLinkClick}
+                aria-disabled={!isUserLoggedIn}
+                className={({ isActive }) =>
+                    `${styles.navItem} ${isActive ? styles.activeNav : ""}`
                 }
                 >
-                <img
-                    src={
-                    mypageNavIcon
-                    }
-                    alt=""
-                    className={
-                    styles.navIcon
-                    }
-                />
+                <img src={mypageNavIcon} alt="" className={styles.navIcon} />
 
-                <span>
-                    내 프로필
-                </span>
+                <span>내 프로필</span>
                 </NavLink>
 
                 <NavLink
                 to="/explore"
                 className={() =>
-                    `${
-                    styles.navItem
-                    } ${
-                    isExploreActive
-                        ? styles.activeNav
-                        : ""
-                    }`
+                    `${styles.navItem} ${isExploreActive ? styles.activeNav : ""}`
                 }
                 >
-                <img
-                    src={
-                    exploreNavIcon
-                    }
-                    alt=""
-                    className={
-                    styles.navIcon
-                    }
-                />
+                <img src={exploreNavIcon} alt="" className={styles.navIcon} />
 
                 <span>탐색</span>
                 </NavLink>
 
                 <NavLink
                 to="/saved"
-                onClickCapture={
-                    handleProtectedLinkClick
-                }
-                aria-disabled={
-                    !isUserLoggedIn
-                }
-                className={({
-                    isActive,
-                }) =>
-                    `${
-                    styles.navItem
-                    } ${
-                    isActive
-                        ? styles.activeNav
-                        : ""
-                    }`
+                onClickCapture={handleProtectedLinkClick}
+                aria-disabled={!isUserLoggedIn}
+                className={({ isActive }) =>
+                    `${styles.navItem} ${isActive ? styles.activeNav : ""}`
                 }
                 >
-                <img
-                    src={
-                    libraryNavIcon
-                    }
-                    alt=""
-                    className={
-                    styles.navIcon
-                    }
-                />
+                <img src={libraryNavIcon} alt="" className={styles.navIcon} />
 
                 <span>보관함</span>
                 </NavLink>
@@ -538,116 +340,58 @@
             )}
 
             {isUserLoggedIn ? (
-            <nav
-                className={
-                styles.rightMenu
-                }
-            >
+            <nav className={styles.rightMenu}>
                 <NavLink
                 to="/scrap"
-                className={
-                    styles.iconButton
-                }
+                className={styles.iconButton}
                 aria-label="스크랩"
                 >
                 <img
-                    src={
-                    isScrapActive
-                        ? scrapActiveIcon
-                        : scrapIcon
-                    }
+                    src={isScrapActive ? scrapActiveIcon : scrapIcon}
                     alt=""
-                    className={
-                    styles.icon
-                    }
+                    className={styles.icon}
                 />
                 </NavLink>
 
-                <div
-                className={
-                    styles.notificationWrapper
-                }
-                >
+                <div className={styles.notificationWrapper}>
                 <button
                     type="button"
-                    className={
-                    styles.iconButton
-                    }
-                    onClick={
-                    handleNotificationToggle
-                    }
+                    className={styles.iconButton}
+                    onClick={handleNotificationToggle}
                     aria-label="알림"
-                    aria-expanded={
-                    isNotificationOpen
-                    }
+                    aria-expanded={isNotificationOpen}
                 >
                     {hasUnreadNotification && (
-                    <span
-                        className={
-                        styles.notificationDot
-                        }
-                    />
+                    <span className={styles.notificationDot} />
                     )}
 
-                    <img
-                    src={bellIcon}
-                    alt=""
-                    className={
-                        styles.icon
-                    }
-                    />
+                    <img src={bellIcon} alt="" className={styles.icon} />
                 </button>
 
                 {isNotificationOpen && (
                     <NotificationPanel
-                    requests={
-                        exchangeRequests
-                    }
-                    errorMessage={
-                        exchangeError
-                    }
-                    onRequestClick={
-                        handleRequestClick
-                    }
-                    onClose={() =>
-                        setIsNotificationOpen(
-                        false,
-                        )
-                    }
+                    requests={exchangeRequests}
+                    errorMessage={exchangeError}
+                    onRequestClick={handleRequestClick}
+                    onClose={() => setIsNotificationOpen(false)}
                     />
                 )}
                 </div>
 
                 <button
                 type="button"
-                className={
-                    styles.iconButton
-                }
-                onClick={() =>
-                    navigate(
-                    "/settings",
-                    )
-                }
+                className={styles.iconButton}
+                onClick={() => navigate("/settings")}
                 aria-label="설정"
                 >
-                <img
-                    src={settingIcon}
-                    alt=""
-                    className={
-                    styles.icon
-                    }
-                />
+                <img src={settingIcon} alt="" className={styles.icon} />
                 </button>
             </nav>
             ) : (
             <button
                 type="button"
-                className={
-                styles.loginButton
-                }
-                onClick={
-                handleLoginClick
-                }
+                className={styles.loginButton}
+                onClick={handleLoginClick}
             >
                 로그인하기
             </button>
@@ -655,35 +399,18 @@
         </header>
 
         <LoginModal
-            isOpen={
-            isLoginModalOpen
-            }
-            onClose={() =>
-            setIsLoginModalOpen(
-                false,
-            )
-            }
+            isOpen={isLoginModalOpen}
+            onClose={() => setIsLoginModalOpen(false)}
         />
 
-        {isUserLoggedIn &&
-            selectedRequest && (
+        {isUserLoggedIn && selectedRequest && (
             <ReceivedExchangeModal
-                request={
-                selectedRequest
-                }
-                onClose={() =>
-                setSelectedRequest(
-                    null,
-                )
-                }
-                onReject={
-                handleRejectRequest
-                }
-                onAccept={
-                handleAcceptRequest
-                }
+            request={selectedRequest}
+            onClose={() => setSelectedRequest(null)}
+            onReject={handleRejectRequest}
+            onAccept={handleAcceptRequest}
             />
-            )}
+        )}
         </>
     );
     };
