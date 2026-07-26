@@ -33,8 +33,9 @@
     }
 
     .profileCircle {
-    width: 72px;
-    height: 72px;
+    width: 96px;
+    height: 96px;
+    padding: 64px 0 0 64px;
     border-radius: 50%;
     background-color: var(--gray-600);
     }
@@ -52,9 +53,9 @@
     align-items: center;
     justify-content: center;
 
-    border: none;
-    border-radius: 50%;
-    background-color: var(--gray-700);
+    border-radius: 18px;
+    border: 2px solid var(--gray900, #222435);
+    background: var(--blue400, #5397FA);
     color: var(--white);
 
     cursor: pointer;
