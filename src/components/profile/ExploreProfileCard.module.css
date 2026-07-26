@@ -1,0 +1,329 @@
+.cardButton {
+    width: 282px;
+    height: 400px;
+    padding: 0;
+
+    display: block;
+
+    border: 0;
+    border-radius: 12px;
+    background: transparent;
+
+    color: inherit;
+    font: inherit;
+    text-align: left;
+
+    cursor: pointer;
+}
+
+.cardButton:focus-visible {
+    outline: 2px solid #b7ddff;
+    outline-offset: 4px;
+}
+
+.card {
+    position: relative;
+
+    width: 282px;
+    height: 400px;
+    padding: 16px 20px;
+
+    display: flex;
+    flex-direction: column;
+
+    border: 0;
+    border-radius: 12px;
+
+    background:
+        radial-gradient(
+            circle at 100% 100%,
+            #fffed1 0%,
+            rgb(255 254 209 / 60%) 10%,
+            rgb(255 254 209 / 0%) 34%
+        ),
+        linear-gradient(
+            135deg,
+            #69adfb 0%,
+            #5298f5 25%,
+            #438bf1 100%
+        );
+
+    color: #ffffff;
+
+    box-sizing: border-box;
+    overflow: hidden;
+
+    transition:
+        transform 160ms ease,
+        box-shadow 160ms ease;
+}
+
+.cardButton:hover .card {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 36px rgb(0 0 0 / 24%);
+}
+
+.topRow {
+    width: 100%;
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.job {
+    min-width: 0;
+    margin: 0;
+
+    color: rgb(255 255 255 / 72%);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 21px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.content {
+    width: 100%;
+    margin-top: 80px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.profileRow {
+    width: 100%;
+    height: 62px;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.avatar,
+.avatarPlaceholder {
+    width: 62px;
+    height: 62px;
+
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.avatar {
+    display: block;
+    object-fit: cover;
+}
+
+.avatarPlaceholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: #ffffff;
+    color: #2d70cc;
+
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.profileInfo {
+    min-width: 0;
+    flex: 1;
+}
+
+.name {
+    display: block;
+    width: 100%;
+
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 28px;
+    letter-spacing: -0.24px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.affiliation {
+    width: 100%;
+    margin: 1px 0 0;
+
+    color: rgb(255 255 255 / 78%);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 18px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tagList {
+    width: 100%;
+    height: 34px;
+    margin-top: 14px;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    overflow: hidden;
+}
+
+.tag {
+    min-width: 0;
+    max-width: 142px;
+    padding: 8px 12px;
+
+    border-radius: 8px;
+    background-color: #2f75da;
+    color: #ffffff;
+
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 18px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    box-sizing: border-box;
+}
+
+.emptyTag {
+    background-color: rgb(47 117 218 / 62%);
+    color: rgb(255 255 255 / 80%);
+}
+
+.experienceBox {
+    width: 100%;
+    height: 87px;
+    margin-top: 9px;
+    padding: 12px;
+
+    border: 0;
+    border-radius: 8px;
+
+    background: linear-gradient(
+        135deg,
+        rgb(62 137 233 / 68%) 0%,
+        rgb(110 176 241 / 42%) 100%
+    );
+
+    box-shadow:
+        inset 0 0 16px rgb(208 235 255 / 28%),
+        0 0 12px rgb(213 238 255 / 24%);
+
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.experienceTitle {
+    width: 100%;
+    margin: 0;
+
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 20px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.experienceDescription {
+    width: 100%;
+    margin: 4px 0 0;
+
+    color: rgb(255 255 255 / 76%);
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 17px;
+
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+
+    word-break: break-word;
+}
+
+.strengthBox {
+    width: fit-content;
+    max-width: 100%;
+    height: 44px;
+    margin-top: 9px;
+    padding: 8px 12px;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    border-radius: 9px;
+    background-color: rgb(122 182 250 / 46%);
+
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.strengthIcon,
+.strengthPlaceholder {
+    width: 28px;
+    height: 28px;
+
+    flex-shrink: 0;
+}
+
+.strengthIcon {
+    display: block;
+    object-fit: contain;
+}
+
+.strengthPlaceholder {
+    border-radius: 5px;
+    background-color: rgb(215 237 255 / 38%);
+}
+
+.strengthText {
+    min-width: 0;
+
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 21px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.introductionFallback {
+    width: 100%;
+    margin: 0;
+
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 20px;
+
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+
+    word-break: keep-all;
+    overflow-wrap: break-word;
+    text-overflow: ellipsis;
+}
+
+@media (max-width: 768px) {
+    .cardButton:hover .card {
+        transform: none;
+        box-shadow: none;
+    }
+}

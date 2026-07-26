@@ -771,38 +771,23 @@
                 </button>
 
                 <Swiper
-                centeredSlides={true}
-                slidesPerView="auto"
-                initialSlide={
-                    initialSlide
-                }
-                spaceBetween={16}
-                speed={
-                    400
-                }
-                grabCursor
-                slideToClickedSlide
-                watchSlidesProgress
-                onSwiper={(
-                    swiper,
-                ) => {
-                    swiperRef.current =
-                    swiper;
-                }}
-                onSlideChange={(
-                    swiper,
-                ) => {
-                    if (
-                    !isDraggingRef.current
-                    ) {
-                    setActiveIndex(
-                        swiper.activeIndex,
-                    );
-                    }
-                }}
-                className={
-                    styles.swiper
-                }
+                    centeredSlides
+                    slidesPerView="auto"
+                    initialSlide={initialSlide}
+                    spaceBetween={20}
+                    speed={400}
+                    grabCursor
+                    slideToClickedSlide
+                    watchSlidesProgress
+                    onSwiper={(swiper) => {
+                        swiperRef.current = swiper;
+                    }}
+                    onSlideChange={(swiper) => {
+                        if (!isDraggingRef.current) {
+                            setActiveIndex(swiper.activeIndex);
+                        }
+                    }}
+                    className={styles.swiper}
                 >
                 {carouselProfiles.map(
                     (profile) => (
