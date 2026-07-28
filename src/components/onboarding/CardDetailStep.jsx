@@ -1,42 +1,23 @@
-    import {
-    useMemo,
-    useState,
-    } from "react";
+    import { useMemo, useState } from "react";
+
+    import { uploadProfileImage } from "../../api/files";
 
     import OnboardingLayout from "../common/OnboardingLayout";
     import TagSelectModal from "./TagSelectModal";
 
-    import styles from "../../pages/ProfileDetailEdit/ProfileDetailEdit.module.css";
+    import styles from "./CardDetailStep.module.css";
+
+    const MAX_LINKS = 4;
+    const MAX_EXPERIENCES = 5;
 
     const LINK_TYPES = [
-    {
-        type: 0,
-        label: "Email",
-    },
-    {
-        type: 1,
-        label: "Instagram",
-    },
-    {
-        type: 2,
-        label: "GitHub",
-    },
-    {
-        type: 3,
-        label: "LinkedIn",
-    },
-    {
-        type: 4,
-        label: "Behance",
-    },
-    {
-        type: 5,
-        label: "Notion",
-    },
-    {
-        type: 6,
-        label: "Website",
-    },
+    { type: 0, label: "Email" },
+    { type: 1, label: "Instagram" },
+    { type: 2, label: "GitHub" },
+    { type: 3, label: "LinkedIn" },
+    { type: 4, label: "Behance" },
+    { type: 5, label: "Notion" },
+    { type: 6, label: "Website" },
     ];
 
     const createEmptyLink = () => ({
@@ -44,51 +25,47 @@
     value: "",
     });
 
-    const createEmptyExperience = (
-    isRepresentative = false,
-    ) => ({
+    const createEmptyExperience = (isRepresentative = false) => ({
     title: "",
     description: "",
     relatedUrl: "",
     isRepresentative,
     });
 
-    const createSkillSections = (
-    skills = [],
-    ) => {
+    const getProfileImagePreviewUrl = (imageUrl) => {
+    const normalizedUrl = String(imageUrl || "").trim();
+
+    if (!normalizedUrl) {
+        return "";
+    }
+
+    if (/\.(?:avif|gif|jpe?g|png|webp)(?:\?.*)?$/i.test(normalizedUrl)) {
+        return normalizedUrl;
+    }
+
+    return `${normalizedUrl.replace(/\/+$/, "")}/72.webp`;
+    };
+
+    const createSkillSections = (skills) => {
     const sectionMap = new Map();
 
     skills.forEach((skill) => {
-        const categoryName =
-        skill?.category?.name ||
-        "툴";
+        const categoryName = skill.category?.name || "기타";
 
-        if (
-        !sectionMap.has(categoryName)
-        ) {
-        sectionMap.set(
-            categoryName,
-            [],
-        );
+        if (!sectionMap.has(categoryName)) {
+        sectionMap.set(categoryName, []);
         }
 
-        sectionMap
-        .get(categoryName)
-        .push({
-            id: skill.id,
-            name: skill.name,
-            type: "skill",
-            optionType: "skill",
+        sectionMap.get(categoryName).push({
+        id: skill.id,
+        name: skill.name,
+        type: "skill",
+        optionType: "skill",
         });
     });
 
-    return Array.from(
-        sectionMap.entries(),
-    ).map(
-        (
-        [categoryName, options],
-        index,
-        ) => ({
+    return Array.from(sectionMap.entries()).map(
+        ([categoryName, options], index) => ({
         id: `skill-category-${index}`,
         title: categoryName,
         options,
@@ -96,24 +73,31 @@
     );
     };
 
-    const createInterestSections = (
-    interests = [],
-    ) => {
-    return [
-        {
+    const createInterestSections = (interests) => [
+    {
         id: "interests",
         title: "관심 분야",
-
-        options: interests.map(
-            (interest) => ({
-            id: interest.id,
-            name: interest.name,
-            type: "interest",
-            optionType: "interest",
-            }),
-        ),
-        },
+        options: interests.map((interest) => ({
+        id: interest.id,
+        name: interest.name,
+        type: "interest",
+        optionType: "interest",
+        })),
+    },
     ];
+
+    const isDeveloperJob = (data) => {
+    const jobText = [
+        data?.job,
+        data?.jobLabel,
+        data?.jobType?.name,
+        data?.jobTypeName,
+    ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+
+    return /frontend|backend|프론트|백엔드/.test(jobText);
     };
 
     const CardDetailStep = ({
@@ -126,809 +110,422 @@
     currentStep,
     totalSteps,
     }) => {
-    const [
-        isTagModalOpen,
-        setIsTagModalOpen,
-    ] = useState(false);
+    const [isTagModalOpen, setIsTagModalOpen] = useState(false);
+    const [isImageUploading, setIsImageUploading] = useState(false);
+    const [imageError, setImageError] = useState("");
 
-    const isDeveloper =
-        data.job === "frontend" ||
-        data.job === "backend";
-
-    const selectedItems =
-        isDeveloper
-        ? data.interests || []
-        : data.techStacks || [];
-
-    const sectionTitle =
-        isDeveloper
-        ? "관심분야"
-        : "스킬";
-
-    const sectionDescription =
-        isDeveloper
-        ? "관심 있는 분야를 보여주세요"
-        : "나의 사용 툴과 역량을 어필해보세요";
-
-    const tagSections = useMemo(
-        () =>
-        isDeveloper
-            ? createInterestSections(
-                interests,
-            )
-            : createSkillSections(
-                skills,
-            ),
-        [
-        interests,
-        isDeveloper,
-        skills,
-        ],
+    const isDeveloper = isDeveloperJob(data);
+    const skillSections = useMemo(() => createSkillSections(skills), [skills]);
+    const interestSections = useMemo(
+        () => createInterestSections(interests),
+        [interests],
     );
 
+    /*
+    * BasicStep과 DetailStep은 서로 반대 항목을 받습니다.
+    * - 기획자·디자이너: Basic 관심분야 / Detail 스킬
+    * - 개발자: Basic 스킬 / Detail 관심분야
+    */
+    const detailTagConfig = isDeveloper
+        ? {
+            key: "interests",
+            label: "관심분야",
+            modalTitle: "관심 분야 선택",
+            modalDescription: "관심 있는 분야를 선택해주세요.",
+            sections: interestSections,
+            selectedItems: data.interests || [],
+        }
+        : {
+            key: "techStacks",
+            label: "스킬",
+            modalTitle: "스킬 선택",
+            modalDescription: "사용하는 기술과 역량을 선택해주세요.",
+            sections: skillSections,
+            selectedItems: data.techStacks || [],
+        };
+
     const links =
-        Array.isArray(data.links) &&
-        data.links.length > 0
+        Array.isArray(data.links) && data.links.length > 0
         ? data.links
         : [createEmptyLink()];
 
     const experiences =
-        Array.isArray(
-        data.experiences,
-        ) &&
-        data.experiences.length > 0
+        Array.isArray(data.experiences) && data.experiences.length > 0
         ? data.experiences
-        : [
-            createEmptyExperience(
-                true,
-            ),
-            ];
+        : [createEmptyExperience(true)];
 
-    const updateSelectedItems = (
-        nextItems,
-    ) => {
-        if (isDeveloper) {
+    const updateLink = (index, key, value) => {
         onChange({
-            interests: nextItems,
-        });
-
-        return;
-        }
-
-        onChange({
-        techStacks: nextItems,
-        });
-    };
-
-    const removeSelectedItem = (
-        itemId,
-    ) => {
-        updateSelectedItems(
-        selectedItems.filter(
-            (item) =>
-            String(item.id) !==
-            String(itemId),
-        ),
-        );
-    };
-
-    const updateLinks = (
-        nextLinks,
-    ) => {
-        onChange({
-        links: nextLinks,
-        });
-    };
-
-    const handleLinkChange = (
-        index,
-        key,
-        value,
-    ) => {
-        updateLinks(
-        links.map(
-            (link, linkIndex) =>
+        links: links.map((link, linkIndex) =>
             linkIndex === index
-                ? {
-                    ...link,
-                    [key]: value,
+            ? {
+                ...link,
+                [key]: value,
                 }
-                : link,
+            : link,
         ),
-        );
+        });
     };
 
     const addLink = () => {
-        if (links.length >= 4) {
+        if (links.length >= MAX_LINKS) {
         return;
         }
 
-        updateLinks([
-        ...links,
-        createEmptyLink(),
-        ]);
-    };
-
-    const removeLink = (index) => {
-        const nextLinks =
-        links.filter(
-            (_, linkIndex) =>
-            linkIndex !== index,
-        );
-
-        updateLinks(
-        nextLinks.length > 0
-            ? nextLinks
-            : [createEmptyLink()],
-        );
-    };
-
-    const updateExperiences = (
-        nextExperiences,
-    ) => {
         onChange({
-        experiences:
-            nextExperiences,
+        links: [...links, createEmptyLink()],
         });
     };
 
-    const handleExperienceChange = (
-        index,
-        key,
-        value,
-    ) => {
-        updateExperiences(
-        experiences.map(
-            (
-            experience,
-            experienceIndex,
-            ) =>
-            experienceIndex === index
-                ? {
-                    ...experience,
-                    [key]: value,
-                }
-                : experience,
-        ),
-        );
+    const removeLink = (index) => {
+        const nextLinks = links.filter((_, linkIndex) => linkIndex !== index);
+
+        onChange({
+        links: nextLinks.length > 0 ? nextLinks : [createEmptyLink()],
+        });
     };
 
-    const setRepresentativeExperience =
-        (index) => {
-        updateExperiences(
-            experiences.map(
-            (
-                experience,
-                experienceIndex,
-            ) => ({
+    const updateExperience = (index, key, value) => {
+        onChange({
+        experiences: experiences.map((experience, experienceIndex) =>
+            experienceIndex === index
+            ? {
                 ...experience,
-
-                isRepresentative:
-                experienceIndex ===
-                index,
-            }),
-            ),
-        );
-        };
+                [key]: value,
+                }
+            : experience,
+        ),
+        });
+    };
 
     const addExperience = () => {
-        if (
-        experiences.length >= 5
-        ) {
+        if (experiences.length >= MAX_EXPERIENCES) {
         return;
         }
 
-        updateExperiences([
-        ...experiences,
-        createEmptyExperience(),
-        ]);
+        onChange({
+        experiences: [...experiences, createEmptyExperience(false)],
+        });
     };
 
-    const removeExperience = (
-        index,
-    ) => {
-        const nextExperiences =
-        experiences.filter(
-            (
-            _,
-            experienceIndex,
-            ) =>
-            experienceIndex !== index,
+    const removeExperience = (index) => {
+        const nextExperiences = experiences.filter(
+        (_, experienceIndex) => experienceIndex !== index,
         );
 
-        if (
-        nextExperiences.length === 0
-        ) {
-        updateExperiences([
-            createEmptyExperience(
-            true,
-            ),
-        ]);
+        onChange({
+        experiences:
+            nextExperiences.length > 0
+            ? nextExperiences.map((experience, experienceIndex) => ({
+                ...experience,
+                isRepresentative:
+                    experienceIndex === 0 ? true : experience.isRepresentative,
+                }))
+            : [createEmptyExperience(true)],
+        });
+    };
 
+    const handleProfileImageChange = async (event) => {
+        const imageFile = event.target.files?.[0];
+        event.target.value = "";
+
+        if (!imageFile) {
         return;
         }
 
-        const hasRepresentative =
-        nextExperiences.some(
-            (experience) =>
-            experience
-                .isRepresentative,
-        );
+        const allowedTypes = ["image/png", "image/jpeg", "image/webp"];
 
-        if (hasRepresentative) {
-        updateExperiences(
-            nextExperiences,
-        );
-
+        if (!allowedTypes.includes(imageFile.type)) {
+        setImageError("PNG, JPG, WEBP 이미지만 등록할 수 있습니다.");
         return;
         }
 
-        updateExperiences(
-        nextExperiences.map(
-            (
-            experience,
-            experienceIndex,
-            ) => ({
-            ...experience,
+        if (imageFile.size > 5 * 1024 * 1024) {
+        setImageError("프로필 이미지는 5MB 이하만 등록할 수 있습니다.");
+        return;
+        }
 
-            isRepresentative:
-                experienceIndex === 0,
-            }),
-        ),
-        );
+        const objectUrl = URL.createObjectURL(imageFile);
+
+        try {
+        setIsImageUploading(true);
+        setImageError("");
+
+        onChange({
+            profileImagePreview: objectUrl,
+        });
+
+        const uploadResult = await uploadProfileImage(imageFile);
+
+        if (!uploadResult?.url) {
+            throw new Error("업로드된 이미지 주소를 받지 못했습니다.");
+        }
+
+        onChange({
+            profileImageUrl: uploadResult.url,
+            profileImagePreview: getProfileImagePreviewUrl(uploadResult.url),
+        });
+        } catch (error) {
+        onChange({
+            profileImagePreview: getProfileImagePreviewUrl(data.profileImageUrl),
+        });
+
+        setImageError(error?.message || "프로필 이미지 업로드에 실패했습니다.");
+        } finally {
+        URL.revokeObjectURL(objectUrl);
+        setIsImageUploading(false);
+        }
     };
 
     return (
         <OnboardingLayout
-        showBackButton
-        showProgress
+        showBackButton={true}
+        showProgress={true}
         onBack={onBack}
         currentStep={currentStep}
         totalSteps={totalSteps}
         >
-        <section
-            className={
-            styles.container
-            }
-        >
-            <div
-            className={
-                styles.titleArea
-            }
-            >
-            <h1
-                className={`headline1 ${styles.title}`}
-            >
-                더 자세한 설명을
-                덧붙여보세요
+        <section className={styles.container}>
+            <header className={styles.titleArea}>
+            <h1 className={`headline1 ${styles.title}`}>
+                더 자세한 설명을 덧붙여보세요
             </h1>
 
-            <p
-                className={`body2 ${styles.description}`}
-            >
-                카드의 세부 프로필에
-                등록되는 정보예요
+            <p className={`caption1 ${styles.description}`}>
+                카드의 세부 프로필에 등록되는 정보예요
             </p>
-            </div>
+            </header>
 
-            <div
-            className={
-                styles.profileImage
-            }
-            >
-            {data.profileImagePreview ||
-            data.profileImageUrl ? (
+            <div className={styles.profileImageBox}>
+            <div className={styles.profileCircle}>
+                {data.profileImagePreview && (
                 <img
-                src={
-                    data.profileImagePreview ||
-                    data.profileImageUrl
-                }
-                alt="프로필"
+                    src={data.profileImagePreview}
+                    alt="선택한 프로필"
+                    className={styles.profileImage}
                 />
-            ) : (
-                <span
-                className={
-                    styles.profilePlaceholder
-                }
-                />
-            )}
-
-            <span
-                className={
-                styles.editBadge
-                }
-                aria-hidden="true"
-            >
-                ✎
-            </span>
-            </div>
-
-            <section
-            className={
-                styles.formSection
-            }
-            >
-            <div
-                className={
-                styles.sectionHeading
-                }
-            >
-                <div>
-                <p
-                    className={
-                    styles.sectionLabel
-                    }
-                >
-                    {sectionTitle}
-                </p>
-
-                <p
-                    className={
-                    styles.sectionHelp
-                    }
-                >
-                    {sectionDescription}
-                </p>
-                </div>
-
-                <span
-                className={
-                    styles.count
-                }
-                >
-                {selectedItems.length}
-                /10
-                </span>
-            </div>
-
-            {selectedItems.length >
-                0 && (
-                <div
-                className={
-                    styles.selectedList
-                }
-                >
-                {selectedItems.map(
-                    (item) => (
-                    <button
-                        key={`${item.optionType || item.type}-${item.id}`}
-                        type="button"
-                        className={
-                        styles.selectedChip
-                        }
-                        onClick={() =>
-                        removeSelectedItem(
-                            item.id,
-                        )
-                        }
-                    >
-                        {item.name}
-
-                        <span
-                        aria-hidden="true"
-                        >
-                        ×
-                        </span>
-                    </button>
-                    ),
                 )}
-                </div>
-            )}
+            </div>
 
-            <button
+            <label className={styles.editButton} aria-label="프로필 이미지 수정">
+                <input
+                type="file"
+                accept="image/png,image/jpeg,image/webp"
+                onChange={handleProfileImageChange}
+                disabled={isImageUploading}
+                className={styles.imageInput}
+                />
+
+                {isImageUploading ? "…" : "✎"}
+            </label>
+            </div>
+
+            {imageError && <p className={styles.errorMessage}>{imageError}</p>}
+
+            <div className={styles.form}>
+            <section className={styles.field}>
+                <div className={styles.fieldHeader}>
+                <label className={styles.label}>{detailTagConfig.label}</label>
+
+                <span className={styles.count}>
+                    {detailTagConfig.selectedItems.length}/10
+                </span>
+                </div>
+
+                {detailTagConfig.selectedItems.length > 0 && (
+                <div className={styles.tagList}>
+                    {detailTagConfig.selectedItems.map((item) => (
+                    <span key={item.id} className={styles.tag}>
+                        {item.name}
+                    </span>
+                    ))}
+                </div>
+                )}
+
+                <button
                 type="button"
-                className={
-                styles.addButton
-                }
-                onClick={() =>
-                setIsTagModalOpen(
-                    true,
-                )
-                }
-            >
+                className={styles.addButton}
+                onClick={() => setIsTagModalOpen(true)}
+                >
                 + 추가하기
-            </button>
+                </button>
             </section>
 
-            <section
-            className={
-                styles.formSection
-            }
-            >
-            <div
-                className={
-                styles.sectionHeading
-                }
-            >
-                <div>
-                <p
-                    className={
-                    styles.sectionLabel
-                    }
-                >
-                    링크
-                </p>
+            <section className={styles.field}>
+                <div className={styles.fieldHeader}>
+                <label className={styles.label}>링크</label>
 
-                <p
-                    className={
-                    styles.sectionHelp
-                    }
-                >
-                    포트폴리오, Github,
-                    이메일 등
-                </p>
+                <span className={styles.count}>
+                    {links.filter((link) => String(link.value || "").trim()).length}
+                    /{MAX_LINKS}
+                </span>
                 </div>
 
-                <span
-                className={
-                    styles.count
-                }
-                >
-                {
-                    links.filter(
-                    (link) =>
-                        (
-                        link.value ||
-                        ""
-                        ).trim(),
-                    ).length
-                }
-                /4
-                </span>
-            </div>
-
-            <div
-                className={
-                styles.linkList
-                }
-            >
-                {links.map(
-                (link, index) => (
+                <div className={styles.linkList}>
+                {links.map((link, index) => (
                     <div
-                    key={`link-${index}`}
-                    className={
-                        styles.linkRow
-                    }
+                    key={link.id || `link-${index}`}
+                    className={styles.linkRow}
                     >
                     <select
-                        className={
-                        styles.select
-                        }
-                        value={link.type}
-                        onChange={(
-                        event,
-                        ) =>
-                        handleLinkChange(
-                            index,
-                            "type",
-                            Number(
-                            event.target
-                                .value,
-                            ),
-                        )
+                        className={styles.linkSelect}
+                        value={Number(link.type ?? 6)}
+                        onChange={(event) =>
+                        updateLink(index, "type", Number(event.target.value))
                         }
                     >
-                        {LINK_TYPES.map(
-                        (linkType) => (
-                            <option
-                            key={
-                                linkType.type
-                            }
-                            value={
-                                linkType.type
-                            }
-                            >
-                            {
-                                linkType.label
-                            }
-                            </option>
-                        ),
-                        )}
+                        {LINK_TYPES.map((linkType) => (
+                        <option key={linkType.type} value={linkType.type}>
+                            {linkType.label}
+                        </option>
+                        ))}
                     </select>
 
                     <input
-                        className={
-                        styles.input
+                        className={styles.input}
+                        type="text"
+                        value={link.value || ""}
+                        onChange={(event) =>
+                        updateLink(index, "value", event.target.value)
                         }
-                        value={
-                        link.value || ""
-                        }
-                        onChange={(
-                        event,
-                        ) =>
-                        handleLinkChange(
-                            index,
-                            "value",
-                            event.target
-                            .value,
-                        )
-                        }
-                        placeholder="URL 또는 이메일을 입력하세요"
+                        placeholder="포트폴리오, Github, 이메일 등"
                     />
 
                     <button
                         type="button"
-                        className={
-                        styles.removeButton
-                        }
-                        onClick={() =>
-                        removeLink(index)
-                        }
+                        className={styles.removeButton}
+                        onClick={() => removeLink(index)}
                         aria-label="링크 삭제"
                     >
                         ×
                     </button>
                     </div>
-                ),
-                )}
-            </div>
-
-            <button
-                type="button"
-                className={
-                styles.addButton
-                }
-                onClick={addLink}
-                disabled={
-                links.length >= 4
-                }
-            >
-                + 추가하기
-            </button>
-            </section>
-
-            <section
-            className={
-                styles.formSection
-            }
-            >
-            <div
-                className={
-                styles.sectionHeading
-                }
-            >
-                <div>
-                <p
-                    className={
-                    styles.sectionLabel
-                    }
-                >
-                    경험
-                </p>
-
-                <p
-                    className={
-                    styles.sectionHelp
-                    }
-                >
-                    내가 쌓아온 활동을
-                    보여주세요
-                </p>
+                ))}
                 </div>
 
-                <span
-                className={
-                    styles.count
-                }
+                <button
+                type="button"
+                className={styles.addButton}
+                onClick={addLink}
+                disabled={links.length >= MAX_LINKS}
                 >
-                {experiences.length}
-                /5
+                + 추가하기
+                </button>
+            </section>
+
+            <section className={styles.field}>
+                <div className={styles.fieldHeader}>
+                <label className={styles.label}>경험</label>
+
+                <span className={styles.count}>
+                    {experiences.length}/{MAX_EXPERIENCES}
                 </span>
-            </div>
+                </div>
 
-            <div
-                className={
-                styles.experienceList
-                }
-            >
-                {experiences.map(
-                (
-                    experience,
-                    index,
-                ) => (
+                <div className={styles.experienceList}>
+                {experiences.map((experience, index) => (
                     <article
-                    key={`experience-${index}`}
-                    className={
-                        styles.experienceCard
-                    }
+                    key={experience.id || `experience-${index}`}
+                    className={styles.experienceCard}
                     >
-                    <div
-                        className={
-                        styles.experienceTop
-                        }
-                    >
-                        <label
-                        className={
-                            styles.representativeLabel
-                        }
-                        >
+                    <label className={styles.representativeRow}>
                         <input
-                            type="radio"
-                            name="newCardRepresentativeExperience"
-                            checked={
-                            Boolean(
-                                experience
-                                .isRepresentative,
-                            )
-                            }
-                            onChange={() =>
-                            setRepresentativeExperience(
-                                index,
-                            )
-                            }
+                        type="radio"
+                        name="representative-experience"
+                        checked={Boolean(experience.isRepresentative)}
+                        onChange={() =>
+                            onChange({
+                            experiences: experiences.map((item, itemIndex) => ({
+                                ...item,
+                                isRepresentative: itemIndex === index,
+                            })),
+                            })
+                        }
                         />
-
                         대표
-                        </label>
-
-                        <button
-                        type="button"
-                        className={
-                            styles.removeExperienceButton
-                        }
-                        onClick={() =>
-                            removeExperience(
-                            index,
-                            )
-                        }
-                        >
-                        삭제
-                        </button>
-                    </div>
-
-                    <label
-                        className={
-                        styles.inputLabel
-                        }
-                    >
-                        제목
-
-                        <span>
-                        {
-                            (
-                            experience
-                                .title ||
-                            ""
-                            ).length
-                        }
-                        /20
-                        </span>
                     </label>
 
+                    <div className={styles.experienceHeader}>
+                        <span>제목</span>
+                        <span>
+                        {(experience.title || "").length}
+                        /20
+                        </span>
+                    </div>
+
                     <input
-                        className={
-                        styles.input
-                        }
-                        value={
-                        experience.title ||
-                        ""
-                        }
+                        className={styles.input}
+                        type="text"
+                        value={experience.title || ""}
                         maxLength={20}
-                        onChange={(
-                        event,
-                        ) =>
-                        handleExperienceChange(
-                            index,
-                            "title",
-                            event.target
-                            .value,
-                        )
+                        onChange={(event) =>
+                        updateExperience(index, "title", event.target.value)
                         }
                         placeholder="프로젝트명, 대외활동 등을 입력해보세요"
                     />
 
-                    <label
-                        className={
-                        styles.inputLabel
-                        }
-                    >
-                        설명
-
+                    <div className={styles.experienceHeader}>
+                        <span>설명</span>
                         <span>
-                        {
-                            (
-                            experience
-                                .description ||
-                            ""
-                            ).length
-                        }
+                        {(experience.description || "").length}
                         /250
                         </span>
-                    </label>
+                    </div>
 
                     <textarea
-                        className={
-                        styles.textarea
-                        }
-                        value={
-                        experience
-                            .description ||
-                        ""
-                        }
+                        className={styles.textarea}
+                        value={experience.description || ""}
                         maxLength={250}
-                        onChange={(
-                        event,
-                        ) =>
-                        handleExperienceChange(
-                            index,
-                            "description",
-                            event.target
-                            .value,
-                        )
+                        onChange={(event) =>
+                        updateExperience(index, "description", event.target.value)
                         }
                         placeholder="텍스트를 입력하세요"
                     />
 
-                    <label
-                        className={
-                        styles.inputLabel
-                        }
-                    >
-                        관련 링크
-                    </label>
+                    <span className={styles.experienceLabel}>관련 링크</span>
 
                     <input
-                        className={
-                        styles.input
+                        className={styles.input}
+                        type="url"
+                        value={experience.relatedUrl || ""}
+                        onChange={(event) =>
+                        updateExperience(index, "relatedUrl", event.target.value)
                         }
-                        value={
-                        experience
-                            .relatedUrl ||
-                        ""
-                        }
-                        onChange={(
-                        event,
-                        ) =>
-                        handleExperienceChange(
-                            index,
-                            "relatedUrl",
-                            event.target
-                            .value,
-                        )
-                        }
-                        placeholder="URL"
+                        placeholder="URL (선택)"
                     />
+
+                    {experiences.length > 1 && (
+                        <button
+                        type="button"
+                        className={styles.removeExperienceButton}
+                        onClick={() => removeExperience(index)}
+                        >
+                        경험 삭제
+                        </button>
+                    )}
                     </article>
-                ),
-                )}
+                ))}
+                </div>
+
+                <button
+                type="button"
+                className={styles.addButton}
+                onClick={addExperience}
+                disabled={experiences.length >= MAX_EXPERIENCES}
+                >
+                추가하기
+                </button>
+            </section>
             </div>
 
-            <button
-                type="button"
-                className={
-                styles.addButton
-                }
-                onClick={
-                addExperience
-                }
-                disabled={
-                experiences.length >= 5
-                }
-            >
-                + 추가하기
-            </button>
-            </section>
-
-            <div
-            className={
-                styles.bottomButtons
-            }
-            >
-            <button
-                type="button"
-                className={
-                styles.skipButton
-                }
-                onClick={onNext}
-            >
+            <div className={styles.actions}>
+            <button type="button" className={styles.skipButton} onClick={onNext}>
                 건너뛰기
             </button>
 
             <button
                 type="button"
-                className={
-                styles.submitButton
-                }
+                className={styles.submitButton}
                 onClick={onNext}
             >
                 등록
@@ -938,32 +535,17 @@
 
         {isTagModalOpen && (
             <TagSelectModal
-            title={
-                isDeveloper
-                ? "나의 관심 분야"
-                : "나의 스킬"
-            }
-            description="먼저 선택된 3개가 카드에 노출돼요"
-            sections={tagSections}
-            selectedItems={
-                selectedItems
-            }
+            title={detailTagConfig.modalTitle}
+            description={detailTagConfig.modalDescription}
+            sections={detailTagConfig.sections}
+            selectedItems={detailTagConfig.selectedItems}
             maxCount={10}
-            onClose={() =>
-                setIsTagModalOpen(
-                false,
-                )
-            }
-            onConfirm={(
-                nextSelectedItems,
-            ) => {
-                updateSelectedItems(
-                nextSelectedItems,
-                );
-
-                setIsTagModalOpen(
-                false,
-                );
+            onClose={() => setIsTagModalOpen(false)}
+            onConfirm={(selectedItems) => {
+                onChange({
+                [detailTagConfig.key]: selectedItems,
+                });
+                setIsTagModalOpen(false);
             }}
             />
         )}
