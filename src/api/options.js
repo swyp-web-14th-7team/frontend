@@ -154,19 +154,21 @@ export const getAffiliationStatuses =
 export const getPurposes = async ({
     page = 1,
     limit = 100,
-    sort = "name",
-    order = "asc",
     search = "",
     signal,
 } = {}) => {
     const params =
-        createListParams({
-            page,
-            limit,
-            sort,
-            order,
-            search,
+        new URLSearchParams({
+            page: String(page),
+            limit: String(limit),
         });
+
+    if (search.trim()) {
+        params.append(
+            "search",
+            search.trim(),
+        );
+    }
 
     return apiRequest(
         `/purposes?${params.toString()}`,

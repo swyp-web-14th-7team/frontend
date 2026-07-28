@@ -1,4 +1,4 @@
-.container {
+    .container {
     width: 100%;
     min-height: calc(100vh - 180px);
     display: flex;
@@ -29,13 +29,17 @@
 
     .profileImageBox {
     position: relative;
-    margin-bottom: 32px;
+    width: 96px;
+    height: 96px;
+    margin: 0 auto 32px;
+    flex-shrink: 0;
+    overflow: visible;
     }
 
     .profileCircle {
     position: relative;
-    width: 72px;
-    height: 72px;
+    width: 96px;
+    height: 96px;
     overflow: hidden;
     border-radius: 50%;
     background-color: var(--gray-600);
@@ -44,23 +48,40 @@
 
     .editButton {
     position: absolute;
-    right: -2px;
-    bottom: -2px;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
 
-    width: 22px;
-    height: 22px;
+    width: 32px;
+    height: 32px;
     padding: 0;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    border: none;
+    border: 1px solid var(--gray-900);
     border-radius: 50%;
-    background-color: var(--gray-700);
+    background-color: #2f80ed;
     color: var(--white);
 
     cursor: pointer;
+    }
+
+    .imageInput {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+
+    cursor: pointer;
+    }
+
+    .imageInput:disabled {
+    cursor: wait;
     }
 
     .form {
@@ -207,7 +228,7 @@
 
     object-fit: cover;
     border-radius: 50%;
-}
+    }
 
     /* 390px 紐⑤컮�� */
     @media (max-width: 768px) {
@@ -255,8 +276,8 @@
     .editButton {
         right: 0;
         bottom: 0;
-        width: 28px;
-        height: 28px;
+        width: 32px;
+        height: 32px;
         font-size: 14px;
     }
 
