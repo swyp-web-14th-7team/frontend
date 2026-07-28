@@ -547,6 +547,7 @@ export const mapProfileCards = (
     if (
         !Array.isArray(profiles)
     ) {
+        
         return [];
     }
 

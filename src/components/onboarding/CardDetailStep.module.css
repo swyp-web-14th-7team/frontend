@@ -1,0 +1,318 @@
+    .container {
+    width: 100%;
+    min-height: calc(100vh - 180px);
+    padding: 56px 0 72px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+    }
+
+    .titleArea {
+    text-align: center;
+    margin-bottom: 48px;
+    }
+
+    .title {
+    margin: 0;
+    color: var(--white);
+    }
+
+    .description {
+    margin: 12px 0 0;
+    color: var(--gray-500);
+    }
+
+    .profileImageBox {
+    position: relative;
+    width: 96px;
+    height: 96px;
+    margin: 0 auto 32px;
+    flex-shrink: 0;
+    overflow: visible;
+    }
+
+    .profileCircle {
+    width: 96px;
+    height: 96px;
+    overflow: hidden;
+    border-radius: 50%;
+    background-color: var(--gray-600);
+    }
+
+    .profileImage {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: center;
+    }
+
+    .editButton {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--gray-500);
+    border-radius: 50%;
+    background-color: #2f80ed;
+    color: var(--white);
+    font-size: 14px;
+    line-height: 1;
+    cursor: pointer;
+    box-sizing: border-box;
+    }
+
+    .imageInput {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    }
+
+    .imageInput:disabled {
+    cursor: wait;
+    }
+
+    .errorMessage {
+    margin: -16px 0 24px;
+    color: #ff6b78;
+    font-size: 13px;
+    text-align: center;
+    }
+
+    .form {
+    width: 100%;
+    max-width: 620px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    }
+
+    .field {
+    width: 100%;
+    }
+
+    .fieldHeader,
+    .experienceHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    }
+
+    .fieldHeader {
+    margin-bottom: 10px;
+    }
+
+    .label,
+    .experienceLabel {
+    color: var(--gray-400);
+    font-size: 13px;
+    }
+
+    .count,
+    .experienceHeader {
+    color: var(--gray-400);
+    font-size: 12px;
+    }
+
+    .tagList {
+    margin-bottom: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    }
+
+    .tag {
+    min-height: 36px;
+    padding: 0 12px;
+    display: inline-flex;
+    align-items: center;
+    border-radius: 8px;
+    background-color: var(--gray-200);
+    color: var(--gray-900);
+    font-size: 13px;
+    }
+
+    .addButton {
+    min-width: 88px;
+    height: 42px;
+    padding: 0 16px;
+    border: 1px solid var(--gray-500);
+    border-radius: 8px;
+    background-color: var(--gray-700);
+    color: var(--white);
+    font: inherit;
+    cursor: pointer;
+    }
+
+    .addButton:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    }
+
+    .linkList,
+    .experienceList {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    }
+
+    .linkList {
+    margin-bottom: 12px;
+    }
+
+    .linkRow {
+    display: grid;
+    grid-template-columns: 136px minmax(0, 1fr) 36px;
+    gap: 8px;
+    }
+
+    .linkSelect,
+    .input,
+    .textarea {
+    width: 100%;
+    border: 0;
+    outline: 0;
+    border-radius: 8px;
+    background-color: var(--gray-800);
+    color: var(--white);
+    font: inherit;
+    box-sizing: border-box;
+    }
+
+    .linkSelect,
+    .input {
+    height: 48px;
+    padding: 0 14px;
+    }
+
+    .textarea {
+    min-height: 76px;
+    padding: 14px;
+    resize: vertical;
+    }
+
+    .input::placeholder,
+    .textarea::placeholder {
+    color: var(--gray-500);
+    }
+
+    .removeButton {
+    width: 36px;
+    height: 48px;
+    padding: 0;
+    border: 0;
+    border-radius: 8px;
+    background-color: var(--gray-700);
+    color: var(--gray-300);
+    font-size: 22px;
+    cursor: pointer;
+    }
+
+    .experienceCard {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border-radius: 8px;
+    background-color: var(--gray-900);
+    }
+
+    .representativeRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--gray-300);
+    font-size: 13px;
+    cursor: pointer;
+    }
+
+    .removeExperienceButton {
+    align-self: flex-end;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #ff6b78;
+    font: inherit;
+    font-size: 12px;
+    cursor: pointer;
+    }
+
+    .actions {
+    width: 100%;
+    max-width: 620px;
+    margin-top: 48px;
+    display: grid;
+    grid-template-columns: 160px minmax(0, 1fr);
+    gap: 8px;
+    }
+
+    .skipButton,
+    .submitButton {
+    height: 56px;
+    border: 0;
+    border-radius: 8px;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    }
+
+    .skipButton {
+    background-color: var(--gray-200);
+    color: var(--gray-900);
+    }
+
+    .submitButton {
+    background-color: #b4dcf8;
+    color: #172033;
+    }
+
+    @media (max-width: 768px) {
+    .container {
+        min-height: auto;
+        padding: 36px 0 40px;
+        align-items: stretch;
+    }
+
+    .titleArea {
+        margin-bottom: 36px;
+    }
+
+    .title {
+        font-size: 24px;
+        line-height: 1.4;
+    }
+
+    .description {
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .profileImageBox {
+        margin-bottom: 32px;
+    }
+
+    .form,
+    .actions {
+        max-width: none;
+    }
+
+    .linkRow {
+        grid-template-columns: 112px minmax(0, 1fr) 36px;
+    }
+
+    .actions {
+        grid-template-columns: 120px minmax(0, 1fr);
+    }
+    }

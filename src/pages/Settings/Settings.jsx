@@ -1,10 +1,14 @@
-    import { useCallback, useEffect, useState } from "react";
+    import { useCallback, useEffect, useMemo, useState } from "react";
 
     import { useNavigate, useParams } from "react-router-dom";
 
-    import { deleteCurrentUser, getMyUser, updateMyUser } from "../../api/users";
+    import { deleteCurrentUser, getMyUser } from "../../api/users";
 
-    import { getMyProfileCards } from "../../api/profile";
+    import {
+    getDefaultProfileCard,
+    getMyProfileCards,
+    updateDefaultProfileCard,
+    } from "../../api/profile";
 
     import {
     cancelConnectionRequest,
@@ -25,14 +29,6 @@
     account: "account",
     };
 
-    /*
-    * 백엔드 카드 교환 요청 상태값
-    *
-    * 0: 대기
-    * 1: 수락
-    * 2: 거절
-    * 3: 취소
-    */
     const REQUEST_STATUS = {
     0: "대기중",
     1: "수락",
@@ -43,20 +39,146 @@
     const STRING_STATUS_MAP = {
     PENDING: 0,
     WAITING: 0,
-
     REJECTED: 2,
     DECLINED: 2,
-
     ACCEPTED: 1,
     APPROVED: 1,
-
     CANCELED: 3,
     CANCELLED: 3,
     };
 
-    /*
-    * 숫자와 문자열 상태값을 모두 처리합니다.
-    */
+    const LINK_TYPES = [
+    { type: 0, label: "Email" },
+    { type: 1, label: "Instagram" },
+    { type: 2, label: "GitHub" },
+    { type: 3, label: "LinkedIn" },
+    { type: 4, label: "Behance" },
+    { type: 5, label: "Notion" },
+    { type: 6, label: "Website" },
+    ];
+
+    const createEmptyLink = () => ({
+    type: 6,
+    value: "",
+    });
+
+    const LINK_TYPE_BY_NAME = {
+    EMAIL: 0,
+    INSTAGRAM: 1,
+    GITHUB: 2,
+    LINKEDIN: 3,
+    BEHANCE: 4,
+    NOTION: 5,
+    WEBSITE: 6,
+    };
+
+    const getLinkValue = (link) =>
+    String(
+        link?.value ??
+        link?.url ??
+        link?.link ??
+        link?.address ??
+        link?.email ??
+        "",
+    ).trim();
+
+    const normalizeEmailValue = (value) =>
+    String(value ?? "")
+        .trim()
+        .replace(/^mailto:/i, "");
+
+    const looksLikeEmail = (value) => {
+    const normalizedValue = normalizeEmailValue(value);
+
+    return (
+        normalizedValue.includes("@") &&
+        !normalizedValue.includes("://") &&
+        !normalizedValue.startsWith("www.")
+    );
+    };
+
+    const normalizeLinkType = (type, value) => {
+    if (looksLikeEmail(value)) {
+        return 0;
+    }
+
+    const numericType = Number(type);
+
+    if (Number.isInteger(numericType) && numericType >= 0 && numericType <= 6) {
+        return numericType;
+    }
+
+    const namedType = LINK_TYPE_BY_NAME[String(type ?? "").toUpperCase()];
+
+    if (namedType !== undefined) {
+        return namedType;
+    }
+
+    return 6;
+    };
+
+    const unwrapUser = (response) =>
+    response?.data?.data?.user ??
+    response?.data?.user ??
+    response?.user ??
+    response?.data?.data ??
+    response?.data ??
+    response ??
+    {};
+
+    const unwrapProfileCard = (response) =>
+    response?.data?.data?.card ??
+    response?.data?.data?.profileCard ??
+    response?.data?.card ??
+    response?.data?.profileCard ??
+    response?.card ??
+    response?.profileCard ??
+    response?.data?.data ??
+    response?.data ??
+    response ??
+    {};
+
+    const normalizeLinks = (links, fallbackEmail = "") => {
+    const sourceLinks = Array.isArray(links) ? links : [];
+
+    const normalizedLinks = sourceLinks
+        .map((link) => {
+        const value = getLinkValue(link);
+        const type = normalizeLinkType(
+            link?.type ?? link?.linkType ?? link?.category,
+            value,
+        );
+
+        return {
+            type,
+            value: type === 0 ? normalizeEmailValue(value) : value,
+        };
+        })
+        .filter((link) => link.value);
+
+    const normalizedFallbackEmail = normalizeEmailValue(fallbackEmail);
+    const hasEmailLink = normalizedLinks.some((link) => link.type === 0);
+
+    if (normalizedFallbackEmail && !hasEmailLink && normalizedLinks.length < 4) {
+        normalizedLinks.unshift({
+        type: 0,
+        value: normalizedFallbackEmail,
+        });
+    }
+
+    return normalizedLinks.length > 0
+        ? normalizedLinks.slice(0, 4)
+        : [createEmptyLink()];
+    };
+
+    const createLinkPayload = (links) =>
+    links
+        .filter((link) => String(link?.value ?? "").trim())
+        .map((link) => ({
+        type: Number(link.type),
+        value: String(link.value).trim(),
+        }));
+
     const getRequestStatus = (request) => {
     const rawStatus =
         request?.status?.value ??
@@ -71,7 +193,7 @@
     if (typeof rawStatus === "string") {
         const trimmedStatus = rawStatus.trim();
 
-        if (trimmedStatus !== "") {
+        if (trimmedStatus) {
         const numericStatus = Number(trimmedStatus);
 
         if (Number.isFinite(numericStatus)) {
@@ -92,15 +214,12 @@
     return Array.isArray(items) ? items : [];
     };
 
-    const getRequestDate = (request) => {
-    return (
-        request?.createdAt?.isoString ??
-        request?.createdAt ??
-        request?.requestedAt?.isoString ??
-        request?.requestedAt ??
-        ""
-    );
-    };
+    const getRequestDate = (request) =>
+    request?.createdAt?.isoString ??
+    request?.createdAt ??
+    request?.requestedAt?.isoString ??
+    request?.requestedAt ??
+    "";
 
     const formatRequestDate = (request) => {
     const value = getRequestDate(request);
@@ -129,72 +248,93 @@
     const activeSection = SECTION_MAP[section] ?? "basic";
 
     const [nickname, setNickname] = useState("");
-
-    const [accountName, setAccountName] = useState("");
-
-    const [accountEmail, setAccountEmail] = useState("");
-
     const [initialNickname, setInitialNickname] = useState("");
 
+    const [links, setLinks] = useState([createEmptyLink()]);
+    const [initialLinks, setInitialLinks] = useState([]);
+
+    const [accountName, setAccountName] = useState("");
+    const [accountEmail, setAccountEmail] = useState("");
+
     const [isLoading, setIsLoading] = useState(true);
-
     const [isSaving, setIsSaving] = useState(false);
-
     const [isLoggingOut, setIsLoggingOut] = useState(false);
 
     const [error, setError] = useState("");
-
     const [successMessage, setSuccessMessage] = useState("");
 
     const [isLeaveModalOpen, setIsLeaveModalOpen] = useState(false);
-
     const [pendingPath, setPendingPath] = useState(null);
 
     const [sentRequests, setSentRequests] = useState([]);
-
     const [isRequestsLoading, setIsRequestsLoading] = useState(false);
-
     const [cancellingRequestId, setCancellingRequestId] = useState(null);
 
     const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
-
     const [isWithdrawing, setIsWithdrawing] = useState(false);
 
-    const isDirty = nickname.trim() !== initialNickname.trim();
+    const currentLinkPayload = useMemo(() => createLinkPayload(links), [links]);
+
+    const isNicknameDirty = nickname.trim() !== initialNickname.trim();
+    const areLinksDirty =
+        JSON.stringify(currentLinkPayload) !== JSON.stringify(initialLinks);
+    const isDirty = isNicknameDirty || areLinksDirty;
 
     /*
-    * 내 회원 정보 조회
+    * 회원 정보와 기본 카드 정보를 함께 불러옵니다.
+    * 닉네임과 링크는 기본 카드 데이터를 우선 사용합니다.
     */
     useEffect(() => {
         const controller = new AbortController();
 
-        const loadUser = async () => {
+        const loadSettings = async () => {
         try {
-            const result = await getMyUser({
-            signal: controller.signal,
-            });
+            setIsLoading(true);
+            setError("");
 
-            const nextNickname = result?.nickname ?? result?.data?.nickname ?? "";
+            const [userResult, defaultProfileResult] = await Promise.all([
+            getMyUser({
+                signal: controller.signal,
+            }),
+            getDefaultProfileCard({
+                signal: controller.signal,
+            }),
+            ]);
 
-            const nextAccountName =
-            result?.name ??
-            result?.data?.name ??
-            result?.username ??
-            result?.data?.username ??
-            nextNickname;
+            if (controller.signal.aborted) {
+            return;
+            }
 
-            const nextAccountEmail = result?.email ?? result?.data?.email ?? "";
+            const user = unwrapUser(userResult);
+            const defaultProfile = unwrapProfileCard(defaultProfileResult);
+
+            const nextNickname = defaultProfile?.nickname ?? user?.nickname ?? "";
+            const nextEmail =
+            user?.email ?? user?.account?.email ?? user?.profile?.email ?? "";
+            const nextLinks = normalizeLinks(
+            defaultProfile?.links ??
+                defaultProfile?.profileLinks ??
+                defaultProfile?.linkList,
+            nextEmail,
+            );
+            const nextLinkPayload = createLinkPayload(nextLinks);
 
             setNickname(nextNickname);
             setInitialNickname(nextNickname);
-            setAccountName(nextAccountName);
-            setAccountEmail(nextAccountEmail);
+
+            setLinks(nextLinks);
+            setInitialLinks(nextLinkPayload);
+
+            setAccountName(
+            user?.name ?? user?.username ?? user?.nickname ?? nextNickname,
+            );
+            setAccountEmail(nextEmail);
         } catch (requestError) {
             if (requestError?.name === "AbortError") {
             return;
             }
 
-            setError(requestError?.message ?? "회원 정보를 불러오지 못했습니다.");
+            setError(requestError?.message ?? "기본 정보를 불러오지 못했습니다.");
         } finally {
             if (!controller.signal.aborted) {
             setIsLoading(false);
@@ -202,16 +342,13 @@
         }
         };
 
-        loadUser();
+        loadSettings();
 
         return () => {
         controller.abort();
         };
     }, []);
 
-    /*
-    * 내가 보낸 카드 교환 요청 조회
-    */
     const loadSentRequests = useCallback(async (signal) => {
         setIsRequestsLoading(true);
         setError("");
@@ -240,19 +377,16 @@
             new Map(
             responses.flatMap(getItems).map((request) => [request.id, request]),
             ).values(),
-        ).sort((a, b) => {
-            const dateA = new Date(getRequestDate(a)).getTime();
+        ).sort((first, second) => {
+            const firstDate = new Date(getRequestDate(first)).getTime();
+            const secondDate = new Date(getRequestDate(second)).getTime();
 
-            const dateB = new Date(getRequestDate(b)).getTime();
-
-            return dateB - dateA;
+            return secondDate - firstDate;
         });
 
-        if (signal?.aborted) {
-            return;
+        if (!signal?.aborted) {
+            setSentRequests(uniqueRequests);
         }
-
-        setSentRequests(uniqueRequests);
         } catch (requestError) {
         if (requestError?.name === "AbortError") {
             return;
@@ -280,16 +414,19 @@
         };
     }, [activeSection, loadSentRequests]);
 
+    const clearMessages = () => {
+        setError("");
+        setSuccessMessage("");
+    };
+
     const moveToPath = (path) => {
         if (isDirty && activeSection === "basic") {
         setPendingPath(path);
         setIsLeaveModalOpen(true);
-
         return;
         }
 
-        setError("");
-        setSuccessMessage("");
+        clearMessages();
         navigate(path);
     };
 
@@ -297,11 +434,46 @@
         if (isDirty && activeSection === "basic") {
         setPendingPath("/profile");
         setIsLeaveModalOpen(true);
-
         return;
         }
 
         navigate("/profile");
+    };
+
+    const handleLinkChange = (index, field, value) => {
+        setLinks((previousLinks) =>
+        previousLinks.map((link, linkIndex) =>
+            linkIndex === index
+            ? {
+                ...link,
+                [field]: field === "type" ? Number(value) : value,
+                }
+            : link,
+        ),
+        );
+
+        clearMessages();
+    };
+
+    const handleAddLink = () => {
+        if (links.length >= 4) {
+        return;
+        }
+
+        setLinks((previousLinks) => [...previousLinks, createEmptyLink()]);
+        clearMessages();
+    };
+
+    const handleRemoveLink = (index) => {
+        setLinks((previousLinks) => {
+        const nextLinks = previousLinks.filter(
+            (_, linkIndex) => linkIndex !== index,
+        );
+
+        return nextLinks.length > 0 ? nextLinks : [createEmptyLink()];
+        });
+
+        clearMessages();
     };
 
     const handleLogout = async () => {
@@ -310,23 +482,17 @@
         }
 
         setIsLoggingOut(true);
-        setError("");
-        setSuccessMessage("");
+        clearMessages();
 
         try {
         await requestLogout();
-
         removeAccessToken();
-
         window.location.replace("/explore");
         } catch (requestError) {
-        console.error("로그아웃 실패:", requestError);
-
         setError(
             requestError?.message ??
             "로그아웃하지 못했습니다. 잠시 후 다시 시도해주세요.",
         );
-
         setIsLoggingOut(false);
         }
     };
@@ -337,7 +503,6 @@
         }
 
         setCancellingRequestId(requestId);
-
         setError("");
 
         try {
@@ -370,13 +535,10 @@
 
         try {
         await deleteCurrentUser();
-
         removeAccessToken();
-
         window.location.replace("/explore");
         } catch (requestError) {
         setError(requestError?.message ?? "회원 탈퇴에 실패했습니다.");
-
         setIsWithdrawing(false);
         setIsWithdrawModalOpen(false);
         }
@@ -391,6 +553,7 @@
         const nextPath = pendingPath ?? "/profile";
 
         setNickname(initialNickname);
+        setLinks(normalizeLinks(initialLinks));
         setIsLeaveModalOpen(false);
         setPendingPath(null);
 
@@ -402,34 +565,47 @@
 
         const trimmedNickname = nickname.trim();
 
-        if (!trimmedNickname) {
+        if (isNicknameDirty && !trimmedNickname) {
         setError("닉네임을 입력해주세요.");
-
         return;
         }
 
         if (!isDirty) {
         setError("");
-
         setSuccessMessage("변경된 내용이 없습니다.");
-
         return;
+        }
+
+        const requestBody = {};
+
+        if (isNicknameDirty) {
+        requestBody.nickname = trimmedNickname;
+        }
+
+        if (areLinksDirty) {
+        requestBody.links = currentLinkPayload;
         }
 
         try {
         setIsSaving(true);
-        setError("");
-        setSuccessMessage("");
+        clearMessages();
 
-        const result = await updateMyUser({
-            nickname: trimmedNickname,
-        });
+        const result = await updateDefaultProfileCard(requestBody);
+        const savedProfile = unwrapProfileCard(result);
 
         const savedNickname =
-            result?.nickname ?? result?.data?.nickname ?? trimmedNickname;
+            savedProfile?.nickname ?? requestBody.nickname ?? initialNickname;
+
+        const savedLinks = Array.isArray(savedProfile?.links)
+            ? savedProfile.links
+            : (requestBody.links ?? initialLinks);
+        const nextSavedLinks = normalizeLinks(savedLinks, accountEmail);
+        const nextSavedLinkPayload = createLinkPayload(nextSavedLinks);
 
         setNickname(savedNickname);
         setInitialNickname(savedNickname);
+        setLinks(nextSavedLinks);
+        setInitialLinks(nextSavedLinkPayload);
 
         setSuccessMessage("기본 정보가 변경되었습니다.");
         } catch (requestError) {
@@ -442,7 +618,7 @@
     const renderBasicSettings = () => {
         if (isLoading) {
         return (
-            <p className={styles.statusText}>회원 정보를 불러오는 중입니다.</p>
+            <p className={styles.statusText}>기본 정보를 불러오는 중입니다.</p>
         );
         }
 
@@ -450,8 +626,7 @@
         <>
             <div className={styles.contentHeader}>
             <h1>기본 정보 변경</h1>
-
-            <p>변경 시점 이후 만드시는 카드에만 변경 사항이 적용됩니다.</p>
+            <p>기본 카드의 닉네임과 링크를 변경합니다.</p>
             </div>
 
             <form className={styles.form} onSubmit={handleSubmit}>
@@ -464,36 +639,69 @@
                 value={nickname}
                 onChange={(event) => {
                     setNickname(event.target.value);
-
-                    setError("");
-                    setSuccessMessage("");
+                    clearMessages();
                 }}
-                maxLength={20}
+                maxLength={255}
                 placeholder="닉네임을 입력해주세요"
                 />
             </div>
 
-            <div className={styles.field}>
-                <label htmlFor="job">직군</label>
-
-                <div className={styles.jobRow}>
-                <button type="button" className={styles.jobSelectButton} disabled>
-                    선택
-                    <span>▾</span>
-                </button>
-
-                <input
-                    id="job"
-                    type="text"
-                    value="직군 변경 API 준비 중"
-                    disabled
-                    readOnly
-                />
+            <div className={`${styles.field} ${styles.linkField}`}>
+                <div className={styles.linkHeader}>
+                <label>링크</label>
+                <span>{currentLinkPayload.length}/4</span>
                 </div>
 
-                <p className={styles.fieldDescription}>
-                현재 API에서는 닉네임만 변경할 수 있습니다.
-                </p>
+                <div className={styles.linkList}>
+                {links.map((link, index) => (
+                    <div className={styles.linkRow} key={index}>
+                    <div className={styles.linkTypeWrap}>
+                        <select
+                        className={styles.linkTypeSelect}
+                        value={link.type}
+                        onChange={(event) =>
+                            handleLinkChange(index, "type", event.target.value)
+                        }
+                        aria-label={`${index + 1}번째 링크 종류`}
+                        >
+                        {LINK_TYPES.map((linkType) => (
+                            <option value={linkType.type} key={linkType.type}>
+                            {linkType.label}
+                            </option>
+                        ))}
+                        </select>
+                    </div>
+
+                    <input
+                        className={styles.linkInput}
+                        type="text"
+                        value={link.value}
+                        onChange={(event) =>
+                        handleLinkChange(index, "value", event.target.value)
+                        }
+                        placeholder="이메일, 포트폴리오 주소 등을 입력해주세요"
+                    />
+
+                    <button
+                        type="button"
+                        className={styles.removeLinkButton}
+                        onClick={() => handleRemoveLink(index)}
+                        aria-label={`${index + 1}번째 링크 삭제`}
+                    >
+                        삭제
+                    </button>
+                    </div>
+                ))}
+                </div>
+
+                <button
+                type="button"
+                className={styles.addLinkButton}
+                onClick={handleAddLink}
+                disabled={links.length >= 4}
+                >
+                + 링크 추가
+                </button>
             </div>
 
             {error && (
@@ -521,22 +729,18 @@
     };
 
     const renderRequests = () => {
-        const getTargetCard = (request) => {
-        return (
-            request?.receiverCard ??
-            request?.receiverProfileCard ??
-            request?.targetCard ??
-            request?.card ??
-            request?.receiver ??
-            {}
-        );
-        };
+        const getTargetCard = (request) =>
+        request?.receiverCard ??
+        request?.receiverProfileCard ??
+        request?.targetCard ??
+        request?.card ??
+        request?.receiver ??
+        {};
 
         return (
         <>
             <div className={styles.contentHeader}>
             <h1>내 요청 기록</h1>
-
             <p>내가 보낸 카드 교환 요청을 관리합니다.</p>
             </div>
 
@@ -556,17 +760,19 @@
             <div className={styles.requestList}>
                 {sentRequests.map((request) => {
                 const targetCard = mapProfileCard(getTargetCard(request));
-
                 const status = getRequestStatus(request);
-
                 const displayName =
                     targetCard?.name ?? targetCard?.nickname ?? "프로필 카드";
-
                 const profileImageUrl =
                     targetCard?.profileImage ?? targetCard?.profileImageUrl ?? "";
 
                 return (
-                    <article className={styles.requestItem} key={request.id}>
+                    <article
+                    className={`${styles.requestItem} ${
+                        status === 0 ? styles.requestItemCancelable : ""
+                    }`}
+                    key={request.id}
+                    >
                     <div className={styles.requestProfile}>
                         {profileImageUrl ? (
                         <img
@@ -583,9 +789,8 @@
                         </div>
                         )}
 
-                        <div>
+                        <div className={styles.requestText}>
                         <strong>{displayName}</strong>
-
                         <p>{formatRequestDate(request)}</p>
                         </div>
                     </div>
@@ -604,12 +809,13 @@
                         {status === 0 && (
                         <button
                             type="button"
+                            className={styles.requestCancelButton}
                             onClick={() => handleCancelRequest(request.id)}
                             disabled={cancellingRequestId === request.id}
                         >
                             {cancellingRequestId === request.id
                             ? "취소 중..."
-                            : "요청 취소"}
+                            : "취소"}
                         </button>
                         )}
                     </div>
@@ -633,7 +839,6 @@
         <div className={styles.accountContent}>
             <div className={styles.contentHeader}>
             <h1>계정 관리</h1>
-
             <p>계정과 관련된 설정을 관리합니다.</p>
             </div>
 
@@ -646,7 +851,6 @@
             <div className={styles.accountInfo}>
             <div className={styles.field}>
                 <label htmlFor="account-name">이름</label>
-
                 <input
                 id="account-name"
                 className={styles.accountReadOnlyInput}
@@ -659,7 +863,6 @@
 
             <div className={styles.field}>
                 <label htmlFor="account-email">이메일</label>
-
                 <input
                 id="account-email"
                 className={styles.accountReadOnlyInput}
@@ -674,7 +877,6 @@
             <div className={styles.dangerSection}>
             <div>
                 <strong>회원 탈퇴</strong>
-
                 <p>탈퇴하면 계정과 관련된 정보가 삭제되며 되돌릴 수 없습니다.</p>
             </div>
 
@@ -701,20 +903,20 @@
             <nav className={styles.sideNav}>
             <button
                 type="button"
-                className={activeSection === "basic" ? styles.activeSideItem : ""}
-                onClick={() => moveToPath("/settings")}
-            >
-                기본 정보 변경
-            </button>
-
-            <button
-                type="button"
                 className={
                 activeSection === "requests" ? styles.activeSideItem : ""
                 }
                 onClick={() => moveToPath("/settings/requests")}
             >
                 내 요청 기록
+            </button>
+
+            <button
+                type="button"
+                className={activeSection === "basic" ? styles.activeSideItem : ""}
+                onClick={() => moveToPath("/settings")}
+            >
+                기본 정보 변경
             </button>
 
             <button
@@ -739,9 +941,7 @@
         <section className={styles.content}>
             <div className={styles.contentInner}>
             {activeSection === "basic" && renderBasicSettings()}
-
             {activeSection === "requests" && renderRequests()}
-
             {activeSection === "account" && renderAccount()}
             </div>
         </section>
@@ -760,7 +960,6 @@
                 onMouseDown={(event) => event.stopPropagation()}
             >
                 <h2 id="leave-modal-title">변경 내용을 삭제하시겠어요?</h2>
-
                 <p>지금 돌아가면 변경 내용이 삭제됩니다.</p>
 
                 <div className={styles.modalActions}>
@@ -802,7 +1001,6 @@
                 onMouseDown={(event) => event.stopPropagation()}
             >
                 <h2 id="withdraw-modal-title">정말 탈퇴하시겠어요?</h2>
-
                 <p>탈퇴 후에는 계정 정보를 복구할 수 없습니다.</p>
 
                 <div className={styles.modalActions}>
