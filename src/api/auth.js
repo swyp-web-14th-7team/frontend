@@ -36,9 +36,6 @@ const parseResponse = async (
     return result?.data;
 };
 
-/*
- * 소셜 로그인 페이지 URL 조회
- */
 export const getSocialLoginUrl =
     async (provider) => {
         const response = await fetch(
@@ -57,9 +54,6 @@ export const getSocialLoginUrl =
         return data?.url;
     };
 
-/*
- * 소셜 로그인 콜백 처리
- */
 export const loginWithSocialCode =
     async ({
         provider,
@@ -95,10 +89,6 @@ export const loginWithSocialCode =
         );
     };
 
-/*
- * refresh_token과 device_id는
- * httpOnly 쿠키로 자동 전달된다.
- */
 export const refreshAccessToken =
     async () => {
         const response = await fetch(
@@ -116,13 +106,6 @@ export const refreshAccessToken =
         );
     };
 
-/*
- * 현재 로그인한 사용자 정보 조회
- *
- * apiClient의 parseResponse에서
- * response.data만 반환하기 때문에
- * 반환값은 바로 사용자 객체이다.
- */
 export const getMyInfo =
     async () => {
         return apiRequest(
@@ -133,9 +116,6 @@ export const getMyInfo =
         );
     };
 
-/*
- * 서버의 refresh_token을 제거한다.
- */
 export const requestLogout =
     async () => {
         const response = await fetch(

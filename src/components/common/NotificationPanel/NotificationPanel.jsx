@@ -6,6 +6,14 @@ const formatDateLabel = (
     const date = new Date(createdAt);
     const today = new Date();
 
+    if (
+        Number.isNaN(
+            date.getTime(),
+        )
+    ) {
+        return "날짜 없음";
+    }
+
     const isToday =
         date.getFullYear() ===
             today.getFullYear() &&
@@ -28,32 +36,148 @@ const formatDateLabel = (
     ).format(date);
 };
 
+const getResultContent = (
+    notification,
+) => {
+    const name =
+        notification?.payload
+            ?.counterpartName ||
+        "상대방";
+
+    if (
+        notification?.type === 1
+    ) {
+        return {
+            title: `${name}님이 교환 요청을 수락했어요`,
+            description:
+                "보관함에서 프로필을 확인해보세요",
+        };
+    }
+
+    if (
+        notification?.type === 2
+    ) {
+        return {
+            title: `${name}님이 교환 요청을 거절했어요`,
+            description:
+                "내 요청 기록을 확인해보세요",
+        };
+    }
+
+    return {
+        title:
+            "새로운 알림이 도착했어요",
+        description:
+            "알림 내용을 확인해보세요",
+    };
+};
+
 const NotificationPanel = ({
     requests = [],
+    notifications = [],
     errorMessage = "",
     onRequestClick,
+    onNotificationClick,
     onClose,
 }) => {
-    const pendingRequests =
+    const requestItems =
         requests.filter(
             (request) =>
                 request.status ===
                 "pending",
+        ).map((request) => ({
+            key: `request-${request.id}`,
+            id: request.id,
+            kind: "request",
+            createdAt:
+                request.createdAt,
+            isRead:
+                request.isRead,
+            profileImage:
+                request.sender
+                    ?.profileImage,
+            initial:
+                request.sender
+                    ?.name?.slice(
+                        0,
+                        1,
+                    ) || "?",
+            title: `${
+                request.sender
+                    ?.name ||
+                "상대방"
+            }님이 교환 요청을 보냈어요`,
+            description:
+                "프로필을 확인해보세요",
+            source: request,
+        }));
+
+    const resultItems =
+        notifications.map(
+            (notification) => {
+                const content =
+                    getResultContent(
+                        notification,
+                    );
+
+                return {
+                    key: `notification-${notification.id}`,
+                    id:
+                        notification.id,
+                    kind:
+                        "notification",
+                    createdAt:
+                        notification.createdAt,
+                    isRead:
+                        Boolean(
+                            notification.readAt,
+                        ),
+                    initial:
+                        notification.payload
+                            ?.counterpartName
+                            ?.slice(
+                                0,
+                                1,
+                            ) ||
+                        "N",
+                    title:
+                        content.title,
+                    description:
+                        content.description,
+                    source:
+                        notification,
+                };
+            },
         );
 
-    const groupedRequests =
-        pendingRequests.reduce(
-            (groups, request) => {
+    const items = [
+        ...requestItems,
+        ...resultItems,
+    ].sort(
+        (first, second) =>
+            new Date(
+                second.createdAt,
+            ) -
+            new Date(
+                first.createdAt,
+            ),
+    );
+
+    const groupedItems =
+        items.reduce(
+            (groups, item) => {
                 const label =
                     formatDateLabel(
-                        request.createdAt,
+                        item.createdAt,
                     );
 
                 if (!groups[label]) {
                     groups[label] = [];
                 }
 
-                groups[label].push(request);
+                groups[label].push(
+                    item,
+                );
 
                 return groups;
             },
@@ -77,21 +201,22 @@ const NotificationPanel = ({
             >
                 {errorMessage && (
                     <div
-                        className={styles.empty}
+                        className={
+                            styles.error
+                        }
                         role="alert"
                     >
                         {errorMessage}
                     </div>
                 )}
 
-                {!errorMessage && pendingRequests.length >
-                0 ? (
+                {items.length > 0 ? (
                     Object.entries(
-                        groupedRequests,
+                        groupedItems,
                     ).map(
                         ([
                             dateLabel,
-                            dateRequests,
+                            dateItems,
                         ]) => (
                             <section
                                 key={
@@ -110,33 +235,43 @@ const NotificationPanel = ({
                                         styles.list
                                     }
                                 >
-                                    {dateRequests.map(
+                                    {dateItems.map(
                                         (
-                                            request,
+                                            item,
                                         ) => (
                                             <button
                                                 key={
-                                                    request.id
+                                                    item.key
                                                 }
                                                 type="button"
                                                 className={`${styles.item} ${
-                                                    !request.isRead
+                                                    !item.isRead
                                                         ? styles.unreadItem
                                                         : ""
                                                 }`}
                                                     onClick={(event) => {
                                                         event.stopPropagation();
-                                                        onRequestClick?.(request);
+
+                                                        if (
+                                                            item.kind ===
+                                                            "request"
+                                                        ) {
+                                                            onRequestClick?.(
+                                                                item.source,
+                                                            );
+
+                                                            return;
+                                                        }
+
+                                                        onNotificationClick?.(
+                                                            item.source,
+                                                        );
                                                     }}
                                             >
-                                                {request
-                                                    .sender
-                                                    .profileImage ? (
+                                                {item.profileImage ? (
                                                     <img
                                                         src={
-                                                            request
-                                                                .sender
-                                                                .profileImage
+                                                            item.profileImage
                                                         }
                                                         alt=""
                                                         className={
@@ -148,7 +283,11 @@ const NotificationPanel = ({
                                                         className={
                                                             styles.avatarPlaceholder
                                                         }
-                                                    />
+                                                    >
+                                                        {
+                                                            item.initial
+                                                        }
+                                                    </span>
                                                 )}
 
                                                 <span
@@ -158,19 +297,14 @@ const NotificationPanel = ({
                                                 >
                                                     <strong>
                                                         {
-                                                            request
-                                                                .sender
-                                                                .name
+                                                            item.title
                                                         }
-                                                        님이
-                                                        교환
-                                                        요청을
-                                                        보냈어요
                                                     </strong>
 
                                                     <span>
-                                                        프로필을
-                                                        확인해보세요
+                                                        {
+                                                            item.description
+                                                        }
                                                     </span>
                                                 </span>
                                             </button>
