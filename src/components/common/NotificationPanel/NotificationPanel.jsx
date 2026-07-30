@@ -64,6 +64,16 @@ const getResultContent = (
         };
     }
 
+    if (
+        notification?.type === 3
+    ) {
+        return {
+            title: `${name}님이 교환 요청을 보냈어요`,
+            description:
+                "프로필을 확인해보세요",
+        };
+    }
+
     return {
         title:
             "새로운 알림이 도착했어요",
@@ -73,46 +83,12 @@ const getResultContent = (
 };
 
 const NotificationPanel = ({
-    requests = [],
     notifications = [],
     errorMessage = "",
-    onRequestClick,
     onNotificationClick,
     onClose,
 }) => {
-    const requestItems =
-        requests.filter(
-            (request) =>
-                request.status ===
-                "pending",
-        ).map((request) => ({
-            key: `request-${request.id}`,
-            id: request.id,
-            kind: "request",
-            createdAt:
-                request.createdAt,
-            isRead:
-                request.isRead,
-            profileImage:
-                request.sender
-                    ?.profileImage,
-            initial:
-                request.sender
-                    ?.name?.slice(
-                        0,
-                        1,
-                    ) || "?",
-            title: `${
-                request.sender
-                    ?.name ||
-                "상대방"
-            }님이 교환 요청을 보냈어요`,
-            description:
-                "프로필을 확인해보세요",
-            source: request,
-        }));
-
-    const resultItems =
+    const items =
         notifications.map(
             (notification) => {
                 const content =
@@ -124,8 +100,6 @@ const NotificationPanel = ({
                     key: `notification-${notification.id}`,
                     id:
                         notification.id,
-                    kind:
-                        "notification",
                     createdAt:
                         notification.createdAt,
                     isRead:
@@ -144,16 +118,19 @@ const NotificationPanel = ({
                         content.title,
                     description:
                         content.description,
+                    tone:
+                        notification.type ===
+                        1
+                            ? "accepted"
+                            : notification.type ===
+                                2
+                              ? "rejected"
+                              : "default",
                     source:
                         notification,
                 };
             },
-        );
-
-    const items = [
-        ...requestItems,
-        ...resultItems,
-    ].sort(
+        ).sort(
         (first, second) =>
             new Date(
                 second.createdAt,
@@ -248,20 +225,17 @@ const NotificationPanel = ({
                                                     !item.isRead
                                                         ? styles.unreadItem
                                                         : ""
+                                                } ${
+                                                    item.tone ===
+                                                    "accepted"
+                                                        ? styles.acceptedItem
+                                                        : item.tone ===
+                                                            "rejected"
+                                                          ? styles.rejectedItem
+                                                          : ""
                                                 }`}
                                                     onClick={(event) => {
                                                         event.stopPropagation();
-
-                                                        if (
-                                                            item.kind ===
-                                                            "request"
-                                                        ) {
-                                                            onRequestClick?.(
-                                                                item.source,
-                                                            );
-
-                                                            return;
-                                                        }
 
                                                         onNotificationClick?.(
                                                             item.source,
