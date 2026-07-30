@@ -1,4 +1,4 @@
-    import { useCallback, useEffect, useState } from "react";
+    import { useState } from "react";
 
     import { NavLink, useLocation, useNavigate } from "react-router-dom";
 
@@ -8,13 +8,12 @@
 
     import {
     acceptConnectionRequest,
-    getReceivedConnectionRequests,
     rejectConnectionRequest,
     } from "../../api/connectionRequests";
 
-    import { getDefaultProfileCard, getMyProfileCards } from "../../api/profile";
+    import { getDefaultProfileCard } from "../../api/profile";
 
-    import { mapProfileCard } from "../../utils/profileMapper";
+    import useNotifications from "../../hooks/useNotifications";
 
     import { isLoggedIn } from "../../utils/auth";
 
@@ -36,10 +35,6 @@
 
     const location = useLocation();
 
-    const [exchangeRequests, setExchangeRequests] = useState([]);
-
-    const [exchangeError, setExchangeError] = useState("");
-
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
 
     const [selectedRequest, setSelectedRequest] = useState(null);
@@ -48,107 +43,17 @@
 
     const isUserLoggedIn = isLoggedIn();
 
-    const loadReceivedRequests = useCallback(async (signal) => {
-        if (!isLoggedIn()) {
-        setExchangeRequests([]);
-
-        return;
-        }
-
-        try {
-        const cardData = await getMyProfileCards({
-            page: 1,
-            limit: 100,
-            sort: "createdAt",
-            order: "desc",
-            signal,
-        });
-
-        const myCards = cardData?.items || [];
-
-        const requestResponses = await Promise.all(
-            myCards.map((card) =>
-            getReceivedConnectionRequests({
-                cardId: card.id,
-
-                page: 1,
-                limit: 100,
-                sort: "createdAt",
-                order: "desc",
-                signal,
-            }),
-            ),
-        );
-
-        const requestMap = new Map();
-
-        requestResponses.forEach((response) => {
-            const items = response?.items || [];
-
-            items.forEach((item) => {
-            const receivedCard = mapProfileCard(item.card || {});
-
-            requestMap.set(item.id, {
-                id: item.id,
-
-                status:
-                item.status === 0
-                    ? "pending"
-                    : item.status === 1
-                    ? "accepted"
-                    : item.status === 2
-                        ? "rejected"
-                        : "cancelled",
-
-                isRead: false,
-
-                createdAt: item.createdAt?.isoString || item.createdAt,
-
-                sender: {
-                id: receivedCard.id,
-
-                name: receivedCard.name,
-
-                profileImage: receivedCard.profileImage,
-                },
-
-                receivedCard,
-
-                message: item.message || "전달된 메시지가 없습니다.",
-            });
-            });
-        });
-
-        const requests = Array.from(requestMap.values()).sort(
-            (first, second) =>
-            new Date(second.createdAt) - new Date(first.createdAt),
-        );
-
-        setExchangeRequests(requests);
-
-        setExchangeError("");
-        } catch (error) {
-        if (error?.name !== "AbortError") {
-            console.error("받은 교환 요청 조회 실패:", error);
-
-            setExchangeError(error.message || "교환 요청을 불러오지 못했습니다.");
-        }
-        }
-    }, []);
-
-    useEffect(() => {
-        const controller = new AbortController();
-
-        const fetchRequests = async () => {
-        await loadReceivedRequests(controller.signal);
-        };
-
-        fetchRequests();
-
-        return () => {
-        controller.abort();
-        };
-    }, [loadReceivedRequests]);
+    const {
+        receivedRequests:
+        exchangeRequests,
+        notifications,
+        errorMessage:
+        exchangeError,
+        hasUnreadNotification,
+        markNotificationAsRead,
+        markReceivedRequestAsRead,
+        removeReceivedRequest,
+    } = useNotifications();
 
     const isExploreActive =
         location.pathname === "/explore" ||
@@ -156,10 +61,6 @@
         location.pathname.startsWith("/profile/");
 
     const isScrapActive = location.pathname === "/scrap";
-
-    const hasUnreadNotification = exchangeRequests.some(
-        (request) => request.status === "pending" && !request.isRead,
-    );
 
     const handleLogoClick = () => {
         navigate("/explore");
@@ -229,15 +130,8 @@
     };
 
     const handleRequestClick = (request) => {
-        setExchangeRequests((currentRequests) =>
-        currentRequests.map((item) =>
-            item.id === request.id
-            ? {
-                ...item,
-                isRead: true,
-                }
-            : item,
-        ),
+        markReceivedRequestAsRead(
+        request.id,
         );
 
         setSelectedRequest({
@@ -248,12 +142,28 @@
         setIsNotificationOpen(false);
     };
 
+    const handleResultNotificationClick = (notification) => {
+        void markNotificationAsRead(
+        notification.id,
+        ).catch((error) => {
+        console.error("알림 읽음 처리 실패:", error);
+        });
+
+        setIsNotificationOpen(false);
+
+        navigate(
+        notification.type === 1
+            ? "/saved"
+            : "/settings/requests",
+        );
+    };
+
     const handleRejectRequest = async (requestId) => {
         try {
         await rejectConnectionRequest(requestId);
 
-        setExchangeRequests((currentRequests) =>
-            currentRequests.filter((request) => request.id !== requestId),
+        removeReceivedRequest(
+            requestId,
         );
 
         setSelectedRequest(null);
@@ -270,8 +180,8 @@
         try {
         await acceptConnectionRequest(requestId);
 
-        setExchangeRequests((currentRequests) =>
-            currentRequests.filter((request) => request.id !== requestId),
+        removeReceivedRequest(
+            requestId,
         );
 
         setSelectedRequest(null);
@@ -371,8 +281,10 @@
                 {isNotificationOpen && (
                     <NotificationPanel
                     requests={exchangeRequests}
+                    notifications={notifications}
                     errorMessage={exchangeError}
                     onRequestClick={handleRequestClick}
+                    onNotificationClick={handleResultNotificationClick}
                     onClose={() => setIsNotificationOpen(false)}
                     />
                 )}

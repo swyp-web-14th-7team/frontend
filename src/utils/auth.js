@@ -21,6 +21,12 @@ export const saveAccessToken = (
         "accessToken",
         accessToken,
     );
+
+    window.dispatchEvent(
+        new CustomEvent(
+            "auth:changed",
+        ),
+    );
 };
 
 export const saveUserName = (
@@ -42,6 +48,12 @@ export const removeAccessToken =
     () => {
         localStorage.removeItem(
             "accessToken",
+        );
+
+        window.dispatchEvent(
+            new CustomEvent(
+                "auth:changed",
+            ),
         );
     };
 
