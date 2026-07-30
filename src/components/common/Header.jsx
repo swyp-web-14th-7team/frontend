@@ -129,19 +129,6 @@
         setIsNotificationOpen((previous) => !previous);
     };
 
-    const handleRequestClick = (request) => {
-        markReceivedRequestAsRead(
-        request.id,
-        );
-
-        setSelectedRequest({
-        ...request,
-        isRead: true,
-        });
-
-        setIsNotificationOpen(false);
-    };
-
     const handleResultNotificationClick = (notification) => {
         void markNotificationAsRead(
         notification.id,
@@ -151,11 +138,56 @@
 
         setIsNotificationOpen(false);
 
+        if (notification.type === 1) {
+        const connectionId =
+            notification.payload
+            ?.connectionId;
+
         navigate(
-        notification.type === 1
-            ? "/saved"
-            : "/settings/requests",
+            connectionId
+            ? `/saved/${encodeURIComponent(connectionId)}`
+            : "/saved",
         );
+
+        return;
+        }
+
+        if (notification.type === 2) {
+        navigate("/settings/requests");
+
+        return;
+        }
+
+        if (notification.type === 3) {
+        const requestId =
+            notification.payload?.requestId;
+
+        const request =
+            exchangeRequests.find(
+            (item) =>
+                String(item.id) ===
+                String(requestId),
+            );
+
+        if (request) {
+            markReceivedRequestAsRead(
+            request.id,
+            );
+
+            setSelectedRequest({
+            ...request,
+            isRead: true,
+            });
+
+            return;
+        }
+
+        navigate("/settings/requests");
+
+        return;
+        }
+
+        navigate("/settings");
     };
 
     const handleRejectRequest = async (requestId) => {
@@ -280,10 +312,8 @@
 
                 {isNotificationOpen && (
                     <NotificationPanel
-                    requests={exchangeRequests}
                     notifications={notifications}
                     errorMessage={exchangeError}
-                    onRequestClick={handleRequestClick}
                     onNotificationClick={handleResultNotificationClick}
                     onClose={() => setIsNotificationOpen(false)}
                     />
