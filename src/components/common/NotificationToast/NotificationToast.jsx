@@ -21,21 +21,53 @@ const getToastContent = (
     if (
         notification?.type === 1
     ) {
+        const connectionId =
+            notification?.payload
+                ?.connectionId;
+
         return {
             title:
                 "연결 요청이 수락되었습니다",
             message: `${name}님과 연결되었습니다.`,
-            path: "/saved",
+            path:
+                connectionId
+                    ? `/saved/${encodeURIComponent(connectionId)}`
+                    : "/saved",
             type: "accepted",
+        };
+    }
+
+    if (
+        notification?.type === 2
+    ) {
+        return {
+            title:
+                "연결 요청이 거절되었습니다",
+            message: `${name}님이 연결 요청을 거절했습니다.`,
+            path: "/settings/requests",
+            type: "rejected",
+        };
+    }
+
+    if (
+        notification?.type === 3
+    ) {
+        return {
+            title:
+                "새로운 연결 요청이 도착했습니다",
+            message: `${name}님이 연결 요청을 보냈습니다.`,
+            path: "/settings/requests",
+            type: "requested",
         };
     }
 
     return {
         title:
-            "연결 요청이 거절되었습니다",
-        message: `${name}님이 연결 요청을 거절했습니다.`,
-        path: "/settings/requests",
-        type: "rejected",
+            "새로운 알림이 도착했습니다",
+        message:
+            "알림함에서 내용을 확인해주세요.",
+        path: "/settings",
+        type: "default",
     };
 };
 

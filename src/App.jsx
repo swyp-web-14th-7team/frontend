@@ -66,6 +66,15 @@
             />
 
             <Route
+            path="/saved/:connectionId"
+            element={
+                <ProtectedRoute>
+                <ProfileDetail />
+                </ProtectedRoute>
+            }
+            />
+
+            <Route
             path="/profile"
             element={
                 <ProtectedRoute>

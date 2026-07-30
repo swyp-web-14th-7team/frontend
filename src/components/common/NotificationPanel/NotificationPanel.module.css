@@ -6,6 +6,8 @@
     padding: 0;
 
     border: 0;
+    border-left: 3px solid
+        transparent;
     background: transparent;
 }
 
@@ -62,6 +64,7 @@
     gap: 12px;
 
     border: 0;
+    border-left: 3px solid transparent;
     border-radius: 7px;
     background: transparent;
     color: #ffffff;
@@ -76,6 +79,24 @@
 
 .unreadItem {
     background-color: #363b51;
+}
+
+.acceptedItem {
+    border-left-color: #58d68d;
+    background-color: rgba(88, 214, 141, 0.14);
+}
+
+.rejectedItem {
+    border-left-color: #ff6b75;
+    background-color: rgba(255, 107, 117, 0.14);
+}
+
+.acceptedItem:hover {
+    background-color: rgba(88, 214, 141, 0.2);
+}
+
+.rejectedItem:hover {
+    background-color: rgba(255, 107, 117, 0.2);
 }
 
 .avatar,

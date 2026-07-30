@@ -38,6 +38,14 @@
     border-left-color: #ff6b75;
 }
 
+.requested {
+    border-left-color: #4b516b;
+}
+
+.default {
+    border-left-color: #9298aa;
+}
+
 .content {
     min-width: 0;
     padding: 0;
