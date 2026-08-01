@@ -23,9 +23,17 @@
         onClick={() => onClick?.(profile.id)}
         aria-label={`${profile.name} 프로필 상세 보기`}
         >
-        <p className={styles.job}>
-            {JOB_LABELS[profile.job] || "직군 미선택"}
-        </p>
+        <div className={styles.topRow}>
+            <p className={styles.job}>
+                {JOB_LABELS[profile.job] || "직군 미선택"}
+            </p>
+
+            {profile.isMine && (
+                <span className={styles.ownCardBadge}>
+                    내 카드
+                </span>
+            )}
+        </div>
 
         <div className={styles.profileRow}>
             {profile.profileImage ? (

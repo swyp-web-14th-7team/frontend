@@ -2,6 +2,10 @@ import { useRef } from "react";
 
 import ExploreProfileCard from "../profile/ExploreProfileCard";
 
+import {
+    getProfileImageUrl,
+} from "../../utils/profileMapper";
+
 import defaultProfileImage from "../../assets/images/avatarPlaceholder_default.png";
 
 import styles from "./MyCardSelector.module.css";
@@ -53,11 +57,17 @@ const normalizeCard = (card) => {
     const cardId =
         getCardId(card);
 
-    const profileImage =
+    const rawProfileImage =
         card?.profileImageUrl ||
         card?.profileImage ||
         card?.imageUrl ||
         card?.image ||
+        "";
+
+    const profileImage =
+        getProfileImageUrl(
+            rawProfileImage,
+        ) ||
         defaultProfileImage;
 
     return {

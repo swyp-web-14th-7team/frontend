@@ -2,6 +2,33 @@ import OnboardingLayout from "../common/OnboardingLayout";
 
 import styles from "./JobSelectStep.module.css";
 
+const getJobIconUrl = (
+    imageUrl,
+) => {
+    const normalizedUrl =
+        String(
+            imageUrl || "",
+        ).trim();
+
+    if (!normalizedUrl) {
+        return "";
+    }
+
+    const isCompletedImageUrl =
+        /\.(?:avif|gif|jpe?g|png|svg|webp)(?:\?.*)?$/i.test(
+            normalizedUrl,
+        );
+
+    if (isCompletedImageUrl) {
+        return normalizedUrl;
+    }
+
+    return `${normalizedUrl.replace(
+        /\/+$/,
+        "",
+    )}/36.webp`;
+};
+
 const JobSelectStep = ({
     data,
     jobOptions = [],
@@ -119,6 +146,11 @@ const JobSelectStep = ({
                                         data.job ===
                                         jobOption.id;
 
+                                    const iconUrl =
+                                        getJobIconUrl(
+                                            jobOption.imageUrl,
+                                        );
+
                                     return (
                                         <button
                                             key={
@@ -146,7 +178,20 @@ const JobSelectStep = ({
                                                 className={
                                                     styles.iconBox
                                                 }
-                                            />
+                                            >
+                                                {iconUrl && (
+                                                    <img
+                                                        src={
+                                                            iconUrl
+                                                        }
+                                                        alt=""
+                                                        aria-hidden="true"
+                                                        className={
+                                                            styles.jobIcon
+                                                        }
+                                                    />
+                                                )}
+                                            </span>
 
                                             <span
                                                 className={

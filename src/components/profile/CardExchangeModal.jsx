@@ -11,6 +11,12 @@ import {
     getMyProfileCards,
 } from "../../api/profile";
 
+import {
+    getPersonalityIcon,
+    getProfileImageUrl,
+    mapProfileCard,
+} from "../../utils/profileMapper";
+
 import MyCardSelector from "../exchange/MyCardSelector";
 
 import styles from "./CardExchangeModal.module.css";
@@ -72,16 +78,24 @@ const extractCardItems = (
 const normalizeCard = (
     card,
 ) => {
+    const mappedCard =
+        mapProfileCard(
+            card || {},
+        );
+
     const nickname =
         card?.nickname ||
         card?.name ||
         "이름 없음";
 
     const job =
-        card?.job ||
-        card?.jobType ||
-        card?.jobTypeName ||
-        card?.jobName ||
+        mappedCard.job ||
+        (
+            typeof card?.job ===
+            "string"
+                ? card.job
+                : ""
+        ) ||
         "";
 
     const affiliationStatus =
@@ -91,12 +105,32 @@ const normalizeCard = (
             : card?.affiliationStatus
                   ?.name || "";
 
+    const rawPersonality =
+        card?.personality ||
+        card?.strength ||
+        null;
+
     const personality =
-        typeof card?.personality ===
+        typeof rawPersonality ===
         "string"
-            ? card.personality
-            : card?.personality ||
-              null;
+            ? rawPersonality
+            : rawPersonality
+              ? {
+                    ...rawPersonality,
+                    icon:
+                        getPersonalityIcon(
+                            rawPersonality.imageUrl ||
+                                rawPersonality.icon,
+                        ),
+                }
+              : null;
+
+    const profileImage =
+        getProfileImageUrl(
+            card?.profileImageUrl ||
+                card?.profileImageUri ||
+                card?.profileImage,
+        );
 
     return {
         ...card,
@@ -116,6 +150,7 @@ const normalizeCard = (
 
         jobTypeName:
             card?.jobTypeName ||
+            mappedCard.jobTypeName ||
             job,
 
         affiliation:
@@ -138,14 +173,10 @@ const normalizeCard = (
             "",
 
         profileImage:
-            card?.profileImageUrl ||
-            card?.profileImage ||
-            "",
+            profileImage,
 
         profileImageUrl:
-            card?.profileImageUrl ||
-            card?.profileImage ||
-            "",
+            profileImage,
 
         cardImageUrl:
             card?.cardImageUrl ||
@@ -158,18 +189,13 @@ const normalizeCard = (
             "",
 
         skills:
-            Array.isArray(
-                card?.skills,
-            )
-                ? card.skills
-                : [],
+            mappedCard.skills,
+
+        techStacks:
+            mappedCard.techStacks,
 
         interests:
-            Array.isArray(
-                card?.interests,
-            )
-                ? card.interests
-                : [],
+            mappedCard.interests,
 
         experiences:
             Array.isArray(

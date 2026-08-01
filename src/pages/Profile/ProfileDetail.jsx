@@ -37,6 +37,7 @@ import {
 } from "../../api/cardBackground";
 
 import usePublicProfile from "../../hooks/usePublicProfile";
+import useMyProfileCardIds from "../../hooks/useMyProfileCardIds";
 
 import {
     mapProfileCard,
@@ -158,6 +159,11 @@ const ProfileDetail = () => {
     connectionId,
 );
 
+    const {
+        myProfileCardIds,
+        isLoading: isMyProfileCardsLoading,
+    } = useMyProfileCardIds();
+
     const loadDrawers = useCallback(async (signal) => {
         try {
             const groupData = await getCollectionGroups({
@@ -265,6 +271,12 @@ const ProfileDetail = () => {
         );
     }
 
+    const isOwnProfileCard =
+        !connectionId &&
+        myProfileCardIds.has(
+            String(profile.id),
+        );
+
     const interests = (profile.interests || [])
         .map((interest, index) => ({
             id:
@@ -322,6 +334,10 @@ const ProfileDetail = () => {
         );
 
     const handleOpenScrap = () => {
+        if (isOwnProfileCard) {
+            return;
+        }
+
         const savedDrawerIds = drawers
             .filter(isProfileInDrawer)
             .map((drawer) => drawer.id);
@@ -482,6 +498,10 @@ const handleScrapSave = async () => {
 };
 
     const handleOpenExchangeModal = () => {
+        if (isOwnProfileCard) {
+            return;
+        }
+
         setIsExchangeModalOpen(true);
     };
 
@@ -610,23 +630,37 @@ const handleScrapSave = async () => {
                     )}
 
                     <div className={styles.summaryActions}>
-                        <button
-                            type="button"
-                            className={styles.exchangeButton}
-                            onClick={
-                                handleOpenExchangeModal
-                            }
-                        >
-                            카드 교환 요청
-                        </button>
+                        {!isMyProfileCardsLoading && (
+                            isOwnProfileCard ? (
+                                <span
+                                    className={
+                                        styles.ownCardStatus
+                                    }
+                                >
+                                    내 카드
+                                </span>
+                            ) : (
+                                <>
+                                    <button
+                                        type="button"
+                                        className={styles.exchangeButton}
+                                        onClick={
+                                            handleOpenExchangeModal
+                                        }
+                                    >
+                                        카드 교환 요청
+                                    </button>
 
-                        <button
-                            type="button"
-                            className={styles.scrapButton}
-                            onClick={handleOpenScrap}
-                        >
-                            스크랩하기
-                        </button>
+                                    <button
+                                        type="button"
+                                        className={styles.scrapButton}
+                                        onClick={handleOpenScrap}
+                                    >
+                                        스크랩하기
+                                    </button>
+                                </>
+                            )
+                        )}
                     </div>
                 </aside>
 
@@ -1078,7 +1112,7 @@ const handleScrapSave = async () => {
                 </div>
             )}
 
-            {isExchangeModalOpen && (
+            {isExchangeModalOpen && !isOwnProfileCard && (
                 <CardExchangeModal
                     receiver={profile}
                     onClose={
