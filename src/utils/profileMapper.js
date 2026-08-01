@@ -535,15 +535,6 @@ export const mapProfileCard = (
         isActive:
             profile.isActive ===
             true,
-
-        /*
-         * 백엔드 0.3.7부터
-         * isDefault는 true 또는
-         * null로 전달된다.
-         */
-        isDefault:
-            profile.isDefault ===
-            true,
     };
 };
 

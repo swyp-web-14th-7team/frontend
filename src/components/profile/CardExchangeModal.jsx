@@ -227,11 +227,6 @@ const normalizeCard = (
                 : card?.purpose
                       ?.name || "",
 
-        isDefault:
-            Boolean(
-                card?.isDefault,
-            ),
-
         isActive:
             card?.isActive !==
             false,

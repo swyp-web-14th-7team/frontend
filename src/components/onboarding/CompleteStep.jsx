@@ -5,6 +5,10 @@ import {
 import OnboardingLayout from "../common/OnboardingLayout";
 import CompleteProfileCard from "../profile/CompleteProfileCard";
 
+import {
+    getProfileImageUrl,
+} from "../../utils/profileMapper";
+
 import avatarPlaceholderDefault from "../../assets/images/avatarPlaceholder_default.png";
 
 import styles from "./CompleteStep.module.css";
@@ -27,9 +31,12 @@ const CompleteStep = ({
         "사용자";
 
     const profileImage =
-        createdProfile.profileImageUrl ||
-        data.profileImageUrl ||
-        data.profileImage ||
+        data.profileImagePreview ||
+        getProfileImageUrl(
+            createdProfile.profileImageUrl ||
+            data.profileImageUrl ||
+            data.profileImage,
+        ) ||
         avatarPlaceholderDefault;
 
     const completedCardData = {
@@ -86,7 +93,7 @@ const CompleteStep = ({
                     <h1
                         className={`headline1 ${styles.title}`}
                     >
-                        {name}님의 기본
+                        {name}님의 프로필
                         카드가 생성됐어요
                     </h1>
 

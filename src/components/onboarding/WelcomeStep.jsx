@@ -42,7 +42,7 @@ const WelcomeStep = ({
                     <p
                         className={`body1 ${styles.description}`}
                     >
-                        기본 카드를 만들어서
+                        프로필 카드를 만들어서
                         공유하고
                         <br />
 

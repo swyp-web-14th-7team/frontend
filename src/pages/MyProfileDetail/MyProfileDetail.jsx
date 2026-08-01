@@ -12,8 +12,6 @@
     updateProfileCard,
     } from "../../api/profile";
 
-    import { getMyUser } from "../../api/users";
-
     import { getPurposes } from "../../api/options";
 
     import { makeCardBackgroundUrl } from "../../api/cardBackground";
@@ -55,13 +53,6 @@
 
     return [];
     };
-
-    const unwrapUser = (response) =>
-    response?.user ??
-    response?.data?.user ??
-    response?.data ??
-    response ??
-    {};
 
     const getJobLabel = (profile) => {
     const job =
@@ -169,6 +160,20 @@
 
     const [shareMessage, setShareMessage] = useState("");
 
+    useEffect(() => {
+        if (actionError !== "마지막 프로필 카드는 삭제할 수 없습니다.") {
+        return undefined;
+        }
+
+        const timerId = window.setTimeout(() => {
+        setActionError("");
+        }, 4000);
+
+        return () => {
+        window.clearTimeout(timerId);
+        };
+    }, [actionError]);
+
     /*
     * 이전 화면의 스크롤 위치가 유지되면서
     * 헤더와 히어로 영역이 잘리는 문제를 방지합니다.
@@ -193,8 +198,7 @@
             setIsLoading(true);
             setLoadError("");
 
-            const [profileResponse, purposeResponse, userResponse] =
-            await Promise.all([
+            const [profileResponse, purposeResponse] = await Promise.all([
             getMyProfileCard(profileId, {
                 signal: controller.signal,
             }),
@@ -203,9 +207,6 @@
                 signal: controller.signal,
             }),
 
-            getMyUser({
-                signal: controller.signal,
-            }).catch(() => null),
             ]);
 
             if (controller.signal.aborted) {
@@ -218,19 +219,7 @@
             profileResponse?.data ??
             profileResponse;
 
-            const mappedProfile = mapProfileCard(rawProfile || {});
-            const currentUser = unwrapUser(userResponse);
-            const currentNickname = String(currentUser?.nickname || "").trim();
-
-            setProfile(
-            currentNickname
-                ? {
-                    ...mappedProfile,
-                    name: currentNickname,
-                    nickname: currentNickname,
-                }
-                : mappedProfile,
-            );
+            setProfile(mapProfileCard(rawProfile || {}));
 
             setPurposes(getItems(purposeResponse));
         } catch (error) {
@@ -295,8 +284,6 @@
     const cardBackgroundUrl = makeCardBackgroundUrl(
         profile.cardImageUrl || profile.cardImage,
     );
-
-    const isDefaultProfile = Boolean(profile.isDefault);
 
     const strengthTitle =
         typeof profile.strength === "string"
@@ -528,7 +515,7 @@
         return;
         }
 
-        if (!isDefaultProfile && selectedIsActive && !selectedPurposeId) {
+        if (selectedIsActive && !selectedPurposeId) {
         setActionError("공개 목적을 선택해주세요.");
 
         return;
@@ -543,11 +530,7 @@
             isActive: selectedIsActive,
         };
 
-        /*
-        * 기본 카드는 목적을 변경하지 않고
-        * 공개/비공개만 변경합니다.
-        */
-        if (!isDefaultProfile && selectedPurposeId) {
+        if (selectedPurposeId) {
             requestBody.purposeId = Number(selectedPurposeId);
         }
 
@@ -562,7 +545,7 @@
 
             isActive: selectedIsActive,
 
-            ...(!isDefaultProfile && selectedPurpose
+            ...(selectedPurpose
             ? {
                 purposeId: selectedPurpose.id,
 
@@ -585,12 +568,6 @@
         setIsMenuOpen(false);
         setActionError("");
 
-        if (isDefaultProfile) {
-        window.alert("기본 프로필 카드는 삭제할 수 없습니다.");
-
-        return;
-        }
-
         setIsDeleteModalOpen(true);
     };
 
@@ -610,7 +587,11 @@
             replace: true,
         });
         } catch (error) {
-        setActionError(error?.message || "프로필을 삭제하지 못했습니다.");
+        setActionError(
+            error?.status === 409
+            ? "마지막 프로필 카드는 삭제할 수 없습니다."
+            : error?.message || "프로필을 삭제하지 못했습니다.",
+        );
 
         setIsDeleteModalOpen(false);
         } finally {
@@ -828,7 +809,6 @@
                 </button>
                 </div>
 
-                {!isDefaultProfile && (
                 <div className={styles.settingRow}>
                     <label htmlFor="profile-purpose">목적</label>
 
@@ -846,7 +826,6 @@
                     ))}
                     </select>
                 </div>
-                )}
 
                 <div className={styles.settingRow}>
                 <span>공개</span>
