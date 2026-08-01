@@ -13,7 +13,7 @@ import {
 } from "../../api/auth";
 
 import {
-    getDefaultProfileCard,
+    getMyProfileCards,
 } from "../../api/profile";
 
 import {
@@ -98,8 +98,8 @@ const AuthCallback = ({
                     );
 
                     const userName =
-                        myInfo?.name ||
                         myInfo?.nickname ||
+                        myInfo?.name ||
                         "";
 
                     if (userName) {
@@ -108,40 +108,27 @@ const AuthCallback = ({
                         );
                     }
 
-try {
-    const defaultProfile =
-        await getDefaultProfileCard();
+                    const profileResult =
+                        await getMyProfileCards({
+                            page: 1,
+                            limit: 1,
+                        });
 
-    const defaultProfileId =
-        defaultProfile?.id ??
-        defaultProfile?.profileCardId ??
-        defaultProfile?.profileCard?.id ??
-        null;
+                    const profileItems =
+                        Array.isArray(profileResult)
+                            ? profileResult
+                            : profileResult?.items ??
+                              profileResult?.data?.items ??
+                              [];
 
-    if (!defaultProfileId) {
-        navigate("/onboarding", {
-            replace: true,
-        });
-
-        return;
-    }
-
-    navigate("/explore", {
-        replace: true,
-    });
-} catch (profileError) {
-    if (
-        profileError?.status === 404
-    ) {
-        navigate("/onboarding", {
-            replace: true,
-        });
-
-        return;
-    }
-
-    throw profileError;
-}
+                    navigate(
+                        profileItems.length > 0
+                            ? "/explore"
+                            : "/onboarding",
+                        {
+                            replace: true,
+                        },
+                    );
 
                 } catch (error) {
                     console.error(

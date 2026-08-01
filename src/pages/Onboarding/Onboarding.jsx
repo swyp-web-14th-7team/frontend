@@ -4,9 +4,10 @@
 
     import {
     createProfileCard,
-    getDefaultProfileCard,
     updateProfileCard,
     } from "../../api/profile";
+
+    import { getMyUser } from "../../api/users";
 
     import {
     getAffiliationStatuses,
@@ -197,54 +198,16 @@
         }));
     };
 
-    const getDefaultCardData = (profileCard) => {
-    if (!profileCard) {
+    const getUserIdentityData = (user) => {
+    if (!user) {
         return {};
     }
 
-    const nickname = profileCard.nickname || profileCard.name || "";
-
-    const profileImageUrl = profileCard.profileImageUrl || "";
-
-    const profileImagePreview = getProfileImagePreviewUrl(profileImageUrl);
+    const nickname = user.nickname || user.name || "";
 
     return {
         name: nickname,
         nickname,
-
-        profileImage: profileImageUrl,
-
-        profileImageUrl,
-
-        profileImagePreview,
-
-        links: normalizeLinks(profileCard.links),
-
-        experiences: normalizeExperiences(profileCard.experiences),
-    };
-    };
-
-    /*
-    * 새 카드 생성에서는 기본 카드의 ID나 상세 내용을 재사용하면 안 됩니다.
-    * 디자인 미리보기에 필요한 닉네임과 프로필 이미지만 이어받습니다.
-    */
-    const getDefaultCardIdentityData = (profileCard) => {
-    if (!profileCard) {
-        return {};
-    }
-
-    const defaultCardData = getDefaultCardData(profileCard);
-
-    return {
-        name: defaultCardData.name || "",
-
-        nickname: defaultCardData.nickname || "",
-
-        profileImage: defaultCardData.profileImage || "",
-
-        profileImageUrl: defaultCardData.profileImageUrl || "",
-
-        profileImagePreview: defaultCardData.profileImagePreview || "",
     };
     };
 
@@ -459,12 +422,11 @@
     }, [draftId, hasLoadedDraft, isOptionLoading, previewStepIndex]);
 
     /*
-    * 수정 전 저장된 새 카드 임시 데이터에는 닉네임이 없을 수 있습니다.
-    * 기본 카드에서 공통 프로필 정보만 보충해 미리보기의 "이름 없음"을 방지합니다.
+    * 카드 미리보기에 사용할 현재 사용자 이름을 불러옵니다.
+    * 화면에서는 이름으로 표시하지만 API 필드는 nickname을 사용합니다.
     */
     useEffect(() => {
         if (
-        !isCardCreationFlow ||
         !hasLoadedDraft ||
         onboardingData.name ||
         onboardingData.nickname
@@ -474,10 +436,10 @@
 
         let isMounted = true;
 
-        const loadDefaultCardIdentity = async () => {
+        const loadUserIdentity = async () => {
         try {
-            const defaultProfileCard = await getDefaultProfileCard();
-            const identityData = getDefaultCardIdentityData(defaultProfileCard);
+            const user = await getMyUser();
+            const identityData = getUserIdentityData(user);
 
             if (!isMounted) {
             return;
@@ -487,30 +449,19 @@
             ...previousData,
             name: previousData.name || identityData.name || "",
             nickname: previousData.nickname || identityData.nickname || "",
-            profileImage:
-                previousData.profileImage || identityData.profileImage || "",
-            profileImageUrl:
-                previousData.profileImageUrl || identityData.profileImageUrl || "",
-            profileImagePreview:
-                previousData.profileImagePreview ||
-                identityData.profileImagePreview ||
-                "",
             }));
         } catch (error) {
-            if (error?.status !== 404) {
-            console.error("기본 카드 정보 조회 실패:", error);
-            }
+            console.error("사용자 이름 조회 실패:", error);
         }
         };
 
-        loadDefaultCardIdentity();
+        loadUserIdentity();
 
         return () => {
         isMounted = false;
         };
     }, [
         hasLoadedDraft,
-        isCardCreationFlow,
         onboardingData.name,
         onboardingData.nickname,
     ]);
@@ -722,32 +673,8 @@
             skills: skillItems,
         }));
 
-        let basicProfileCard = null;
-
-        /*
-        * 새 카드 만들기에서도 기본 카드를 조회해
-        * 닉네임과 프로필 이미지만 미리보기에 사용합니다.
-        *
-        * 기본 카드가 없는 최초 온보딩에서만
-        * 여기서 기본 카드를 생성합니다.
-        */
-        try {
-            basicProfileCard = await getDefaultProfileCard();
-        } catch (error) {
-            if (error?.status !== 404) {
-            throw error;
-            }
-
-            if (!isCardCreationFlow) {
-            basicProfileCard = await createProfileCard({
-                jobTypeId: selectedJobTypeId,
-            });
-            }
-        }
-
-        const inheritedCardData = isCardCreationFlow
-            ? getDefaultCardIdentityData(basicProfileCard)
-            : getDefaultCardData(basicProfileCard);
+        const user = await getMyUser();
+        const identityData = getUserIdentityData(user);
 
         updateOnboardingData({
             job: selectedJob.id,
@@ -768,11 +695,11 @@
 
             cardImageUrl: "",
 
-            profileCardId: isCardCreationFlow ? null : basicProfileCard?.id || null,
+            profileCardId: null,
 
-            createdProfile: isCardCreationFlow ? null : basicProfileCard,
+            createdProfile: null,
 
-            ...inheritedCardData,
+            ...identityData,
         });
 
         nextStep();
@@ -894,9 +821,9 @@
             jobTypeId: onboardingData.jobTypeId,
             };
 
-            if (onboardingData.purposeId) {
-            createPayload.purposeId = onboardingData.purposeId;
-            }
+            createPayload.purposeId = isCardCreationFlow
+            ? Number(onboardingData.purposeId)
+            : 1;
 
             createdCard = await createProfileCard(createPayload);
 
@@ -907,10 +834,10 @@
             throw new Error("생성된 프로필 카드 ID를 받지 못했습니다.");
         }
 
-        const updatedCard = await updateProfileCard(profileCardId, {
-            ...profilePayload,
-            isActive: true,
-        });
+        const updatedCard = await updateProfileCard(
+            profileCardId,
+            profilePayload,
+        );
 
         removeOnboardingDraft(draftId);
 
