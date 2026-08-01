@@ -601,11 +601,15 @@
                 ? {
                     backgroundImage: `
                                     linear-gradient(
-                                        rgba(56, 132, 236, 0.1),
-                                        rgba(224, 235, 218, 0.08)
+                                        90deg,
+                                        rgba(56, 132, 236, 0.08),
+                                        rgba(224, 235, 218, 0.12)
                                     ),
                                     url("${cardBackgroundUrl}")
                                 `,
+                    backgroundPosition: "center",
+                    backgroundSize: "cover",
+                    backgroundRepeat: "no-repeat",
                 }
                 : undefined
             }

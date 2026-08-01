@@ -96,11 +96,21 @@
 
     .sideNav .logoutButton {
     margin-top: 8px;
-    color: #c7c9d2;
+    color: #ff6b78;
+    }
+
+    .sideNav .logoutButton:hover:not(:disabled) {
+    color: #ff8791;
+    background: rgba(255, 107, 120, 0.08);
+    }
+
+    .sideNav .logoutButton:disabled {
+    color: #b65b64;
+    cursor: wait;
     }
 
     /* =========================
-    蹂몃Ц
+    癰귣챶揆
     ========================= */
 
     .content {
@@ -150,7 +160,7 @@
     }
 
     /* =========================
-    湲곕낯 �뺣낫 蹂�寃�
+    疫꿸퀡�� 占쎈베�� 癰귨옙野껓옙
     ========================= */
 
     .form {
@@ -160,7 +170,7 @@
     flex-direction: column;
     gap: 24px;
 
-    /* 湲곗〈�� �덈떎硫� �쒓굅 */
+    /* 疫꿸퀣�덌옙占� 占쎈뜄�롳쭖占� 占쎌뮄援� */
     height: auto;
     min-height: 0;
     justify-content: flex-start;
@@ -488,7 +498,7 @@
     }
 
     /* =========================
-    �� �붿껌 湲곕줉
+    占쏙옙 占쎈뗄猿� 疫꿸퀡以�
     ========================= */
 
     .requestDateGroups {
@@ -703,7 +713,7 @@
     }
 
     /* =========================
-    硫붿떆吏�
+    筌롫뗄�놅쭪占�
     ========================= */
 
     .error,
@@ -730,7 +740,7 @@
     }
 
     /* =========================
-    怨꾩젙 愿�由�
+    �④쑴�� �울옙�깍옙
     ========================= */
 
     .dangerSection {
@@ -782,7 +792,7 @@
     }
 
     /* =========================
-    紐⑤떖
+    筌뤴뫀��
     ========================= */
 
     .modalBackdrop {
@@ -864,17 +874,17 @@
     color: #f8d98d;
     }
 
-    /* status 1 = 嫄곗젅 */
+    /* status 1 = 椰꾧퀣�� */
     .status1 {
     color: #a2a6b4;
     }
 
-    /* status 2 = �섎씫 */
+    /* status 2 = 占쎌꼶�� */
     .status2 {
     color: #a9e7c5;
     }
 
-    /* status 3 = 痍⑥냼 */
+    /* status 3 = �띯뫁�� */
     .status3 {
     color: #a2a6b4;
     }
@@ -888,6 +898,13 @@
     flex-direction: column;
     gap: 20px;
     margin-top: 32px;
+    }
+
+    .accountForm {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
     }
 
     .accountInfo .field {
@@ -921,6 +938,55 @@
     .accountInfo .field input:focus,
     .accountReadOnlyInput:focus {
     border-color: transparent;
+    }
+
+    .accountInfo .field .accountNicknameInput {
+    cursor: text;
+    }
+
+    .accountInfo .field .accountNicknameInput:focus {
+    border-color: #878fa1;
+    }
+
+    .nicknameControlRow {
+    width: 100%;
+
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+    align-items: center;
+    }
+
+    .nicknameSubmitButton {
+    min-width: 76px;
+    height: 48px;
+    padding: 0 16px;
+
+    border: 0;
+    border-radius: 8px;
+
+    color: #22364a;
+    background: #b4dcfa;
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+    }
+
+    .nicknameSubmitButton:hover:not(:disabled) {
+    background: #c8e7ff;
+    }
+
+    .nicknameSubmitButton:disabled {
+    opacity: 0.65;
+    cursor: wait;
+    }
+
+    .accountForm .error,
+    .accountForm .success {
+    margin-top: 20px;
     }
 
     .accountContent .dangerSection {
@@ -1027,7 +1093,7 @@
     }
     }
     /* =========================
-    諛섏쓳��
+    獄쏆꼷�놂옙占�
     ========================= */
 
     @media (max-width: 1100px) {
@@ -1079,7 +1145,7 @@
 
     .sideNav {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(2, 1fr);
     }
 
     .sideNav button {
