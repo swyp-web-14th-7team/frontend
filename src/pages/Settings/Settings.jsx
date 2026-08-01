@@ -9,10 +9,6 @@
     } from "../../api/users";
 
     import {
-    updateDefaultProfileCard,
-    } from "../../api/profile";
-
-    import {
     cancelConnectionRequest,
     getSentConnectionRequests,
     } from "../../api/connectionRequests";
@@ -125,10 +121,9 @@
 
     const activeSection = SECTION_MAP[section] ?? "account";
 
-    const [nickname, setNickname] = useState("");
-    const [initialNickname, setInitialNickname] = useState("");
+    const [name, setName] = useState("");
+    const [initialName, setInitialName] = useState("");
 
-    const [accountName, setAccountName] = useState("");
     const [accountEmail, setAccountEmail] = useState("");
 
     const [isLoading, setIsLoading] = useState(true);
@@ -148,8 +143,8 @@
     const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
     const [isWithdrawing, setIsWithdrawing] = useState(false);
 
-    const isNicknameDirty = nickname.trim() !== initialNickname.trim();
-    const isDirty = isNicknameDirty;
+    const isNameDirty = name.trim() !== initialName.trim();
+    const isDirty = isNameDirty;
 
     /*
     * 계정 관리에 필요한 회원 정보를 불러옵니다.
@@ -172,17 +167,14 @@
 
             const user = unwrapUser(userResult);
 
-            const nextNickname =
+            const nextName =
             user?.nickname || user?.profile?.nickname || user?.name || "";
             const nextEmail =
             user?.email ?? user?.account?.email ?? user?.profile?.email ?? "";
 
-            setNickname(nextNickname);
-            setInitialNickname(nextNickname);
+            setName(nextName);
+            setInitialName(nextName);
 
-            setAccountName(
-            user?.name ?? user?.username ?? user?.nickname ?? nextNickname,
-            );
             setAccountEmail(nextEmail);
         } catch (requestError) {
             if (requestError?.name === "AbortError") {
@@ -371,7 +363,7 @@
     const handleDiscardChanges = () => {
         const nextPath = pendingPath ?? "/profile";
 
-        setNickname(initialNickname);
+        setName(initialName);
         setIsLeaveModalOpen(false);
         setPendingPath(null);
 
@@ -381,10 +373,10 @@
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        const trimmedNickname = nickname.trim();
+        const trimmedName = name.trim();
 
-        if (isNicknameDirty && !trimmedNickname) {
-        setError("닉네임을 입력해주세요.");
+        if (isNameDirty && !trimmedName) {
+        setError("이름을 입력해주세요.");
         return;
         }
 
@@ -399,27 +391,23 @@
         clearMessages();
 
         const result = await updateCurrentUser({
-            nickname: trimmedNickname,
-        });
-
-        await updateDefaultProfileCard({
-            nickname: trimmedNickname,
+            nickname: trimmedName,
         });
 
         const savedUser = unwrapUser(result);
 
-        const savedNickname =
-            savedUser?.nickname || savedUser?.name || trimmedNickname;
+        const savedName =
+            savedUser?.nickname || savedUser?.name || trimmedName;
 
-        setNickname(savedNickname);
-        setInitialNickname(savedNickname);
-        saveUserName(savedNickname);
+        setName(savedName);
+        setInitialName(savedName);
+        saveUserName(savedName);
 
-        setSuccessMessage("닉네임과 카드 정보가 변경되었습니다.");
+        setSuccessMessage("이름이 변경되었습니다.");
         } catch (requestError) {
         setError(
             requestError?.message ??
-            "닉네임 또는 카드 정보를 변경하지 못했습니다.",
+            "이름을 변경하지 못했습니다.",
         );
         } finally {
         setIsSaving(false);
@@ -537,7 +525,7 @@
         <div className={styles.accountContent}>
             <div className={styles.contentHeader}>
             <h1>계정 관리</h1>
-            <p>닉네임과 계정 정보를 관리합니다.</p>
+            <p>이름과 계정 정보를 관리합니다.</p>
             </div>
 
             <form
@@ -546,41 +534,29 @@
             >
             <div className={styles.accountInfo}>
                 <div className={styles.field}>
-                <label htmlFor="account-nickname">닉네임</label>
-                <div className={styles.nicknameControlRow}>
+                <label htmlFor="account-name">이름</label>
+                <div className={styles.nameControlRow}>
                     <input
-                    id="account-nickname"
-                    className={styles.accountNicknameInput}
+                    id="account-name"
+                    className={styles.accountNameInput}
                     type="text"
-                    value={nickname}
+                    value={name}
                     onChange={(event) => {
-                        setNickname(event.target.value);
+                        setName(event.target.value);
                         clearMessages();
                     }}
                     maxLength={255}
-                    placeholder="닉네임을 입력해주세요"
+                    placeholder="이름을 입력해주세요"
                     />
 
                     <button
                     type="submit"
-                    className={styles.nicknameSubmitButton}
+                    className={styles.nameSubmitButton}
                     disabled={isSaving}
                     >
                     {isSaving ? "변경 중..." : "변경"}
                     </button>
                 </div>
-                </div>
-
-                <div className={styles.field}>
-                <label htmlFor="account-name">이름</label>
-                <input
-                    id="account-name"
-                    className={styles.accountReadOnlyInput}
-                    type="text"
-                    value={accountName || "등록된 이름이 없습니다."}
-                    readOnly
-                    aria-readonly="true"
-                />
                 </div>
 
                 <div className={styles.field}>
