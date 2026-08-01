@@ -13,7 +13,6 @@ import {
 } from "qrcode.react";
 
 import {
-    getDefaultProfileCard,
     getMyProfileCards,
     updateProfileCard,
 } from "../../api/profile";
@@ -21,10 +20,6 @@ import {
 import {
     getPurposes,
 } from "../../api/options";
-
-import {
-    getMyUser,
-} from "../../api/users";
 
 import {
     makeCardBackgroundUrl,
@@ -133,11 +128,6 @@ const MyPage = () => {
     ] = useState([]);
 
     const [
-        defaultProfileId,
-        setDefaultProfileId,
-    ] = useState(null);
-
-    const [
         purposes,
         setPurposes,
     ] = useState([]);
@@ -212,16 +202,6 @@ const MyPage = () => {
             selectedIndex
         ] || null;
 
-    const isSelectedProfileDefault =
-        Boolean(
-            selectedProfile &&
-                (
-                    selectedProfile.isDefault ||
-                    selectedProfile.id ===
-                        defaultProfileId
-                ),
-        );
-
     const previousProfile =
         selectedIndex > 0
             ? profiles[
@@ -261,26 +241,11 @@ const MyPage = () => {
                     const [
                         profileResult,
                         purposeResult,
-                        defaultProfileResult,
-                        userResult,
                     ] =
                         await Promise.all(
                             [
                                 getMyProfileCards(),
                                 getPurposes(),
-                                getDefaultProfileCard().catch(
-                                    (requestError) => {
-                                        if (
-                                            requestError?.status ===
-                                            404
-                                        ) {
-                                            return null;
-                                        }
-
-                                        throw requestError;
-                                    },
-                                ),
-                                getMyUser(),
                             ],
                         );
 
@@ -312,49 +277,9 @@ const MyPage = () => {
                                   ?.items ??
                               [];
 
-                    const resolvedDefaultProfile =
-                        defaultProfileResult
-                            ?.data ??
-                        defaultProfileResult
-                            ?.profileCard ??
-                        defaultProfileResult;
-
-                    const resolvedDefaultProfileId =
-                        resolvedDefaultProfile
-                            ?.id ??
-                        resolvedDefaultProfile
-                            ?.profileCardId ??
-                        null;
-
-                    const currentNickname =
-                        userResult?.nickname ||
-                        userResult?.user?.nickname ||
-                        userResult?.profile?.nickname ||
-                        userResult?.name ||
-                        userResult?.user?.name ||
-                        "";
-
-                    setDefaultProfileId(
-                        resolvedDefaultProfileId,
-                    );
-
                     const mappedProfiles =
                         mapProfileCards(
                             profileItems,
-                        ).map(
-                            (profile) => ({
-                                ...profile,
-                                ...(currentNickname
-                                    ? {
-                                          name: currentNickname,
-                                          nickname: currentNickname,
-                                      }
-                                    : {}),
-                                isDefault:
-                                    profile.isDefault ||
-                                    profile.id ===
-                                        resolvedDefaultProfileId,
-                            }),
                         );
 
                     setProfiles(
@@ -365,17 +290,7 @@ const MyPage = () => {
                         purposeItems,
                     );
 
-                    const defaultIndex =
-                        mappedProfiles.findIndex(
-                            (profile) =>
-                                profile.isDefault,
-                        );
-
-                    setSelectedIndex(
-                        defaultIndex >= 0
-                            ? defaultIndex
-                            : 0,
-                    );
+                    setSelectedIndex(0);
                 } catch (
                     requestError
                 ) {
@@ -661,7 +576,6 @@ const MyPage = () => {
             }
 
             if (
-                !isSelectedProfileDefault &&
                 selectedIsActive &&
                 !selectedPurposeId
             ) {
@@ -684,10 +598,7 @@ const MyPage = () => {
                         selectedIsActive,
                 };
 
-                if (
-                    !isSelectedProfileDefault &&
-                    selectedPurposeId
-                ) {
+                if (selectedPurposeId) {
                     requestBody.purposeId =
                         Number(
                             selectedPurposeId,
@@ -724,12 +635,17 @@ const MyPage = () => {
                                           isActive:
                                               selectedIsActive,
 
+                                          purposeId:
+                                              selectedPurpose?.id ??
+                                              profile.purposeId,
+
+                                          purpose:
+                                              selectedPurpose ??
+                                              profile.purpose,
+
                                           purposes:
-                                              !isSelectedProfileDefault &&
                                               selectedPurpose
-                                                  ? [
-                                                        selectedPurpose.name,
-                                                    ]
+                                                  ? [selectedPurpose.name]
                                                   : profile.purposes,
                                       }
                                     : profile,
@@ -1168,18 +1084,16 @@ const MyPage = () => {
                                     : "비공개"}
                             </span>
 
-                            {!isSelectedProfileDefault && (
-                                <span
-                                    className={
-                                        styles.purposeBadge
-                                    }
-                                >
-                                    {getProfilePurposeName(
-                                        selectedProfile,
-                                        purposes,
-                                    ) || "목적 미설정"}
-                                </span>
-                            )}
+                            <span
+                                className={
+                                    styles.purposeBadge
+                                }
+                            >
+                                {getProfilePurposeName(
+                                    selectedProfile,
+                                    purposes,
+                                ) || "목적 미설정"}
+                            </span>
                         </div>
 
                         <div
@@ -1270,12 +1184,11 @@ const MyPage = () => {
                                 styles.modalBody
                             }
                         >
-                            {!isSelectedProfileDefault && (
-                                <div
-                                    className={
-                                        styles.settingRow
-                                    }
-                                >
+                            <div
+                                className={
+                                    styles.settingRow
+                                }
+                            >
                                     <label
                                         htmlFor="profile-purpose"
                                     >
@@ -1316,8 +1229,7 @@ const MyPage = () => {
                                             ),
                                         )}
                                     </select>
-                                </div>
-                            )}
+                            </div>
 
                             <div
                                 className={

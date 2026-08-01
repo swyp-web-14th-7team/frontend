@@ -9,6 +9,11 @@
     } from "../../api/users";
 
     import {
+    getMyProfileCards,
+    updateProfileCard,
+    } from "../../api/profile";
+
+    import {
     cancelConnectionRequest,
     getSentConnectionRequests,
     } from "../../api/connectionRequests";
@@ -390,9 +395,26 @@
         setIsSaving(true);
         clearMessages();
 
-        const result = await updateCurrentUser({
-            nickname: trimmedName,
+        const cardsResponse = await getMyProfileCards({
+            page: 1,
+            limit: 100,
         });
+
+        const profileCards = getItems(cardsResponse);
+
+        const [result] = await Promise.all([
+            updateCurrentUser({
+            nickname: trimmedName,
+            }),
+
+            ...profileCards
+            .filter((card) => card?.id)
+            .map((card) =>
+                updateProfileCard(card.id, {
+                nickname: trimmedName,
+                }),
+            ),
+        ]);
 
         const savedUser = unwrapUser(result);
 
