@@ -9,8 +9,7 @@
     } from "../../api/users";
 
     import {
-    getMyProfileCards,
-    updateProfileCard,
+    updateDefaultProfileCard,
     } from "../../api/profile";
 
     import {
@@ -20,7 +19,7 @@
 
     import { requestLogout } from "../../api/auth";
 
-    import { removeAccessToken } from "../../utils/auth";
+    import { removeAccessToken, saveUserName } from "../../utils/auth";
 
     import { mapProfileCard } from "../../utils/profileMapper";
 
@@ -174,7 +173,7 @@
             const user = unwrapUser(userResult);
 
             const nextNickname =
-            user?.nickname ?? user?.profile?.nickname ?? "";
+            user?.nickname || user?.profile?.nickname || user?.name || "";
             const nextEmail =
             user?.email ?? user?.account?.email ?? user?.profile?.email ?? "";
 
@@ -399,33 +398,22 @@
         setIsSaving(true);
         clearMessages();
 
-        const cardsResponse = await getMyProfileCards({
-            page: 1,
-            limit: 100,
-        });
-        const profileCards = getItems(cardsResponse);
-
         const result = await updateCurrentUser({
             nickname: trimmedNickname,
         });
 
-        await Promise.all(
-            profileCards
-            .filter((card) => card?.id)
-            .map((card) =>
-                updateProfileCard(card.id, {
-                nickname: trimmedNickname,
-                }),
-            ),
-        );
+        await updateDefaultProfileCard({
+            nickname: trimmedNickname,
+        });
 
         const savedUser = unwrapUser(result);
 
         const savedNickname =
-            savedUser?.nickname ?? trimmedNickname;
+            savedUser?.nickname || savedUser?.name || trimmedNickname;
 
         setNickname(savedNickname);
         setInitialNickname(savedNickname);
+        saveUserName(savedNickname);
 
         setSuccessMessage("닉네임과 카드 정보가 변경되었습니다.");
         } catch (requestError) {
@@ -625,7 +613,7 @@
             <div className={styles.dangerSection}>
             <div>
                 <strong>회원 탈퇴</strong>
-                <p>탈퇴하면 계정과 관련된 정보가 삭제되며 되돌릴 수 없ㅇ.</p>
+                <p>탈퇴하면 계정과 관련된 정보가 삭제되며 되돌릴 수 없습니다.</p>
             </div>
 
             <button type="button" onClick={() => setIsWithdrawModalOpen(true)}>
