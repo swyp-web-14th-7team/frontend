@@ -12,6 +12,8 @@
     updateProfileCard,
     } from "../../api/profile";
 
+    import { getMyUser } from "../../api/users";
+
     import { getPurposes } from "../../api/options";
 
     import { makeCardBackgroundUrl } from "../../api/cardBackground";
@@ -53,6 +55,13 @@
 
     return [];
     };
+
+    const unwrapUser = (response) =>
+    response?.user ??
+    response?.data?.user ??
+    response?.data ??
+    response ??
+    {};
 
     const getJobLabel = (profile) => {
     const job =
@@ -184,7 +193,8 @@
             setIsLoading(true);
             setLoadError("");
 
-            const [profileResponse, purposeResponse] = await Promise.all([
+            const [profileResponse, purposeResponse, userResponse] =
+            await Promise.all([
             getMyProfileCard(profileId, {
                 signal: controller.signal,
             }),
@@ -192,6 +202,10 @@
             getPurposes({
                 signal: controller.signal,
             }),
+
+            getMyUser({
+                signal: controller.signal,
+            }).catch(() => null),
             ]);
 
             if (controller.signal.aborted) {
@@ -204,7 +218,19 @@
             profileResponse?.data ??
             profileResponse;
 
-            setProfile(mapProfileCard(rawProfile || {}));
+            const mappedProfile = mapProfileCard(rawProfile || {});
+            const currentUser = unwrapUser(userResponse);
+            const currentNickname = String(currentUser?.nickname || "").trim();
+
+            setProfile(
+            currentNickname
+                ? {
+                    ...mappedProfile,
+                    name: currentNickname,
+                    nickname: currentNickname,
+                }
+                : mappedProfile,
+            );
 
             setPurposes(getItems(purposeResponse));
         } catch (error) {
@@ -601,15 +627,11 @@
                 ? {
                     backgroundImage: `
                                     linear-gradient(
-                                        90deg,
-                                        rgba(56, 132, 236, 0.08),
-                                        rgba(224, 235, 218, 0.12)
+                                        rgba(56, 132, 236, 0.1),
+                                        rgba(224, 235, 218, 0.08)
                                     ),
                                     url("${cardBackgroundUrl}")
                                 `,
-                    backgroundPosition: "center",
-                    backgroundSize: "cover",
-                    backgroundRepeat: "no-repeat",
                 }
                 : undefined
             }
