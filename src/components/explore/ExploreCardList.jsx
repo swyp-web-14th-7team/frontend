@@ -63,6 +63,7 @@ const RestrictedCardWrapper = ({
 
 const ExploreCardList = ({
     profiles = [],
+    myProfileCardIds = new Set(),
     activeTab = "전체보기",
     keyword = "",
     isUserLoggedIn = false,
@@ -176,9 +177,15 @@ const ExploreCardList = ({
                             }
                         >
                             <ExploreProfileCard
-                                profile={
-                                    profile
-                                }
+                                profile={{
+                                    ...profile,
+                                    isMine:
+                                        myProfileCardIds.has(
+                                            String(
+                                                profile.id,
+                                            ),
+                                        ),
+                                }}
                                 onClick={
                                     isCardRestricted
                                         ? undefined
@@ -206,9 +213,15 @@ const ExploreCardList = ({
                             }
                         >
                             <MobileProfileCard
-                                profile={
-                                    profile
-                                }
+                                profile={{
+                                    ...profile,
+                                    isMine:
+                                        myProfileCardIds.has(
+                                            String(
+                                                profile.id,
+                                            ),
+                                        ),
+                                }}
                                 onClick={
                                     isCardRestricted
                                         ? undefined

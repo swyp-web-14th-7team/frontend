@@ -48,7 +48,14 @@ const CompleteStep = ({
             data.cardImageUrl,
     };
 
-    const handleViewProfile =
+    const handleViewMyCards =
+        () => {
+            navigate(
+                "/profile",
+            );
+        };
+
+    const handleExplore =
         () => {
             navigate(
                 "/explore",
@@ -86,12 +93,11 @@ const CompleteStep = ({
                     <p
                         className={`caption1 ${styles.description}`}
                     >
-                        기본 카드는 전체보기
-                        탭에 등록돼요
+                        완성된 카드는 내 프로필에서
+                        확인할 수 있어요
                         <br />
-                        새로운 인맥을 찾고
-                        프로필 카드를
-                        교환해보세요!
+                        다른 사람의 카드도 둘러보고
+                        연결해보세요!
                     </p>
                 </div>
 
@@ -111,15 +117,23 @@ const CompleteStep = ({
                     />
                 </div>
 
-                <button
-                    type="button"
-                    onClick={
-                        handleViewProfile
-                    }
-                    className={`body1 ${styles.nextButton}`}
-                >
-                    보러가기
-                </button>
+                <div className={styles.actions}>
+                    <button
+                        type="button"
+                        onClick={handleViewMyCards}
+                        className={`body1 ${styles.nextButton}`}
+                    >
+                        내 카드 보기
+                    </button>
+
+                    <button
+                        type="button"
+                        onClick={handleExplore}
+                        className={`body1 ${styles.exploreButton}`}
+                    >
+                        다른 사람 둘러보기
+                    </button>
+                </div>
             </section>
         </OnboardingLayout>
     );

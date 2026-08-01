@@ -1031,7 +1031,7 @@ const Scrap = () => {
                                                     styles.emptyDrawer
                                                 }
                                             >
-                                                아직 저장된 프로필이 없습니다.
+                                                아직 담아둔 카드가 없어요
                                             </div>
                                         )}
                                     </section>

@@ -20,6 +20,7 @@
     import ExploreProfileCard from "../../components/profile/ExploreProfileCard";
 
     import usePublicProfiles from "../../hooks/usePublicProfiles";
+    import useMyProfileCardIds from "../../hooks/useMyProfileCardIds";
 
     import { isLoggedIn } from "../../utils/auth";
     import { mapProfileCard } from "../../utils/profileMapper";
@@ -109,9 +110,15 @@
 
     const { profiles, isLoading, errorMessage } = usePublicProfiles();
 
+    const {
+        myProfileCardIds,
+        isLoading: isMyProfileCardsLoading,
+    } = useMyProfileCardIds();
+
     const swiperRef = useRef(null);
     const isDraggingRef = useRef(false);
     const dragProgressRef = useRef(null);
+    const sideSlidePointerRef = useRef(null);
 
     const purpose = searchParams.get("purpose");
 
@@ -286,6 +293,10 @@
         ? exchangedProfileIds.includes(String(activeProfile.id))
         : false;
 
+    const isActiveProfileMine = activeProfile
+        ? myProfileCardIds.has(String(activeProfile.id))
+        : false;
+
     const indicatorProgress =
         carouselProfiles.length <= 1
         ? 0
@@ -298,8 +309,59 @@
         navigate(-1);
     };
 
-    const handleProfileClick = (clickedProfileId) => {
+    const handleProfileClick = (
+        clickedProfileId,
+        clickedIndex,
+    ) => {
+        const isDesktop =
+        window.matchMedia(
+            "(min-width: 769px)",
+        ).matches;
+
+        const swiper =
+        swiperRef.current;
+
+        if (
+        isDesktop &&
+        swiper &&
+        clickedIndex !== swiper.activeIndex
+        ) {
+        swiper.slideTo(
+            clickedIndex,
+            400,
+        );
+        return;
+        }
+
         navigate(`/profile/${clickedProfileId}`);
+    };
+
+    const handleSlidePointerDownCapture = (clickedIndex) => {
+        const isDesktop =
+        window.matchMedia(
+            "(min-width: 769px)",
+        ).matches;
+
+        const swiper = swiperRef.current;
+
+        sideSlidePointerRef.current =
+        isDesktop &&
+        swiper &&
+        clickedIndex !== swiper.activeIndex
+            ? clickedIndex
+            : null;
+    };
+
+    const handleSlideClickCapture = (event, clickedIndex) => {
+        if (sideSlidePointerRef.current !== clickedIndex) {
+        return;
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        swiperRef.current?.slideTo(clickedIndex, 400);
+        sideSlidePointerRef.current = null;
     };
 
     const handlePrevSlide = () => {
@@ -680,7 +742,6 @@
                 spaceBetween={20}
                 speed={400}
                 grabCursor
-                slideToClickedSlide
                 watchSlidesProgress
                 onSwiper={(swiper) => {
                     swiperRef.current = swiper;
@@ -692,11 +753,30 @@
                 }}
                 className={styles.swiper}
                 >
-                {carouselProfiles.map((profile) => (
-                    <SwiperSlide key={profile.id} className={styles.slide}>
+                {carouselProfiles.map((profile, index) => (
+                    <SwiperSlide
+                    key={profile.id}
+                    className={styles.slide}
+                    onPointerDownCapture={() =>
+                        handleSlidePointerDownCapture(index)
+                    }
+                    onClickCapture={(event) =>
+                        handleSlideClickCapture(event, index)
+                    }
+                    >
                     <ExploreProfileCard
-                        profile={profile}
-                        onClick={handleProfileClick}
+                        profile={{
+                        ...profile,
+                        isMine: myProfileCardIds.has(
+                            String(profile.id),
+                        ),
+                        }}
+                        onClick={(clickedProfileId) =>
+                        handleProfileClick(
+                            clickedProfileId,
+                            index,
+                        )
+                        }
                     />
                     </SwiperSlide>
                 ))}
@@ -714,26 +794,45 @@
             </div>
 
             <div className={styles.actionArea}>
-                <button
-                type="button"
-                className={`${styles.scrapButton} ${
-                    isActiveProfileScrapped ? styles.scrapped : ""
-                }`}
-                onClick={handleOpenScrapSheet}
-                aria-pressed={isActiveProfileScrapped}
-                >
-                <img src={scrapIcon} alt="" className={styles.scrapIcon} />
-
-                <span>{isActiveProfileScrapped ? "스크랩됨" : "스크랩"}</span>
-                </button>
-
-                {isActiveProfileExchanged && (
-                <span
+                {!isMyProfileCardsLoading && (
+                isActiveProfileMine ? (
+                    <span
                     className={styles.exchangedStatus}
-                    aria-label="교환이 완료된 카드"
-                >
-                    교환됨
-                </span>
+                    aria-label="내 프로필 카드"
+                    >
+                    내 카드
+                    </span>
+                ) : (
+                    <>
+                    <button
+                        type="button"
+                        className={`${styles.scrapButton} ${
+                        isActiveProfileScrapped ? styles.scrapped : ""
+                        }`}
+                        onClick={handleOpenScrapSheet}
+                        aria-pressed={isActiveProfileScrapped}
+                    >
+                        <img
+                        src={scrapIcon}
+                        alt=""
+                        className={styles.scrapIcon}
+                        />
+
+                        <span>
+                        {isActiveProfileScrapped ? "스크랩됨" : "스크랩"}
+                        </span>
+                    </button>
+
+                    {isActiveProfileExchanged && (
+                        <span
+                        className={styles.exchangedStatus}
+                        aria-label="교환이 완료된 카드"
+                        >
+                        교환됨
+                        </span>
+                    )}
+                    </>
+                )
                 )}
             </div>
 

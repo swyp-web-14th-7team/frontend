@@ -1136,6 +1136,16 @@ const MyPage = () => {
             : "비공개"}
     </span>
 
+    {isSelectedProfileDefault && (
+        <span
+            className={
+                styles.defaultBadge
+            }
+        >
+            기본
+        </span>
+    )}
+
     {!isSelectedProfileDefault && (
         <span
             className={

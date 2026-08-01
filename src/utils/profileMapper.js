@@ -276,23 +276,29 @@ const getPurposeNames = (
     return [];
 };
 
-const getPersonalityIcon = (
+export const getPersonalityIcon = (
     imageUrl,
 ) => {
-    if (!imageUrl) {
+    const normalizedUrl =
+        String(
+            imageUrl || "",
+        ).trim();
+
+    if (!normalizedUrl) {
         return "";
     }
 
-    if (
-        imageUrl.endsWith(
-            ".webp",
-        )
-    ) {
-        return imageUrl;
+    const isCompletedImageUrl =
+        /\.(?:avif|gif|jpe?g|png|svg|webp)(?:\?.*)?$/i.test(
+            normalizedUrl,
+        );
+
+    if (isCompletedImageUrl) {
+        return normalizedUrl;
     }
 
-    return `${imageUrl.replace(
-        /\/$/,
+    return `${normalizedUrl.replace(
+        /\/+$/,
         "",
     )}/36.webp`;
 };
@@ -303,7 +309,7 @@ const getPersonalityIcon = (
  *
  * 이미 이미지 확장자가 포함된 완성 URL이라면 그대로 사용합니다.
  */
-const getProfileImageUrl = (
+export const getProfileImageUrl = (
     imageUrl,
 ) => {
     const normalizedUrl =

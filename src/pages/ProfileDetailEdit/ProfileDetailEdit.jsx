@@ -644,7 +644,7 @@
     return (
         <OnboardingLayout
         showBackButton={true}
-        showProgress={true}
+        showProgress={false}
         onBack={handleBack}
         currentStep={2}
         totalSteps={5}
@@ -653,7 +653,7 @@
             <div className={styles.titleArea}>
             <h1 className={`headline1 ${styles.title}`}>세부 프로필 수정</h1>
             <p className={`body2 ${styles.description}`}>
-                현재 등록된 모든 정보를 수정할 수 있어요
+                내 카드에 담길 정보를 수정해요
             </p>
             </div>
 
