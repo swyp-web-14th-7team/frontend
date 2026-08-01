@@ -15,6 +15,38 @@
 
     const MAX_SELECTED_TAGS = 10;
 
+    const JOB_DISPLAY_NAMES = {
+    PM: "기획자",
+    Planner: "기획자",
+    기획자: "기획자",
+
+    Designer: "디자이너",
+    디자이너: "디자이너",
+
+    Frontend: "프론트엔드 개발자",
+    "Frontend Developer": "프론트엔드 개발자",
+    "프론트 개발자": "프론트엔드 개발자",
+    "프론트엔드 개발자": "프론트엔드 개발자",
+
+    Backend: "백엔드 개발자",
+    "Backend Developer": "백엔드 개발자",
+    "백엔드 개발자": "백엔드 개발자",
+    };
+
+    const getJobDisplayName = (
+    jobType,
+    ) => {
+    const name =
+        jobType?.name ||
+        jobType?.label ||
+        "";
+
+    return (
+        JOB_DISPLAY_NAMES[name] ||
+        name
+    );
+    };
+
     const getItems = (response) =>
     response?.items ||
     response?.data?.items ||
@@ -489,7 +521,9 @@
                         }
                     >
                         {
-                        jobType.name
+                        getJobDisplayName(
+                            jobType,
+                        )
                         }
                     </button>
                     );

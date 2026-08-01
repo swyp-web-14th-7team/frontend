@@ -364,6 +364,8 @@
                 jobTypeId: jobType.id,
 
                 apiName: jobType.name,
+
+                imageUrl: jobType.imageUrl,
                 };
             })
             .filter(Boolean);

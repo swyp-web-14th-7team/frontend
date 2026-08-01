@@ -20,8 +20,18 @@
     cursor: pointer;
     }
 
+    .topRow {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    }
+
     .job {
     width: 100%;
+    min-width: 0;
     margin: 0;
 
     color: #b9bdcb;
@@ -32,6 +42,19 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    }
+
+    .ownCardBadge {
+    flex-shrink: 0;
+    padding: 4px 8px;
+
+    border-radius: 6px;
+    background-color: #303347;
+    color: #ffffff;
+
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 16px;
     }
 
     .profileRow {

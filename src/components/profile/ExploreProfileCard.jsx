@@ -138,6 +138,14 @@ const hasRepresentativeExperience = Boolean(
                             profile.jobTypeName ||
                             "직군 미선택"}
                     </p>
+
+                    {profile.isMine && (
+                        <span
+                            className={styles.ownCardBadge}
+                        >
+                            내 카드
+                        </span>
+                    )}
                 </div>
 
                 <div className={styles.content}>
