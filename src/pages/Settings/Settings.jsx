@@ -1,13 +1,16 @@
-    import { useCallback, useEffect, useMemo, useState } from "react";
+    import { useCallback, useEffect, useState } from "react";
 
     import { useNavigate, useParams } from "react-router-dom";
 
-    import { deleteCurrentUser, getMyUser } from "../../api/users";
+    import {
+    deleteCurrentUser,
+    getMyUser,
+    updateCurrentUser,
+    } from "../../api/users";
 
     import {
-    getDefaultProfileCard,
     getMyProfileCards,
-    updateDefaultProfileCard,
+    updateProfileCard,
     } from "../../api/profile";
 
     import {
@@ -24,7 +27,6 @@
     import styles from "./Settings.module.css";
 
     const SECTION_MAP = {
-    basic: "basic",
     requests: "requests",
     account: "account",
     };
@@ -47,76 +49,6 @@
     CANCELLED: 3,
     };
 
-    const LINK_TYPES = [
-    { type: 0, label: "Email" },
-    { type: 1, label: "Instagram" },
-    { type: 2, label: "GitHub" },
-    { type: 3, label: "LinkedIn" },
-    { type: 4, label: "Behance" },
-    { type: 5, label: "Notion" },
-    { type: 6, label: "Website" },
-    ];
-
-    const createEmptyLink = () => ({
-    type: 6,
-    value: "",
-    });
-
-    const LINK_TYPE_BY_NAME = {
-    EMAIL: 0,
-    INSTAGRAM: 1,
-    GITHUB: 2,
-    LINKEDIN: 3,
-    BEHANCE: 4,
-    NOTION: 5,
-    WEBSITE: 6,
-    };
-
-    const getLinkValue = (link) =>
-    String(
-        link?.value ??
-        link?.url ??
-        link?.link ??
-        link?.address ??
-        link?.email ??
-        "",
-    ).trim();
-
-    const normalizeEmailValue = (value) =>
-    String(value ?? "")
-        .trim()
-        .replace(/^mailto:/i, "");
-
-    const looksLikeEmail = (value) => {
-    const normalizedValue = normalizeEmailValue(value);
-
-    return (
-        normalizedValue.includes("@") &&
-        !normalizedValue.includes("://") &&
-        !normalizedValue.startsWith("www.")
-    );
-    };
-
-    const normalizeLinkType = (type, value) => {
-    if (looksLikeEmail(value)) {
-        return 0;
-    }
-
-    const numericType = Number(type);
-
-    if (Number.isInteger(numericType) && numericType >= 0 && numericType <= 6) {
-        return numericType;
-    }
-
-    const namedType = LINK_TYPE_BY_NAME[String(type ?? "").toUpperCase()];
-
-    if (namedType !== undefined) {
-        return namedType;
-    }
-
-    return 6;
-    };
-
     const unwrapUser = (response) =>
     response?.data?.data?.user ??
     response?.data?.user ??
@@ -125,59 +57,6 @@
     response?.data ??
     response ??
     {};
-
-    const unwrapProfileCard = (response) =>
-    response?.data?.data?.card ??
-    response?.data?.data?.profileCard ??
-    response?.data?.card ??
-    response?.data?.profileCard ??
-    response?.card ??
-    response?.profileCard ??
-    response?.data?.data ??
-    response?.data ??
-    response ??
-    {};
-
-    const normalizeLinks = (links, fallbackEmail = "") => {
-    const sourceLinks = Array.isArray(links) ? links : [];
-
-    const normalizedLinks = sourceLinks
-        .map((link) => {
-        const value = getLinkValue(link);
-        const type = normalizeLinkType(
-            link?.type ?? link?.linkType ?? link?.category,
-            value,
-        );
-
-        return {
-            type,
-            value: type === 0 ? normalizeEmailValue(value) : value,
-        };
-        })
-        .filter((link) => link.value);
-
-    const normalizedFallbackEmail = normalizeEmailValue(fallbackEmail);
-    const hasEmailLink = normalizedLinks.some((link) => link.type === 0);
-
-    if (normalizedFallbackEmail && !hasEmailLink && normalizedLinks.length < 4) {
-        normalizedLinks.unshift({
-        type: 0,
-        value: normalizedFallbackEmail,
-        });
-    }
-
-    return normalizedLinks.length > 0
-        ? normalizedLinks.slice(0, 4)
-        : [createEmptyLink()];
-    };
-
-    const createLinkPayload = (links) =>
-    links
-        .filter((link) => String(link?.value ?? "").trim())
-        .map((link) => ({
-        type: Number(link.type),
-        value: String(link.value).trim(),
-        }));
 
     const getRequestStatus = (request) => {
     const rawStatus =
@@ -245,13 +124,10 @@
     const navigate = useNavigate();
     const { section } = useParams();
 
-    const activeSection = SECTION_MAP[section] ?? "basic";
+    const activeSection = SECTION_MAP[section] ?? "account";
 
     const [nickname, setNickname] = useState("");
     const [initialNickname, setInitialNickname] = useState("");
-
-    const [links, setLinks] = useState([createEmptyLink()]);
-    const [initialLinks, setInitialLinks] = useState([]);
 
     const [accountName, setAccountName] = useState("");
     const [accountEmail, setAccountEmail] = useState("");
@@ -273,16 +149,11 @@
     const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
     const [isWithdrawing, setIsWithdrawing] = useState(false);
 
-    const currentLinkPayload = useMemo(() => createLinkPayload(links), [links]);
-
     const isNicknameDirty = nickname.trim() !== initialNickname.trim();
-    const areLinksDirty =
-        JSON.stringify(currentLinkPayload) !== JSON.stringify(initialLinks);
-    const isDirty = isNicknameDirty || areLinksDirty;
+    const isDirty = isNicknameDirty;
 
     /*
-    * 회원 정보와 기본 카드 정보를 함께 불러옵니다.
-    * 닉네임과 링크는 기본 카드 데이터를 우선 사용합니다.
+    * 계정 관리에 필요한 회원 정보를 불러옵니다.
     */
     useEffect(() => {
         const controller = new AbortController();
@@ -292,38 +163,23 @@
             setIsLoading(true);
             setError("");
 
-            const [userResult, defaultProfileResult] = await Promise.all([
-            getMyUser({
+            const userResult = await getMyUser({
                 signal: controller.signal,
-            }),
-            getDefaultProfileCard({
-                signal: controller.signal,
-            }),
-            ]);
+            });
 
             if (controller.signal.aborted) {
             return;
             }
 
             const user = unwrapUser(userResult);
-            const defaultProfile = unwrapProfileCard(defaultProfileResult);
 
-            const nextNickname = defaultProfile?.nickname ?? user?.nickname ?? "";
+            const nextNickname =
+            user?.nickname ?? user?.profile?.nickname ?? "";
             const nextEmail =
             user?.email ?? user?.account?.email ?? user?.profile?.email ?? "";
-            const nextLinks = normalizeLinks(
-            defaultProfile?.links ??
-                defaultProfile?.profileLinks ??
-                defaultProfile?.linkList,
-            nextEmail,
-            );
-            const nextLinkPayload = createLinkPayload(nextLinks);
 
             setNickname(nextNickname);
             setInitialNickname(nextNickname);
-
-            setLinks(nextLinks);
-            setInitialLinks(nextLinkPayload);
 
             setAccountName(
             user?.name ?? user?.username ?? user?.nickname ?? nextNickname,
@@ -334,7 +190,7 @@
             return;
             }
 
-            setError(requestError?.message ?? "기본 정보를 불러오지 못했습니다.");
+            setError(requestError?.message ?? "회원 정보를 불러오지 못했습니다.");
         } finally {
             if (!controller.signal.aborted) {
             setIsLoading(false);
@@ -420,7 +276,7 @@
     };
 
     const moveToPath = (path) => {
-        if (isDirty && activeSection === "basic") {
+        if (isDirty && activeSection === "account") {
         setPendingPath(path);
         setIsLeaveModalOpen(true);
         return;
@@ -431,49 +287,13 @@
     };
 
     const handleBack = () => {
-        if (isDirty && activeSection === "basic") {
+        if (isDirty && activeSection === "account") {
         setPendingPath("/profile");
         setIsLeaveModalOpen(true);
         return;
         }
 
         navigate("/profile");
-    };
-
-    const handleLinkChange = (index, field, value) => {
-        setLinks((previousLinks) =>
-        previousLinks.map((link, linkIndex) =>
-            linkIndex === index
-            ? {
-                ...link,
-                [field]: field === "type" ? Number(value) : value,
-                }
-            : link,
-        ),
-        );
-
-        clearMessages();
-    };
-
-    const handleAddLink = () => {
-        if (links.length >= 4) {
-        return;
-        }
-
-        setLinks((previousLinks) => [...previousLinks, createEmptyLink()]);
-        clearMessages();
-    };
-
-    const handleRemoveLink = (index) => {
-        setLinks((previousLinks) => {
-        const nextLinks = previousLinks.filter(
-            (_, linkIndex) => linkIndex !== index,
-        );
-
-        return nextLinks.length > 0 ? nextLinks : [createEmptyLink()];
-        });
-
-        clearMessages();
     };
 
     const handleLogout = async () => {
@@ -553,7 +373,6 @@
         const nextPath = pendingPath ?? "/profile";
 
         setNickname(initialNickname);
-        setLinks(normalizeLinks(initialLinks));
         setIsLeaveModalOpen(false);
         setPendingPath(null);
 
@@ -576,156 +395,47 @@
         return;
         }
 
-        const requestBody = {};
-
-        if (isNicknameDirty) {
-        requestBody.nickname = trimmedNickname;
-        }
-
-        if (areLinksDirty) {
-        requestBody.links = currentLinkPayload;
-        }
-
         try {
         setIsSaving(true);
         clearMessages();
 
-        const result = await updateDefaultProfileCard(requestBody);
-        const savedProfile = unwrapProfileCard(result);
+        const cardsResponse = await getMyProfileCards({
+            page: 1,
+            limit: 100,
+        });
+        const profileCards = getItems(cardsResponse);
+
+        const result = await updateCurrentUser({
+            nickname: trimmedNickname,
+        });
+
+        await Promise.all(
+            profileCards
+            .filter((card) => card?.id)
+            .map((card) =>
+                updateProfileCard(card.id, {
+                nickname: trimmedNickname,
+                }),
+            ),
+        );
+
+        const savedUser = unwrapUser(result);
 
         const savedNickname =
-            savedProfile?.nickname ?? requestBody.nickname ?? initialNickname;
-
-        const savedLinks = Array.isArray(savedProfile?.links)
-            ? savedProfile.links
-            : (requestBody.links ?? initialLinks);
-        const nextSavedLinks = normalizeLinks(savedLinks, accountEmail);
-        const nextSavedLinkPayload = createLinkPayload(nextSavedLinks);
+            savedUser?.nickname ?? trimmedNickname;
 
         setNickname(savedNickname);
         setInitialNickname(savedNickname);
-        setLinks(nextSavedLinks);
-        setInitialLinks(nextSavedLinkPayload);
 
-        setSuccessMessage("기본 정보가 변경되었습니다.");
+        setSuccessMessage("닉네임과 카드 정보가 변경되었습니다.");
         } catch (requestError) {
-        setError(requestError?.message ?? "기본 정보를 변경하지 못했습니다.");
+        setError(
+            requestError?.message ??
+            "닉네임 또는 카드 정보를 변경하지 못했습니다.",
+        );
         } finally {
         setIsSaving(false);
         }
-    };
-
-    const renderBasicSettings = () => {
-        if (isLoading) {
-        return (
-            <p className={styles.statusText}>기본 정보를 불러오는 중입니다.</p>
-        );
-        }
-
-        return (
-        <>
-            <div className={styles.contentHeader}>
-            <h1>기본 정보 변경</h1>
-            <p>기본 카드의 닉네임과 링크를 변경합니다.</p>
-            </div>
-
-            <form className={styles.form} onSubmit={handleSubmit}>
-            <div className={styles.field}>
-                <label htmlFor="nickname">닉네임</label>
-
-                <input
-                id="nickname"
-                type="text"
-                value={nickname}
-                onChange={(event) => {
-                    setNickname(event.target.value);
-                    clearMessages();
-                }}
-                maxLength={255}
-                placeholder="닉네임을 입력해주세요"
-                />
-            </div>
-
-            <div className={`${styles.field} ${styles.linkField}`}>
-                <div className={styles.linkHeader}>
-                <label>링크</label>
-                <span>{currentLinkPayload.length}/4</span>
-                </div>
-
-                <div className={styles.linkList}>
-                {links.map((link, index) => (
-                    <div className={styles.linkRow} key={index}>
-                    <div className={styles.linkTypeWrap}>
-                        <select
-                        className={styles.linkTypeSelect}
-                        value={link.type}
-                        onChange={(event) =>
-                            handleLinkChange(index, "type", event.target.value)
-                        }
-                        aria-label={`${index + 1}번째 링크 종류`}
-                        >
-                        {LINK_TYPES.map((linkType) => (
-                            <option value={linkType.type} key={linkType.type}>
-                            {linkType.label}
-                            </option>
-                        ))}
-                        </select>
-                    </div>
-
-                    <input
-                        className={styles.linkInput}
-                        type="text"
-                        value={link.value}
-                        onChange={(event) =>
-                        handleLinkChange(index, "value", event.target.value)
-                        }
-                        placeholder="이메일, 포트폴리오 주소 등을 입력해주세요"
-                    />
-
-                    <button
-                        type="button"
-                        className={styles.removeLinkButton}
-                        onClick={() => handleRemoveLink(index)}
-                        aria-label={`${index + 1}번째 링크 삭제`}
-                    >
-                        삭제
-                    </button>
-                    </div>
-                ))}
-                </div>
-
-                <button
-                type="button"
-                className={styles.addLinkButton}
-                onClick={handleAddLink}
-                disabled={links.length >= 4}
-                >
-                + 링크 추가
-                </button>
-            </div>
-
-            {error && (
-                <p className={styles.error} role="alert">
-                {error}
-                </p>
-            )}
-
-            {successMessage && (
-                <p className={styles.success} role="status">
-                {successMessage}
-                </p>
-            )}
-
-            <button
-                type="submit"
-                className={styles.submitButton}
-                disabled={isSaving}
-            >
-                {isSaving ? "변경 중..." : "변경하기"}
-            </button>
-            </form>
-        </>
-        );
     };
 
     const renderRequests = () => {
@@ -839,45 +549,83 @@
         <div className={styles.accountContent}>
             <div className={styles.contentHeader}>
             <h1>계정 관리</h1>
-            <p>계정과 관련된 설정을 관리합니다.</p>
+            <p>닉네임과 계정 정보를 관리합니다.</p>
+            </div>
+
+            <form
+            className={styles.accountForm}
+            onSubmit={handleSubmit}
+            >
+            <div className={styles.accountInfo}>
+                <div className={styles.field}>
+                <label htmlFor="account-nickname">닉네임</label>
+                <div className={styles.nicknameControlRow}>
+                    <input
+                    id="account-nickname"
+                    className={styles.accountNicknameInput}
+                    type="text"
+                    value={nickname}
+                    onChange={(event) => {
+                        setNickname(event.target.value);
+                        clearMessages();
+                    }}
+                    maxLength={255}
+                    placeholder="닉네임을 입력해주세요"
+                    />
+
+                    <button
+                    type="submit"
+                    className={styles.nicknameSubmitButton}
+                    disabled={isSaving}
+                    >
+                    {isSaving ? "변경 중..." : "변경"}
+                    </button>
+                </div>
+                </div>
+
+                <div className={styles.field}>
+                <label htmlFor="account-name">이름</label>
+                <input
+                    id="account-name"
+                    className={styles.accountReadOnlyInput}
+                    type="text"
+                    value={accountName || "등록된 이름이 없습니다."}
+                    readOnly
+                    aria-readonly="true"
+                />
+                </div>
+
+                <div className={styles.field}>
+                <label htmlFor="account-email">이메일</label>
+                <input
+                    id="account-email"
+                    className={styles.accountReadOnlyInput}
+                    type="text"
+                    value={accountEmail || "등록된 이메일이 없습니다."}
+                    readOnly
+                    aria-readonly="true"
+                />
+                </div>
             </div>
 
             {error && (
-            <p className={styles.error} role="alert">
+                <p className={styles.error} role="alert">
                 {error}
-            </p>
+                </p>
             )}
 
-            <div className={styles.accountInfo}>
-            <div className={styles.field}>
-                <label htmlFor="account-name">이름</label>
-                <input
-                id="account-name"
-                className={styles.accountReadOnlyInput}
-                type="text"
-                value={accountName || "등록된 이름이 없습니다."}
-                readOnly
-                aria-readonly="true"
-                />
-            </div>
+            {successMessage && (
+                <p className={styles.success} role="status">
+                {successMessage}
+                </p>
+            )}
 
-            <div className={styles.field}>
-                <label htmlFor="account-email">이메일</label>
-                <input
-                id="account-email"
-                className={styles.accountReadOnlyInput}
-                type="text"
-                value={accountEmail || "등록된 이메일이 없습니다."}
-                readOnly
-                aria-readonly="true"
-                />
-            </div>
-            </div>
+            </form>
 
             <div className={styles.dangerSection}>
             <div>
                 <strong>회원 탈퇴</strong>
-                <p>탈퇴하면 계정과 관련된 정보가 삭제되며 되돌릴 수 없습니다.</p>
+                <p>탈퇴하면 계정과 관련된 정보가 삭제되며 되돌릴 수 없ㅇ.</p>
             </div>
 
             <button type="button" onClick={() => setIsWithdrawModalOpen(true)}>
@@ -913,14 +661,6 @@
 
             <button
                 type="button"
-                className={activeSection === "basic" ? styles.activeSideItem : ""}
-                onClick={() => moveToPath("/settings")}
-            >
-                기본 정보 변경
-            </button>
-
-            <button
-                type="button"
                 className={activeSection === "account" ? styles.activeSideItem : ""}
                 onClick={() => moveToPath("/settings/account")}
             >
@@ -940,7 +680,6 @@
 
         <section className={styles.content}>
             <div className={styles.contentInner}>
-            {activeSection === "basic" && renderBasicSettings()}
             {activeSection === "requests" && renderRequests()}
             {activeSection === "account" && renderAccount()}
             </div>
