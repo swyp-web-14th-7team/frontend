@@ -940,15 +940,15 @@
     border-color: transparent;
     }
 
-    .accountInfo .field .accountNicknameInput {
+    .accountInfo .field .accountNameInput {
     cursor: text;
     }
 
-    .accountInfo .field .accountNicknameInput:focus {
+    .accountInfo .field .accountNameInput:focus {
     border-color: #878fa1;
     }
 
-    .nicknameControlRow {
+    .nameControlRow {
     width: 100%;
 
     display: grid;
@@ -957,7 +957,7 @@
     align-items: center;
     }
 
-    .nicknameSubmitButton {
+    .nameSubmitButton {
     min-width: 76px;
     height: 48px;
     padding: 0 16px;
@@ -975,11 +975,11 @@
     cursor: pointer;
     }
 
-    .nicknameSubmitButton:hover:not(:disabled) {
+    .nameSubmitButton:hover:not(:disabled) {
     background: #c8e7ff;
     }
 
-    .nicknameSubmitButton:disabled {
+    .nameSubmitButton:disabled {
     opacity: 0.65;
     cursor: wait;
     }

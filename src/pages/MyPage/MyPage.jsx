@@ -268,7 +268,18 @@ const MyPage = () => {
                             [
                                 getMyProfileCards(),
                                 getPurposes(),
-                                getDefaultProfileCard(),
+                                getDefaultProfileCard().catch(
+                                    (requestError) => {
+                                        if (
+                                            requestError?.status ===
+                                            404
+                                        ) {
+                                            return null;
+                                        }
+
+                                        throw requestError;
+                                    },
+                                ),
                                 getMyUser(),
                             ],
                         );
