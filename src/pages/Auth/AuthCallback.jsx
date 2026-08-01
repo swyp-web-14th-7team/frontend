@@ -13,7 +13,8 @@ import {
 } from "../../api/auth";
 
 import {
-    getDefaultProfileCard,
+    getMyProfileCards,
+    getProfileCardCount,
 } from "../../api/profile";
 
 import {
@@ -108,41 +109,35 @@ const AuthCallback = ({
                         );
                     }
 
-try {
-    const defaultProfile =
-        await getDefaultProfileCard();
+                    /*
+                     * 보유한 프로필 카드가 하나도 없으면
+                     * 온보딩부터 진행합니다.
+                     */
+                    const myProfileCards =
+                        await getMyProfileCards(
+                            {
+                                limit: 1,
+                            },
+                        );
 
-    const defaultProfileId =
-        defaultProfile?.id ??
-        defaultProfile?.profileCardId ??
-        defaultProfile?.profileCard?.id ??
-        null;
+                    if (
+                        getProfileCardCount(
+                            myProfileCards,
+                        ) < 1
+                    ) {
+                        navigate(
+                            "/onboarding",
+                            {
+                                replace: true,
+                            },
+                        );
 
-    if (!defaultProfileId) {
-        navigate("/onboarding", {
-            replace: true,
-        });
+                        return;
+                    }
 
-        return;
-    }
-
-    navigate("/explore", {
-        replace: true,
-    });
-} catch (profileError) {
-    if (
-        profileError?.status === 404
-    ) {
-        navigate("/onboarding", {
-            replace: true,
-        });
-
-        return;
-    }
-
-    throw profileError;
-}
-
+                    navigate("/explore", {
+                        replace: true,
+                    });
                 } catch (error) {
                     console.error(
                         "로그인 처리 실패:",

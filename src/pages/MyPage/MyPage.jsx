@@ -13,7 +13,6 @@ import {
 } from "qrcode.react";
 
 import {
-    getDefaultProfileCard,
     getMyProfileCards,
     updateProfileCard,
 } from "../../api/profile";
@@ -133,11 +132,6 @@ const MyPage = () => {
     ] = useState([]);
 
     const [
-        defaultProfileId,
-        setDefaultProfileId,
-    ] = useState(null);
-
-    const [
         purposes,
         setPurposes,
     ] = useState([]);
@@ -212,15 +206,11 @@ const MyPage = () => {
             selectedIndex
         ] || null;
 
-    const isSelectedProfileDefault =
-        Boolean(
-            selectedProfile &&
-                (
-                    selectedProfile.isDefault ||
-                    selectedProfile.id ===
-                        defaultProfileId
-                ),
-        );
+    /*
+     * 기본 카드 개념이 없어져
+     * 모든 카드를 동일하게 다룹니다.
+     */
+    const isSelectedProfileDefault = false;
 
     const previousProfile =
         selectedIndex > 0
@@ -261,14 +251,12 @@ const MyPage = () => {
                     const [
                         profileResult,
                         purposeResult,
-                        defaultProfileResult,
                         userResult,
                     ] =
                         await Promise.all(
                             [
                                 getMyProfileCards(),
                                 getPurposes(),
-                                getDefaultProfileCard(),
                                 getMyUser(),
                             ],
                         );
@@ -301,20 +289,6 @@ const MyPage = () => {
                                   ?.items ??
                               [];
 
-                    const resolvedDefaultProfile =
-                        defaultProfileResult
-                            ?.data ??
-                        defaultProfileResult
-                            ?.profileCard ??
-                        defaultProfileResult;
-
-                    const resolvedDefaultProfileId =
-                        resolvedDefaultProfile
-                            ?.id ??
-                        resolvedDefaultProfile
-                            ?.profileCardId ??
-                        null;
-
                     const currentNickname =
                         userResult?.nickname ||
                         userResult?.user?.nickname ||
@@ -322,10 +296,6 @@ const MyPage = () => {
                         userResult?.name ||
                         userResult?.user?.name ||
                         "";
-
-                    setDefaultProfileId(
-                        resolvedDefaultProfileId,
-                    );
 
                     const mappedProfiles =
                         mapProfileCards(
@@ -339,10 +309,6 @@ const MyPage = () => {
                                           nickname: currentNickname,
                                       }
                                     : {}),
-                                isDefault:
-                                    profile.isDefault ||
-                                    profile.id ===
-                                        resolvedDefaultProfileId,
                             }),
                         );
 
@@ -354,17 +320,7 @@ const MyPage = () => {
                         purposeItems,
                     );
 
-                    const defaultIndex =
-                        mappedProfiles.findIndex(
-                            (profile) =>
-                                profile.isDefault,
-                        );
-
-                    setSelectedIndex(
-                        defaultIndex >= 0
-                            ? defaultIndex
-                            : 0,
-                    );
+                    setSelectedIndex(0);
                 } catch (
                     requestError
                 ) {

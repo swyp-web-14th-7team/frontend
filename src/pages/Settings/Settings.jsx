@@ -9,7 +9,7 @@
     } from "../../api/users";
 
     import {
-    updateDefaultProfileCard,
+    getMyProfileCards,
     } from "../../api/profile";
 
     import {
@@ -398,11 +398,11 @@
         setIsSaving(true);
         clearMessages();
 
+        /*
+        * 유저 닉네임만 변경합니다.
+        * 이미 만들어진 카드의 닉네임은 카드별로 수정합니다.
+        */
         const result = await updateCurrentUser({
-            nickname: trimmedNickname,
-        });
-
-        await updateDefaultProfileCard({
             nickname: trimmedNickname,
         });
 
@@ -415,11 +415,11 @@
         setInitialNickname(savedNickname);
         saveUserName(savedNickname);
 
-        setSuccessMessage("닉네임과 카드 정보가 변경되었습니다.");
+        setSuccessMessage("닉네임이 변경되었습니다.");
         } catch (requestError) {
         setError(
             requestError?.message ??
-            "닉네임 또는 카드 정보를 변경하지 못했습니다.",
+            "닉네임을 변경하지 못했습니다.",
         );
         } finally {
         setIsSaving(false);

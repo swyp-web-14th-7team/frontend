@@ -11,7 +11,10 @@
     rejectConnectionRequest,
     } from "../../api/connectionRequests";
 
-    import { getDefaultProfileCard } from "../../api/profile";
+    import {
+    getMyProfileCards,
+    getProfileCardCount,
+    } from "../../api/profile";
 
     import useNotifications from "../../hooks/useNotifications";
 
@@ -93,15 +96,15 @@
         event.preventDefault();
 
         try {
-        const defaultProfile = await getDefaultProfileCard();
+        /*
+        * 보유한 프로필 카드가 하나도 없으면
+        * 온보딩부터 진행합니다.
+        */
+        const myProfileCards = await getMyProfileCards({
+            limit: 1,
+        });
 
-        const defaultProfileId =
-            defaultProfile?.id ??
-            defaultProfile?.profileCardId ??
-            defaultProfile?.profileCard?.id ??
-            null;
-
-        if (!defaultProfileId) {
+        if (getProfileCardCount(myProfileCards) < 1) {
             navigate("/onboarding");
 
             return;
@@ -109,13 +112,7 @@
 
         navigate("/profile");
         } catch (error) {
-        if (error?.status === 404) {
-            navigate("/onboarding");
-
-            return;
-        }
-
-        console.error("기본 카드 확인 실패:", error);
+        console.error("프로필 카드 확인 실패:", error);
 
         /*
         * 일시적인 API 오류로 프로필 접근이
