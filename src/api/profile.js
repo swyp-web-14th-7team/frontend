@@ -82,24 +82,6 @@
     });
     };
 
-    /*
-    * getMyProfileCards 응답에서 보유한 카드 개수를 읽습니다.
-    *
-    * 온보딩 진행 여부를 카드 개수로 판단하므로,
-    * metadata가 없는 응답에서도 안전하게 0을 반환합니다.
-    */
-    export const getProfileCardCount = (response) => {
-    if (Array.isArray(response)) {
-        return response.length;
-    }
-
-    return (
-        response?.metadata?.total ??
-        response?.items?.length ??
-        0
-    );
-    };
-
     export const getMyProfileCard = async (profileId, { signal } = {}) => {
     if (!profileId) {
         throw new Error("프로필 카드 ID가 필요합니다.");

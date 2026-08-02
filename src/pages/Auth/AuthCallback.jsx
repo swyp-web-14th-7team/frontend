@@ -14,7 +14,6 @@ import {
 
 import {
     getMyProfileCards,
-    getProfileCardCount,
 } from "../../api/profile";
 
 import {
@@ -99,8 +98,8 @@ const AuthCallback = ({
                     );
 
                     const userName =
-                        myInfo?.name ||
                         myInfo?.nickname ||
+                        myInfo?.name ||
                         "";
 
                     if (userName) {
@@ -109,35 +108,28 @@ const AuthCallback = ({
                         );
                     }
 
-                    /*
-                     * 보유한 프로필 카드가 하나도 없으면
-                     * 온보딩부터 진행합니다.
-                     */
-                    const myProfileCards =
-                        await getMyProfileCards(
-                            {
-                                limit: 1,
-                            },
-                        );
+                    const profileResult =
+                        await getMyProfileCards({
+                            page: 1,
+                            limit: 1,
+                        });
 
-                    if (
-                        getProfileCardCount(
-                            myProfileCards,
-                        ) < 1
-                    ) {
-                        navigate(
-                            "/onboarding",
-                            {
-                                replace: true,
-                            },
-                        );
+                    const profileItems =
+                        Array.isArray(profileResult)
+                            ? profileResult
+                            : profileResult?.items ??
+                              profileResult?.data?.items ??
+                              [];
 
-                        return;
-                    }
+                    navigate(
+                        profileItems.length > 0
+                            ? "/explore"
+                            : "/onboarding",
+                        {
+                            replace: true,
+                        },
+                    );
 
-                    navigate("/explore", {
-                        replace: true,
-                    });
                 } catch (error) {
                     console.error(
                         "로그인 처리 실패:",

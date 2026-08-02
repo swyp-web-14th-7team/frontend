@@ -35,7 +35,6 @@ import {
     } from "../../utils/profileMapper";
 
     import useNotifications from "../../hooks/useNotifications";
-    import useMyProfileCardIds from "../../hooks/useMyProfileCardIds";
 
     import {
     isLoggedIn,
@@ -235,10 +234,6 @@ import {
 
     const isUserLoggedIn =
         isLoggedIn();
-
-    const {
-        myProfileCardIds,
-    } = useMyProfileCardIds();
 
     const {
         receivedRequests:
@@ -961,7 +956,6 @@ import {
                 >
                 <ExploreCardList
                     profiles={profiles}
-                    myProfileCardIds={myProfileCardIds}
                     activeTab={activeTab}
                     keyword={keyword}
                     isUserLoggedIn={isUserLoggedIn}

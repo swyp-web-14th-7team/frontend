@@ -7,7 +7,7 @@
     updateProfileCard,
     } from "../../api/profile";
 
-    import { getCurrentUser } from "../../api/users";
+    import { getMyUser } from "../../api/users";
 
     import {
     getAffiliationStatuses,
@@ -85,6 +85,31 @@
     relatedUrl: "",
     isRepresentative,
     });
+
+    /*
+    * 프로필 이미지 API는 이미지의 기본 경로를 반환하고,
+    * 실제 표시용 이미지는 크기별 파일 경로를 사용합니다.
+    *
+    * 이미 완성된 이미지 파일 URL을 받은 경우에는
+    * 같은 경로를 그대로 사용합니다.
+    */
+    const getProfileImagePreviewUrl = (imageUrl) => {
+    const normalizedUrl = (imageUrl || "").trim();
+
+    if (!normalizedUrl) {
+        return "";
+    }
+
+    const isImageFileUrl = /\.(?:avif|gif|jpe?g|png|webp)(?:\?.*)?$/i.test(
+        normalizedUrl,
+    );
+
+    if (isImageFileUrl) {
+        return normalizedUrl;
+    }
+
+    return `${normalizedUrl.replace(/\/+$/, "")}/72.webp`;
+    };
 
     const getItems = (response) => {
     if (Array.isArray(response)) {
@@ -171,6 +196,19 @@
 
         isRepresentative: experience?.isRepresentative ?? index === 0,
         }));
+    };
+
+    const getUserIdentityData = (user) => {
+    if (!user) {
+        return {};
+    }
+
+    const nickname = user.nickname || user.name || "";
+
+    return {
+        name: nickname,
+        nickname,
+    };
     };
 
     const Onboarding = () => {
@@ -384,11 +422,8 @@
     }, [draftId, hasLoadedDraft, isOptionLoading, previewStepIndex]);
 
     /*
-    * 카드 닉네임의 기본값은 유저 닉네임입니다.
-    * 미리보기가 "이름 없음"으로 보이지 않도록 채워둡니다.
-    *
-    * 카드끼리는 아무것도 상속하지 않으므로
-    * 첫 카드와 두 번째 이후 카드가 동일하게 동작합니다.
+    * 카드 미리보기에 사용할 현재 사용자 이름을 불러옵니다.
+    * 화면에서는 이름으로 표시하지만 API 필드는 nickname을 사용합니다.
     */
     useEffect(() => {
         if (
@@ -401,27 +436,26 @@
 
         let isMounted = true;
 
-        const loadUserNickname = async () => {
+        const loadUserIdentity = async () => {
         try {
-            const user = await getCurrentUser();
+            const user = await getMyUser();
+            const identityData = getUserIdentityData(user);
 
-            const userNickname = user?.nickname || user?.name || "";
-
-            if (!isMounted || !userNickname) {
+            if (!isMounted) {
             return;
             }
 
             setOnboardingData((previousData) => ({
             ...previousData,
-            name: previousData.name || userNickname,
-            nickname: previousData.nickname || userNickname,
+            name: previousData.name || identityData.name || "",
+            nickname: previousData.nickname || identityData.nickname || "",
             }));
         } catch (error) {
-            console.error("유저 닉네임 조회 실패:", error);
+            console.error("사용자 이름 조회 실패:", error);
         }
         };
 
-        loadUserNickname();
+        loadUserIdentity();
 
         return () => {
         isMounted = false;
@@ -639,12 +673,9 @@
             skills: skillItems,
         }));
 
-        /*
-        * 카드는 상속 없이 빈 상태로 시작하고,
-        * 실제 생성은 마지막 제출 단계에서 한 번만 합니다.
-        *
-        * 첫 카드와 두 번째 이후 카드가 같은 흐름을 탑니다.
-        */
+        const user = await getMyUser();
+        const identityData = getUserIdentityData(user);
+
         updateOnboardingData({
             job: selectedJob.id,
 
@@ -667,6 +698,8 @@
             profileCardId: null,
 
             createdProfile: null,
+
+            ...identityData,
         });
 
         nextStep();
@@ -788,9 +821,9 @@
             jobTypeId: onboardingData.jobTypeId,
             };
 
-            if (onboardingData.purposeId) {
-            createPayload.purposeId = onboardingData.purposeId;
-            }
+            createPayload.purposeId = isCardCreationFlow
+            ? Number(onboardingData.purposeId)
+            : 1;
 
             createdCard = await createProfileCard(createPayload);
 
@@ -801,10 +834,10 @@
             throw new Error("생성된 프로필 카드 ID를 받지 못했습니다.");
         }
 
-        const updatedCard = await updateProfileCard(profileCardId, {
-            ...profilePayload,
-            isActive: true,
-        });
+        const updatedCard = await updateProfileCard(
+            profileCardId,
+            profilePayload,
+        );
 
         removeOnboardingDraft(draftId);
 

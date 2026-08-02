@@ -277,13 +277,6 @@ const MyCardSelector = ({
                                             : "비공개"}
                                     </span>
 
-                                    {card.isDefault && (
-                                        <span
-                                            className={`${styles.badge} ${styles.defaultBadge}`}
-                                        >
-                                            기본
-                                        </span>
-                                    )}
                                 </div>
                             </div>
                         );

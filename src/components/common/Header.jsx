@@ -11,11 +11,6 @@
     rejectConnectionRequest,
     } from "../../api/connectionRequests";
 
-    import {
-    getMyProfileCards,
-    getProfileCardCount,
-    } from "../../api/profile";
-
     import useNotifications from "../../hooks/useNotifications";
 
     import { isLoggedIn } from "../../utils/auth";
@@ -88,38 +83,13 @@
         setIsLoginModalOpen(true);
     };
 
-    const handleMyProfileClick = async (event) => {
+    const handleMyProfileClick = (event) => {
         if (!isUserLoggedIn) {
         return;
         }
 
         event.preventDefault();
-
-        try {
-        /*
-        * 보유한 프로필 카드가 하나도 없으면
-        * 온보딩부터 진행합니다.
-        */
-        const myProfileCards = await getMyProfileCards({
-            limit: 1,
-        });
-
-        if (getProfileCardCount(myProfileCards) < 1) {
-            navigate("/onboarding");
-
-            return;
-        }
-
         navigate("/profile");
-        } catch (error) {
-        console.error("프로필 카드 확인 실패:", error);
-
-        /*
-        * 일시적인 API 오류로 프로필 접근이
-        * 완전히 막히는 것을 방지합니다.
-        */
-        navigate("/profile");
-        }
     };
 
     const handleNotificationToggle = () => {

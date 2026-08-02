@@ -22,10 +22,6 @@ import {
 } from "../../api/options";
 
 import {
-    getMyUser,
-} from "../../api/users";
-
-import {
     makeCardBackgroundUrl,
 } from "../../api/cardBackground";
 
@@ -206,12 +202,6 @@ const MyPage = () => {
             selectedIndex
         ] || null;
 
-    /*
-     * 기본 카드 개념이 없어져
-     * 모든 카드를 동일하게 다룹니다.
-     */
-    const isSelectedProfileDefault = false;
-
     const previousProfile =
         selectedIndex > 0
             ? profiles[
@@ -251,13 +241,11 @@ const MyPage = () => {
                     const [
                         profileResult,
                         purposeResult,
-                        userResult,
                     ] =
                         await Promise.all(
                             [
                                 getMyProfileCards(),
                                 getPurposes(),
-                                getMyUser(),
                             ],
                         );
 
@@ -289,27 +277,9 @@ const MyPage = () => {
                                   ?.items ??
                               [];
 
-                    const currentNickname =
-                        userResult?.nickname ||
-                        userResult?.user?.nickname ||
-                        userResult?.profile?.nickname ||
-                        userResult?.name ||
-                        userResult?.user?.name ||
-                        "";
-
                     const mappedProfiles =
                         mapProfileCards(
                             profileItems,
-                        ).map(
-                            (profile) => ({
-                                ...profile,
-                                ...(currentNickname
-                                    ? {
-                                          name: currentNickname,
-                                          nickname: currentNickname,
-                                      }
-                                    : {}),
-                            }),
                         );
 
                     setProfiles(
@@ -606,7 +576,6 @@ const MyPage = () => {
             }
 
             if (
-                !isSelectedProfileDefault &&
                 selectedIsActive &&
                 !selectedPurposeId
             ) {
@@ -629,10 +598,7 @@ const MyPage = () => {
                         selectedIsActive,
                 };
 
-                if (
-                    !isSelectedProfileDefault &&
-                    selectedPurposeId
-                ) {
+                if (selectedPurposeId) {
                     requestBody.purposeId =
                         Number(
                             selectedPurposeId,
@@ -669,12 +635,17 @@ const MyPage = () => {
                                           isActive:
                                               selectedIsActive,
 
+                                          purposeId:
+                                              selectedPurpose?.id ??
+                                              profile.purposeId,
+
+                                          purpose:
+                                              selectedPurpose ??
+                                              profile.purpose,
+
                                           purposes:
-                                              !isSelectedProfileDefault &&
                                               selectedPurpose
-                                                  ? [
-                                                        selectedPurpose.name,
-                                                    ]
+                                                  ? [selectedPurpose.name]
                                                   : profile.purposes,
                                       }
                                     : profile,
@@ -1113,18 +1084,16 @@ const MyPage = () => {
                                     : "비공개"}
                             </span>
 
-                            {!isSelectedProfileDefault && (
-                                <span
-                                    className={
-                                        styles.purposeBadge
-                                    }
-                                >
-                                    {getProfilePurposeName(
-                                        selectedProfile,
-                                        purposes,
-                                    ) || "목적 미설정"}
-                                </span>
-                            )}
+                            <span
+                                className={
+                                    styles.purposeBadge
+                                }
+                            >
+                                {getProfilePurposeName(
+                                    selectedProfile,
+                                    purposes,
+                                ) || "목적 미설정"}
+                            </span>
                         </div>
 
                         <div
@@ -1215,12 +1184,11 @@ const MyPage = () => {
                                 styles.modalBody
                             }
                         >
-                            {!isSelectedProfileDefault && (
-                                <div
-                                    className={
-                                        styles.settingRow
-                                    }
-                                >
+                            <div
+                                className={
+                                    styles.settingRow
+                                }
+                            >
                                     <label
                                         htmlFor="profile-purpose"
                                     >
@@ -1261,8 +1229,7 @@ const MyPage = () => {
                                             ),
                                         )}
                                     </select>
-                                </div>
-                            )}
+                            </div>
 
                             <div
                                 className={
