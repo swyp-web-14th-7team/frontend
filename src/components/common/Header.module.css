@@ -6,8 +6,8 @@
     display: flex;
     align-items: center;
 
-    border-bottom: 1px solid var(--gray-800, #32374c);
-    background-color: var(--black, #111017);
+    border-bottom: 1px solid var(--gray-800);
+    background-color: var(--black);
 
     box-sizing: border-box;
 }
@@ -45,7 +45,7 @@
     align-items: center;
     gap: 8px;
 
-    color: #878a9a;
+    color: var(--gray-500);
     font-size: 14px;
     font-weight: 500;
     line-height: 150%;
@@ -68,24 +68,24 @@
 }
 
 .navItem:hover {
-    color: #ffffff;
+    color: var(--white);
 }
 
 .navItem:hover .navIcon {
     opacity: 0.8;
 }
 
-/* 현재 선택된 메뉴 */
+/* �꾩옱 �좏깮�� 硫붾돱 */
 .navItem.activeNav,
 .navItem.activeNav:visited {
-    color: #ffffff;
+    color: var(--white);
     font-weight: 600;
 }
 
 .navItem.activeNav .navIcon {
     opacity: 1;
 
-    /* SVG 내부 색상도 흰색으로 변경 */
+    /* SVG �대� �됱긽�� �곗깋�쇰줈 蹂�寃� */
     filter:
         brightness(0)
         saturate(100%)
@@ -102,7 +102,7 @@
     gap: 20px;
 }
 
-/* 아이콘을 누르는 영역은 28px */
+/* �꾩씠肄섏쓣 �꾨Ⅴ�� �곸뿭�� 28px */
 .iconButton {
     position: relative;
 
@@ -121,7 +121,7 @@
     cursor: pointer;
 }
 
-/* 실제 보이는 아이콘은 24px */
+/* �ㅼ젣 蹂댁씠�� �꾩씠肄섏� 24px */
 .icon {
     display: block;
     width: 24px;
@@ -151,7 +151,7 @@
     height: 5px;
 
     border-radius: 50%;
-    background-color: #ff4d5e;
+    background-color: var(--alert-red);
 }
 
 .mobileHiddenAction {
@@ -164,7 +164,7 @@
 
     border: 0;
     background: transparent;
-    color: #ffffff;
+    color: var(--white);
 
     font-family: inherit;
     font-size: 14px;
@@ -174,7 +174,7 @@
 }
 
 .loginButton:hover {
-    color: #afd9fa;
+    color: var(--blue-200);
 }
 
 .loginButton:active {
@@ -188,7 +188,7 @@
 
 .loginButton:focus-visible {
     border-radius: 2px;
-    outline: 2px solid #afd9fa;
+    outline: 2px solid var(--blue-200);
     outline-offset: 4px;
 }
 

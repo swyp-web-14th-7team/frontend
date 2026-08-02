@@ -23,8 +23,8 @@
 
     border-radius: 8px;
 
-    color: #fdfeff;
-    background: #222435;
+    color: var(--white);
+    background: var(--gray-900);
 
     box-shadow:
         0 24px 70px rgb(0 0 0 / 45%);
@@ -44,7 +44,7 @@
     padding: 0;
     border: 0;
 
-    color: #fdfeff;
+    color: var(--white);
     background: transparent;
 
     cursor: pointer;
@@ -65,7 +65,7 @@
 
     .closeButton:focus-visible {
     border-radius: 4px;
-    outline: 2px solid #fdfeff;
+    outline: 2px solid var(--white);
     outline-offset: 3px;
     }
 
@@ -87,7 +87,7 @@
     .title {
     margin: 20px 0 0;
 
-    color: #fdfeff;
+    color: var(--white);
 
     font-family: Pretendard, sans-serif;
     font-size: 36px;
@@ -102,7 +102,7 @@
     .description {
     margin: 16px 0 0;
 
-    color: #d3d5de;
+    color: var(--gray-300);
 
     font-family: Pretendard, sans-serif;
     font-size: 16px;
@@ -161,7 +161,7 @@
     }
 
     .loginButton:focus-visible {
-    outline: 2px solid #fdfeff;
+    outline: 2px solid var(--white);
     outline-offset: 3px;
     }
 
@@ -171,17 +171,17 @@
     }
 
     .kakaoButton {
-    color: #171717;
+    color: var(--black);
     background: #fee500;
     }
 
     .googleButton {
-    color: #171822;
-    background: #fdfeff;
+    color: var(--gray-900);
+    background: var(--white);
     }
 
     .naverButton {
-    color: #fdfeff;
+    color: var(--white);
     background: #03c75a;
     }
 
@@ -235,7 +235,7 @@
     align-items: center;
     justify-content: center;
 
-    color: #fdfeff;
+    color: var(--white);
 
     font-family: Arial, sans-serif;
     font-size: 22px;

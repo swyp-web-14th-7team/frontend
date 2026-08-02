@@ -2,8 +2,8 @@
     min-height: calc(100vh - 76px);
     padding: 60px 0 58px;
 
-    background-color: #111017;
-    color: #ffffff;
+    background-color: var(--black);
+    color: var(--white);
 
     box-sizing: border-box;
 }
@@ -16,7 +16,7 @@
 .title {
     margin: 0 0 20px;
 
-    color: #fdfeff;
+    color: var(--white);
     font-size: 24px;
     font-weight: 600;
     line-height: 138%;
@@ -36,7 +36,7 @@
     align-items: center;
     gap: 28px;
 
-    border-bottom: 1px solid #303344;
+    border-bottom: 1px solid var(--gray-800);
 
     box-sizing: border-box;
 }
@@ -49,7 +49,7 @@
     border: 0;
     background: transparent;
 
-    color: #777b8e;
+    color: var(--gray-500);
     font-family: inherit;
     font-size: 14px;
     font-weight: 500;
@@ -58,11 +58,11 @@
 }
 
 .tabButton:hover {
-    color: #ffffff;
+    color: var(--white);
 }
 
 .activeTab {
-    color: #ffffff;
+    color: var(--white);
     font-weight: 600;
 }
 
@@ -74,7 +74,7 @@
 
     height: 2px;
 
-    background-color: #ffffff;
+    background-color: var(--white);
 
     content: "";
 }
@@ -100,7 +100,7 @@
         to bottom,
         rgb(17 16 23 / 0%),
         rgb(17 16 23 / 88%) 55%,
-        #111017 100%
+        var(--black) 100%
     );
 
     pointer-events: none;
@@ -123,7 +123,7 @@
 .loginGuideTitle {
     margin: 0;
 
-    color: #ffffff;
+    color: var(--white);
     font-size: 24px;
     font-weight: 700;
     line-height: 1.4;
@@ -132,7 +132,7 @@
 .loginGuideDescription {
     margin: 16px 0 24px;
 
-    color: #9ca0b2;
+    color: var(--gray-500);
     font-size: 14px;
     line-height: 1.6;
 }
@@ -144,8 +144,8 @@
     border: 0;
     border-radius: 6px;
 
-    background-color: #cceaff;
-    color: #111017;
+    background-color: var(--blue-100);
+    color: var(--black);
 
     font-family: inherit;
     font-size: 14px;
@@ -193,7 +193,7 @@
     .mobileTitle {
         margin: 0;
 
-        color: #ffffff;
+        color: var(--white);
         font-size: 20px;
         font-weight: 700;
         line-height: 140%;
@@ -232,7 +232,7 @@
         gap: 28px;
         overflow-x: auto;
 
-        border-bottom: 1px solid #34384b;
+        border-bottom: 1px solid var(--gray-800);
 
         scrollbar-width: none;
     }

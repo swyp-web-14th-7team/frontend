@@ -7,7 +7,7 @@
     margin: 62px auto 0;
     padding-bottom: 80px;
 
-    color: #f7f8ff;
+    color: var(--gray-50);
 }
 
 .titleArea {
@@ -17,12 +17,12 @@
 
 .title {
     margin: 0;
-    color: #ffffff;
+    color: var(--white);
 }
 
 .description {
     margin: 10px 0 0;
-    color: #7f849b;
+    color: var(--gray-500);
 }
 
 .profileImage {
@@ -35,7 +35,7 @@ padding: 64px 0 0 64px;
     margin: 0 auto 44px;
 
     border-radius: 50%;
-    background: #6d748e;
+    background: var(--gray-600);
 }
 
 .profileImage img,
@@ -60,11 +60,11 @@ padding: 64px 0 0 64px;
     display: grid;
     place-items: center;
 
-    border: 2px solid #0f0f17;
+    border: 2px solid var(--black);
     border-radius: 50%;
 
-    color: #ffffff;
-    background: #4287ff;
+    color: var(--white);
+    background: var(--blue-400);
 
     font-size: 12px;
 }
@@ -84,7 +84,7 @@ padding: 64px 0 0 64px;
 .sectionLabel {
     margin: 0;
 
-    color: #e9ebf6;
+    color: var(--gray-150);
 
     font-size: 14px;
     font-weight: 600;
@@ -93,14 +93,14 @@ padding: 64px 0 0 64px;
 .sectionHelp {
     margin: 6px 0 0;
 
-    color: #73798f;
+    color: var(--gray-500);
     font-size: 12px;
 }
 
 .count {
     margin: 0;
 
-    color: #8d92a7;
+    color: var(--gray-500);
     font-size: 11px;
 }
 
@@ -116,11 +116,11 @@ padding: 64px 0 0 64px;
     min-height: 34px;
     padding: 7px 12px;
 
-    border: 1px solid #6e758e;
+    border: 1px solid var(--gray-600);
     border-radius: 7px;
 
-    color: #273149;
-    background: #e7f1ff;
+    color: var(--gray-800);
+    background: var(--blue-100);
 
     font-size: 13px;
     cursor: pointer;
@@ -138,8 +138,8 @@ padding: 64px 0 0 64px;
     border: 0;
     border-radius: 6px;
 
-    color: #eef0f8;
-    background: #363b52;
+    color: var(--gray-150);
+    background: var(--gray-800);
 
     font-size: 13px;
     cursor: pointer;
@@ -173,8 +173,8 @@ padding: 64px 0 0 64px;
     border: 1px solid transparent;
     border-radius: 6px;
 
-    color: #f2f4fb;
-    background: #34394f;
+    color: var(--gray-100);
+    background: var(--gray-800);
 
     outline: none;
 }
@@ -182,7 +182,7 @@ padding: 64px 0 0 64px;
 .select:focus,
 .input:focus,
 .textarea:focus {
-    border-color: #9bd2ff;
+    border-color: var(--blue-200);
 }
 
 .select {
@@ -204,7 +204,7 @@ padding: 64px 0 0 64px;
 
 .input::placeholder,
 .textarea::placeholder {
-    color: #747a91;
+    color: var(--gray-500);
 }
 
 .removeButton {
@@ -214,8 +214,8 @@ padding: 64px 0 0 64px;
     border: 0;
     border-radius: 6px;
 
-    color: #c9ccda;
-    background: #2a2e42;
+    color: var(--gray-300);
+    background: var(--gray-800);
 
     font-size: 20px;
     cursor: pointer;
@@ -231,10 +231,10 @@ padding: 64px 0 0 64px;
 .experienceCard {
     padding: 16px;
 
-    border: 1px solid #383d54;
+    border: 1px solid var(--gray-800);
     border-radius: 8px;
 
-    background: #25293b;
+    background: var(--gray-900);
 }
 
 .experienceTop {
@@ -250,18 +250,18 @@ padding: 64px 0 0 64px;
     align-items: center;
     gap: 7px;
 
-    color: #dfe2ed;
+    color: var(--gray-200);
     font-size: 13px;
 }
 
 .representativeLabel input {
-    accent-color: #9bd2ff;
+    accent-color: var(--blue-200);
 }
 
 .removeExperienceButton {
     border: 0;
 
-    color: #ff858d;
+    color: var(--alert-red);
     background: transparent;
 
     font-size: 12px;
@@ -274,12 +274,12 @@ padding: 64px 0 0 64px;
     display: flex;
     justify-content: space-between;
 
-    color: #c3c7d5;
+    color: var(--gray-300);
     font-size: 12px;
 }
 
 .inputLabel span {
-    color: #767c91;
+    color: var(--gray-500);
     font-size: 10px;
 }
 
@@ -306,13 +306,13 @@ padding: 64px 0 0 64px;
 }
 
 .skipButton {
-    color: #343849;
-    background: #edf0f5;
+    color: var(--gray-800);
+    background: var(--gray-150);
 }
 
 .submitButton {
-    color: #243143;
-    background: #a9d8fc;
+    color: var(--gray-800);
+    background: var(--blue-200);
 }
 
 .skipButton:disabled,
@@ -329,7 +329,7 @@ padding: 64px 0 0 64px;
 .errorMessage {
     margin: 14px 0;
 
-    color: #ff747d;
+    color: var(--alert-red);
     font-size: 13px;
     text-align: center;
 }
@@ -338,7 +338,7 @@ padding: 64px 0 0 64px;
     margin: 0;
     padding-top: 160px;
 
-    color: #ffffff;
+    color: var(--white);
     text-align: center;
 }
 
@@ -349,8 +349,8 @@ padding: 64px 0 0 64px;
     border: 0;
     border-radius: 6px;
 
-    color: #222938;
-    background: #abd9fb;
+    color: var(--gray-900);
+    background: var(--blue-200);
 
     cursor: pointer;
 }
@@ -374,6 +374,63 @@ padding: 64px 0 0 64px;
         );
 }
 
+.leaveModal {
+    width: min(420px, 100%);
+    padding: 26px;
+
+    border: 1px solid var(--gray-700);
+    border-radius: 10px;
+
+    color: var(--white);
+    background: var(--gray-800);
+
+    box-sizing: border-box;
+}
+
+.leaveModal h2 {
+    margin: 0 0 8px;
+
+    font-size: 18px;
+}
+
+.leaveModal p {
+    margin: 0;
+
+    color: var(--gray-300);
+
+    font-size: 14px;
+}
+
+.modalActions {
+    margin-top: 30px;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.modalActions button {
+    height: 48px;
+
+    border: 0;
+    border-radius: 7px;
+
+    font-family: inherit;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+.continueButton {
+    color: var(--gray-800);
+    background: var(--gray-200);
+}
+
+.discardButton {
+    color: var(--gray-800);
+    background: var(--blue-200);
+}
+
 .modal {
     width: min(480px, 100%);
     max-height:
@@ -388,7 +445,7 @@ padding: 64px 0 0 64px;
     padding: 24px;
 
     border-radius: 12px;
-    background: #24283a;
+    background: var(--gray-900);
 }
 
 .modalHeader {
@@ -402,21 +459,21 @@ padding: 64px 0 0 64px;
 .modalHeader h2 {
     margin: 0;
 
-    color: #ffffff;
+    color: var(--white);
     font-size: 19px;
 }
 
 .modalHeader p {
     margin: 8px 0 0;
 
-    color: #858a9f;
+    color: var(--gray-500);
     font-size: 13px;
 }
 
 .modalHeader button {
     border: 0;
 
-    color: #ffffff;
+    color: var(--white);
     background: transparent;
 
     font-size: 24px;
@@ -433,20 +490,20 @@ padding: 64px 0 0 64px;
     min-height: 38px;
     padding: 8px 13px;
 
-    border: 1px solid #4d536c;
+    border: 1px solid var(--gray-700);
     border-radius: 7px;
 
-    color: #e5e7f0;
-    background: #34394f;
+    color: var(--gray-200);
+    background: var(--gray-800);
 
     cursor: pointer;
 }
 
 .optionSelected {
-    border-color: #a9d8fc;
+    border-color: var(--blue-200);
 
-    color: #263044;
-    background: #a9d8fc;
+    color: var(--gray-800);
+    background: var(--blue-200);
 }
 
 .modalSubmitButton {
@@ -458,8 +515,8 @@ padding: 64px 0 0 64px;
     border: 0;
     border-radius: 6px;
 
-    color: #293243;
-    background: #a9d8fc;
+    color: var(--gray-800);
+    background: var(--blue-200);
 
     font-weight: 600;
     cursor: pointer;

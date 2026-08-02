@@ -1,6 +1,4 @@
-    /* =========================
-    데스크톱
-    ========================= */
+
 
     .overlay {
     position: fixed;
@@ -170,8 +168,8 @@
     border: none;
     border-radius: 6px;
 
-    background-color: #ffffff;
-    color: #111017;
+    background-color: var(--white);
+    color: var(--black);
 
     cursor: pointer;
     }
@@ -182,9 +180,7 @@
     cursor: not-allowed;
     }
 
-    /* =========================
-    모바일 390px
-    ========================= */
+
 
     @media (max-width: 768px) {
     .overlay {

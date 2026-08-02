@@ -247,6 +247,39 @@
     return `${imageUrl.replace(/\/$/, "")}/72.webp`;
     };
 
+    const createEditSnapshot = ({
+    introduction,
+    selectedSkills,
+    selectedInterests,
+    links,
+    experiences,
+    profileImageUrl,
+    }) =>
+    JSON.stringify({
+        introduction,
+        selectedSkills: selectedSkills.map((item) => ({
+        id: item?.id,
+        name: item?.name,
+        })),
+        selectedInterests: selectedInterests.map((item) => ({
+        id: item?.id,
+        name: item?.name,
+        })),
+        links: links.map((link) => ({
+        id: link?.id,
+        type: Number(link?.type ?? 6),
+        value: link?.value || "",
+        })),
+        experiences: experiences.map((experience) => ({
+        id: experience?.id,
+        title: experience?.title || "",
+        description: experience?.description || "",
+        relatedUrl: experience?.relatedUrl || "",
+        isRepresentative: Boolean(experience?.isRepresentative),
+        })),
+        profileImageUrl,
+    });
+
     const TagEditSection = ({ title, description, items, onRemove, onOpen }) => (
     <section className={styles.formSection}>
         <div className={styles.sectionHeading}>
@@ -284,6 +317,8 @@
     const navigate = useNavigate();
     const { profileId } = useParams();
     const imageInputRef = useRef(null);
+    const pendingNavigationRef = useRef(null);
+    const allowExitRef = useRef(false);
 
     const [profile, setProfile] = useState(null);
     const [introduction, setIntroduction] = useState("");
@@ -299,6 +334,8 @@
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
     const [isImageUploading, setIsImageUploading] = useState(false);
+    const [isLeaveModalOpen, setIsLeaveModalOpen] = useState(false);
+    const [initialSnapshot, setInitialSnapshot] = useState(null);
     const [errorMessage, setErrorMessage] = useState("");
 
     const job = useMemo(() => normalizeJob(profile), [profile]);
@@ -315,11 +352,37 @@
         [interestOptions],
     );
 
+    const currentSnapshot = useMemo(
+        () =>
+        createEditSnapshot({
+            introduction,
+            selectedSkills,
+            selectedInterests,
+            links,
+            experiences,
+            profileImageUrl,
+        }),
+        [
+        introduction,
+        selectedSkills,
+        selectedInterests,
+        links,
+        experiences,
+        profileImageUrl,
+        ],
+    );
+
+    const isDirty =
+        !isLoading &&
+        initialSnapshot !== null &&
+        currentSnapshot !== initialSnapshot;
+
     useEffect(() => {
         const controller = new AbortController();
 
         const loadProfile = async () => {
         setIsLoading(true);
+        setInitialSnapshot(null);
         setErrorMessage("");
 
         try {
@@ -351,19 +414,38 @@
 
             const imageUrl =
             profileData?.profileImageUrl || profileData?.profileImageUri || "";
+            const nextIntroduction =
+            profileData?.description || profileData?.introduction || "";
+            const nextSelectedSkills = normalizeItems(
+            profileData?.skills,
+            "skill",
+            );
+            const nextSelectedInterests = normalizeItems(
+            profileData?.interests,
+            "interest",
+            );
+            const nextLinks = normalizeLinks(profileData?.links);
+            const nextExperiences = normalizeExperiences(
+            profileData?.experiences,
+            );
+
+            setInitialSnapshot(createEditSnapshot({
+            introduction: nextIntroduction,
+            selectedSkills: nextSelectedSkills,
+            selectedInterests: nextSelectedInterests,
+            links: nextLinks,
+            experiences: nextExperiences,
+            profileImageUrl: imageUrl,
+            }));
 
             setProfile(profileData);
-            setIntroduction(
-            profileData?.description || profileData?.introduction || "",
-            );
+            setIntroduction(nextIntroduction);
             setSkillOptions(extractItems(skillResponse));
             setInterestOptions(extractItems(interestResponse));
-            setSelectedSkills(normalizeItems(profileData?.skills, "skill"));
-            setSelectedInterests(
-            normalizeItems(profileData?.interests, "interest"),
-            );
-            setLinks(normalizeLinks(profileData?.links));
-            setExperiences(normalizeExperiences(profileData?.experiences));
+            setSelectedSkills(nextSelectedSkills);
+            setSelectedInterests(nextSelectedInterests);
+            setLinks(nextLinks);
+            setExperiences(nextExperiences);
             setProfileImageUrl(imageUrl);
             setProfileImagePreview(getProfileImagePreviewUrl(imageUrl));
         } catch (error) {
@@ -384,8 +466,54 @@
         return () => controller.abort();
     }, [profileId]);
 
+    useEffect(() => {
+        if (!isDirty) return undefined;
+
+        const handleBeforeUnload = (event) => {
+        if (allowExitRef.current) return;
+
+        event.preventDefault();
+        event.returnValue = "";
+        };
+
+        window.addEventListener("beforeunload", handleBeforeUnload);
+
+        return () => {
+        window.removeEventListener("beforeunload", handleBeforeUnload);
+        };
+    }, [isDirty]);
+
+    const requestNavigation = (navigationAction) => {
+        if (!isDirty || allowExitRef.current) {
+        navigationAction();
+        return;
+        }
+
+        pendingNavigationRef.current = navigationAction;
+        setIsLeaveModalOpen(true);
+    };
+
     const handleBack = () => {
-        navigate(`/my-profile/${profileId}`);
+        requestNavigation(() => navigate(`/my-profile/${profileId}`));
+    };
+
+    const handleLogoClick = () => {
+        requestNavigation(() => navigate("/explore"));
+    };
+
+    const handleContinueEditing = () => {
+        pendingNavigationRef.current = null;
+        setIsLeaveModalOpen(false);
+    };
+
+    const handleDiscardChanges = () => {
+        const navigationAction = pendingNavigationRef.current;
+
+        allowExitRef.current = true;
+        pendingNavigationRef.current = null;
+        setIsLeaveModalOpen(false);
+
+        navigationAction?.();
     };
 
     const removeSelectedItem = (setter, itemId) => {
@@ -594,6 +722,8 @@
         try {
         await updateProfileCard(profileId, createRequestBody());
 
+        allowExitRef.current = true;
+
         navigate(`/my-profile/${profileId}`, {
             replace: true,
         });
@@ -610,6 +740,7 @@
             showBackButton={true}
             showProgress={true}
             onBack={handleBack}
+            onLogoClick={handleLogoClick}
             currentStep={2}
             totalSteps={5}
         >
@@ -624,6 +755,7 @@
             showBackButton={true}
             showProgress={true}
             onBack={handleBack}
+            onLogoClick={handleLogoClick}
             currentStep={2}
             totalSteps={5}
         >
@@ -646,6 +778,7 @@
         showBackButton={true}
         showProgress={false}
         onBack={handleBack}
+        onLogoClick={handleLogoClick}
         currentStep={2}
         totalSteps={5}
         >
@@ -993,6 +1126,43 @@
                 setModalType(null);
             }}
             />
+        )}
+
+        {isLeaveModalOpen && (
+            <div
+            className={styles.modalBackdrop}
+            role="presentation"
+            onMouseDown={handleContinueEditing}
+            >
+            <section
+                className={styles.leaveModal}
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="leave-modal-title"
+                onMouseDown={(event) => event.stopPropagation()}
+            >
+                <h2 id="leave-modal-title">변경 내용을 삭제하시겠어요?</h2>
+                <p>지금 돌아가면 변경 내용이 삭제됩니다.</p>
+
+                <div className={styles.modalActions}>
+                <button
+                    type="button"
+                    className={styles.continueButton}
+                    onClick={handleContinueEditing}
+                >
+                    수정 계속하기
+                </button>
+
+                <button
+                    type="button"
+                    className={styles.discardButton}
+                    onClick={handleDiscardChanges}
+                >
+                    변경 사항 삭제
+                </button>
+                </div>
+            </section>
+            </div>
         )}
         </OnboardingLayout>
     );

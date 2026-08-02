@@ -62,7 +62,7 @@
 
     border: 1px solid var(--gray-900);
     border-radius: 50%;
-    background-color: #2f80ed;
+    background-color: var(--blue-500);
     color: var(--white);
 
     cursor: pointer;
@@ -169,7 +169,7 @@
     border-radius: 8px;
 
     background-color: var(--gray-800);
-    color: #ffffff;
+    color: var(--white);
     box-sizing: border-box;
     }
 
@@ -208,15 +208,15 @@
     }
 
     .nextButtonActive {
-    background-color: #ffffff;
-    color: #111111;
+    background-color: var(--white);
+    color: var(--black);
     cursor: pointer;
     }
 
     .count {
     margin: 6px 0 0;
     text-align: right;
-    color: #9ca3af;
+    color: var(--gray-400);
     font-size: 12px;
     }
 
@@ -230,7 +230,7 @@
     border-radius: 50%;
     }
 
-    /* 390px 紐⑤컮�� */
+    /* 390px 筌뤴뫀而�옙占� */
     @media (max-width: 768px) {
     .container {
         min-height: auto;

@@ -62,7 +62,7 @@
     justify-content: center;
     border: 1px solid var(--gray-500);
     border-radius: 50%;
-    background-color: #2f80ed;
+    background-color: var(--blue-500);
     color: var(--white);
     font-size: 14px;
     line-height: 1;
@@ -86,7 +86,7 @@
 
     .errorMessage {
     margin: -16px 0 24px;
-    color: #ff6b78;
+    color: var(--alert-red);
     font-size: 13px;
     text-align: center;
     }
@@ -243,7 +243,7 @@
     padding: 0;
     border: 0;
     background: transparent;
-    color: #ff6b78;
+    color: var(--alert-red);
     font: inherit;
     font-size: 12px;
     cursor: pointer;
@@ -274,8 +274,8 @@
     }
 
     .submitButton {
-    background-color: #b4dcf8;
-    color: #172033;
+    background-color: var(--blue-200);
+    color: var(--gray-900);
     }
 
     @media (max-width: 768px) {

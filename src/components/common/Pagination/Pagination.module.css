@@ -18,7 +18,7 @@
     border-radius: 8px;
 
     background: transparent;
-    color: #74788b;
+    color: var(--gray-500);
 
     font-family: inherit;
     font-size: 14px;
@@ -28,12 +28,12 @@
 
 .pageButton:hover,
 .arrowButton:hover:not(:disabled) {
-    color: #ffffff;
+    color: var(--white);
 }
 
 .active {
-    background-color: #34394e;
-    color: #ffffff;
+    background-color: var(--gray-800);
+    color: var(--white);
 }
 
 .arrowButton:disabled {

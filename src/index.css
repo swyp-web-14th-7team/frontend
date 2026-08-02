@@ -17,7 +17,7 @@ body,
 
 body {
   margin: 0;
-  background-color: #111017;
-  color: #ffffff;
+  background-color: var(--black);
+  color: var(--white);
   font-family: "Pretendard", sans-serif;
 }

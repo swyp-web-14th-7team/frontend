@@ -7,7 +7,7 @@
     align-items: center;
     justify-content: space-between;
 
-    background-color: #111017;
+    background-color: var(--black);
 
     box-sizing: border-box;
     }
@@ -59,7 +59,7 @@
     .backButton:focus-visible,
     .logoLink:focus-visible {
     border-radius: 4px;
-    outline: 2px solid #b9dfff;
+    outline: 2px solid var(--blue-200);
     outline-offset: 3px;
     }
 
@@ -82,5 +82,5 @@
     height: 5px;
 
     border-radius: 50%;
-    background-color: #ff4d5e;
+    background-color: var(--alert-red);
     }

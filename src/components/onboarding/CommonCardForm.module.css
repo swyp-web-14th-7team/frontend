@@ -31,7 +31,7 @@
     .count {
     margin-top: 6px;
     text-align: right;
-    color: #9CA3AF;
+    color: var(--gray-400);
     font-size: 12px;
     }
 
