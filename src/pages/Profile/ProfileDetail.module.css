@@ -1063,6 +1063,15 @@
         flex-direction: column;
     }
 
+    /*
+     * 세로 배치로 돌아오면 flex-basis가 높이에 적용되어
+     * 버튼이 찌그러지므로 고정 높이를 다시 쓰게 합니다.
+     */
+    .exchangeButton,
+    .scrapButton {
+        flex: 0 0 auto;
+    }
+
     .detailCard {
         padding: 28px 20px;
     }
