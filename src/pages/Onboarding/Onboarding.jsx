@@ -800,9 +800,9 @@
             * 사용자가 고른 목적으로 다시 갱신합니다.
             */
             createdCard = await createProfileCard({
-            jobTypeId: onboardingData.jobTypeId,
-            purposeId:
-                Number(onboardingData.purposeId) || DEFAULT_PURPOSE_ID,
+                jobTypeId: onboardingData.jobTypeId,
+                purposeId:
+                    Number(onboardingData.purposeId) || DEFAULT_PURPOSE_ID,
             });
 
             profileCardId = createdCard?.id;
@@ -835,7 +835,11 @@
 
     /*
     * 마지막 목적 선택 단계에서
+<<<<<<< HEAD
     * 고른 목적을 반영하고 공개 상태를 다시 확정합니다.
+=======
+    * 고른 목적을 반영하고 카드를 공개로 전환합니다.
+>>>>>>> origin/develop
     */
     const handlePurposeSubmit = async () => {
         const selectedPurposeId =

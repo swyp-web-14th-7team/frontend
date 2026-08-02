@@ -38,7 +38,7 @@ import ExploreProfileCard from "../../components/profile/ExploreProfileCard";
 
 import shareIcon from "../../assets/icons/icon_share.svg";
 import copyIcon from "../../assets/icons/button.svg";
-import downloadIcon from "../../assets/icons/다운로드.svg";
+import downloadIcon from "../../assets/icons/\uB2E4\uC6B4\uB85C\uB4DC.svg";
 
 import cardStyles from "../../components/profile/ProfileCard.module.css";
 import styles from "./MyPage.module.css";
