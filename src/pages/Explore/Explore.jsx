@@ -44,25 +44,6 @@ import {
 
     import styles from "./Explore.module.css";
 
-    const TABS = [
-    "전체보기",
-    "팀 빌딩",
-    "커피챗",
-    "교류/네트워킹",
-    ];
-
-    const normalizePurposeName = (
-    value = "",
-    ) => {
-    return String(value)
-        .trim()
-        .toLowerCase()
-        .replace(
-        /[\s/·ㆍ_-]/g,
-        "",
-        );
-    };
-
     const normalizeAffiliationName = (
     value = "",
     ) => {
@@ -272,12 +253,8 @@ import {
         ? null
         : purposes.find(
             (purpose) =>
-                normalizePurposeName(
-                purpose?.name,
-                ) ===
-                normalizePurposeName(
+                purpose?.name ===
                 activeTab,
-                ),
             );
 
     const selectedPurposeId =
@@ -309,6 +286,17 @@ import {
         .map(
             (status) =>
             status?.name,
+        )
+        .filter(Boolean),
+    ];
+
+    const purposeTabs = [
+        "전체보기",
+
+        ...purposes
+        .map(
+            (purpose) =>
+            purpose?.name,
         )
         .filter(Boolean),
     ];
@@ -930,7 +918,7 @@ import {
                     role="tablist"
                     aria-label="탐색 카테고리"
                 >
-                    {TABS.map((tab) => {
+                    {purposeTabs.map((tab) => {
                     const isActive =
                         activeTab === tab;
 

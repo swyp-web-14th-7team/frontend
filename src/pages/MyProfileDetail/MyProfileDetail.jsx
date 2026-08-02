@@ -1,4 +1,4 @@
-    import { useEffect, useLayoutEffect, useState } from "react";
+    import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
     import { useNavigate, useParams } from "react-router-dom";
 
@@ -160,19 +160,15 @@
 
     const [shareMessage, setShareMessage] = useState("");
 
+    const deleteMessageTimerRef = useRef(null);
+
     useEffect(() => {
-        if (actionError !== "마지막 프로필 카드는 삭제할 수 없습니다.") {
-        return undefined;
-        }
-
-        const timerId = window.setTimeout(() => {
-        setActionError("");
-        }, 4000);
-
         return () => {
-        window.clearTimeout(timerId);
+        if (deleteMessageTimerRef.current) {
+            window.clearTimeout(deleteMessageTimerRef.current);
+        }
         };
-    }, [actionError]);
+    }, []);
 
     /*
     * 이전 화면의 스크롤 위치가 유지되면서
@@ -587,11 +583,26 @@
             replace: true,
         });
         } catch (error) {
-        setActionError(
+        const deleteMessage =
             error?.status === 409
             ? "마지막 프로필 카드는 삭제할 수 없습니다."
-            : error?.message || "프로필을 삭제하지 못했습니다.",
-        );
+            : error?.message || "프로필을 삭제하지 못했습니다.";
+
+        setActionError(deleteMessage);
+
+        if (deleteMessageTimerRef.current) {
+            window.clearTimeout(deleteMessageTimerRef.current);
+        }
+
+        deleteMessageTimerRef.current = window.setTimeout(() => {
+            setActionError((currentMessage) =>
+            currentMessage === deleteMessage
+                ? ""
+                : currentMessage,
+            );
+
+            deleteMessageTimerRef.current = null;
+        }, 3000);
 
         setIsDeleteModalOpen(false);
         } finally {

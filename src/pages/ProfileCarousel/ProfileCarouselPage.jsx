@@ -29,12 +29,6 @@
 
     import styles from "./ProfileCarouselPage.module.css";
 
-    const PURPOSE_HEADER_TEXT = {
-    "팀 빌딩": "팀을 찾고 있어요",
-    커피챗: "커피챗 나눠요",
-    "교류/네트워킹": "새로운 만남을 찾아요",
-    };
-
     const ChevronLeftIcon = () => (
     <svg
         width="28"
@@ -122,19 +116,12 @@
 
     const purpose = searchParams.get("purpose");
 
-    const headerText = PURPOSE_HEADER_TEXT[purpose] ?? "";
-
     /*
     * 탐색 화면에서 선택한 섹션의 purpose가
     * 쿼리스트링으로 전달되면 해당 목적의 카드만 표시합니다.
     *
     * 전체보기에서는 purpose가 없으므로 모든 카드를 표시합니다.
     */
-    const normalizePurposeName = (value = "") =>
-        String(value).replace(/\s+/g, "").replace(/[·/]/g, "").toLowerCase();
-
-    const normalizedPurpose = normalizePurposeName(purpose);
-
     const carouselProfiles = purpose
         ? profiles.filter((profile) => {
             const purposeNames = Array.isArray(profile.purposes)
@@ -147,7 +134,7 @@
                 ? item
                 : item?.name || item?.purposeName || "";
 
-            return normalizePurposeName(purposeName) === normalizedPurpose;
+            return purposeName === purpose;
             });
         })
         : profiles;
@@ -697,8 +684,6 @@
                 aria-label="이전 화면으로 돌아가기"
             >
                 <BackIcon />
-
-                {headerText && <span>{headerText}</span>}
             </button>
             </div>
 
@@ -718,8 +703,6 @@
                 aria-label="이전 화면으로 돌아가기"
             >
                 <BackIcon />
-
-                {headerText && <span>{headerText}</span>}
             </button>
             </div>
 
