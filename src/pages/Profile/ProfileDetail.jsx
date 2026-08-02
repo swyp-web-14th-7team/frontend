@@ -221,6 +221,14 @@ const ProfileDetail = () => {
     }, []);
 
     useEffect(() => {
+        /*
+         * 보관함에서 연 카드는 스크랩할 수 없으므로
+         * 서랍 목록도 불러오지 않습니다.
+         */
+        if (connectionId) {
+            return undefined;
+        }
+
         const controller = new AbortController();
 
         const timerId = window.setTimeout(() => {
@@ -231,7 +239,7 @@ const ProfileDetail = () => {
             window.clearTimeout(timerId);
             controller.abort();
         };
-    }, [loadDrawers]);
+    }, [connectionId, loadDrawers]);
 
     if (isLoading) {
         return (
@@ -276,6 +284,14 @@ const ProfileDetail = () => {
         myProfileCardIds.has(
             String(profile.id),
         );
+
+    /*
+     * 보관함(/saved/:connectionId)에서 연 카드는
+     * 이미 교환이 성립된 카드이므로
+     * 스크랩과 교환 요청을 노출하지 않습니다.
+     */
+    const isFromSavedList =
+        Boolean(connectionId);
 
     const interests = (profile.interests || [])
         .map((interest, index) => ({
@@ -544,7 +560,13 @@ const handleScrapSave = async () => {
             />
 
             <div className={styles.layout}>
-                <aside className={styles.summaryCard}>
+                <aside
+                    className={`${styles.summaryCard} ${
+                        isFromSavedList
+                            ? styles.summaryCardCompact
+                            : ""
+                    }`}
+                >
                     <div className={styles.profileBlock}>
                         {profile.profileImage ? (
                             <img
@@ -629,39 +651,45 @@ const handleScrapSave = async () => {
                         />
                     )}
 
-                    <div className={styles.summaryActions}>
-                        {!isMyProfileCardsLoading && (
-                            isOwnProfileCard ? (
-                                <span
-                                    className={
-                                        styles.ownCardStatus
-                                    }
-                                >
-                                    내 카드
-                                </span>
-                            ) : (
-                                <>
-                                    <button
-                                        type="button"
-                                        className={styles.exchangeButton}
-                                        onClick={
-                                            handleOpenExchangeModal
+                    {/*
+                      * 보관함에서 연 카드는 액션이 없으므로
+                      * 빈 여백이 생기지 않도록 영역째 렌더링하지 않습니다.
+                      */}
+                    {!isFromSavedList && (
+                        <div className={styles.summaryActions}>
+                            {!isMyProfileCardsLoading && (
+                                isOwnProfileCard ? (
+                                    <span
+                                        className={
+                                            styles.ownCardStatus
                                         }
                                     >
-                                        카드 교환 요청
-                                    </button>
+                                        내 카드
+                                    </span>
+                                ) : (
+                                    <>
+                                        <button
+                                            type="button"
+                                            className={styles.exchangeButton}
+                                            onClick={
+                                                handleOpenExchangeModal
+                                            }
+                                        >
+                                            카드 교환 요청
+                                        </button>
 
-                                    <button
-                                        type="button"
-                                        className={styles.scrapButton}
-                                        onClick={handleOpenScrap}
-                                    >
-                                        스크랩하기
-                                    </button>
-                                </>
-                            )
-                        )}
-                    </div>
+                                        <button
+                                            type="button"
+                                            className={styles.scrapButton}
+                                            onClick={handleOpenScrap}
+                                        >
+                                            스크랩하기
+                                        </button>
+                                    </>
+                                )
+                            )}
+                        </div>
+                    )}
                 </aside>
 
                 <article className={styles.detailCard}>
@@ -894,7 +922,7 @@ const handleScrapSave = async () => {
                 </article>
             </div>
 
-            {isScrapOpen && (
+            {isScrapOpen && !isFromSavedList && (
                 <div
                     className={styles.modalBackdrop}
                     role="presentation"
@@ -1112,7 +1140,9 @@ const handleScrapSave = async () => {
                 </div>
             )}
 
-            {isExchangeModalOpen && !isOwnProfileCard && (
+            {isExchangeModalOpen &&
+                !isOwnProfileCard &&
+                !isFromSavedList && (
                 <CardExchangeModal
                     receiver={profile}
                     onClose={
