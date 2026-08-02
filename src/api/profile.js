@@ -63,11 +63,11 @@
     };
 
     export const getMyProfileCards = async ({
-    page = 1,
-    limit = 10,
-    sort = "createdAt",
-    order = "desc",
-    signal,
+        page = 1,
+        limit = 10,
+        sort = "createdAt",
+        order = "desc",
+        signal,
     } = {}) => {
     const params = new URLSearchParams({
         page: String(page),

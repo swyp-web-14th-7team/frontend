@@ -46,6 +46,37 @@ class AuthenticationExpiredError extends Error {}
 
 class FatalStreamError extends Error {}
 
+/*
+ * 서버가 스트림을 정상 종료했을 때 사용합니다.
+ *
+ * fetch-event-source는 정상 종료를 예외로 보지 않아
+ * onclose에서 던져 주지 않으면 재연결하지 않습니다.
+ */
+class StreamClosedError extends Error {}
+
+/*
+ * 서버는 access token 만료 시점(30분)에 스트림을 끊습니다.
+ * 끊긴 뒤에는 토큰을 재발급받아 다시 연결해야 하므로,
+ * 재발급이 끝날 여유를 두고 재연결합니다.
+ */
+const STREAM_RETRY_BASE_DELAY = 3000;
+
+/*
+ * 서버 장애로 연결이 계속 실패할 때
+ * 모든 클라이언트가 3초마다 몰리지 않도록
+ * 대기 시간을 두 배씩 늘립니다.
+ */
+const STREAM_RETRY_MAX_DELAY = 30000;
+
+/*
+ * 이 시간 이상 연결이 유지됐다면 정상 동작으로 보고
+ * 대기 시간을 처음부터 다시 셉니다.
+ *
+ * 붙자마자 끊기는 상황에서는 초기화하지 않아야
+ * 대기 시간이 실제로 늘어납니다.
+ */
+const STREAM_STABLE_DURATION = 10000;
+
 const getItems = (result) => {
     if (Array.isArray(result)) {
         return result;
@@ -594,6 +625,41 @@ export const NotificationProvider = ({
                 }
             };
 
+        /*
+         * 연속 실패 횟수와 마지막 연결 시각입니다.
+         * 토큰이 바뀌어 effect가 다시 실행되면 함께 초기화됩니다.
+         */
+        let retryCount = 0;
+
+        let connectedAt = null;
+
+        const getRetryDelay = () => {
+            /*
+             * 충분히 오래 붙어 있었다면 정상 주기로 보고
+             * 대기 시간을 처음부터 다시 셉니다.
+             */
+            if (
+                connectedAt !== null &&
+                Date.now() - connectedAt >=
+                    STREAM_STABLE_DURATION
+            ) {
+                retryCount = 0;
+            }
+
+            connectedAt = null;
+
+            const delay =
+                STREAM_RETRY_BASE_DELAY *
+                2 ** retryCount;
+
+            retryCount += 1;
+
+            return Math.min(
+                delay,
+                STREAM_RETRY_MAX_DELAY,
+            );
+        };
+
         void fetchEventSource(
             streamUrl,
             {
@@ -623,6 +689,9 @@ export const NotificationProvider = ({
                             "text/event-stream",
                         )
                     ) {
+                        connectedAt =
+                            Date.now();
+
                         setNotificationError(
                             "",
                         );
@@ -709,6 +778,16 @@ export const NotificationProvider = ({
                         );
                     }
                 },
+                /*
+                 * 서버가 토큰 만료로 스트림을 끊으면
+                 * 예외 없이 종료되어 재연결이 일어나지 않습니다.
+                 * 던져서 onerror의 재연결 경로로 넘깁니다.
+                 */
+                onclose() {
+                    throw new StreamClosedError(
+                        "알림 연결이 종료되었습니다.",
+                    );
+                },
                 onerror(error) {
                     if (
                         error instanceof
@@ -730,11 +809,31 @@ export const NotificationProvider = ({
                         throw error;
                     }
 
+                    /*
+                     * 만료된 토큰으로 다시 붙으면 곧바로 끊기므로
+                     * 재발급을 먼저 요청합니다.
+                     *
+                     * 재발급에 성공하면 accessToken이 바뀌며
+                     * 이 effect가 다시 실행돼 새 토큰으로 연결되고,
+                     * 그 과정에서 아래 재연결 예약은 정리됩니다.
+                     *
+                     * 토큰이 그대로인 경우를 대비해
+                     * 재연결 예약도 함께 남겨 둡니다.
+                     */
+                    if (
+                        error instanceof
+                        StreamClosedError
+                    ) {
+                        void renewAccessToken();
+
+                        return getRetryDelay();
+                    }
+
                     setNotificationError(
                         "실시간 알림 연결을 다시 시도하고 있습니다.",
                     );
 
-                    return 3000;
+                    return getRetryDelay();
                 },
             },
         ).catch((error) => {

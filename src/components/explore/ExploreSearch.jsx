@@ -84,27 +84,37 @@ const ExploreSearch = ({
     const hasSelectedSkills =
         selectedTags.length > 0;
 
-    /*
-     * 1개: Swift
-     * 여러 개: Swift 외 3
-     */
-    const skillFilterLabel = hasSelectedSkills
-        ? `${getSkillName(selectedTags[0])}${
-              selectedTags.length > 1
-                  ? ` 외 ${selectedTags.length - 1}`
-                  : ""
-          }`
-        : "직군·스킬";
-
-    /*
-     * 직접 입력한 검색어가 있으면 검색어 표시
-     * 검색어가 없고 직군을 선택했다면 직군 표시
-     */
-    const displayedKeyword =
-        keyword ||
+    const jobTypeName =
         getJobDisplayName(
             selectedJobType,
         );
+
+    /*
+     * 스킬만: Swift / Swift 외 3
+     * 직군만: 프론트엔드 개발자
+     * 둘 다: 프론트엔드 개발자 · Swift 외 3
+     *
+     * 선택한 직군은 검색어가 아니라
+     * 필터 버튼에 표시합니다.
+     */
+    const skillFilterLabel =
+        [
+            jobTypeName,
+
+            hasSelectedSkills
+                ? `${getSkillName(selectedTags[0])}${
+                      selectedTags.length > 1
+                          ? ` 외 ${selectedTags.length - 1}`
+                          : ""
+                  }`
+                : "",
+        ]
+            .filter(Boolean)
+            .join(" · ") || "직군·스킬";
+
+    const hasActiveFilter =
+        hasSelectedSkills ||
+        Boolean(jobTypeName);
 
     const handleFilterApply = ({
         jobType,
@@ -131,7 +141,7 @@ const ExploreSearch = ({
 
                 <input
                     type="search"
-                    value={displayedKeyword}
+                    value={keyword}
                     onChange={(event) =>
                         onKeywordChange(
                             event.target.value,
@@ -161,7 +171,7 @@ const ExploreSearch = ({
                     <button
                         type="button"
                         className={`${styles.filterButton} ${
-                            hasSelectedSkills
+                            hasActiveFilter
                                 ? styles.activeFilterButton
                                 : ""
                         }`}
@@ -174,7 +184,7 @@ const ExploreSearch = ({
                             {skillFilterLabel}
                         </span>
 
-                        {!hasSelectedSkills && (
+                        {!hasActiveFilter && (
                             <img
                                 src={dropdownIcon}
                                 alt=""

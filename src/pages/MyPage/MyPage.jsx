@@ -345,6 +345,20 @@ const MyPage = () => {
             );
         };
 
+    /*
+     * 카드가 하나도 없는 사용자는 최초 온보딩 대상입니다.
+     * 마지막 카드는 삭제할 수 없으므로
+     * 카드 0개는 아직 첫 카드를 만들지 않은 경우뿐입니다.
+     */
+    const handleCreateFirstProfile =
+        () => {
+            setIsAddMenuOpen(
+                false,
+            );
+
+            navigate("/onboarding");
+        };
+
     const handleOpenDraftModal =
         () => {
             const savedDrafts =
@@ -833,7 +847,7 @@ const MyPage = () => {
                         <button
                             type="button"
                             onClick={
-                                handleCreateProfile
+                                handleCreateFirstProfile
                             }
                         >
                             첫 카드 만들기
