@@ -37,6 +37,8 @@ import {
 import ExploreProfileCard from "../../components/profile/ExploreProfileCard";
 
 import shareIcon from "../../assets/icons/icon_share.svg";
+import copyIcon from "../../assets/icons/button.svg";
+import downloadIcon from "../../assets/icons/다운로드.svg";
 
 import cardStyles from "../../components/profile/ProfileCard.module.css";
 import styles from "./MyPage.module.css";
@@ -138,6 +140,11 @@ const MyPage = () => {
     ] = useState(0);
 
     const [
+        carouselDirection,
+        setCarouselDirection,
+    ] = useState(null);
+
+    const [
         flippedProfileId,
         setFlippedProfileId,
     ] = useState(null);
@@ -214,6 +221,14 @@ const MyPage = () => {
         profiles.length - 1
             ? profiles[
                   selectedIndex + 1
+              ]
+            : null;
+
+    const peekProfile =
+        selectedIndex <
+        profiles.length - 2
+            ? profiles[
+                  selectedIndex + 2
               ]
             : null;
 
@@ -322,6 +337,16 @@ const MyPage = () => {
     const handleSelectIndex = (
         index,
     ) => {
+        if (index === selectedIndex) {
+            return;
+        }
+
+        setCarouselDirection(
+            index > selectedIndex
+                ? "next"
+                : "previous",
+        );
+
         setSelectedIndex(index);
 
         setFlippedProfileId(
@@ -343,6 +368,20 @@ const MyPage = () => {
             navigate(
                 `/onboarding?mode=create&draftId=${draftId}`,
             );
+        };
+
+    /*
+     * 카드가 하나도 없는 사용자는 최초 온보딩 대상입니다.
+     * 마지막 카드는 삭제할 수 없으므로
+     * 카드 0개는 아직 첫 카드를 만들지 않은 경우뿐입니다.
+     */
+    const handleCreateFirstProfile =
+        () => {
+            setIsAddMenuOpen(
+                false,
+            );
+
+            navigate("/onboarding");
         };
 
     const handleOpenDraftModal =
@@ -833,7 +872,7 @@ const MyPage = () => {
                         <button
                             type="button"
                             onClick={
-                                handleCreateProfile
+                                handleCreateFirstProfile
                             }
                         >
                             첫 카드 만들기
@@ -842,9 +881,14 @@ const MyPage = () => {
                 ) : (
                     <>
                         <div
-                            className={
-                                styles.carousel
-                            }
+                            key={`carousel-${selectedProfile.id}`}
+                            className={`${styles.carousel} ${
+                                carouselDirection === "next"
+                                    ? styles.carouselNext
+                                    : carouselDirection === "previous"
+                                      ? styles.carouselPrevious
+                                      : ""
+                            }`}
                         >
                             <div
                                 className={
@@ -866,130 +910,24 @@ const MyPage = () => {
                                         styles.cardShell
                                     }
                                 >
-                                    {isSelectedCardFlipped ? (
-                                        <article
-                                            className={`${cardStyles.card} ${styles.qrCard}`}
-                                            style={{
-                                                backgroundImage:
-                                                    selectedProfile
-                                                        .cardImageUrl ||
-                                                    selectedProfile
-                                                        .cardImage
-                                                        ? `linear-gradient(
-                                                            rgba(17, 16, 23, 0.08),
-                                                            rgba(17, 16, 23, 0.08)
-                                                        ),
-                                                        url("${makeCardBackgroundUrl(
-                                                            selectedProfile.cardImageUrl ||
-                                                                selectedProfile.cardImage,
-                                                        )}")`
-                                                        : undefined,
-                                            }}
+                                    <div
+                                        className={`${styles.flipCard} ${
+                                            isSelectedCardFlipped
+                                                ? styles.flipped
+                                                : ""
+                                        }`}
+                                    >
+                                        <div
+                                            className={`${styles.cardFace} ${styles.frontFace}`}
+                                            aria-hidden={
+                                                isSelectedCardFlipped
+                                            }
+                                            inert={
+                                                isSelectedCardFlipped
+                                                    ? ""
+                                                    : undefined
+                                            }
                                         >
-                                            <div
-                                                className={
-                                                    styles.qrHeader
-                                                }
-                                            >
-                                                <span>
-                                                    {getJobLabel(
-                                                        selectedProfile
-                                                            .job,
-                                                    )}
-                                                </span>
-
-                                                <button
-                                                    type="button"
-                                                    className={
-                                                        styles.flipButton
-                                                    }
-                                                    onClick={
-                                                        handleFlipCard
-                                                    }
-                                                    aria-label="카드 앞면 보기"
-                                                >
-                                                    <img
-                                                        src={
-                                                            shareIcon
-                                                        }
-                                                        alt=""
-                                                    />
-                                                </button>
-                                            </div>
-
-                                            <div
-                                                ref={
-                                                    qrCodeRef
-                                                }
-                                                className={
-                                                    styles.qrContainer
-                                                }
-                                            >
-                                                <QRCodeSVG
-                                                    value={
-                                                        profileShareUrl
-                                                    }
-                                                    size={
-                                                        205
-                                                    }
-                                                    level="H"
-                                                    includeMargin
-                                                    fgColor="#5b9cff"
-                                                    bgColor="#ffffff"
-                                                />
-                                            </div>
-
-                                            <div
-                                                className={
-                                                    styles.qrActions
-                                                }
-                                            >
-                                                <button
-                                                    type="button"
-                                                    onClick={
-                                                        handleCopyLink
-                                                    }
-                                                >
-                                                    <span
-                                                        aria-hidden="true"
-                                                    >
-                                                        ⧉
-                                                    </span>
-
-                                                    링크 복사
-                                                </button>
-
-                                                <button
-                                                    type="button"
-                                                    onClick={
-                                                        handleDownloadQr
-                                                    }
-                                                >
-                                                    <span
-                                                        aria-hidden="true"
-                                                    >
-                                                        ⇩
-                                                    </span>
-
-                                                    다운로드
-                                                </button>
-                                            </div>
-
-                                            {copyMessage && (
-                                                <p
-                                                    className={
-                                                        styles.copyMessage
-                                                    }
-                                                    role="status"
-                                                >
-                                                    {
-                                                        copyMessage
-                                                    }
-                                                </p>
-                                            )}
-                                        </article>
-                                    ) : (
-                                        <>
                                             <ExploreProfileCard
                                                 profile={
                                                     selectedProfile
@@ -1054,9 +992,144 @@ const MyPage = () => {
                                                     </button>
                                                 </div>
                                             )}
+                                        </div>
 
-                                        </>
-                                    )}
+                                        <div
+                                            className={`${styles.cardFace} ${styles.backFace}`}
+                                            aria-hidden={
+                                                !isSelectedCardFlipped
+                                            }
+                                            inert={
+                                                isSelectedCardFlipped
+                                                    ? undefined
+                                                    : ""
+                                            }
+                                        >
+                                            <article
+                                                className={`${cardStyles.card} ${styles.qrCard}`}
+                                                style={{
+                                                    backgroundImage:
+                                                        selectedProfile
+                                                            .cardImageUrl ||
+                                                        selectedProfile
+                                                            .cardImage
+                                                            ? `linear-gradient(
+                                                                rgba(17, 16, 23, 0.08),
+                                                                rgba(17, 16, 23, 0.08)
+                                                            ),
+                                                            url("${makeCardBackgroundUrl(
+                                                                selectedProfile.cardImageUrl ||
+                                                                    selectedProfile.cardImage,
+                                                            )}")`
+                                                            : undefined,
+                                                }}
+                                            >
+                                                <div
+                                                    className={
+                                                        styles.qrHeader
+                                                    }
+                                                >
+                                                    <span>
+                                                        {getJobLabel(
+                                                            selectedProfile
+                                                                .job,
+                                                        )}
+                                                    </span>
+
+                                                    <button
+                                                        type="button"
+                                                        className={
+                                                            styles.flipButton
+                                                        }
+                                                        onClick={
+                                                            handleFlipCard
+                                                        }
+                                                        aria-label="카드 앞면 보기"
+                                                    >
+                                                        <img
+                                                            src={
+                                                                shareIcon
+                                                            }
+                                                            alt=""
+                                                        />
+                                                    </button>
+                                                </div>
+
+                                                <div
+                                                    ref={
+                                                        qrCodeRef
+                                                    }
+                                                    className={
+                                                        styles.qrContainer
+                                                    }
+                                                >
+                                                    <QRCodeSVG
+                                                        value={
+                                                            profileShareUrl
+                                                        }
+                                                        size={
+                                                            205
+                                                        }
+                                                        level="H"
+                                                        includeMargin
+                                                        fgColor="#5b9cff"
+                                                        bgColor="#ffffff"
+                                                    />
+                                                </div>
+
+                                                <div
+                                                    className={
+                                                        styles.qrActions
+                                                    }
+                                                >
+                                                    <button
+                                                        type="button"
+                                                        onClick={
+                                                            handleCopyLink
+                                                        }
+                                                        aria-label="링크 복사"
+                                                    >
+                                                        <img
+                                                            src={
+                                                                copyIcon
+                                                            }
+                                                            alt=""
+                                                            aria-hidden="true"
+                                                        />
+                                                    </button>
+
+                                                    <button
+                                                        type="button"
+                                                        onClick={
+                                                            handleDownloadQr
+                                                        }
+                                                        aria-label="다운로드"
+                                                    >
+                                                        <img
+                                                            src={
+                                                                downloadIcon
+                                                            }
+                                                            alt=""
+                                                            aria-hidden="true"
+                                                        />
+                                                    </button>
+                                                </div>
+
+                                                {copyMessage && (
+                                                    <p
+                                                        className={
+                                                            styles.copyMessage
+                                                        }
+                                                        role="status"
+                                                    >
+                                                        {
+                                                            copyMessage
+                                                        }
+                                                    </p>
+                                                )}
+                                            </article>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -1069,6 +1142,22 @@ const MyPage = () => {
                                     nextProfile,
                                 )}
                             </div>
+
+                            {peekProfile && (
+                                <>
+                                    <div
+                                        className={
+                                            styles.peekSlot
+                                        }
+                                        aria-hidden="true"
+                                        inert=""
+                                    >
+                                        {renderSideCard(
+                                            peekProfile,
+                                        )}
+                                    </div>
+                                </>
+                            )}
                         </div>
 
                         <div className={styles.badgeRow}>

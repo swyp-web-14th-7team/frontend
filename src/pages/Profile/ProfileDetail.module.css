@@ -7,8 +7,8 @@
 
     overflow-x: hidden;
 
-    background: #111017;
-    color: #fdfeff;
+    background: var(--black);
+    color: var(--white);
 
     box-sizing: border-box;
 }
@@ -26,9 +26,9 @@
         ),
         linear-gradient(
             110deg,
-            #579bf7 0%,
+            var(--blue-400) 0%,
             #6aacf6 57%,
-            #e6e8cf 100%
+            var(--y-100) 100%
         );
 
     background-position: center;
@@ -51,7 +51,7 @@
 }
 
 /* =========================
-   �쇱そ �꾨줈�� �⑤꼸
+   占쎌눘�� 占쎄쑬以덌옙占� 占썩뫀瑗�
 ========================= */
 
 .summaryCard {
@@ -65,9 +65,18 @@
     gap: 36px;
 
     border-radius: 8px;
-    background: #222435;
+    background: var(--gray-900);
 
     box-sizing: border-box;
+}
+
+/*
+ * 蹂닿��� �곸꽭�먮뒗 �≪뀡 踰꾪듉�� �놁뒿�덈떎.
+ * 怨좎젙 �믪씠瑜� 洹몃�濡� �먮㈃ 移대뱶 �꾨옒履쎌뿉 鍮� 怨듦컙�� �⑥뒿�덈떎.
+ */
+.summaryCardCompact {
+    min-height: 0;
+    padding-bottom: 40px;
 }
 
 .profileBlock {
@@ -104,8 +113,8 @@
     align-items: center;
     justify-content: center;
 
-    background: #dbe8ff;
-    color: #4e75b2;
+    background: var(--blue-100);
+    color: var(--blue-500);
 
     font-size: 22px;
     font-weight: 700;
@@ -128,7 +137,7 @@
 }
 
 .name {
-    color: #fdfeff;
+    color: var(--white);
 
     font-size: 20px;
     font-weight: 700;
@@ -141,7 +150,7 @@
 
     overflow: hidden;
 
-    color: #d7dae4;
+    color: var(--gray-300);
 
     font-size: 13px;
     font-weight: 500;
@@ -156,7 +165,7 @@
 
     overflow: hidden;
 
-    color: #aeb3c2;
+    color: var(--gray-400);
 
     font-size: 13px;
     font-weight: 400;
@@ -181,7 +190,7 @@
     gap: 8px;
 
     border-radius: 6px;
-    background: #32374c;
+    background: var(--gray-800);
 
     box-sizing: border-box;
 }
@@ -201,7 +210,7 @@
 
 .strengthPlaceholder {
     border-radius: 2px;
-    background: #454b63;
+    background: var(--gray-700);
 }
 
 .strengthText {
@@ -209,7 +218,7 @@
 
     overflow: hidden;
 
-    color: #f9fafb;
+    color: var(--gray-50);
 
     font-size: 12px;
     font-weight: 600;
@@ -238,8 +247,8 @@
     justify-content: center;
 
     border-radius: 4px;
-    background: #303347;
-    color: #ffffff;
+    background: var(--gray-800);
+    color: var(--white);
 
     font-size: 14px;
     font-weight: 600;
@@ -270,21 +279,21 @@
 }
 
 .exchangeButton {
-    background: #afd8f8;
-    color: #181b29;
+    background: var(--blue-200);
+    color: var(--gray-900);
 }
 
 .scrapButton {
-    background: #e4e7ec;
-    color: #25293a;
+    background: var(--gray-200);
+    color: var(--gray-900);
 }
 
 .exchangeButton:hover {
-    background: #c4e4fc;
+    background: var(--blue-200);
 }
 
 .scrapButton:hover {
-    background: #f2f4f7;
+    background: var(--gray-100);
 }
 
 .exchangeButton:active,
@@ -294,12 +303,12 @@
 
 .exchangeButton:focus-visible,
 .scrapButton:focus-visible {
-    outline: 2px solid #ffffff;
+    outline: 2px solid var(--white);
     outline-offset: 2px;
 }
 
 /* =========================
-   �ㅻⅨ履� �곸꽭 �⑤꼸
+   占썬끇�⑨쭫占� 占쎄낯苑� 占썩뫀瑗�
 ========================= */
 
 .detailCard {
@@ -308,7 +317,7 @@
     padding: 48px 44px;
 
     border-radius: 8px;
-    background: #222435;
+    background: var(--gray-900);
 
     box-sizing: border-box;
 }
@@ -316,7 +325,7 @@
 .section {
     padding: 24px 0;
 
-    border-bottom: 3px solid #32374c;
+    border-bottom: 3px solid var(--gray-800);
 }
 
 .section:first-child {
@@ -331,7 +340,7 @@
 .sectionTitle {
     margin: 0 0 8px;
 
-    color: #8f95a6;
+    color: var(--gray-500);
 
     font-size: 14px;
     font-weight: 500;
@@ -342,7 +351,7 @@
 .introduction {
     margin: 0;
 
-    color: #f9fafb;
+    color: var(--gray-50);
 
     font-size: 16px;
     font-weight: 400;
@@ -355,7 +364,7 @@
 }
 
 /* =========================
-   愿��� 遺꾩빞 / �ㅽ궗
+   �울옙占쏙옙 �브쑴鍮� / 占썬끋沅�
 ========================= */
 
 .tagList {
@@ -378,8 +387,8 @@
     overflow: hidden;
 
     border-radius: 8px;
-    background: #32374c;
-    color: #dce0eb;
+    background: var(--gray-800);
+    color: var(--gray-200);
 
     font-size: 14px;
     font-weight: 500;
@@ -392,7 +401,7 @@
 }
 
 /* =========================
-   留곹겕
+   筌띻낱寃�
 ========================= */
 
 .linkList {
@@ -414,7 +423,7 @@
     align-items: center;
     gap: 8px;
 
-    color: #858b9d;
+    color: var(--gray-500);
     text-decoration: none;
 }
 
@@ -427,8 +436,8 @@
     justify-content: center;
 
     border-radius: 50%;
-    background: #32374c;
-    color: #cbd0dc;
+    background: var(--gray-800);
+    color: var(--gray-300);
 
     transition:
         background-color 0.18s ease,
@@ -446,7 +455,7 @@
 
     overflow: hidden;
 
-    color: #777d8f;
+    color: var(--gray-500);
 
     font-size: 11px;
     font-weight: 400;
@@ -458,24 +467,24 @@
 }
 
 .linkItem:hover .linkCircle {
-    background: #444a62;
-    color: #ffffff;
+    background: var(--gray-700);
+    color: var(--white);
 
     transform: translateY(-2px);
 }
 
 .linkItem:hover .linkLabel {
-    color: #f9fafb;
+    color: var(--gray-50);
 }
 
 .linkItem:focus-visible {
     border-radius: 8px;
-    outline: 2px solid #afd8f8;
+    outline: 2px solid var(--blue-200);
     outline-offset: 5px;
 }
 
 /* =========================
-   寃쏀뿕
+   野껋�肉�
 ========================= */
 
 .experienceGrid {
@@ -495,7 +504,7 @@
     gap: 8px;
 
     border-radius: 8px;
-    background: #32374c;
+    background: var(--gray-800);
 
     box-sizing: border-box;
 
@@ -503,7 +512,7 @@
 }
 
 .experienceCard:hover {
-    background: #393f56;
+    background: var(--gray-800);
 }
 
 .experienceTitleRow {
@@ -526,8 +535,8 @@
     justify-content: center;
 
     border-radius: 6px;
-    background: #50566d;
-    color: #f2e7aa;
+    background: var(--gray-700);
+    color: var(--y-300);
 
     font-size: 11px;
     font-weight: 600;
@@ -539,7 +548,7 @@
 
     overflow: hidden;
 
-    color: #f9fafb;
+    color: var(--gray-50);
 
     font-size: 15px;
     font-weight: 600;
@@ -556,7 +565,7 @@
     display: -webkit-box;
     overflow: hidden;
 
-    color: #aeb3c2;
+    color: var(--gray-400);
 
     font-size: 13px;
     font-weight: 400;
@@ -575,7 +584,7 @@
 
     overflow: hidden;
 
-    color: #777e91;
+    color: var(--gray-500);
 
     font-size: 11px;
     font-weight: 400;
@@ -587,21 +596,21 @@
 }
 
 .experienceLink:hover {
-    color: #afd8f8;
+    color: var(--blue-200);
 }
 
 .emptyText,
 .emptyDrawerText {
     margin: 0;
 
-    color: #777d8f;
+    color: var(--gray-500);
 
     font-size: 13px;
     line-height: 160%;
 }
 
 /* =========================
-   �ㅽ겕�� 紐⑤떖
+   占썬끋寃뺧옙占� 筌뤴뫀��
 ========================= */
 
 .modalBackdrop {
@@ -628,10 +637,10 @@
 
     overflow-y: auto;
 
-    border: 1px solid #41465c;
+    border: 1px solid var(--gray-700);
     border-radius: 12px;
-    background: #222435;
-    color: #ffffff;
+    background: var(--gray-900);
+    color: var(--white);
 
     box-sizing: border-box;
 }
@@ -647,7 +656,7 @@
 .modalHeader h2 {
     margin: 0;
 
-    color: #ffffff;
+    color: var(--white);
 
     font-size: 22px;
     font-weight: 700;
@@ -664,7 +673,7 @@
 
     border: 0;
     background: transparent;
-    color: #ffffff;
+    color: var(--white);
 
     font-family: inherit;
     font-size: 30px;
@@ -674,7 +683,7 @@
 }
 
 .closeButton:hover {
-    color: #afd8f8;
+    color: var(--blue-200);
 }
 
 .scrapSummary {
@@ -686,7 +695,7 @@
 }
 
 .scrapSummary > span {
-    color: #777d91;
+    color: var(--gray-500);
 
     font-size: 14px;
     font-weight: 600;
@@ -697,7 +706,7 @@
 
     border: 0;
     background: transparent;
-    color: #dce0eb;
+    color: var(--gray-200);
 
     font-family: inherit;
     font-size: 14px;
@@ -707,16 +716,16 @@
 }
 
 .addDrawerButton:hover {
-    color: #afd8f8;
+    color: var(--blue-200);
 }
 
 .addDrawerForm {
     margin-bottom: 18px;
     padding: 16px;
 
-    border: 1px solid #4b516b;
+    border: 1px solid var(--gray-700);
     border-radius: 8px;
-    background: #292c40;
+    background: var(--gray-800);
 }
 
 .addDrawerInputRow {
@@ -732,8 +741,8 @@
     border-radius: 6px;
     outline: none;
 
-    background: #363b51;
-    color: #ffffff;
+    background: var(--gray-800);
+    color: var(--white);
 
     font-family: inherit;
     font-size: 13px;
@@ -742,11 +751,11 @@
 }
 
 .addDrawerInputRow input::placeholder {
-    color: #777d91;
+    color: var(--gray-500);
 }
 
 .addDrawerInputRow input:focus {
-    border-color: #afd8f8;
+    border-color: var(--blue-200);
 }
 
 .addDrawerInputRow span {
@@ -754,7 +763,7 @@
     top: 50%;
     right: 12px;
 
-    color: #8f96aa;
+    color: var(--gray-500);
 
     font-size: 11px;
 
@@ -786,18 +795,18 @@
 }
 
 .cancelDrawerButton {
-    background: #363b51;
-    color: #dce0eb;
+    background: var(--gray-800);
+    color: var(--gray-200);
 }
 
 .createDrawerButton {
-    background: #afd8f8;
-    color: #171925;
+    background: var(--blue-200);
+    color: var(--gray-900);
 }
 
 .createDrawerButton:disabled {
-    background: #4b5065;
-    color: #858b9e;
+    background: var(--gray-700);
+    color: var(--gray-500);
 
     cursor: not-allowed;
 }
@@ -805,7 +814,7 @@
 .scrapError {
     margin: 12px 0;
 
-    color: #ff8c92;
+    color: var(--alert-red);
 
     font-size: 13px;
     line-height: 1.5;
@@ -831,7 +840,7 @@
 
     border: 0;
     background: transparent;
-    color: #ffffff;
+    color: var(--white);
 
     font-family: inherit;
     text-align: left;
@@ -844,7 +853,7 @@
 
     overflow: hidden;
 
-    color: #dce0eb;
+    color: var(--gray-200);
 
     font-size: 16px;
     font-weight: 500;
@@ -864,11 +873,11 @@
     align-items: center;
     justify-content: center;
 
-    border: 2px solid #ffffff;
+    border: 2px solid var(--white);
     border-radius: 50%;
 
     background: transparent;
-    color: #ffffff;
+    color: var(--white);
 
     font-size: 22px;
     line-height: 1;
@@ -877,8 +886,8 @@
 }
 
 .selectedStatusIcon {
-    background: #ffffff;
-    color: #222435;
+    background: var(--white);
+    color: var(--gray-900);
 
     font-size: 19px;
     font-weight: 700;
@@ -897,8 +906,8 @@
     border: 0;
     border-radius: 7px;
 
-    background: #afd8f8;
-    color: #171925;
+    background: var(--blue-200);
+    color: var(--gray-900);
 
     font-family: inherit;
     font-size: 15px;
@@ -908,7 +917,7 @@
 }
 
 .saveButton:hover {
-    background: #c4e4fc;
+    background: var(--blue-200);
 }
 
 .saveButton:disabled {
@@ -917,7 +926,7 @@
 }
 
 /* =========================
-   濡쒕뵫 / �ㅻ쪟
+   嚥≪뮆逾� / 占썬끇履�
 ========================= */
 
 .notFound {
@@ -929,8 +938,8 @@
     justify-content: center;
     gap: 20px;
 
-    background: #111017;
-    color: #ffffff;
+    background: var(--black);
+    color: var(--white);
 }
 
 .notFound p {
@@ -943,15 +952,15 @@
     border: 0;
     border-radius: 6px;
 
-    background: #afd8f8;
-    color: #171925;
+    background: var(--blue-200);
+    color: var(--gray-900);
 
     font-family: inherit;
     cursor: pointer;
 }
 
 /* =========================
-   諛섏쓳��
+   獄쏆꼷�놂옙占�
 ========================= */
 
 @media (max-width: 1100px) {
@@ -1052,6 +1061,15 @@
 
     .summaryActions {
         flex-direction: column;
+    }
+
+    /*
+     * �몃줈 諛곗튂濡� �뚯븘�ㅻ㈃ flex-basis媛� �믪씠�� �곸슜�섏뼱
+     * 踰꾪듉�� 李뚭렇�ъ�誘�濡� 怨좎젙 �믪씠瑜� �ㅼ떆 �곌쾶 �⑸땲��.
+     */
+    .exchangeButton,
+    .scrapButton {
+        flex: 0 0 auto;
     }
 
     .detailCard {

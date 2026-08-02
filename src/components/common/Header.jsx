@@ -28,7 +28,11 @@
     import bellIcon from "../../assets/icons/알림.svg";
     import settingIcon from "../../assets/icons/설정.svg";
 
-    const Header = ({ showNav = false }) => {
+    const Header = ({
+    showNav = false,
+    showActions = true,
+    onLogoClick,
+    }) => {
     const navigate = useNavigate();
 
     const location = useLocation();
@@ -60,7 +64,18 @@
 
     const isScrapActive = location.pathname === "/scrap";
 
+    const isProfileFormFlow =
+        location.pathname === "/onboarding" ||
+        /^\/my-profile\/[^/]+\/detail-edit\/?$/.test(location.pathname);
+
+    const shouldShowActions = showActions && !isProfileFormFlow;
+
     const handleLogoClick = () => {
+        if (onLogoClick) {
+        onLogoClick();
+        return;
+        }
+
         navigate("/explore");
     };
 
@@ -248,7 +263,7 @@
             </nav>
             )}
 
-            {isUserLoggedIn ? (
+            {shouldShowActions && (isUserLoggedIn ? (
             <nav className={styles.rightMenu}>
                 <NavLink
                 to="/scrap"
@@ -304,7 +319,7 @@
             >
                 로그인하기
             </button>
-            )}
+            ))}
         </header>
 
         <LoginModal

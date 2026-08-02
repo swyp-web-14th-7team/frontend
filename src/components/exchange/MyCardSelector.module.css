@@ -119,18 +119,18 @@
 }
 
 .publicBadge {
-    background-color: #afd8f8;
-    color: #222435;
+    background-color: var(--blue-200);
+    color: var(--gray-900);
 }
 
 .privateBadge {
-    background-color: #4b516b;
-    color: #ffffff;
+    background-color: var(--gray-700);
+    color: var(--white);
 }
 
 .defaultBadge {
-    background-color: #303347;
-    color: #ffffff;
+    background-color: var(--gray-800);
+    color: var(--white);
 }
 
 .pagination {
@@ -153,20 +153,20 @@
     border: 0;
     border-radius: 50%;
 
-    background-color: #555b70;
+    background-color: var(--gray-600);
 
     cursor: pointer;
 }
 
 .dot:hover {
-    background-color: #7c849d;
+    background-color: var(--gray-500);
 }
 
 .activeDot {
     width: 10px;
     height: 10px;
 
-    background-color: #afd8f8;
+    background-color: var(--blue-200);
 }
 
 .empty {
@@ -179,9 +179,9 @@
     align-items: center;
     justify-content: center;
 
-    border: 1px dashed #4b516b;
+    border: 1px dashed var(--gray-700);
     border-radius: 8px;
-    color: #888ea2;
+    color: var(--gray-500);
 
     font-size: 14px;
 

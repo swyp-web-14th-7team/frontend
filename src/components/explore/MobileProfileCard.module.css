@@ -10,9 +10,9 @@
 
     border: 0;
     border-radius: 8px;
-    background-color: #222435;
+    background-color: var(--gray-900);
 
-    color: #ffffff;
+    color: var(--white);
     font-family: inherit;
     text-align: left;
 
@@ -34,7 +34,7 @@
     min-width: 0;
     margin: 0;
 
-    color: #b9bdcb;
+    color: var(--gray-400);
     font-size: 12px;
     font-weight: 500;
     line-height: 150%;
@@ -49,8 +49,8 @@
     padding: 4px 8px;
 
     border-radius: 6px;
-    background-color: #303347;
-    color: #ffffff;
+    background-color: var(--gray-800);
+    color: var(--white);
 
     font-size: 11px;
     font-weight: 600;
@@ -103,7 +103,7 @@
     .name {
     flex-shrink: 0;
 
-    color: #ffffff;
+    color: var(--white);
     font-size: 16px;
     font-weight: 700;
     line-height: 140%;
@@ -114,7 +114,7 @@
     .affiliation {
     min-width: 0;
 
-    color: #9fa4b7;
+    color: var(--gray-400);
     font-size: 11px;
     line-height: 150%;
 
@@ -145,13 +145,13 @@
     }
 
     .strengthIconPlaceholder {
-    background-color: #30354c;
+    background-color: var(--gray-800);
     }
 
     .strengthText {
     min-width: 0;
 
-    color: #d7d9e3;
+    color: var(--gray-300);
     font-size: 12px;
     font-weight: 500;
     line-height: 150%;
@@ -180,8 +180,8 @@
     align-items: center;
 
     border-radius: 6px;
-    background-color: #34394f;
-    color: #ffffff;
+    background-color: var(--gray-800);
+    color: var(--white);
 
     font-size: 12px;
 

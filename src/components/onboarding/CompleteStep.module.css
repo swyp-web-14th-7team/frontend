@@ -20,13 +20,13 @@
 
     .title {
     margin: 0 0 8px;
-    color: #ffffff;
+    color: var(--white);
     }
 
     .description {
     margin: 0;
 
-    color: #9ca3af;
+    color: var(--gray-400);
     line-height: 150%;
     }
 
@@ -64,14 +64,14 @@
     }
 
     .nextButton {
-    background-color: #ffffff;
-    color: #111017;
+    background-color: var(--white);
+    color: var(--black);
     }
 
     .exploreButton {
-    border: 1px solid #6b7280;
+    border: 1px solid var(--gray-600);
     background-color: transparent;
-    color: #ffffff;
+    color: var(--white);
     }
 
     .nextButton:hover,
@@ -79,7 +79,7 @@
     opacity: 0.9;
     }
 
-    /* 紐⑤컮�� 390px */
+    /* 筌뤴뫀而�옙占� 390px */
     @media (max-width: 768px) {
     .container {
         min-height: calc(100dvh - 44px);

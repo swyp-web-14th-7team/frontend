@@ -23,8 +23,8 @@
     overflow: hidden;
 
     border-radius: 16px 16px 0 0;
-    background: #222536;
-    color: #f7f8fb;
+    background: var(--gray-900);
+    color: var(--gray-50);
 }
 
 .header {
@@ -48,7 +48,7 @@
 .title {
     margin: 0;
 
-    color: #f7f8fb;
+    color: var(--gray-50);
     font-size: 22px;
     font-weight: 700;
     line-height: 1.45;
@@ -58,7 +58,7 @@
 .description {
     margin: 12px 0 0;
 
-    color: #898da0;
+    color: var(--gray-500);
     font-size: 16px;
     font-weight: 400;
     line-height: 1.7;
@@ -80,7 +80,7 @@
     border: 0;
     background: transparent;
 
-    color: #f7f8fb;
+    color: var(--gray-50);
     font-family: inherit;
     font-size: 36px;
     font-weight: 200;
@@ -155,7 +155,7 @@
     pointer-events: none;
 }
 
-/* 移대뱶�� �덈궡 臾멸뎄瑜� 媛숈� �몃줈 �먮쫫�� 諛곗튂 */
+/* 燁삳�諭띰옙占� 占쎈뜄沅� �얜㈇�꾤몴占� 揶쏆늿占� 占쎈챶以� 占쎈Ŧ已ワ옙占� 獄쏄퀣�� */
 .cardScreen {
     width: 100%;
     height: 100%;
@@ -170,7 +170,7 @@
     box-sizing: border-box;
 }
 
-/* ExploreProfileCard�� �ㅼ젣 �ш린瑜� �대�吏��� 鍮꾩듂�섍쾶 異뺤냼�� �꾩껜 �몄텧 */
+/* ExploreProfileCard占쏙옙 占썬끉�� 占싼덈┛�쒙옙 占쎈�占쏙쭪占쏙옙占� ��쑴�귨옙�띿쓺 �곕벡�쇽옙占� 占쎄쑴猿� 占쎈챷�� */
 .exchangeCardPreview {
     --card-scale: 0.875;
 
@@ -206,7 +206,7 @@
     border-radius: 999px;
     background: rgba(86, 91, 119, 0.48);
 
-    color: #d8dae5;
+    color: var(--gray-300);
     font-size: 14px;
     font-weight: 500;
     line-height: 1.4;
@@ -242,7 +242,7 @@
 .messageJob {
     margin: 0 0 22px;
 
-    color: #aeb2c4;
+    color: var(--gray-400);
     font-size: 16px;
     font-weight: 700;
     line-height: 1.4;
@@ -285,7 +285,7 @@
     align-items: center;
     justify-content: center;
 
-    color: #303348;
+    color: var(--gray-800);
     font-size: 24px;
     font-weight: 700;
 }
@@ -301,7 +301,7 @@
 .messageProfileInfo strong {
     overflow: hidden;
 
-    color: #f7f8fb;
+    color: var(--gray-50);
     font-size: 22px;
     font-weight: 700;
     line-height: 1.35;
@@ -314,7 +314,7 @@
 .messageProfileInfo span {
     overflow: hidden;
 
-    color: #b2b6c7;
+    color: var(--gray-400);
     font-size: 16px;
     font-weight: 400;
     line-height: 1.45;
@@ -332,11 +332,11 @@
     box-sizing: border-box;
     padding: 13px 16px;
 
-    border: 1px solid #d5d7df;
+    border: 1px solid var(--gray-300);
     border-radius: 8px;
     background: rgba(255, 255, 255, 0.055);
 
-    color: #f0f1f6;
+    color: var(--gray-150);
     font-size: 17px;
     font-weight: 400;
     line-height: 1.58;
@@ -369,7 +369,7 @@
         16px
         max(38px, env(safe-area-inset-bottom));
 
-    background: #222536;
+    background: var(--gray-900);
 }
 
 .rejectButton,
@@ -393,13 +393,13 @@
 }
 
 .rejectButton {
-    background: #e7eaf0;
-    color: #292c3d;
+    background: var(--gray-200);
+    color: var(--gray-800);
 }
 
 .acceptButton {
-    background: #b8dcf8;
-    color: #202334;
+    background: var(--blue-200);
+    color: var(--gray-900);
 }
 
 .rejectButton:hover,
@@ -543,11 +543,11 @@
 
 
 /* =========================================================
-   iPhone / 紐⑤컮�� �몃줈 �붾㈃ 蹂댁젙
-   - 二쇱냼李� 蹂��붿뿉 ���묓븯�꾨줉 svh �ъ슜
-   - �곷떒 �ㅻ뜑媛� 議곌툑 蹂댁씠�꾨줉 諛뷀� �쒗듃 �믪씠 �쒗븳
-   - 移대뱶�� 履쎌� 移대뱶媛� 湲곌린 �믪씠�� �곕씪 �먮룞 異뺤냼
-   - �� �몃뵒耳��댄꽣 �곸뿭源뚯� �덉쟾�섍쾶 �뺣낫
+   iPhone / 筌뤴뫀而�옙占� 占쎈챶以� 占쎈뗀�� 癰귣똻��
+   - 雅뚯눘�쇽㎕占� 癰귨옙占쎈뗄肉� 占쏙옙占쎈쵑釉�옙袁⑥쨯 svh 占싼딆뒠
+   - 占쎄낮�� 占썬끇�묈첎占� 鈺곌퀗�� 癰귣똻�좑옙袁⑥쨯 獄쏅�占� 占쎌뮉�� 占쎈��� 占쎌뮉釉�
+   - 燁삳�諭띰옙占� 筌잛럩占� 燁삳�諭뜹첎占� 疫꿸퀗由� 占쎈��좑옙占� 占쎄퀡�� 占쎈Ŧ猷� �곕벡��
+   - 占쏙옙 占쎈챶逾믦�놂옙占쎈똾苑� 占쎄낯肉�틦��옙 占쎈뜆�억옙�띿쓺 占쎈베��
    ========================================================= */
 
 @supports (height: 100svh) {
@@ -665,7 +665,7 @@
     }
 }
 
-/* iPhone SE, 12/13 mini泥섎읆 �몃줈 怨듦컙�� 吏㏃� 湲곌린 */
+/* iPhone SE, 12/13 mini筌ｌ꼶�� 占쎈챶以� �⑤벀而숋옙占� 筌욁룂占� 疫꿸퀗由� */
 @media (max-width: 390px) and (max-height: 760px) {
     .modalContainer {
         height: calc(100dvh - 44px);
@@ -732,7 +732,7 @@
     }
 }
 
-/* iPhone Pro Max 怨꾩뿴泥섎읆 �믪씠媛� 異⑸텇�� 湲곌린 */
+/* iPhone Pro Max �④쑴肉댐㎗�롮쓥 占쎈��졾첎占� �겸뫖�뉛옙占� 疫꿸퀗由� */
 @media (min-width: 414px) and (min-height: 850px) and (max-width: 480px) {
     .exchangeCardPreview {
         --card-scale: 0.86;
@@ -823,7 +823,7 @@
 }
 
 
-/* 怨좎젙 移대뱶 �ш린瑜� �좎��섎㈃�� 紐⑤떖 �덉뿉 移대뱶 �꾩껜媛� 蹂댁씠�꾨줉 諛곗튂 */
+/* �⑥쥙�� 燁삳�諭� 占싼덈┛�쒙옙 占쎌쥙占쏙옙�롢늺占쏙옙 筌뤴뫀�� 占쎈뜆肉� 燁삳�諭� 占쎄쑴猿쒎첎占� 癰귣똻�좑옙袁⑥쨯 獄쏄퀣�� */
 @media (max-width: 480px) {
     .content {
         padding-top: 10px;

@@ -19,7 +19,7 @@
     .title {
     margin: 0;
 
-    color: #f9fafb;
+    color: var(--gray-50);
     font-weight: 600;
     text-align: center; 
     }
@@ -31,7 +31,7 @@
     .description {
     margin: 16px 0 0;
 
-    color: #878ea1;
+    color: var(--gray-500);
     text-align: center;
     line-height: 1.6;
     }
@@ -79,13 +79,13 @@
     border: none;
     border-radius: 8px;
 
-    background-color: #ffffff;
-    color: #111017;
+    background-color: var(--white);
+    color: var(--black);
 
     cursor: pointer;
     }
 
-    /* 390px 모바일 */
+    /* 390px 紐⑤컮�� */
     @media (max-width: 768px) {
     .container {
         flex: 1;
@@ -141,7 +141,7 @@
     }
     }
 
-    /* 세로 길이가 짧은 모바일 */
+    /* �몃줈 湲몄씠媛� 吏㏃� 紐⑤컮�� */
     @media (max-width: 768px) and (max-height: 750px) {
     .container {
         padding-top: 40px;
@@ -167,7 +167,7 @@
     }
     }
 
-    /* 세로 길이가 매우 짧은 모바일 */
+    /* �몃줈 湲몄씠媛� 留ㅼ슦 吏㏃� 紐⑤컮�� */
     @media (max-width: 768px) and (max-height: 650px) {
     .container {
         padding-top: 24px;

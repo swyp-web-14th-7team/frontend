@@ -86,31 +86,6 @@
     isRepresentative,
     });
 
-    /*
-    * 프로필 이미지 API는 이미지의 기본 경로를 반환하고,
-    * 실제 표시용 이미지는 크기별 파일 경로를 사용합니다.
-    *
-    * 이미 완성된 이미지 파일 URL을 받은 경우에는
-    * 같은 경로를 그대로 사용합니다.
-    */
-    const getProfileImagePreviewUrl = (imageUrl) => {
-    const normalizedUrl = (imageUrl || "").trim();
-
-    if (!normalizedUrl) {
-        return "";
-    }
-
-    const isImageFileUrl = /\.(?:avif|gif|jpe?g|png|webp)(?:\?.*)?$/i.test(
-        normalizedUrl,
-    );
-
-    if (isImageFileUrl) {
-        return normalizedUrl;
-    }
-
-    return `${normalizedUrl.replace(/\/+$/, "")}/72.webp`;
-    };
-
     const getItems = (response) => {
     if (Array.isArray(response)) {
         return response;
@@ -131,8 +106,14 @@
     return [];
     };
 
+    /*
+    * 목적은 마지막 단계에서 고르며,
+    * 항상 존재하는 1번 목적을 기본값으로 체크해 둡니다.
+    */
+    const DEFAULT_PURPOSE_ID = 1;
+
     const INITIAL_ONBOARDING_DATA = {
-    purposeId: null,
+    purposeId: DEFAULT_PURPOSE_ID,
     purposeName: "",
 
     job: "",
@@ -223,18 +204,21 @@
     const isCardCreationFlow = mode === "create" || mode === "resume";
 
     /*
-    * 최초 온보딩: 6단계
-    * 새 카드 만들기: 7단계
+    * 두 흐름 모두 7단계입니다.
+    *
+    * 최초 온보딩:   환영 → 직군 → 기본 → 미리보기 → 목적 → 로딩 → 완료
+    * 새 카드 만들기: 직군 → 기본 → 상세 → 미리보기 → 목적 → 로딩 → 완료
+    *
+    * 앞부분만 다르고 미리보기 이후 순서는 같아
+    * 단계 번호를 공유합니다.
     */
-    const totalSteps = isCardCreationFlow ? 7 : 6;
+    const totalSteps = 7;
 
-    /*
-    * 최초 온보딩에서는 미리보기가 3번,
-    * 새 카드 생성에서는 상세 정보가 추가되어 4번입니다.
-    */
-    const previewStepIndex = isCardCreationFlow ? 4 : 3;
+    const previewStepIndex = 3;
 
-    const loadingStepIndex = previewStepIndex + 1;
+    const purposeStepIndex = previewStepIndex + 1;
+
+    const loadingStepIndex = purposeStepIndex + 1;
 
     const [draftId] = useState(() => queryDraftId || createDraftId());
 
@@ -474,11 +458,10 @@
         return;
         }
 
-        if (isCardCreationFlow && step === 0 && !onboardingData.purposeId) {
-        return;
-        }
-
-        if (!isCardCreationFlow && step === 0) {
+        /*
+        * 첫 단계는 아직 입력한 값이 없어 저장하지 않습니다.
+        */
+        if (step === 0) {
         return;
         }
 
@@ -718,12 +701,6 @@
     };
 
     const handleUpdateProfile = async () => {
-        if (isCardCreationFlow && !onboardingData.purposeId) {
-        setSubmitError("카드 목적을 선택해주세요.");
-
-        return;
-        }
-
         if (!onboardingData.jobTypeId) {
         setSubmitError("선택한 직군을 확인하지 못했습니다.");
 
@@ -817,15 +794,16 @@
         let createdCard = onboardingData.createdProfile;
 
         if (!profileCardId) {
-            const createPayload = {
+            /*
+            * 온보딩 카드는 생성되는 순간부터 공개 상태여야 하므로
+            * 기본 목적을 함께 전달합니다. 마지막 목적 선택 단계에서는
+            * 사용자가 고른 목적으로 다시 갱신합니다.
+            */
+            createdCard = await createProfileCard({
             jobTypeId: onboardingData.jobTypeId,
-            };
-
-            createPayload.purposeId = isCardCreationFlow
-            ? Number(onboardingData.purposeId)
-            : 1;
-
-            createdCard = await createProfileCard(createPayload);
+            purposeId:
+                Number(onboardingData.purposeId) || DEFAULT_PURPOSE_ID,
+            });
 
             profileCardId = createdCard?.id;
         }
@@ -838,8 +816,6 @@
             profileCardId,
             profilePayload,
         );
-
-        removeOnboardingDraft(draftId);
 
         updateOnboardingData({
             profileCardId,
@@ -857,23 +833,71 @@
         }
     };
 
-    const firstStep = isCardCreationFlow ? (
+    /*
+    * 마지막 목적 선택 단계에서
+    * 고른 목적을 반영하고 공개 상태를 다시 확정합니다.
+    */
+    const handlePurposeSubmit = async () => {
+        const selectedPurposeId =
+        Number(onboardingData.purposeId) || DEFAULT_PURPOSE_ID;
+
+        if (!onboardingData.profileCardId) {
+        setSubmitError("생성된 프로필 카드를 확인하지 못했습니다.");
+
+        return;
+        }
+
+        try {
+        setIsSubmitting(true);
+        setSubmitError("");
+
+        const publishedCard = await updateProfileCard(
+            onboardingData.profileCardId,
+            {
+            purposeId: selectedPurposeId,
+            isActive: true,
+            },
+        );
+
+        removeOnboardingDraft(draftId);
+
+        updateOnboardingData({
+            purposeId: selectedPurposeId,
+
+            createdProfile: publishedCard,
+        });
+
+        nextStep();
+        } catch (error) {
+        console.error("카드 목적 설정 실패:", error);
+
+        setSubmitError(error?.message || "카드 목적을 저장하지 못했습니다.");
+        } finally {
+        setIsSubmitting(false);
+        }
+    };
+
+    const welcomeStep = (
+        <WelcomeStep
+        key="welcome"
+        onNext={nextStep}
+        currentStep={step}
+        totalSteps={totalSteps}
+        />
+    );
+
+    const purposeStep = (
         <PurposeSelectStep
         key="purpose"
         data={onboardingData}
         purposeOptions={optionData.purposes}
         isLoading={isOptionLoading}
+        isSubmitting={isSubmitting}
         errorMessage={optionError}
+        submitError={submitError}
         onChange={updateOnboardingData}
-        onNext={nextStep}
-        onBack={() => navigate("/profile")}
-        currentStep={step}
-        totalSteps={totalSteps}
-        />
-    ) : (
-        <WelcomeStep
-        key="welcome"
-        onNext={nextStep}
+        onNext={handlePurposeSubmit}
+        onBack={prevStep}
         currentStep={step}
         totalSteps={totalSteps}
         />
@@ -889,7 +913,11 @@
         errorMessage={optionError || basicCardError}
         onChange={updateOnboardingData}
         onNext={handleJobNext}
-        onBack={prevStep}
+        onBack={
+            isCardCreationFlow && step === 0
+            ? () => navigate("/profile")
+            : prevStep
+        }
         currentStep={step}
         totalSteps={totalSteps}
         />
@@ -962,20 +990,30 @@
     );
 
     /*
-    * 새 카드 만들기에서만
-    * 기본 정보 다음에 상세 정보 단계를 추가합니다.
+    * 미리보기 이후 순서는 두 흐름이 같습니다.
+    *
+    * 최초 온보딩은 환영 화면으로 시작하고,
+    * 새 카드 만들기는 상세 정보 단계가 추가됩니다.
     */
     const steps = isCardCreationFlow
         ? [
-            firstStep,
             jobStep,
             basicStep,
             detailStep,
             previewStep,
+            purposeStep,
             loadingStep,
             completeStep,
         ]
-        : [firstStep, jobStep, basicStep, previewStep, loadingStep, completeStep];
+        : [
+            welcomeStep,
+            jobStep,
+            basicStep,
+            previewStep,
+            purposeStep,
+            loadingStep,
+            completeStep,
+        ];
 
     return <>{steps[step]}</>;
     };

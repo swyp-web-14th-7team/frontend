@@ -2,8 +2,8 @@
     min-height: 100vh;
     min-height: 100dvh;
 
-    background-color: #111017;
-    color: #ffffff;
+    background-color: var(--black);
+    color: var(--white);
 
     box-sizing: border-box;
     }
@@ -52,7 +52,7 @@
 
     border: none;
     background-color: transparent;
-    color: #ffffff;
+    color: var(--white);
 
     font-size: 28px;
     line-height: 1;
@@ -68,19 +68,19 @@
     overflow: hidden;
 
     border-radius: 999px;
-    background-color: var(--gray-800, #32374c);
+    background-color: var(--gray-800);
     }
 
     .progressValue {
     height: 100%;
 
     border-radius: inherit;
-    background-color: var(--gray-400, #9ca3af);
+    background-color: var(--gray-400);
 
     transition: width 0.3s ease;
     }
 
-    /* 뒤로가기 버튼이 없는 완료 화면 */
+    /* �ㅻ줈媛�湲� 踰꾪듉�� �녿뒗 �꾨즺 �붾㈃ */
     .headerWithoutBack {
     gap: 0;
     }

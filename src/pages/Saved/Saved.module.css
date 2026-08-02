@@ -3,8 +3,8 @@
     min-height: calc(100vh - 64px);
     padding: 56px 80px 80px;
 
-    background-color: #0e0e15;
-    color: #ffffff;
+    background-color: var(--black);
+    color: var(--white);
 
     box-sizing: border-box;
 }
@@ -18,7 +18,7 @@
 .title {
     margin: 0 0 48px;
 
-    color: #ffffff;
+    color: var(--white);
 
     font-size: 24px;
     font-weight: 700;
@@ -33,7 +33,7 @@
     justify-content: space-between;
     gap: 24px;
 
-    border-bottom: 1px solid #32374c;
+    border-bottom: 1px solid var(--gray-800);
 }
 
 .filterLeft {
@@ -77,8 +77,8 @@
     border: 1px solid transparent;
     border-radius: 7px;
 
-    background-color: #363b51;
-    color: #d8dce7;
+    background-color: var(--gray-800);
+    color: var(--gray-300);
 
     font-size: 13px;
     font-weight: 500;
@@ -90,14 +90,14 @@
 
 .filterButton:hover,
 .dropdownButton:hover {
-    background-color: #474d66;
+    background-color: var(--gray-700);
 }
 
 .selectedFilter {
-    border-color: #d6e9f8;
+    border-color: var(--blue-100);
 
-    background-color: #dceeff;
-    color: #242839;
+    background-color: var(--blue-100);
+    color: var(--gray-900);
 }
 
 .divider {
@@ -107,7 +107,7 @@
 
     flex-shrink: 0;
 
-    background-color: #596077;
+    background-color: var(--gray-600);
 }
 
 .selectWrapper,
@@ -130,8 +130,8 @@
     appearance: none;
     -webkit-appearance: none;
 
-    background-color: #363b51;
-    color: #d8dce7;
+    background-color: var(--gray-800);
+    color: var(--gray-300);
 
     font-family: inherit;
     font-size: 13px;
@@ -143,12 +143,12 @@
 
 .selectWrapper select:hover,
 .sortWrapper select:hover {
-    background-color: #474d66;
+    background-color: var(--gray-700);
 }
 
 .selectWrapper select:focus,
 .sortWrapper select:focus {
-    border-color: #9fcaf2;
+    border-color: var(--blue-300);
 }
 
 .selectArrow {
@@ -176,7 +176,7 @@
 }
 
 .sortWrapper select:hover {
-    background-color: #222435;
+    background-color: var(--gray-900);
 }
 
 .dropdownIcon {
@@ -197,10 +197,10 @@
 .appliedDropdown {
     max-width: 220px;
 
-    border-color: #8fa7c4;
+    border-color: var(--blue-300);
 
-    background-color: #363b51;
-    color: #ffffff;
+    background-color: var(--gray-800);
+    color: var(--white);
 }
 
 .filterSummary {
@@ -226,10 +226,10 @@
     width: 340px;
     padding: 20px;
 
-    border: 1px solid #42485f;
+    border: 1px solid var(--gray-700);
     border-radius: 8px;
 
-    background-color: #222435;
+    background-color: var(--gray-900);
 
     box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
 
@@ -255,7 +255,7 @@
 
     border: 0;
     background: transparent;
-    color: #ffffff;
+    color: var(--white);
 
     font-size: 24px;
     line-height: 1;
@@ -276,8 +276,8 @@
     border: 1px solid transparent;
     border-radius: 6px;
 
-    background-color: #363b51;
-    color: #d8dce7;
+    background-color: var(--gray-800);
+    color: var(--gray-300);
 
     font-size: 12px;
 
@@ -285,20 +285,20 @@
 }
 
 .interestItem:hover {
-    background-color: #474d66;
+    background-color: var(--gray-700);
 }
 
 .selectedInterest {
-    border-color: #d6e9f8;
+    border-color: var(--blue-100);
 
-    background-color: #dceeff;
-    color: #242839;
+    background-color: var(--blue-100);
+    color: var(--gray-900);
 }
 
 .emptyInterest {
     margin: 24px 0;
 
-    color: #8f96aa;
+    color: var(--gray-500);
 
     font-size: 13px;
     text-align: center;
@@ -326,13 +326,13 @@
 }
 
 .resetButton {
-    background-color: #f0f3f7;
-    color: #242839;
+    background-color: var(--gray-150);
+    color: var(--gray-900);
 }
 
 .applyButton {
-    background-color: #afd8f8;
-    color: #171925;
+    background-color: var(--blue-200);
+    color: var(--gray-900);
 }
 
 .resultHeader {
@@ -342,7 +342,7 @@
     align-items: center;
     justify-content: flex-end;
 
-    color: #9da3b6;
+    color: var(--gray-400);
 
     font-size: 13px;
 }
@@ -369,12 +369,12 @@
     flex-direction: column;
     gap: 8px;
 
-    color: #8f96aa;
+    color: var(--gray-500);
     text-align: center;
 }
 
 .emptyResult strong {
-    color: #d8dce7;
+    color: var(--gray-300);
 
     font-size: 16px;
 }
@@ -397,13 +397,17 @@
 }
 
 .statusMessage {
-    color: #555d6d;
-    background-color: #f5f6f8;
+    color: var(--gray-600);
+    background-color: var(--gray-100);
 }
 
 .errorMessage {
-    color: #d92d20;
-    background-color: #fff1f0;
+    color: var(--alert-red);
+    background-color: color-mix(
+        in srgb,
+        var(--alert-red) 8%,
+        var(--white)
+    );
 }
 
 @media (max-width: 1320px) {

@@ -17,7 +17,7 @@
 }
 
 .cardButton:focus-visible {
-    outline: 2px solid #b7ddff;
+    outline: 2px solid var(--blue-200);
     outline-offset: 4px;
 }
 
@@ -37,18 +37,18 @@
     background:
         radial-gradient(
             circle at 100% 100%,
-            #fffed1 0%,
+            var(--y-100) 0%,
             rgb(255 254 209 / 60%) 10%,
             rgb(255 254 209 / 0%) 34%
         ),
         linear-gradient(
             135deg,
             #69adfb 0%,
-            #5298f5 25%,
+            var(--blue-400) 25%,
             #438bf1 100%
         );
 
-    color: #ffffff;
+    color: var(--white);
 
     box-sizing: border-box;
     overflow: hidden;
@@ -92,7 +92,7 @@
 
     border-radius: 6px;
     background-color: rgb(34 36 53 / 82%);
-    color: #ffffff;
+    color: var(--white);
 
     font-size: 11px;
     font-weight: 600;
@@ -135,8 +135,8 @@
     align-items: center;
     justify-content: center;
 
-    background-color: #ffffff;
-    color: #2d70cc;
+    background-color: var(--white);
+    color: var(--blue-500);
 
     font-size: 24px;
     font-weight: 700;
@@ -151,7 +151,7 @@
     display: block;
     width: 100%;
 
-    color: #ffffff;
+    color: var(--white);
     font-size: 20px;
     font-weight: 700;
     line-height: 28px;
@@ -194,8 +194,8 @@
     padding: 8px 12px;
 
     border-radius: 8px;
-    background-color: #2f75da;
-    color: #ffffff;
+    background-color: var(--blue-500);
+    color: var(--white);
 
     font-size: 12px;
     font-weight: 500;
@@ -240,7 +240,7 @@
     width: 100%;
     margin: 0;
 
-    color: #ffffff;
+    color: var(--white);
     font-size: 13px;
     font-weight: 600;
     line-height: 20px;
@@ -306,7 +306,7 @@
 .strengthText {
     min-width: 0;
 
-    color: #ffffff;
+    color: var(--white);
     font-size: 14px;
     font-weight: 600;
     line-height: 21px;
@@ -320,7 +320,7 @@
     width: 100%;
     margin: 0;
 
-    color: #ffffff;
+    color: var(--white);
     font-size: 13px;
     font-weight: 500;
     line-height: 20px;
