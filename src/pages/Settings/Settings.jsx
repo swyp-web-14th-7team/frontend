@@ -10,6 +10,7 @@
 
     import {
     getMyProfileCards,
+    updateProfileCard,
     } from "../../api/profile";
 
     import {
@@ -395,12 +396,32 @@
         clearMessages();
 
         /*
-        * 유저 닉네임만 변경합니다.
-        * 카드 닉네임 반영은 서버에서 처리합니다.
+        * 유저 닉네임을 먼저 변경합니다.
         */
         const result = await updateCurrentUser({
             nickname: trimmedName,
         });
+
+        /*
+        * 카드 닉네임은 카드마다 따로 저장되므로
+        * 보유한 모든 카드에 같은 이름을 반영합니다.
+        */
+        const cardsResponse = await getMyProfileCards({
+            page: 1,
+            limit: 100,
+        });
+
+        const profileCards = getItems(cardsResponse);
+
+        await Promise.all(
+            profileCards
+            .filter((card) => card?.id)
+            .map((card) =>
+                updateProfileCard(card.id, {
+                nickname: trimmedName,
+                }),
+            ),
+        );
 
         const savedUser = unwrapUser(result);
 
