@@ -20,7 +20,9 @@ const PurposeSelectStep = ({
     data,
     purposeOptions = [],
     isLoading = false,
+    isSubmitting = false,
     errorMessage = "",
+    submitError = "",
     onChange,
     onNext,
     onBack,
@@ -30,6 +32,10 @@ const PurposeSelectStep = ({
     const handleSelectPurpose = (
         purpose,
     ) => {
+        if (isSubmitting) {
+            return;
+        }
+
         onChange({
             purposeId:
                 purpose.id,
@@ -39,10 +45,15 @@ const PurposeSelectStep = ({
         });
     };
 
+    /*
+     * 저장에 실패한 경우에는 다시 시도할 수 있어야 하므로
+     * 목적 목록 조회 실패만 진행을 막습니다.
+     */
     const handleNext = () => {
         if (
             !data.purposeId ||
             isLoading ||
+            isSubmitting ||
             errorMessage
         ) {
             return;
@@ -96,13 +107,15 @@ const PurposeSelectStep = ({
                 )}
 
                 {!isLoading &&
-                    errorMessage && (
+                    (errorMessage ||
+                        submitError) && (
                         <p
                             className={
                                 styles.errorMessage
                             }
                         >
-                            {errorMessage}
+                            {errorMessage ||
+                                submitError}
                         </p>
                     )}
 
@@ -198,12 +211,15 @@ const PurposeSelectStep = ({
                     disabled={
                         !data.purposeId ||
                         isLoading ||
+                        isSubmitting ||
                         Boolean(
                             errorMessage,
                         )
                     }
                 >
-                    다음
+                    {isSubmitting
+                        ? "저장 중..."
+                        : "다음"}
                 </button>
             </section>
         </OnboardingLayout>

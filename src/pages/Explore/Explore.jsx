@@ -533,9 +533,12 @@ import {
                         : selectedAffiliationStatusId,
 
                     /*
-                    * 직군은 보내지 않고
-                    * 선택한 스킬만 전달한다.
+                    * 선택한 직군과 스킬을
+                    * 함께 전달한다.
                     */
+                    jobTypeId:
+                    selectedJobType?.id,
+
                     skillIds:
                     selectedTags.map(
                         (tag) =>
@@ -641,6 +644,7 @@ import {
         purposeError,
         affiliation,
         selectedAffiliationStatusId,
+        selectedJobType,
         selectedTags,
     ]);
 
@@ -897,11 +901,8 @@ import {
                 setCurrentPage(1);
                 }}
                 onJobTypeChange={(value) => {
-                /*
-                * 직군은 관련 스킬 목록을
-                * 좁히는 용도로만 저장한다.
-                */
                 setSelectedJobType(value);
+                setCurrentPage(1);
                 }}
                 onSortChange={(value) => {
                 setSort(value);
