@@ -70,6 +70,15 @@
     box-sizing: border-box;
 }
 
+/*
+ * 보관함 상세에는 액션 버튼이 없습니다.
+ * 고정 높이를 그대로 두면 카드 아래쪽에 빈 공간이 남습니다.
+ */
+.summaryCardCompact {
+    min-height: 0;
+    padding-bottom: 40px;
+}
+
 .profileBlock {
     width: 100%;
     min-height: 150px;
