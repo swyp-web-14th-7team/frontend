@@ -44,15 +44,6 @@ import {
 
     import styles from "./Explore.module.css";
 
-    /*
-     * 목적 탭은 purposes API 목록을 그대로 사용하고,
-     * 전체보기 탭만 앞에 붙입니다.
-     *
-     * 탭 이름이 곧 목적 이름이므로
-     * 목적이 추가·변경돼도 별도 수정이 필요 없습니다.
-     */
-    const ALL_TAB = "전체보기";
-
     const normalizeAffiliationName = (
     value = "",
     ) => {
@@ -132,7 +123,7 @@ import {
         activeTab,
         setActiveTab,
     ] = useState(
-        ALL_TAB,
+        "전체보기",
     );
 
     const [
@@ -254,18 +245,11 @@ import {
     const isRestrictedTab =
         !isUserLoggedIn &&
         activeTab !==
-        ALL_TAB;
-
-    const tabs = [
-        ALL_TAB,
-        ...purposes.map(
-        (purpose) =>
-            purpose.name,
-        ),
-    ];
+        "전체보기";
 
     const selectedPurpose =
-        activeTab === ALL_TAB
+        activeTab ===
+        "전체보기"
         ? null
         : purposes.find(
             (purpose) =>
@@ -302,6 +286,17 @@ import {
         .map(
             (status) =>
             status?.name,
+        )
+        .filter(Boolean),
+    ];
+
+    const purposeTabs = [
+        "전체보기",
+
+        ...purposes
+        .map(
+            (purpose) =>
+            purpose?.name,
         )
         .filter(Boolean),
     ];
@@ -468,7 +463,8 @@ import {
             }
 
             if (
-            activeTab !== ALL_TAB &&
+            activeTab !==
+                "전체보기" &&
             !selectedPurposeId
             ) {
             setProfiles(
@@ -520,7 +516,8 @@ import {
                     sortParams.order,
 
                     purposeId:
-                    activeTab === ALL_TAB
+                    activeTab ===
+                    "전체보기"
                         ? undefined
                         : selectedPurposeId,
 
@@ -694,7 +691,7 @@ import {
     const handleMobileSearchOpen =
         () => {
         setActiveTab(
-            ALL_TAB,
+            "전체보기",
         );
 
         setCurrentPage(
@@ -806,7 +803,7 @@ import {
     };
 
     const handleMobileLogoClick = () => {
-        setActiveTab(ALL_TAB);
+        setActiveTab("전체보기");
         setCurrentPage(1);
         setKeyword("");
         setAffiliation("");
@@ -921,7 +918,7 @@ import {
                     role="tablist"
                     aria-label="탐색 카테고리"
                 >
-                    {tabs.map((tab) => {
+                    {purposeTabs.map((tab) => {
                     const isActive =
                         activeTab === tab;
 

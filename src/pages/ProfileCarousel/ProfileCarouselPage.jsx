@@ -116,14 +116,9 @@
 
     const purpose = searchParams.get("purpose");
 
-    const headerText = purpose ?? "";
-
     /*
     * 탐색 화면에서 선택한 섹션의 purpose가
     * 쿼리스트링으로 전달되면 해당 목적의 카드만 표시합니다.
-    *
-    * 전달되는 값과 카드의 목적 모두 purposes API의 name이므로
-    * 그대로 비교합니다.
     *
     * 전체보기에서는 purpose가 없으므로 모든 카드를 표시합니다.
     */
@@ -689,8 +684,6 @@
                 aria-label="이전 화면으로 돌아가기"
             >
                 <BackIcon />
-
-                {headerText && <span>{headerText}</span>}
             </button>
             </div>
 
@@ -710,8 +703,6 @@
                 aria-label="이전 화면으로 돌아가기"
             >
                 <BackIcon />
-
-                {headerText && <span>{headerText}</span>}
             </button>
             </div>
 
