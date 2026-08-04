@@ -11,8 +11,6 @@
     box-sizing: border-box;
 }
 
-/* �곷떒 �ㅻ줈 媛�湲� */
-
 .pageHeader {
     width: min(1240px, 100%);
     margin: 0 auto;
@@ -67,7 +65,7 @@
     outline-offset: 5px;
 }
 
-/* 罹먮윭�� */
+/* 筌�Ŧ��옙占� */
 
 .carouselSection {
     width: min(1240px, 100%);
@@ -87,7 +85,6 @@
     overflow: hidden;
 }
 
-/* 醫뚯슦 �� 移대뱶�� �곸슜�섎뒗 洹몃씪�곗씠�� */
 .carouselArea::before,
 .carouselArea::after {
     position: absolute;
@@ -165,7 +162,7 @@
         filter 0.45s ease;
 }
 
-/* 媛��대뜲 �쒖꽦 移대뱶 */
+
 .slide:global(.swiper-slide-active) {
     z-index: 10;
 }
@@ -180,7 +177,7 @@
     box-shadow: 0 24px 50px rgb(0 0 0 / 38%);
 }
 
-/* �쒖꽦 移대뱶 諛붾줈 �묒쁿 */
+
 .slide:global(.swiper-slide-prev),
 .slide:global(.swiper-slide-next) {
     z-index: 5;
@@ -195,11 +192,8 @@
         blur(0.7px);
 }
 
-/*
- * 282px 移대뱶�� 0.9諛곕뒗 �� 254px�대떎.
- * 異뺤냼�섎㈃�� �앷린�� 14px �щ갚留뚰겮 以묒븰�쇰줈 �대룞�쒖폒
- * �쇨렇留덉쓽 移대뱶 媛꾧꺽 20px�� 留욎텣��.
- */
+
+ 
 .slide:global(.swiper-slide-prev) > button {
     transform:
         translateX(14px)
@@ -212,7 +206,7 @@
         scale(0.9);
 }
 
-/* 醫뚯슦 �붿궡�� */
+
 
 .arrowButton {
     position: absolute;
@@ -297,7 +291,7 @@
     right: 64px;
 }
 
-/* �ㅽ겕�� 踰꾪듉 */
+
 
 .actionArea {
     width: 100%;
@@ -379,7 +373,7 @@
     user-select: none;
 }
 
-/* �대몢�� �몃뵒耳��댄꽣 �몃옓 */
+
 .indicator::before {
     position: absolute;
     top: 50%;
@@ -395,7 +389,7 @@
     transform: translateY(-50%);
 }
 
-/* ��吏곸씠�� �곗깋 �먯옟�� */
+/* 占쏙옙筌욊낯�좑옙占� 占쎄퀣源� 占쎈Ŋ�잞옙占� */
 .indicatorThumb {
     position: absolute;
     top: 50%;
@@ -424,7 +418,7 @@
     transition: left 0.18s ease-out;
 }
 
-/* �먯옟�� 二쇰��� 湲멸쾶 �쇱��� 鍮� */
+
 .indicatorThumb::before {
     position: absolute;
     top: 50%;
@@ -450,7 +444,7 @@
     filter: blur(3px);
 }
 
-/* �ㅽ겕�� 諛뷀��쒗듃 */
+/* 占썬끋寃뺧옙占� 獄쏅�占쏙옙�쀫뱜 */
 
 .scrapSheetBackdrop {
     position: fixed;
@@ -612,7 +606,7 @@
     cursor: pointer;
 }
 
-/* �� �쒕엻 留뚮뱾湲� */
+/* 占쏙옙 占쎌뮆�� 筌띾슢諭얏묾占� */
 
 .createDrawerForm {
     display: flex;
@@ -704,7 +698,7 @@
 
 .actionArea {
     width: 100%;
-    margin: 8px 0 24px;
+    margin: 24px 0 24px;
 
     display: flex;
     align-items: center;
@@ -731,7 +725,7 @@
     font-size: 14px;
     font-weight: 600;
 }
-/* �쒕툝由� */
+/* 占쎌뮆�앯뵳占� */
 
 @media (max-width: 1280px) {
     .pageHeader {
@@ -772,7 +766,7 @@
     }
 }
 
-/* 紐⑤컮�� */
+
 
 @media (max-width: 768px) {
     .container {
@@ -838,8 +832,8 @@
     }
 
     /*
-     * 紐⑤컮�쇱뿉�쒕뒗 hover媛� �녾린 �뚮Ц��
-     * 醫뚯슦 �붿궡�쒕� ��긽 �쒖떆�쒕떎.
+     * 筌뤴뫀而�옙�깅퓠占쎌뮆�� hover揶쏉옙 占쎈끍由� 占쎈슢揆占쏙옙
+     * �ル슣�� 占쎈뗄沅∽옙�뺧옙 占쏙옙湲� 占쎌뮇�놅옙�뺣뼄.
      */
     .arrowButton,
     .carouselArea:hover
@@ -875,7 +869,7 @@
 
     .actionArea {
     width: 100%;
-    margin: 8px 0 24px;
+    margin: 20px 0 24px;
 
     display: flex;
     align-items: center;
@@ -916,7 +910,7 @@
         height: 18px;
     }
 
-    /* 紐⑤컮�쇱뿉�쒕뒗 �몃뵒耳��댄꽣留� �④릿��. */
+
     .indicatorContainer {
         display: none;
     }

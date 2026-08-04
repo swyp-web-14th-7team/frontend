@@ -772,17 +772,22 @@
                 (experience.description || "").trim() ||
                 (experience.relatedUrl || "").trim(),
             )
-            .map((experience, index) => ({
-                title: (experience.title || "").trim(),
+            .map((experience, index) => {
+                const relatedUrl = (experience.relatedUrl || "").trim();
 
-                description: (experience.description || "").trim(),
+                return {
+                    title: (experience.title || "").trim(),
 
-                relatedUrl: (experience.relatedUrl || "").trim(),
+                    description: (experience.description || "").trim(),
 
-                sortOrder: index,
+                    // 선택 항목인 링크가 비어 있으면 요청 데이터에서 제외합니다.
+                    ...(relatedUrl ? { relatedUrl } : {}),
 
-                isRepresentative: Boolean(experience.isRepresentative),
-            }));
+                    sortOrder: index,
+
+                    isRepresentative: Boolean(experience.isRepresentative),
+                };
+            });
         }
 
         if (onboardingData.profileImageUrl) {
