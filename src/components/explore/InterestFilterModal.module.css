@@ -27,11 +27,11 @@
 
     overflow: hidden;
 
-    border: 1px solid #34394f;
+    border: 1px solid var(--gray-800);
     border-radius: 10px;
 
-    background-color: #222435;
-    color: #ffffff;
+    background-color: var(--gray-900);
+    color: var(--white);
 
     box-sizing: border-box;
 }
@@ -62,7 +62,7 @@
 
     border: 0;
     background: transparent;
-    color: #ffffff;
+    color: var(--white);
 
     font-size: 32px;
     font-weight: 300;
@@ -88,8 +88,8 @@
     border-radius: 8px;
     outline: none;
 
-    background-color: #363b51;
-    color: #ffffff;
+    background-color: var(--gray-800);
+    color: var(--white);
 
     font-family: inherit;
     font-size: 14px;
@@ -98,11 +98,11 @@
 }
 
 .searchBox input::placeholder {
-    color: #777d91;
+    color: var(--gray-500);
 }
 
 .searchBox input:focus {
-    border-color: #9fcaf2;
+    border-color: var(--blue-300);
 }
 
 .searchBox input::-webkit-search-cancel-button {
@@ -145,7 +145,7 @@
 
 .optionArea::-webkit-scrollbar-thumb {
     border-radius: 5px;
-    background-color: #596077;
+    background-color: var(--gray-600);
 }
 
 .optionButton,
@@ -161,8 +161,8 @@
     border: 1px solid transparent;
     border-radius: 7px;
 
-    background-color: #363b51;
-    color: #d8dce7;
+    background-color: var(--gray-800);
+    color: var(--gray-300);
 
     font-family: inherit;
     font-size: 13px;
@@ -173,7 +173,7 @@
 }
 
 .optionButton:hover {
-    background-color: #474d66;
+    background-color: var(--gray-700);
 }
 
 .optionButton:disabled {
@@ -183,10 +183,10 @@
 
 .selectedOption,
 .selectedTag {
-    border-color: #d6e9f8;
+    border-color: var(--blue-100);
 
-    background-color: #dceeff;
-    color: #242839;
+    background-color: var(--blue-100);
+    color: var(--gray-900);
 }
 
 .removeIcon {
@@ -203,7 +203,7 @@
     width: 100%;
     margin: 60px 0 0;
 
-    color: #8f96aa;
+    color: var(--gray-500);
 
     font-size: 13px;
     text-align: center;
@@ -212,13 +212,13 @@
 .selectedSection {
     padding: 20px 28px 24px;
 
-    border-top: 1px solid #4b526b;
+    border-top: 1px solid var(--gray-700);
 }
 
 .sectionLabel {
     margin: 0 0 16px;
 
-    color: #d8dce7;
+    color: var(--gray-300);
 
     font-size: 13px;
     font-weight: 600;
@@ -236,11 +236,11 @@
 }
 
 .selectedTag:hover {
-    background-color: #cbdff3;
+    background-color: var(--blue-100);
 }
 
 .emptySelection {
-    color: #777d91;
+    color: var(--gray-500);
 
     font-size: 13px;
 }
@@ -270,21 +270,21 @@
 }
 
 .resetButton {
-    background-color: #f0f3f7;
-    color: #242839;
+    background-color: var(--gray-150);
+    color: var(--gray-900);
 }
 
 .resetButton:hover {
-    background-color: #ffffff;
+    background-color: var(--white);
 }
 
 .applyButton {
-    background-color: #afd8f8;
-    color: #171925;
+    background-color: var(--blue-200);
+    color: var(--gray-900);
 }
 
 .applyButton:hover {
-    background-color: #c2e3fc;
+    background-color: var(--blue-200);
 }
 
 @media (max-width: 768px) {

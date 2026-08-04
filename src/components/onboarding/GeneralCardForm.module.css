@@ -36,11 +36,11 @@
     align-items: center;
 
     border-radius: 999px;
-    background: var(--300, #D0D4DD);
-    color: var(--800, #32374C);
+    background: var(--300, var(--gray-300));
+    color: var(--800, var(--gray-800));
     }
 
-    /* 모바일 */
+    /* 紐⑤컮�� */
     @media (max-width: 768px) {
     .addButton {
         height: 38px;

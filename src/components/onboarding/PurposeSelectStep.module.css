@@ -16,13 +16,13 @@
 .title {
     margin: 0;
 
-    color: #ffffff;
+    color: var(--white);
 }
 
 .description {
     margin: 12px 0 0;
 
-    color: #777d92;
+    color: var(--gray-500);
 }
 
 .purposeList {
@@ -43,8 +43,8 @@
     align-items: center;
     gap: 18px;
 
-    color: #f2f4fb;
-    background: #34394e;
+    color: var(--gray-100);
+    background: var(--gray-800);
 
     text-align: left;
     cursor: pointer;
@@ -55,12 +55,12 @@
 }
 
 .purposeItem:hover {
-    background: #3c4259;
+    background: var(--gray-800);
 }
 
 .purposeItem.selected {
-    border-color: #9bd2ff;
-    background: #555c72;
+    border-color: var(--blue-200);
+    background: var(--gray-600);
 }
 
 .icon {
@@ -87,12 +87,12 @@
     width: 10px;
     height: 10px;
 
-    background: #ffffff;
+    background: var(--white);
 }
 
 .icon1 i:nth-child(2),
 .icon1 i:nth-child(3) {
-    background: #fff5a5;
+    background: var(--y-200);
 }
 
 .icon2 i:nth-child(1),
@@ -101,11 +101,11 @@
 }
 
 .icon2 i:nth-child(2) {
-    background: #ffffff;
+    background: var(--white);
 }
 
 .icon2 i:nth-child(3) {
-    background: #fff5a5;
+    background: var(--y-200);
 }
 
 .icon3 {
@@ -116,7 +116,7 @@
 
 .icon3 i:nth-child(2),
 .icon3 i:nth-child(3) {
-    background: #fff5a5;
+    background: var(--y-200);
 }
 
 .purposeText {
@@ -128,7 +128,7 @@
 }
 
 .purposeText strong {
-    color: #ffffff;
+    color: var(--white);
 
     font-size: 15px;
     font-weight: 600;
@@ -137,7 +137,7 @@
 .purposeText span {
     overflow: hidden;
 
-    color: #a7abbb;
+    color: var(--gray-400);
 
     font-size: 13px;
     white-space: nowrap;
@@ -153,8 +153,8 @@
     border: 0;
     border-radius: 6px;
 
-    color: #263245;
-    background: #acd9fa;
+    color: var(--gray-800);
+    background: var(--blue-200);
 
     font-size: 15px;
     font-weight: 600;
@@ -163,8 +163,8 @@
 }
 
 .nextButton:disabled {
-    color: #70758a;
-    background: #34394e;
+    color: var(--gray-600);
+    background: var(--gray-800);
 
     cursor: not-allowed;
 }
@@ -177,11 +177,11 @@
 }
 
 .statusMessage {
-    color: #a5aabc;
+    color: var(--gray-400);
 }
 
 .errorMessage {
-    color: #ff747d;
+    color: var(--alert-red);
 }
 
 @media (max-width: 640px) {

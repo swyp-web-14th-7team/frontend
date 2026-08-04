@@ -12,7 +12,7 @@
     align-items: flex-start;
     justify-content: space-around;
 
-    border-top: 1px solid #3c4053;
+    border-top: 1px solid var(--gray-800);
     background-color: rgba(24, 25, 39, 0.96);
     backdrop-filter: blur(12px);
 
@@ -27,7 +27,7 @@
     align-items: center;
     gap: 6px;
 
-    color: #85899a;
+    color: var(--gray-500);
     text-decoration: none;
     }
 
@@ -50,7 +50,7 @@
     }
 
     .activeNavItem {
-    color: #ffffff;
+    color: var(--white);
     }
 
     .activeNavItem .navIcon {
@@ -66,7 +66,7 @@
     height: 5px;
 
     border-radius: 999px;
-    background-color: #ffffff;
+    background-color: var(--white);
 
     transform: translateX(-50%);
     }

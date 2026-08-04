@@ -12,7 +12,7 @@
     justify-content: space-between;
 
     border-radius: 8px;
-    background-color: #222435;
+    background-color: var(--gray-900);
 
     box-sizing: border-box;
 }
@@ -36,14 +36,14 @@
     outline: 0;
     background: transparent;
 
-    color: #ffffff;
+    color: var(--white);
     font-family: inherit;
     font-size: 14px;
     line-height: 150%;
 }
 
 .searchInput::placeholder {
-    color: #777b8e;
+    color: var(--gray-500);
     opacity: 1;
 }
 
@@ -70,8 +70,8 @@
     height: 37px;
     padding: 8px 12px;
 
-    border-color: #565d72;
-    background-color: #32374c;
+    border-color: var(--gray-600);
+    background-color: var(--gray-800);
 }
 
 .selectedAffiliationDropdown {
@@ -88,8 +88,8 @@
 
     justify-content: center;
 
-    border-color: #878fa1;
-    background-color: #32374c;
+    border-color: var(--gray-500);
+    background-color: var(--gray-800);
 }
 
 .selectedAffiliationDropdown > button img {
@@ -112,11 +112,11 @@
 
     flex-shrink: 0;
 
-    border: 1px solid #62677b;
+    border: 1px solid var(--gray-600);
     border-radius: 8px;
 
-    background-color: #32374c;
-    color: #ffffff;
+    background-color: var(--gray-800);
+    color: var(--white);
 
     font-family: inherit;
     font-size: 13px;
@@ -127,7 +127,7 @@
 }
 
 .filterButton:hover {
-    border-color: #878fa1;
+    border-color: var(--gray-500);
 }
 
 .filterText {
@@ -138,11 +138,11 @@
     text-overflow: ellipsis;
     white-space: nowrap;
 
-    color: #ffffff;
+    color: var(--white);
     text-align: left;
 }
 
-/* 스킬 선택 후 피그마 디자인 */
+/* �ㅽ궗 �좏깮 �� �쇨렇留� �붿옄�� */
 .activeFilterButton {
     width: auto;
     min-width: 132px;
@@ -151,13 +151,13 @@
 
     justify-content: center;
 
-    border-color: #878fa1;
-    background-color: #32374c;
+    border-color: var(--gray-500);
+    background-color: var(--gray-800);
 }
 
 .activeFilterButton:hover {
-    border-color: #a4abc0;
-    background-color: #32374c;
+    border-color: var(--gray-400);
+    background-color: var(--gray-800);
 }
 
 .activeFilterButton .filterText {
@@ -207,11 +207,11 @@
     border: 0;
     background-color: transparent;
 
-    color: #a9adbc;
+    color: var(--gray-400);
 }
 
 .sortDropdown > button:hover {
-    color: #ffffff;
+    color: var(--white);
 }
 
 .sortDropdown > ul {
@@ -262,7 +262,7 @@
         flex: 0 0 100%;
 
         border-radius: 8px;
-        background-color: #34394f;
+        background-color: var(--gray-800);
 
         box-sizing: border-box;
     }
@@ -284,15 +284,15 @@
         width: 90px;
     }
 
-/* 현 소속과 직군·스킬 공통 색상 */
+/* �� �뚯냽怨� 吏곴뎔쨌�ㅽ궗 怨듯넻 �됱긽 */
 .affiliationDropdown > button,
 .filterButton {
-    border: 1px solid #62677b;
-    background-color: #32374c;
-    color: #ffffff;
+    border: 1px solid var(--gray-600);
+    background-color: var(--gray-800);
+    color: var(--white);
 }
 
-/* 스킬 적용 후에도 동일한 색상 유지 */
+/* �ㅽ궗 �곸슜 �꾩뿉�� �숈씪�� �됱긽 �좎� */
 .activeFilterButton {
     width: auto;
     min-width: 132px;
@@ -301,15 +301,15 @@
 
     justify-content: center;
 
-    border-color: #878fa1;
-    background-color: #32374c;
+    border-color: var(--gray-500);
+    background-color: var(--gray-800);
 }
 
 .affiliationDropdown > button:hover,
 .filterButton:hover,
 .activeFilterButton:hover {
-    border-color: #878fa1;
-    background-color: #32374c;
+    border-color: var(--gray-500);
+    background-color: var(--gray-800);
 }
 
     .sortArea {

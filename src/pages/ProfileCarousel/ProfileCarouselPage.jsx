@@ -14,8 +14,6 @@
     moveCollection,
     } from "../../api/collections";
 
-    import { getConnections } from "../../api/connections";
-
     import LoginModal from "../../components/common/LoginModal/LoginModal";
     import ExploreProfileCard from "../../components/profile/ExploreProfileCard";
 
@@ -28,6 +26,16 @@
     import scrapIcon from "../../assets/icons/icon_archived.svg";
 
     import styles from "./ProfileCarouselPage.module.css";
+
+    const PURPOSE_HEADER_TEXT = {
+    팀빌딩: "팀을 찾고 있어요",
+    커피챗: "커피챗 나눠요",
+    네트워킹: "새로운 만남을 찾아요",
+    교류네트워킹: "새로운 만남을 찾아요",
+    };
+
+    const normalizePurposeForHeader = (value = "") =>
+    String(value).replace(/\s+/g, "").replace(/[·/]/g, "").toLowerCase();
 
     const ChevronLeftIcon = () => (
     <svg
@@ -95,7 +103,6 @@
     const navigate = useNavigate();
 
     const [drawers, setDrawers] = useState([]);
-    const [exchangedProfileIds, setExchangedProfileIds] = useState([]);
     const [scrapError, setScrapError] = useState("");
     const [isSavingScrap, setIsSavingScrap] = useState(false);
 
@@ -115,6 +122,8 @@
     const sideSlidePointerRef = useRef(null);
 
     const purpose = searchParams.get("purpose");
+    const headerText =
+        PURPOSE_HEADER_TEXT[normalizePurposeForHeader(purpose)] ?? "";
 
     /*
     * 탐색 화면에서 선택한 섹션의 purpose가
@@ -214,54 +223,6 @@
         };
     }, [loadScrapDrawers]);
 
-    useEffect(() => {
-        if (!isLoggedIn()) {
-        setExchangedProfileIds([]);
-        return undefined;
-        }
-
-        const controller = new AbortController();
-
-        const loadConnections = async () => {
-        try {
-            const data = await getConnections({
-            page: 1,
-            limit: 100,
-            sort: "createdAt",
-            order: "desc",
-            signal: controller.signal,
-            });
-
-            if (controller.signal.aborted) {
-            return;
-            }
-
-            const connections = getArrayData(data);
-
-            const profileIds = connections
-            .map((connection) => connection?.card?.id)
-            .filter((id) => id !== null && id !== undefined)
-            .map(String);
-
-            setExchangedProfileIds([...new Set(profileIds)]);
-        } catch (error) {
-            if (error?.name === "AbortError") {
-            return;
-            }
-
-            console.error("교환 완료 카드 조회 실패:", error);
-
-            setExchangedProfileIds([]);
-        }
-        };
-
-        loadConnections();
-
-        return () => {
-        controller.abort();
-        };
-    }, []);
-
     const activeProfile = carouselProfiles[activeIndex];
 
     const isFirstSlide = activeIndex === 0;
@@ -274,10 +235,6 @@
             (profile) => String(profile.id) === String(activeProfile.id),
             ),
         )
-        : false;
-
-    const isActiveProfileExchanged = activeProfile
-        ? exchangedProfileIds.includes(String(activeProfile.id))
         : false;
 
     const isActiveProfileMine = activeProfile
@@ -646,6 +603,8 @@
                 aria-label="이전 화면으로 돌아가기"
             >
                 <BackIcon />
+
+                {headerText && <span>{headerText}</span>}
             </button>
             </div>
 
@@ -665,6 +624,8 @@
                 aria-label="이전 화면으로 돌아가기"
             >
                 <BackIcon />
+
+                {headerText && <span>{headerText}</span>}
             </button>
             </div>
 
@@ -684,6 +645,8 @@
                 aria-label="이전 화면으로 돌아가기"
             >
                 <BackIcon />
+
+                {headerText && <span>{headerText}</span>}
             </button>
             </div>
 
@@ -703,6 +666,8 @@
                 aria-label="이전 화면으로 돌아가기"
             >
                 <BackIcon />
+
+                {headerText && <span>{headerText}</span>}
             </button>
             </div>
 
@@ -786,7 +751,6 @@
                     내 카드
                     </span>
                 ) : (
-                    <>
                     <button
                         type="button"
                         className={`${styles.scrapButton} ${
@@ -805,16 +769,6 @@
                         {isActiveProfileScrapped ? "스크랩됨" : "스크랩"}
                         </span>
                     </button>
-
-                    {isActiveProfileExchanged && (
-                        <span
-                        className={styles.exchangedStatus}
-                        aria-label="교환이 완료된 카드"
-                        >
-                        교환됨
-                        </span>
-                    )}
-                    </>
                 )
                 )}
             </div>

@@ -5,13 +5,11 @@
 
     overflow: hidden;
 
-    background-color: #111017;
-    color: #ffffff;
+    background-color: var(--black);
+    color: var(--white);
 
     box-sizing: border-box;
 }
-
-/* 상단 뒤로 가기 */
 
 .pageHeader {
     width: min(1240px, 100%);
@@ -32,7 +30,7 @@
 
     border: 0;
     background-color: transparent;
-    color: #ffffff;
+    color: var(--white);
 
     font-family: inherit;
     font-size: 18px;
@@ -63,11 +61,11 @@
 
 .backButton:focus-visible {
     border-radius: 4px;
-    outline: 2px solid #ffffff;
+    outline: 2px solid var(--white);
     outline-offset: 5px;
 }
 
-/* 캐러셀 */
+/* 筌�Ŧ��옙占� */
 
 .carouselSection {
     width: min(1240px, 100%);
@@ -87,7 +85,6 @@
     overflow: hidden;
 }
 
-/* 좌우 끝 카드에 적용되는 그라데이션 */
 .carouselArea::before,
 .carouselArea::after {
     position: absolute;
@@ -106,7 +103,7 @@
 
     background: linear-gradient(
         90deg,
-        #111017 0%,
+        var(--black) 0%,
         rgb(17 16 23 / 88%) 35%,
         rgb(17 16 23 / 0%) 100%
     );
@@ -117,7 +114,7 @@
 
     background: linear-gradient(
         270deg,
-        #111017 0%,
+        var(--black) 0%,
         rgb(17 16 23 / 88%) 35%,
         rgb(17 16 23 / 0%) 100%
     );
@@ -165,7 +162,7 @@
         filter 0.45s ease;
 }
 
-/* 가운데 활성 카드 */
+
 .slide:global(.swiper-slide-active) {
     z-index: 10;
 }
@@ -180,7 +177,7 @@
     box-shadow: 0 24px 50px rgb(0 0 0 / 38%);
 }
 
-/* 활성 카드 바로 양옆 */
+
 .slide:global(.swiper-slide-prev),
 .slide:global(.swiper-slide-next) {
     z-index: 5;
@@ -195,11 +192,8 @@
         blur(0.7px);
 }
 
-/*
- * 282px 카드의 0.9배는 약 254px이다.
- * 축소되면서 생기는 14px 여백만큼 중앙으로 이동시켜
- * 피그마의 카드 간격 20px을 맞춘다.
- */
+
+ 
 .slide:global(.swiper-slide-prev) > button {
     transform:
         translateX(14px)
@@ -212,7 +206,7 @@
         scale(0.9);
 }
 
-/* 좌우 화살표 */
+
 
 .arrowButton {
     position: absolute;
@@ -231,7 +225,7 @@
     border-radius: 50%;
 
     background-color: rgb(20 22 33 / 94%);
-    color: #ffffff;
+    color: var(--white);
 
     opacity: 0;
     visibility: hidden;
@@ -267,7 +261,7 @@
     visibility: visible;
     pointer-events: auto;
 
-    outline: 2px solid #ffffff;
+    outline: 2px solid var(--white);
     outline-offset: 3px;
 
     transform:
@@ -276,7 +270,7 @@
 }
 
 .arrowButton:hover {
-    background-color: #32374c;
+    background-color: var(--gray-800);
 
     transform:
         translateY(-50%)
@@ -297,7 +291,7 @@
     right: 64px;
 }
 
-/* 스크랩 버튼 */
+
 
 .actionArea {
     width: 100%;
@@ -321,8 +315,8 @@
     border: 0;
     border-radius: 8px;
 
-    background-color: #32374c;
-    color: #ffffff;
+    background-color: var(--gray-800);
+    color: var(--white);
 
     font-family: inherit;
     font-size: 14px;
@@ -344,18 +338,18 @@
 }
 
 .scrapButton:hover {
-    background-color: #42485f;
+    background-color: var(--gray-700);
     transform: translateY(-2px);
 }
 
 .scrapButton.scrapped {
-    background-color: #525dff;
+    background-color: var(--blue-500);
 }
 
 .emptyMessage {
     margin: 120px auto 0;
 
-    color: #ffffff;
+    color: var(--white);
     font-size: 16px;
     text-align: center;
 }
@@ -379,7 +373,7 @@
     user-select: none;
 }
 
-/* 어두운 인디케이터 트랙 */
+
 .indicator::before {
     position: absolute;
     top: 50%;
@@ -389,13 +383,13 @@
     height: 4px;
 
     border-radius: 999px;
-    background-color: #202334;
+    background-color: var(--gray-900);
 
     content: "";
     transform: translateY(-50%);
 }
 
-/* 움직이는 흰색 손잡이 */
+/* 占쏙옙筌욊낯�좑옙占� 占쎄퀣源� 占쎈Ŋ�잞옙占� */
 .indicatorThumb {
     position: absolute;
     top: 50%;
@@ -409,7 +403,7 @@
     height: 6px;
 
     border-radius: 999px;
-    background-color: #fdfefe;
+    background-color: var(--white);
 
     pointer-events: none;
 
@@ -424,7 +418,7 @@
     transition: left 0.18s ease-out;
 }
 
-/* 손잡이 주변의 길게 퍼지는 빛 */
+
 .indicatorThumb::before {
     position: absolute;
     top: 50%;
@@ -450,7 +444,7 @@
     filter: blur(3px);
 }
 
-/* 스크랩 바텀시트 */
+/* 占썬끋寃뺧옙占� 獄쏅�占쏙옙�쀫뱜 */
 
 .scrapSheetBackdrop {
     position: fixed;
@@ -472,8 +466,8 @@
     padding: 32px 26px 28px;
 
     border-radius: 20px 20px 0 0;
-    background-color: #222435;
-    color: #ffffff;
+    background-color: var(--gray-900);
+    color: var(--white);
 
     box-sizing: border-box;
 }
@@ -500,7 +494,7 @@
 
     border: 0;
     background: transparent;
-    color: #ffffff;
+    color: var(--white);
 
     font-size: 34px;
     font-weight: 300;
@@ -516,7 +510,7 @@
     align-items: center;
     justify-content: space-between;
 
-    color: #a4a9bb;
+    color: var(--gray-400);
     font-size: 15px;
 }
 
@@ -525,7 +519,7 @@
 
     border: 0;
     background: transparent;
-    color: #dfe2eb;
+    color: var(--gray-200);
 
     font-family: inherit;
     font-size: 15px;
@@ -535,7 +529,7 @@
 }
 
 .addDrawerButton:hover {
-    color: #afd8f8;
+    color: var(--blue-200);
 }
 
 .collectionList {
@@ -559,7 +553,7 @@
 
     border: 0;
     background: transparent;
-    color: #ffffff;
+    color: var(--white);
 
     font-size: 17px;
     text-align: left;
@@ -575,10 +569,10 @@
     align-items: center;
     justify-content: center;
 
-    border: 2px solid #f5f6f8;
+    border: 2px solid var(--gray-100);
     border-radius: 50%;
 
-    color: #ffffff;
+    color: var(--white);
 
     font-size: 26px;
     line-height: 1;
@@ -587,9 +581,9 @@
 }
 
 .selectedIcon {
-    border-color: #ffffff;
-    background-color: #ffffff;
-    color: #222435;
+    border-color: var(--white);
+    background-color: var(--white);
+    color: var(--gray-900);
 
     font-size: 20px;
     font-weight: 800;
@@ -603,8 +597,8 @@
     border: 0;
     border-radius: 9px;
 
-    background-color: #afd8f8;
-    color: #222435;
+    background-color: var(--blue-200);
+    color: var(--gray-900);
 
     font-size: 17px;
     font-weight: 700;
@@ -612,7 +606,7 @@
     cursor: pointer;
 }
 
-/* 새 서랍 만들기 */
+/* 占쏙옙 占쎌뮆�� 筌띾슢諭얏묾占� */
 
 .createDrawerForm {
     display: flex;
@@ -629,7 +623,7 @@
 
 .createDrawerInputHeader label,
 .createDrawerInputHeader span {
-    color: #9da3b6;
+    color: var(--gray-400);
     font-size: 13px;
 }
 
@@ -642,8 +636,8 @@
     border-radius: 7px;
     outline: none;
 
-    background-color: #34394f;
-    color: #ffffff;
+    background-color: var(--gray-800);
+    color: var(--white);
 
     font-family: inherit;
     font-size: 14px;
@@ -652,11 +646,11 @@
 }
 
 .createDrawerForm input::placeholder {
-    color: #73798d;
+    color: var(--gray-500);
 }
 
 .createDrawerForm input:focus {
-    border-color: #afd8f8;
+    border-color: var(--blue-200);
 }
 
 .createDrawerActions {
@@ -684,27 +678,27 @@
 .cancelCreateButton {
     width: 100px;
 
-    background-color: #363b51;
-    color: #ffffff;
+    background-color: var(--gray-800);
+    color: var(--white);
 }
 
 .createDrawerButton {
     flex: 1;
 
-    background-color: #afd8f8;
-    color: #222435;
+    background-color: var(--blue-200);
+    color: var(--gray-900);
 }
 
 .createDrawerButton:disabled {
-    background-color: #596077;
-    color: #9298aa;
+    background-color: var(--gray-600);
+    color: var(--gray-500);
 
     cursor: not-allowed;
 }
 
 .actionArea {
     width: 100%;
-    margin: 8px 0 24px;
+    margin: 24px 0 24px;
 
     display: flex;
     align-items: center;
@@ -722,16 +716,16 @@
     align-items: center;
     justify-content: center;
 
-    border: 1px solid #525dff;
+    border: 1px solid var(--blue-500);
     border-radius: 999px;
 
-    background-color: #525dff;
-    color: #ffffff;
+    background-color: var(--blue-500);
+    color: var(--white);
 
     font-size: 14px;
     font-weight: 600;
 }
-/* 태블릿 */
+/* 占쎌뮆�앯뵳占� */
 
 @media (max-width: 1280px) {
     .pageHeader {
@@ -772,7 +766,7 @@
     }
 }
 
-/* 모바일 */
+
 
 @media (max-width: 768px) {
     .container {
@@ -838,8 +832,8 @@
     }
 
     /*
-     * 모바일에서는 hover가 없기 때문에
-     * 좌우 화살표를 항상 표시한다.
+     * 筌뤴뫀而�옙�깅퓠占쎌뮆�� hover揶쏉옙 占쎈끍由� 占쎈슢揆占쏙옙
+     * �ル슣�� 占쎈뗄沅∽옙�뺧옙 占쏙옙湲� 占쎌뮇�놅옙�뺣뼄.
      */
     .arrowButton,
     .carouselArea:hover
@@ -875,7 +869,7 @@
 
     .actionArea {
     width: 100%;
-    margin: 8px 0 24px;
+    margin: 20px 0 24px;
 
     display: flex;
     align-items: center;
@@ -893,11 +887,11 @@
     align-items: center;
     justify-content: center;
 
-    border: 1px solid #525dff;
+    border: 1px solid var(--blue-500);
     border-radius: 999px;
 
-    background-color: #525dff;
-    color: #ffffff;
+    background-color: var(--blue-500);
+    color: var(--white);
 
     font-size: 14px;
     font-weight: 600;
@@ -916,7 +910,7 @@
         height: 18px;
     }
 
-    /* 모바일에서는 인디케이터만 숨긴다. */
+
     .indicatorContainer {
         display: none;
     }

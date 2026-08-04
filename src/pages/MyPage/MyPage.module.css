@@ -1,8 +1,8 @@
 .page {
     min-height: calc(100vh - 72px);
     padding: 48px 24px 80px;
-    color: #f7f7fb;
-    background: #0e0e16;
+    color: var(--gray-50);
+    background: var(--black);
 }
 
 .container {
@@ -31,17 +31,17 @@
 
 .addButton {
     padding: 10px 16px;
-    border: 1px solid #474c62;
+    border: 1px solid var(--gray-700);
     border-radius: 7px;
-    color: #f6f7fb;
+    color: var(--gray-100);
     font-family: inherit;
     font-size: 13px;
-    background: #34394e;
+    background: var(--gray-800);
     cursor: pointer;
 }
 
 .addButton:hover {
-    background: #41475f;
+    background: var(--gray-700);
 }
 
 .addMenu {
@@ -53,9 +53,9 @@
     padding: 7px;
     flex-direction: column;
     gap: 3px;
-    border: 1px solid #50566f;
+    border: 1px solid var(--gray-700);
     border-radius: 8px;
-    background: #2f3346;
+    background: var(--gray-800);
     box-shadow:
         0 18px 40px
         rgb(0 0 0 / 35%);
@@ -65,7 +65,7 @@
     padding: 9px;
     border: 0;
     border-radius: 5px;
-    color: #f6f7fb;
+    color: var(--gray-100);
     font-family: inherit;
     font-size: 12px;
     text-align: left;
@@ -74,24 +74,29 @@
 }
 
 .addMenu button:hover:not(:disabled) {
-    background: #40465e;
+    background: var(--gray-700);
 }
 
 .addMenu button:disabled {
-    color: #7c8091;
+    color: var(--gray-500);
     cursor: not-allowed;
 }
 
 .carousel {
+    position: relative;
+
     display: grid;
     grid-template-columns:
         282px
         282px
         282px;
-    min-height: 400px;
+    min-height: 416px;
+    padding: 8px 0;
     align-items: center;
     justify-content: center;
-    gap: 24px;
+    gap: 16px;
+
+    overflow: hidden;
 }
 
 .sideSlot,
@@ -101,10 +106,155 @@
     justify-content: center;
 }
 
+.peekSlot {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    z-index: 1;
+
+    width: 96px;
+    height: 400px;
+
+    overflow: hidden;
+
+    transform: translateY(-50%);
+
+    -webkit-mask-image: linear-gradient(
+        90deg,
+        #000000 0%,
+        rgb(0 0 0 / 88%) 28%,
+        rgb(0 0 0 / 42%) 68%,
+        transparent 100%
+    );
+
+    mask-image: linear-gradient(
+        90deg,
+        #000000 0%,
+        rgb(0 0 0 / 88%) 28%,
+        rgb(0 0 0 / 42%) 68%,
+        transparent 100%
+    );
+
+    pointer-events: none;
+}
+
+.peekSlot .sideCardShell {
+    opacity: 0.34;
+    filter: brightness(0.48);
+
+    transform: scale(0.94);
+    transform-origin: left center;
+
+    transition: none;
+}
+
+.carouselNext > .sideSlot,
+.carouselNext > .centerSlot {
+    animation: cardsFromRight 320ms
+        cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.carouselPrevious > .sideSlot,
+.carouselPrevious > .centerSlot {
+    animation: cardsFromLeft 320ms
+        cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.carouselNext > .peekSlot,
+.carouselPrevious > .peekSlot {
+    animation: peekReveal 420ms
+        cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes cardsFromRight {
+    from {
+        opacity: 0.72;
+        transform: translateX(18px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes cardsFromLeft {
+    from {
+        opacity: 0.72;
+        transform: translateX(-18px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes peekReveal {
+    from {
+        opacity: 0;
+        transform:
+            translateY(-50%)
+            translateX(28px);
+    }
+
+    to {
+        opacity: 1;
+        transform:
+            translateY(-50%)
+            translateX(0);
+    }
+}
+
 .cardShell,
 .sideCardShell {
     position: relative;
     width: 282px;
+}
+
+.cardShell {
+    height: 400px;
+    perspective: 1200px;
+}
+
+.flipCard {
+    position: relative;
+    width: 100%;
+    height: 100%;
+
+    transform-style: preserve-3d;
+    transition:
+        transform 560ms
+        cubic-bezier(0.2, 0.75, 0.25, 1);
+    will-change: transform;
+}
+
+.flipped {
+    transform: rotateY(180deg);
+}
+
+.cardFace {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    border-radius: 12px;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+.cardFace[aria-hidden="true"] {
+    pointer-events: none;
+}
+
+.frontFace {
+    transform: rotateY(0deg);
+}
+
+.backFace {
+    transform: rotateY(180deg);
 }
 
 .sideCardShell {
@@ -163,7 +313,7 @@
     border: 1px solid
         rgb(255 255 255 / 15%);
     border-radius: 10px;
-    color: #ffffff;
+    color: var(--white);
     text-align: center;
     background:
         rgb(72 139 224 / 86%);
@@ -188,7 +338,7 @@
     padding: 9px 13px;
     border: 0;
     border-radius: 7px;
-    color: #ffffff;
+    color: var(--white);
     font-family: inherit;
     font-size: 12px;
     background:
@@ -206,7 +356,7 @@
     width: 282px;
     height: 400px;
     min-height: 400px;
-    padding: 20px;
+    padding: 16px 20px 20px;
     gap: 0;
     align-items: stretch;
 
@@ -222,7 +372,7 @@
     width: 100%;
     align-items: flex-start;
     justify-content: space-between;
-    color: #d5d8e0;
+    color: var(--gray-300);
     font-size: 14px;
     font-weight: 600;
     line-height: 150%;
@@ -251,7 +401,7 @@
     height: auto;
     padding: 10px;
     border-radius: 9px;
-    background: #ffffff;
+    background: var(--white);
     box-shadow:
         0 14px 34px
         rgb(20 65 125 / 25%);
@@ -266,36 +416,42 @@
 }
 
 .qrActions button {
-    min-width: 0;
-    height: 42px;
-    padding: 0 13px;
+    width: auto;
+    height: 44px;
+    padding: 0;
 
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-
-    flex: 1;
 
     border: 0;
     border-radius: 8px;
-    color: #ffffff;
-    font-family: inherit;
-    font-size: 12px;
-    font-weight: 600;
-    background:
-        rgb(255 255 255 / 18%);
+    background: transparent;
     cursor: pointer;
+    overflow: hidden;
 }
 
-.qrActions button span {
-    font-size: 18px;
-    line-height: 1;
+.qrActions button:first-child {
+    width: 115px;
+}
+
+.qrActions button:last-child {
+    width: 112px;
+}
+
+.qrActions button img {
+    display: block;
+    width: 100%;
+    height: 44px;
 }
 
 .qrActions button:hover {
-    background:
-        rgb(255 255 255 / 28%);
+    filter: brightness(1.12);
+}
+
+.qrActions button:focus-visible {
+    outline: 2px solid var(--white);
+    outline-offset: 2px;
 }
 
 .copyMessage {
@@ -330,17 +486,17 @@
 }
 
 .activeStatusBadge {
-    color: #264962;
-    background: #b9e0ff;
+    color: var(--gray-800);
+    background: var(--blue-200);
 }
 
 .inactiveStatusBadge {
-    color: #3c4050;
-    background: #c3c5cd;
+    color: var(--gray-800);
+    background: var(--gray-300);
 }
 
 .purposeBadge {
-    color: #e2d9bc;
+    color: var(--y-300);
     background: #29261f;
 }
 
@@ -357,14 +513,14 @@
     padding: 0;
     border: 0;
     border-radius: 50%;
-    background: #50566b;
+    background: var(--gray-700);
     cursor: pointer;
 }
 
 .activeDot {
     width: 19px;
     border-radius: 999px;
-    background: #aedcff;
+    background: var(--blue-200);
 }
 
 .error {
@@ -372,7 +528,7 @@
     margin: 0 auto 18px;
     padding: 9px 13px;
     border-radius: 7px;
-    color: #ffb9bd;
+    color: var(--alert-red);
     font-size: 13px;
     background:
         rgb(195 50 63 / 16%);
@@ -383,13 +539,13 @@
     display: grid;
     min-height: 430px;
     place-items: center;
-    color: #b9bbc8;
+    color: var(--gray-400);
 }
 
 .empty {
     align-content: center;
     gap: 16px;
-    border: 1px dashed #3d4050;
+    border: 1px dashed var(--gray-700);
     border-radius: 12px;
 }
 
@@ -401,10 +557,10 @@
     padding: 10px 16px;
     border: 0;
     border-radius: 7px;
-    color: #24344a;
+    color: var(--gray-800);
     font-family: inherit;
     font-weight: 700;
-    background: #b4ddfb;
+    background: var(--blue-200);
     cursor: pointer;
 }
 
@@ -423,10 +579,10 @@
     width: min(500px, 100%);
     box-sizing: border-box;
     padding: 26px;
-    border: 1px solid #363b51;
+    border: 1px solid var(--gray-700);
     border-radius: 12px;
-    color: #f4f5fa;
-    background: #212437;
+    color: var(--gray-100);
+    background: var(--gray-900);
     box-shadow:
         0 30px 80px
         rgb(0 0 0 / 45%);
@@ -447,7 +603,7 @@
 .closeButton {
     padding: 3px 7px;
     border: 0;
-    color: #f4f5fa;
+    color: var(--gray-100);
     font-family: inherit;
     font-size: 26px;
     line-height: 1;
@@ -471,23 +627,23 @@
 
 .settingRow label,
 .settingRow > span {
-    color: #e6e7ee;
+    color: var(--gray-200);
     font-size: 14px;
 }
 
 .settingRow select {
     min-width: 150px;
     padding: 10px 12px;
-    border: 1px solid #474d65;
+    border: 1px solid var(--gray-700);
     border-radius: 8px;
-    color: #f5f6fa;
+    color: var(--gray-100);
     font-family: inherit;
-    background: #30354b;
+    background: var(--gray-800);
     outline: none;
 }
 
 .settingRow select:focus {
-    border-color: #99cff8;
+    border-color: var(--blue-200);
 }
 
 .toggle {
@@ -499,15 +655,15 @@
     justify-content: space-between;
     border: 0;
     border-radius: 999px;
-    color: #b8bdca;
+    color: var(--gray-400);
     font-family: inherit;
-    background: #4a4e5e;
+    background: var(--gray-700);
     cursor: pointer;
 }
 
 .toggleOn {
-    color: #24526e;
-    background: #a9d9ff;
+    color: var(--gray-800);
+    background: var(--blue-200);
 }
 
 .toggleText {
@@ -521,7 +677,7 @@
     height: 28px;
     flex-shrink: 0;
     border-radius: 50%;
-    background: #ffffff;
+    background: var(--white);
     box-shadow:
         0 2px 6px
         rgb(0 0 0 / 24%);
@@ -543,15 +699,15 @@
     padding: 13px;
     border: 0;
     border-radius: 8px;
-    color: #24344a;
+    color: var(--gray-800);
     font-family: inherit;
     font-weight: 700;
-    background: #b4ddfb;
+    background: var(--blue-200);
     cursor: pointer;
 }
 
 .saveButton:hover:not(:disabled) {
-    background: #c7e7ff;
+    background: var(--blue-200);
 }
 
 .saveButton:disabled {
@@ -566,7 +722,7 @@
     overflow: hidden;
 
     border-radius: 12px;
-    background: #222536;
+    background: var(--gray-900);
 }
 
 .draftHeader {
@@ -580,14 +736,14 @@
 .draftHeader h2 {
     margin: 0;
 
-    color: #ffffff;
+    color: var(--white);
     font-size: 20px;
 }
 
 .draftHeader button {
     border: 0;
 
-    color: #ffffff;
+    color: var(--white);
     background: transparent;
 
     font-size: 26px;
@@ -610,7 +766,7 @@
     align-items: center;
     justify-content: space-between;
 
-    color: #e8eaf3;
+    color: var(--gray-200);
     background: transparent;
 
     cursor: pointer;
@@ -618,11 +774,11 @@
 
 .draftItem:hover,
 .selectedDraft {
-    background: #393e55;
+    background: var(--gray-800);
 }
 
 .draftItem time {
-    color: #a7abbd;
+    color: var(--gray-400);
     font-size: 14px;
 }
 
@@ -630,7 +786,7 @@
     margin: 0;
     padding: 40px 28px;
 
-    color: #9297aa;
+    color: var(--gray-500);
     text-align: center;
 }
 
@@ -642,8 +798,8 @@
     border: 0;
     border-radius: 7px;
 
-    color: #273244;
-    background: #acd9fa;
+    color: var(--gray-800);
+    background: var(--blue-200);
 
     font-size: 16px;
     font-weight: 600;
@@ -682,6 +838,10 @@
             282px
             minmax(90px, 190px);
         gap: 12px;
+    }
+
+    .peekSlot {
+        display: none;
     }
 }
 
@@ -724,5 +884,20 @@
 
     .settingRow select {
         width: 100%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .flipCard {
+        transition: none;
+    }
+
+    .carouselNext > .sideSlot,
+    .carouselNext > .centerSlot,
+    .carouselPrevious > .sideSlot,
+    .carouselPrevious > .centerSlot,
+    .carouselNext > .peekSlot,
+    .carouselPrevious > .peekSlot {
+        animation: none;
     }
 }

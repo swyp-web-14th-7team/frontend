@@ -772,17 +772,22 @@
                 (experience.description || "").trim() ||
                 (experience.relatedUrl || "").trim(),
             )
-            .map((experience, index) => ({
-                title: (experience.title || "").trim(),
+            .map((experience, index) => {
+                const relatedUrl = (experience.relatedUrl || "").trim();
 
-                description: (experience.description || "").trim(),
+                return {
+                    title: (experience.title || "").trim(),
 
-                relatedUrl: (experience.relatedUrl || "").trim(),
+                    description: (experience.description || "").trim(),
 
-                sortOrder: index,
+                    // 선택 항목인 링크가 비어 있으면 요청 데이터에서 제외합니다.
+                    ...(relatedUrl ? { relatedUrl } : {}),
 
-                isRepresentative: Boolean(experience.isRepresentative),
-            }));
+                    sortOrder: index,
+
+                    isRepresentative: Boolean(experience.isRepresentative),
+                };
+            });
         }
 
         if (onboardingData.profileImageUrl) {
@@ -795,11 +800,14 @@
 
         if (!profileCardId) {
             /*
-            * 목적과 공개 여부는 마지막 목적 선택 단계에서 정하므로
-            * 여기서는 비공개 상태로 카드만 만들어 둡니다.
+            * 온보딩 카드는 생성되는 순간부터 공개 상태여야 하므로
+            * 기본 목적을 함께 전달합니다. 마지막 목적 선택 단계에서는
+            * 사용자가 고른 목적으로 다시 갱신합니다.
             */
             createdCard = await createProfileCard({
-            jobTypeId: onboardingData.jobTypeId,
+                jobTypeId: onboardingData.jobTypeId,
+                purposeId:
+                    Number(onboardingData.purposeId) || DEFAULT_PURPOSE_ID,
             });
 
             profileCardId = createdCard?.id;
@@ -832,7 +840,11 @@
 
     /*
     * 마지막 목적 선택 단계에서
+<<<<<<< HEAD
+    * 고른 목적을 반영하고 공개 상태를 다시 확정합니다.
+=======
     * 고른 목적을 반영하고 카드를 공개로 전환합니다.
+>>>>>>> origin/develop
     */
     const handlePurposeSubmit = async () => {
         const selectedPurposeId =

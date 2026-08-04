@@ -10,16 +10,14 @@
 
         display: block;
 
-        background-color: #0e0e15;
-        color: #ffffff;
+        background-color: var(--black);
+        color: var(--white);
 
         box-sizing: border-box;
         overflow: hidden;
     }
 
-    /* =========================
-        상단
-    ========================= */
+
 
     .topBar {
         height: 44px;
@@ -37,7 +35,7 @@
 
         border: 0;
         background: transparent;
-        color: #ffffff;
+        color: var(--white);
 
         cursor: pointer;
     }
@@ -49,7 +47,7 @@
     }
 
     .doneButton {
-        color: #b9dfff;
+        color: var(--blue-200);
 
         font-size: 14px;
         font-weight: 600;
@@ -97,15 +95,13 @@
 
         border: 0;
         background: transparent;
-        color: #ffffff;
+        color: var(--white);
 
         font-size: 28px;
         cursor: pointer;
     }
 
-    /* =========================
-        서랍 목록
-    ========================= */
+
 
     .drawerList {
         display: flex;
@@ -123,7 +119,7 @@
 
         border: 0;
         background: transparent;
-        color: #ffffff;
+        color: var(--white);
 
         cursor: pointer;
     }
@@ -133,13 +129,11 @@
     }
 
     .drawerHeader span {
-        color: #aeb3c2;
+        color: var(--gray-400);
         font-size: 12px;
     }
 
-    /* =========================
-        겹쳐진 작은 카드
-    ========================= */
+
 
     .smallCardStack {
         position: relative;
@@ -210,9 +204,7 @@
         transform: translateX(2px);
     }
 
-    /* =========================
-        서랍 상세
-    ========================= */
+
 
     .detail {
         padding-top: 28px;
@@ -238,7 +230,7 @@
     .detailHeader p {
         margin: 8px 0 0;
 
-        color: #aeb3c2;
+        color: var(--gray-400);
         font-size: 12px;
     }
 
@@ -253,15 +245,13 @@
 
         border: 0;
         background: transparent;
-        color: #ffffff;
+        color: var(--white);
 
         font-size: 16px;
         cursor: pointer;
     }
 
-    /* =========================
-        큰 카드 캐러셀
-    ========================= */
+
 
     .profileCarousel {
         width: 100%;
@@ -293,16 +283,14 @@
     }
 
     .selectedCard {
-        border-color: #b8d9f5;
+        border-color: var(--blue-200);
 
         box-shadow:
         inset 0 0 8px rgba(184, 217, 245, 0.4),
         0 0 5px rgba(184, 217, 245, 0.4);
     }
 
-    /* =========================
-        점 세 개 메뉴
-    ========================= */
+
 
     .menu {
         position: absolute;
@@ -313,9 +301,9 @@
         width: 110px;
         padding: 8px 0;
 
-        border: 1px solid #596077;
+        border: 1px solid var(--gray-600);
         border-radius: 8px;
-        background-color: #363b51;
+        background-color: var(--gray-800);
 
         box-sizing: border-box;
     }
@@ -326,7 +314,7 @@
 
         border: 0;
         background: transparent;
-        color: #ffffff;
+        color: var(--white);
 
         font-size: 13px;
         text-align: left;
@@ -339,12 +327,10 @@
     }
 
     .menu .menuDelete {
-        color: #ff4d5e;
+        color: var(--alert-red);
     }
 
-    /* =========================
-        삭제 버튼
-    ========================= */
+
 
     .trashButton {
         position: fixed;
@@ -356,10 +342,10 @@
         height: 46px;
         padding: 0;
 
-        border: 1px solid #ffffff;
+        border: 1px solid var(--white);
         border-radius: 50%;
-        background-color: #0e0e15;
-        color: #ffffff;
+        background-color: var(--black);
+        color: var(--white);
 
         font-size: 20px;
 
@@ -368,8 +354,8 @@
     }
 
     .trashButton:disabled {
-        color: #777d91;
-        border-color: #777d91;
+        color: var(--gray-500);
+        border-color: var(--gray-500);
 
         cursor: not-allowed;
     }
@@ -377,13 +363,11 @@
     .emptyText {
         margin: 32px 20px;
 
-        color: #777d91;
+        color: var(--gray-500);
         font-size: 13px;
     }
 
-    /* =========================
-        바텀시트
-    ========================= */
+
 
     .sheetBackdrop {
         position: fixed;
@@ -402,7 +386,7 @@
         padding: 28px 20px 26px;
 
         border-radius: 16px 16px 0 0;
-        background-color: #222435;
+        background-color: var(--gray-900);
 
         box-sizing: border-box;
     }
@@ -426,7 +410,7 @@
 
         border: 0;
         background: transparent;
-        color: #ffffff;
+        color: var(--white);
 
         font-size: 24px;
 
@@ -443,7 +427,7 @@
 
     .inputHeader label,
     .inputHeader span {
-        color: #9da3b6;
+        color: var(--gray-400);
         font-size: 12px;
     }
 
@@ -456,18 +440,18 @@
         border-radius: 6px;
         outline: none;
 
-        background-color: #34394f;
-        color: #ffffff;
+        background-color: var(--gray-800);
+        color: var(--white);
 
         box-sizing: border-box;
     }
 
     .bottomSheet input::placeholder {
-        color: #73798d;
+        color: var(--gray-500);
     }
 
     .bottomSheet input:focus {
-        border-color: #9fcaf2;
+        border-color: var(--blue-300);
     }
 
     .submitButton {
@@ -478,8 +462,8 @@
         border: 0;
         border-radius: 6px;
 
-        background-color: #afd8f8;
-        color: #171925;
+        background-color: var(--blue-200);
+        color: var(--gray-900);
 
         font-size: 14px;
         font-weight: 700;
@@ -488,8 +472,8 @@
     }
 
     .submitButton:disabled {
-        background-color: #596077;
-        color: #9298aa;
+        background-color: var(--gray-600);
+        color: var(--gray-500);
 
         cursor: not-allowed;
     }
