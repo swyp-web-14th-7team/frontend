@@ -110,8 +110,13 @@
     cursor: wait;
     }
 
+    .mobileSettingsMenu,
+    .mobileSectionBackButton {
+    display: none;
+    }
+
     /* =========================
-    �곌랜梨뜻룇
+    占쎄퀗�쒙㎖�삳즵
     ========================= */
 
     .content {
@@ -161,7 +166,7 @@
     }
 
     /* =========================
-    �リ옇�∽옙占� �좎럥踰좑옙占� �곌랬�숅뇦猿볦삕
+    占썬꺁�뉛옙�쎌삕�좑옙 占쎌쥙�θ린醫묒삕�좑옙 占쎄퀗�э옙�낅눇�용낌��
     ========================= */
 
     .form {
@@ -171,7 +176,7 @@
     flex-direction: column;
     gap: 24px;
 
-    /* �リ옇�ｏ옙�뚯삕�좑옙 �좎럥�꾬옙濡녹춺�좑옙 �좎럩裕꾣뤃占� */
+    /* 占썬꺁�뉛옙節륁삕占쎈슣�뺧옙醫묒삕 占쎌쥙�ο옙袁ъ삕嚥〓끃異븝옙醫묒삕 占쎌쥙�⑵짆袁ｋ쨨�좑옙 */
     height: auto;
     min-height: 0;
     justify-content: flex-start;
@@ -499,7 +504,7 @@
     }
 
     /* =========================
-    �좎룞�� �좎럥�꾤뙼占� �リ옇�▽빳占�
+    占쎌쥙猷욑옙占� 占쎌쥙�ο옙袁ㅻ쇊�좑옙 占썬꺁�뉛옙�쎈뭄�좑옙
     ========================= */
 
     .requestDateGroups {
@@ -714,7 +719,7 @@
     }
 
     /* =========================
-    嶺뚮∥�꾬옙�낆��좑옙
+    癲ル슢�ο옙袁ъ삕占쎈굞占쏙옙醫묒삕
     ========================= */
 
     .error,
@@ -741,7 +746,7 @@
     }
 
     /* =========================
-    占썩몿�댐옙占� 占쎌슱�숋옙源띿삕
+    �좎뜦紐울옙�먯삕�좑옙 �좎럩�깍옙�뗭삕繹먮씮��
     ========================= */
 
     .dangerSection {
@@ -793,7 +798,7 @@
     }
 
     /* =========================
-    嶺뚮ㅄ維�占쏙옙
+    癲ル슢�꾤땟占썲뜝�숈삕
     ========================= */
 
     .modalBackdrop {
@@ -875,17 +880,17 @@
     color: #f8d98d;
     }
 
-    /* status 1 = 濾곌쑨�ｏ옙占� */
+    /* status 1 = 癲꾧퀗�⑨옙節륁삕�좑옙 */
     .status1 {
     color: var(--gray-400);
     }
 
-    /* status 2 = �좎럩瑗띰옙占� */
+    /* status 2 = 占쎌쥙�⑴몭�곗삕�좑옙 */
     .status2 {
     color: #a9e7c5;
     }
 
-    /* status 3 = 占쎈씚維곻옙占� */
+    /* status 3 = �좎럥�싩땟怨살삕�좑옙 */
     .status3 {
     color: var(--gray-400);
     }
@@ -1094,7 +1099,7 @@
     }
     }
     /* =========================
-    �꾩룇瑗뤄옙�귥삕�좑옙
+    占쎄쑴猷뉒몭琉꾩삕占쎄램�뺧옙醫묒삕
     ========================= */
 
     @media (max-width: 1100px) {
@@ -1126,10 +1131,141 @@
     }
     }
 
-    @media (max-width: 680px) {
+    @media (max-width: 767px) {
     .page {
         display: block;
         min-height: 100vh;
+    }
+
+    .settingsIndexPage .sidebar,
+    .settingsIndexPage .content {
+        display: none;
+    }
+
+    .page:not(.settingsIndexPage) .sidebar {
+        display: none;
+    }
+
+    .page:not(.settingsIndexPage) .content {
+        padding: 0 24px 64px;
+    }
+
+    .page:not(.settingsIndexPage) .contentInner {
+        width: 100%;
+        margin: 0;
+    }
+
+    .settingsIndexPage .mobileSettingsMenu {
+        min-height: 100vh;
+        padding: 28px 24px 64px;
+
+        display: block;
+
+        color: var(--gray-100);
+        background: var(--black);
+
+        box-sizing: border-box;
+    }
+
+    .mobileBackButton,
+    .page:not(.settingsIndexPage) .mobileSectionBackButton {
+        width: 40px;
+        height: 40px;
+        padding: 0;
+
+        display: grid;
+        place-items: center;
+
+        border: 0;
+        background: transparent;
+        color: var(--white);
+
+        cursor: pointer;
+    }
+
+    .mobileBackButton {
+        margin: 0 0 42px -10px;
+    }
+
+    .page:not(.settingsIndexPage) .mobileSectionBackButton {
+        margin: 28px 0 42px 14px;
+    }
+
+    .mobileBackButton span,
+    .mobileSectionBackButton span {
+        font-size: 42px;
+        font-weight: 200;
+        line-height: 1;
+
+        transform: translateY(-2px);
+    }
+
+    .mobileBackButton:focus-visible,
+    .mobileSectionBackButton:focus-visible,
+    .mobileMenuItem:focus-visible,
+    .mobileLogoutButton:focus-visible {
+        border-radius: 6px;
+        outline: 2px solid var(--blue-200);
+        outline-offset: 3px;
+    }
+
+    .mobileMenuGroup + .mobileMenuGroup {
+        margin-top: 58px;
+    }
+
+    .mobileMenuGroup h2 {
+        margin: 0 0 22px;
+
+        color: var(--white);
+
+        font-size: 24px;
+        font-weight: 600;
+        line-height: 150%;
+    }
+
+    .mobileMenuItem,
+    .mobileLogoutButton {
+        width: 100%;
+        min-height: 52px;
+        padding: 0;
+
+        border: 0;
+        background: transparent;
+        color: var(--gray-200);
+
+        font-family: inherit;
+        font-size: 18px;
+        font-weight: 400;
+        text-align: left;
+
+        cursor: pointer;
+    }
+
+    .mobileMenuItem {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .mobileMenuChevron {
+        width: 12px;
+        height: 12px;
+        margin-right: 5px;
+
+        border-top: 2px solid var(--gray-100);
+        border-right: 2px solid var(--gray-100);
+
+        transform: rotate(45deg);
+    }
+
+    .mobileLogoutButton {
+        margin-top: 4px;
+        color: var(--alert-red);
+    }
+
+    .mobileLogoutButton:disabled {
+        opacity: 0.55;
+        cursor: wait;
     }
 
     .sidebar {

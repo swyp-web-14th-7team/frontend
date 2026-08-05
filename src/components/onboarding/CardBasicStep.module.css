@@ -230,7 +230,7 @@
     border-radius: 50%;
     }
 
-    /* 390px 筌뤴뫀而�옙占� */
+    /* 390px 嶺뚮ㅄ維��뚳옙�쇿뜝占� */
     @media (max-width: 768px) {
     .container {
         min-height: auto;
@@ -301,6 +301,9 @@
     .selectedStrength {
         min-height: 56px;
         padding: 12px 14px;
+        border: 0;
+        border-radius: 8px;
+        background-color: var(--gray-700);
     }
 
     .strengthIcon {
@@ -311,14 +314,24 @@
     .textarea {
         min-height: 88px;
         padding: 14px;
+        border: 1px solid transparent;
+        border-radius: 8px;
         font-size: 14px;
         line-height: 1.5;
+        background-color: var(--gray-700);
+    }
+
+    .textarea:focus {
+        border-color: var(--blue-300);
     }
 
     .addButton {
         height: 38px;
         padding: 0 14px;
+        border: 0;
+        border-radius: 8px;
         font-size: 13px;
+        background-color: var(--gray-700);
     }
 
     .nextButton,
@@ -327,5 +340,15 @@
         height: 56px;
         margin-top: 32px;
         flex-shrink: 0;
+    }
+
+    .nextButton {
+        color: var(--gray-500);
+        background-color: var(--gray-900);
+    }
+
+    .nextButtonActive {
+        color: var(--gray-900);
+        background-color: var(--blue-200);
     }
     }
