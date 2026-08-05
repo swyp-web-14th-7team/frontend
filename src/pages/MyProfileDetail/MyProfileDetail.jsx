@@ -628,6 +628,15 @@
 
         <div className={styles.layout}>
             <aside className={styles.summaryCard}>
+            <button
+                type="button"
+                className={styles.mobileBackButton}
+                onClick={() => navigate("/profile")}
+                aria-label="내 프로필로 돌아가기"
+            >
+                ‹
+            </button>
+
             <div className={styles.menuArea}>
                 <button
                 type="button"
@@ -643,6 +652,14 @@
                 <div className={styles.profileMenu}>
                     <button type="button" onClick={() => handleEdit("profile")}>
                     수정하기
+                    </button>
+
+                    <button
+                    type="button"
+                    className={styles.mobileVisibilityMenuButton}
+                    onClick={handleOpenVisibility}
+                    >
+                    공개설정 변경
                     </button>
 
                     <button

@@ -530,13 +530,63 @@ padding: 64px 0 0 64px;
         margin-top: 42px;
     }
 
+    .selectedChip {
+        border: 0;
+        color: var(--gray-100);
+        background: var(--gray-700);
+    }
+
+    .addButton {
+        border: 0;
+        border-radius: 6px;
+        color: var(--gray-100);
+        background: var(--gray-700);
+    }
+
     .linkRow {
         grid-template-columns:
             100px 1fr 36px;
     }
 
+    .select,
+    .input,
+    .textarea {
+        border-color: transparent;
+        border-radius: 6px;
+        background: var(--gray-700);
+    }
+
+    .select:focus,
+    .input:focus,
+    .textarea:focus {
+        border-color: var(--blue-300);
+    }
+
+    .removeButton {
+        background: var(--gray-700);
+    }
+
+    .experienceCard {
+        border-color: var(--gray-700);
+    }
+
     .bottomButtons {
         grid-template-columns:
             110px 1fr;
+    }
+
+    .skipButton,
+    .submitButton {
+        border-radius: 8px;
+    }
+
+    .submitButton {
+        color: var(--gray-900);
+        background: var(--blue-200);
+    }
+
+    .submitButton:disabled {
+        color: var(--gray-400);
+        background: var(--gray-700);
     }
 }

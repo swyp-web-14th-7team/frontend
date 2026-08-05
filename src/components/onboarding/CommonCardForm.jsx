@@ -58,6 +58,7 @@ const CommonCardForm = ({
                     }
                 >
                     <Dropdown
+                        className={styles.affiliationDropdown}
                         value={
                             data.affiliationType
                         }

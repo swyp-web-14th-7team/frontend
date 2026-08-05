@@ -39,3 +39,27 @@
     width: 140px;
     flex-shrink: 0;
     }
+
+    @media (max-width: 768px) {
+    .input {
+        height: 48px;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        background-color: var(--gray-700);
+    }
+
+    .input:focus {
+        border-color: var(--blue-300);
+    }
+
+    .affiliationDropdown > button {
+        height: 48px;
+        border-color: transparent;
+        background-color: var(--gray-700);
+    }
+
+    .affiliationDropdown > button:hover,
+    .affiliationDropdown > button:focus-visible {
+        border-color: var(--blue-300);
+    }
+    }
