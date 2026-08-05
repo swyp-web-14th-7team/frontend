@@ -31,6 +31,10 @@
     gap: 16px;
     }
 
+    .notificationWrapper {
+    position: relative;
+    }
+
     .iconButton,
     .backButton {
     position: relative;
@@ -83,4 +87,28 @@
 
     border-radius: 50%;
     background-color: var(--alert-red);
+    }
+
+    .loginButton {
+    height: 40px;
+    padding: 0;
+
+    border: 0;
+    border-radius: 4px;
+
+    color: var(--white);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    background: transparent;
+    cursor: pointer;
+    }
+
+    .loginButton:hover {
+    color: var(--blue-200);
+    }
+
+    .loginButton:focus-visible {
+    outline: 2px solid var(--blue-200);
+    outline-offset: 3px;
     }

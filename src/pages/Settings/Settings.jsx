@@ -150,6 +150,7 @@
 
     const isNameDirty = name.trim() !== initialName.trim();
     const isDirty = isNameDirty;
+    const isSettingsIndex = !section;
 
     /*
     * 계정 관리에 필요한 회원 정보를 불러옵니다.
@@ -630,7 +631,69 @@
     };
 
     return (
-        <main className={styles.page}>
+        <main
+        className={`${styles.page} ${
+            isSettingsIndex ? styles.settingsIndexPage : ""
+        }`}
+        >
+        <section
+            className={styles.mobileSettingsMenu}
+            aria-label="설정 메뉴"
+        >
+            <button
+            type="button"
+            className={styles.mobileBackButton}
+            onClick={handleBack}
+            aria-label="내 프로필로 돌아가기"
+            >
+            <span aria-hidden="true">‹</span>
+            </button>
+
+            <div className={styles.mobileMenuGroup}>
+            <h2>카드 교환</h2>
+
+            <button
+                type="button"
+                className={styles.mobileMenuItem}
+                onClick={() => moveToPath("/settings/requests")}
+            >
+                <span>내 요청 기록</span>
+                <span className={styles.mobileMenuChevron} aria-hidden="true" />
+            </button>
+            </div>
+
+            <div className={styles.mobileMenuGroup}>
+            <h2>계정</h2>
+
+            <button
+                type="button"
+                className={styles.mobileMenuItem}
+                onClick={() => moveToPath("/settings/account")}
+            >
+                <span>계정 관리</span>
+                <span className={styles.mobileMenuChevron} aria-hidden="true" />
+            </button>
+
+            <button
+                type="button"
+                className={styles.mobileLogoutButton}
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+            >
+                {isLoggingOut ? "로그아웃 중..." : "로그아웃"}
+            </button>
+            </div>
+        </section>
+
+        <button
+            type="button"
+            className={styles.mobileSectionBackButton}
+            onClick={() => moveToPath("/settings")}
+            aria-label="설정 메뉴로 돌아가기"
+        >
+            <span aria-hidden="true">‹</span>
+        </button>
+
         <aside className={styles.sidebar}>
             <button
             type="button"

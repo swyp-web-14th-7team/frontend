@@ -315,4 +315,50 @@
     .actions {
         grid-template-columns: 120px minmax(0, 1fr);
     }
+
+    .tag {
+        color: var(--gray-100);
+        background-color: var(--gray-700);
+    }
+
+    .addButton {
+        border: 0;
+        color: var(--gray-100);
+        background-color: var(--gray-700);
+    }
+
+    .linkSelect,
+    .input,
+    .textarea {
+        border: 1px solid transparent;
+        background-color: var(--gray-800);
+    }
+
+    .linkSelect:focus,
+    .input:focus,
+    .textarea:focus {
+        border-color: var(--blue-300);
+    }
+
+    .removeButton {
+        background-color: var(--gray-700);
+    }
+
+    .experienceCard {
+        background-color: var(--gray-900);
+    }
+
+    .representativeRow input {
+        accent-color: var(--blue-300);
+    }
+
+    .skipButton {
+        color: var(--gray-900);
+        background-color: var(--gray-200);
+    }
+
+    .submitButton {
+        color: var(--gray-900);
+        background-color: var(--blue-200);
+    }
     }

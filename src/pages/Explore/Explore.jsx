@@ -836,6 +836,8 @@ import {
             onNotificationClick={handleNotificationToggle}
             isNotificationOpen={isNotificationOpen}
             hasUnreadNotification={hasUnreadNotification}
+            isUserLoggedIn={isUserLoggedIn}
+            onLoginClick={handleStartClick}
             notificationPanel={
                 <NotificationPanel
                 requests={exchangeRequests}

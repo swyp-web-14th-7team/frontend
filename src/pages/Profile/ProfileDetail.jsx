@@ -158,6 +158,8 @@ const ProfileDetail = () => {
         setIsExchangeModalOpen,
     ] = useState(false);
 
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
     const [connectedProfileCardIds, setConnectedProfileCardIds] =
         useState(() => new Set());
 
@@ -445,6 +447,8 @@ const ProfileDetail = () => {
             return;
         }
 
+        setIsMobileMenuOpen(false);
+
         const savedDrawerIds = drawers
             .filter(isProfileInDrawer)
             .map((drawer) => drawer.id);
@@ -609,6 +613,7 @@ const handleScrapSave = async () => {
             return;
         }
 
+        setIsMobileMenuOpen(false);
         setIsExchangeModalOpen(true);
     };
 
@@ -627,6 +632,10 @@ const handleScrapSave = async () => {
         window.alert(
             `${profile.name}님에게 카드 교환 요청을 보냈습니다.`,
         );
+    };
+
+    const handleMobileBack = () => {
+        navigate(-1);
     };
 
     return (
@@ -658,6 +667,58 @@ const handleScrapSave = async () => {
                             : ""
                     }`}
                 >
+                    <button
+                        type="button"
+                        className={styles.mobileBackButton}
+                        onClick={handleMobileBack}
+                        aria-label="이전 화면으로 돌아가기"
+                    >
+                        ‹
+                    </button>
+
+                    {!isConnectedProfileCard &&
+                        !isProfileActionLoading &&
+                        !isOwnProfileCard && (
+                            <div className={styles.mobileMenuArea}>
+                                <button
+                                    type="button"
+                                    className={styles.mobileMoreButton}
+                                    onClick={() =>
+                                        setIsMobileMenuOpen(
+                                            (current) => !current,
+                                        )
+                                    }
+                                    aria-label="프로필 메뉴"
+                                    aria-expanded={isMobileMenuOpen}
+                                >
+                                    •••
+                                </button>
+
+                                {isMobileMenuOpen && (
+                                    <div
+                                        className={styles.mobileProfileMenu}
+                                        role="menu"
+                                    >
+                                        <button
+                                            type="button"
+                                            onClick={handleOpenScrap}
+                                            role="menuitem"
+                                        >
+                                            스크랩하기
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            onClick={handleOpenExchangeModal}
+                                            role="menuitem"
+                                        >
+                                            카드 교환 요청
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
                     <div className={styles.profileBlock}>
                         {profile.profileImage ? (
                             <img

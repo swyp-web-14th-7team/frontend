@@ -14,4 +14,8 @@
     .desktopHeader {
         display: block;
     }
+
+    .mobileHiddenBottomNavigation {
+        display: none;
+    }
 }
