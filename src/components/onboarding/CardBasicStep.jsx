@@ -17,7 +17,7 @@
     if (!normalizedUrl) {
         return "";
     }
- 
+
     const isImageFileUrl = /\.(?:avif|gif|jpe?g|png|webp)(?:\?.*)?$/i.test(
         normalizedUrl,
     );
@@ -95,46 +95,6 @@
         .toLowerCase();
 
     return /frontend|backend|프론트|백엔드/.test(jobText);
-    };
-
-    const getRequiredFieldMessage = (data) => {
-    const isAffiliationMissing = !data.affiliationStatusId;
-    const isIntroductionMissing = !(data.introduction || "").trim();
-    const isStrengthMissing = !data.strength;
-
-    if (
-        isAffiliationMissing &&
-        isIntroductionMissing &&
-        isStrengthMissing
-    ) {
-        return "현 소속과 성향을 선택하고 한 줄 소개를 작성해주세요.";
-    }
-
-    if (isAffiliationMissing && isIntroductionMissing) {
-        return "현 소속을 선택하고 한 줄 소개를 작성해주세요.";
-    }
-
-    if (isAffiliationMissing && isStrengthMissing) {
-        return "현 소속과 성향을 선택해주세요.";
-    }
-
-    if (isIntroductionMissing && isStrengthMissing) {
-        return "성향을 선택하고 한 줄 소개를 작성해주세요.";
-    }
-
-    if (isAffiliationMissing) {
-        return "현 소속을 선택해주세요.";
-    }
-
-    if (isIntroductionMissing) {
-        return "한 줄 소개를 작성해주세요.";
-    }
-
-    if (isStrengthMissing) {
-        return "성향을 선택해주세요.";
-    }
-
-    return "";
     };
 
     const CardBasicStep = ({
@@ -251,8 +211,6 @@
         Boolean(data.affiliationStatusId) &&
         (data.introduction || "").trim() !== "" &&
         Boolean(data.strength);
-
-    const requiredFieldMessage = getRequiredFieldMessage(data);
 
     return (
         <OnboardingLayout
@@ -408,12 +366,12 @@
             </div>
             </div>
 
-            {(submitError || requiredFieldMessage) && (
+            {submitError && (
             <p
                 className={styles.validationMessage}
-                role={submitError ? "alert" : "status"}
+                role="alert"
             >
-                {submitError || requiredFieldMessage}
+                {submitError}
             </p>
             )}
 
