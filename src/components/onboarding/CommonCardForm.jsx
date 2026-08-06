@@ -95,7 +95,7 @@ const CommonCardForm = ({
                                 .value,
                         )
                     }
-                    placeholder="텍스트를 입력하세요"
+                    placeholder="학교명, 직장명 등을 입력해주세요"
                 />
 
                 <p
