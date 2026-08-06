@@ -89,19 +89,19 @@
     border: none;
     border-radius: 8px;
 
-    background-color: var(--gray-200);
-    color: var(--black);
+    background-color: var(--blue-200);
+    color: var(--gray-900);
 
     cursor: pointer;
     }
 
     .nextButton:disabled {
-    background-color: var(--gray-800);
+    background-color: var(--gray-900);
     color: var(--gray-500);
     cursor: not-allowed;
     }
 
-    /* 紐⑤컮��: 390px 湲곗� */
+    /* 錻��皿鐃緒申: 390px 羚芽�鐃� */
     @media (max-width: 768px) {
     .container {
         flex: 1;

@@ -79,13 +79,13 @@
     border: none;
     border-radius: 8px;
 
-    background-color: var(--white);
-    color: var(--black);
+    background-color: var(--blue-200);
+    color: var(--gray-900);
 
     cursor: pointer;
     }
 
-    /* 390px 紐⑤컮�� */
+    /* 390px 錻��皿鐃緒申 */
     @media (max-width: 768px) {
     .container {
         flex: 1;
@@ -141,7 +141,7 @@
     }
     }
 
-    /* �몃줈 湲몄씠媛� 吏㏃� 紐⑤컮�� */
+    /* 鐃暑�譴� 羚蛾���紵�鐃� 錻���鐃� 錻��皿鐃緒申 */
     @media (max-width: 768px) and (max-height: 750px) {
     .container {
         padding-top: 40px;
@@ -167,7 +167,7 @@
     }
     }
 
-    /* �몃줈 湲몄씠媛� 留ㅼ슦 吏㏃� 紐⑤컮�� */
+    /* 鐃暑�譴� 羚蛾���紵�鐃� 錻��殊�� 錻���鐃� 錻��皿鐃緒申 */
     @media (max-width: 768px) and (max-height: 650px) {
     .container {
         padding-top: 24px;

@@ -23,7 +23,7 @@
     import { isLoggedIn } from "../../utils/auth";
     import { mapProfileCard } from "../../utils/profileMapper";
 
-    import scrapIcon from "../../assets/icons/icon_archived.svg";
+    import scrapIcon from "../../assets/icons/icon_scrap.svg";
 
     import styles from "./ProfileCarouselPage.module.css";
 
@@ -757,6 +757,7 @@
                         isActiveProfileScrapped ? styles.scrapped : ""
                         }`}
                         onClick={handleOpenScrapSheet}
+                        disabled={isActiveProfileScrapped}
                         aria-pressed={isActiveProfileScrapped}
                     >
                         <img
@@ -766,7 +767,7 @@
                         />
 
                         <span>
-                        {isActiveProfileScrapped ? "스크랩됨" : "스크랩"}
+                        {isActiveProfileScrapped ? "스크랩 완료" : "스크랩"}
                         </span>
                     </button>
                 )
