@@ -102,6 +102,11 @@
     color: var(--gray-400);
     }
 
+    .requiredMark {
+    margin-left: 3px;
+    color: var(--alert-red);
+    }
+
     .affiliationRow {
     display: flex;
     gap: 8px;
@@ -211,6 +216,19 @@
     background-color: var(--white);
     color: var(--black);
     cursor: pointer;
+    }
+
+    .validationMessage {
+    width: 100%;
+    max-width: 560px;
+    min-height: 20px;
+    margin: 12px 0 0;
+
+    color: var(--alert-red);
+
+    font-size: 13px;
+    line-height: 1.5;
+    text-align: center;
     }
 
     .count {
@@ -340,6 +358,11 @@
         height: 56px;
         margin-top: 32px;
         flex-shrink: 0;
+    }
+
+    .validationMessage {
+        max-width: none;
+        text-align: left;
     }
 
     .nextButton {

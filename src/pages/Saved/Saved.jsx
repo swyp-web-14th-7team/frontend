@@ -9,6 +9,10 @@ import {
     getConnections,
 } from "../../api/connections";
 
+import {
+    getInterests,
+} from "../../api/options";
+
 import ExploreProfileCard from "../../components/profile/ExploreProfileCard";
 import SkillFilterModal from "../../components/explore/SkillFilterModal";
 import InterestFilterModal from "../../components/explore/InterestFilterModal";
@@ -64,117 +68,6 @@ const AFFILIATION_OPTIONS = [
     },
 ];
 
-const INTEREST_OPTIONS = [
-    {
-        id: "interest-service-planning",
-        name: "서비스 기획",
-    },
-    {
-        id: "interest-ai",
-        name: "AI",
-    },
-    {
-        id: "interest-ux",
-        name: "UX",
-    },
-    {
-        id: "interest-branding",
-        name: "브랜딩",
-    },
-    {
-        id: "interest-ui-design",
-        name: "UI 디자인",
-    },
-    {
-        id: "interest-user-research",
-        name: "사용자 리서치",
-    },
-    {
-        id: "interest-commerce",
-        name: "이커머스",
-    },
-    {
-        id: "interest-data",
-        name: "데이터 분석",
-    },
-    {
-        id: "interest-automation",
-        name: "자동화 효율화",
-    },
-    {
-        id: "interest-ux-design",
-        name: "UX 디자인",
-    },
-    {
-        id: "interest-mobile",
-        name: "모바일 앱",
-    },
-    {
-        id: "interest-content",
-        name: "콘텐츠",
-    },
-    {
-        id: "interest-community",
-        name: "커뮤니티",
-    },
-    {
-        id: "interest-car",
-        name: "자동차",
-    },
-    {
-        id: "interest-entertainment",
-        name: "엔터테인먼트",
-    },
-    {
-        id: "interest-reading",
-        name: "독서",
-    },
-    {
-        id: "interest-utility",
-        name: "유틸리티",
-    },
-    {
-        id: "interest-used-market",
-        name: "중고거래",
-    },
-    {
-        id: "interest-o2o",
-        name: "O2O",
-    },
-    {
-        id: "interest-consulting",
-        name: "컨설팅",
-    },
-    {
-        id: "interest-b2b",
-        name: "B2B",
-    },
-    {
-        id: "interest-beauty",
-        name: "뷰티",
-    },
-    {
-        id: "interest-small-business",
-        name: "소상공인",
-    },
-    {
-        id: "interest-esg",
-        name: "ESG",
-    },
-    {
-        id: "interest-messenger",
-        name: "메신저",
-    },
-    {
-        id: "interest-senior",
-        name: "시니어",
-    },
-    {
-        id: "interest-universal-design",
-        name: "유니버설 디자인",
-    },
-];
-
 const SORT_OPTIONS = [
     {
         id: "recent",
@@ -198,6 +91,26 @@ const normalizeValue = (value) =>
     String(value || "")
         .trim()
         .toLowerCase();
+
+const getItems = (response) => {
+    if (Array.isArray(response)) {
+        return response;
+    }
+
+    if (Array.isArray(response?.items)) {
+        return response.items;
+    }
+
+    if (Array.isArray(response?.data?.items)) {
+        return response.data.items;
+    }
+
+    if (Array.isArray(response?.data)) {
+        return response.data;
+    }
+
+    return [];
+};
 
 const getSelectedId = (item) => {
     if (
@@ -255,6 +168,9 @@ const Saved = () => {
 
     const [errorMessage, setErrorMessage] =
         useState("");
+
+    const [cmsInterests, setCmsInterests] =
+        useState([]);
 
     useEffect(() => {
         const controller =
@@ -338,6 +254,46 @@ const Saved = () => {
         };
     }, []);
 
+    useEffect(() => {
+        const controller =
+            new AbortController();
+
+        const fetchInterests = async () => {
+            try {
+                const data = await getInterests({
+                    page: 1,
+                    limit: 100,
+                    sort: "name",
+                    order: "asc",
+                    signal: controller.signal,
+                });
+
+                if (controller.signal.aborted) {
+                    return;
+                }
+
+                setCmsInterests(getItems(data));
+            } catch (error) {
+                if (error?.name === "AbortError") {
+                    return;
+                }
+
+                console.error(
+                    "관심분야 목록 조회 실패:",
+                    error,
+                );
+
+                setCmsInterests([]);
+            }
+        };
+
+        void fetchInterests();
+
+        return () => {
+            controller.abort();
+        };
+    }, []);
+
     const [selectedJobs, setSelectedJobs] =
         useState([]);
 
@@ -369,51 +325,51 @@ const Saved = () => {
 
     const interestOptions = useMemo(() => {
         const optionMap = new Map();
+        const optionNames = new Set();
 
-        INTEREST_OPTIONS.forEach((option) => {
-            optionMap.set(
-                normalizeValue(option.name),
-                option,
-            );
-        });
+        const addOption = (interest) => {
+            const name = normalizeTag(interest);
+
+            if (!name) {
+                return;
+            }
+
+            const id =
+                typeof interest === "string"
+                    ? interest
+                    : interest.id ?? name;
+
+            const idKey = String(id);
+            const nameKey = normalizeValue(name);
+
+            if (
+                optionMap.has(idKey) ||
+                optionNames.has(nameKey)
+            ) {
+                return;
+            }
+
+            optionMap.set(idKey, {
+                id,
+                name,
+            });
+
+            optionNames.add(nameKey);
+        };
+
+        cmsInterests.forEach(addOption);
 
         savedProfiles.forEach((profile) => {
             const profileInterests =
                 profile.interests || [];
 
-            profileInterests.forEach(
-                (interest) => {
-                    const name =
-                        normalizeTag(interest);
-
-                    if (!name) {
-                        return;
-                    }
-
-                    const id =
-                        typeof interest ===
-                        "string"
-                            ? interest
-                            : interest.id ||
-                              name;
-
-                    const key =
-                        normalizeValue(name);
-
-                    if (!optionMap.has(key)) {
-                        optionMap.set(key, {
-                            id,
-                            name,
-                        });
-                    }
-                },
-            );
+            profileInterests.forEach(addOption);
         });
 
         return Array.from(
             optionMap.values(),
         );
-    }, [savedProfiles]);
+    }, [cmsInterests, savedProfiles]);
 
     const skillSummary = useMemo(
         () =>
@@ -517,6 +473,17 @@ const Saved = () => {
                         ),
                     );
 
+                    const profileInterestIds = (
+                        profile.interests || []
+                    )
+                        .map(getSelectedId)
+                        .filter(
+                            (id) =>
+                                id !== undefined &&
+                                id !== null,
+                        )
+                        .map(String);
+
                     const matchesInterests =
                         selectedInterests.length ===
                             0 ||
@@ -528,6 +495,16 @@ const Saved = () => {
                                     getSelectedId(
                                         selectedInterest,
                                     );
+
+                                if (
+                                    selectedId !== undefined &&
+                                    selectedId !== null &&
+                                    profileInterestIds.includes(
+                                        String(selectedId),
+                                    )
+                                ) {
+                                    return true;
+                                }
 
                                 const option =
                                     interestOptions.find(
