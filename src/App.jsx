@@ -48,6 +48,11 @@
             <Route path="/explore" element={<Explore />} />
 
             <Route
+            path="/profile-carousel/:profileId"
+            element={<ProfileCarouselPage />}
+            />
+
+            <Route
             path="/scrap"
             element={
                 <ProtectedRoute>
@@ -116,11 +121,6 @@
             }
             />
         </Route>
-
-        <Route
-            path="/profile-carousel/:profileId"
-            element={<ProfileCarouselPage />}
-        />
 
         <Route
             path="/onboarding"

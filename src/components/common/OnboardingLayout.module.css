@@ -75,12 +75,12 @@
     height: 100%;
 
     border-radius: inherit;
-    background-color: var(--gray-400);
+    background-color: var(--blue-300);
 
     transition: width 0.3s ease;
     }
 
-    /* �ㅻ줈媛�湲� 踰꾪듉�� �녿뒗 �꾨즺 �붾㈃ */
+    /* 占썬끇以덂첎占썸묾占� 甕곌쑵�됵옙占� 占쎈끏�� 占쎄쑬利� 占쎈뗀�� */
     .headerWithoutBack {
     gap: 0;
     }

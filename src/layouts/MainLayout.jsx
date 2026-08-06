@@ -57,6 +57,9 @@ const MainLayout = () => {
         isOtherProfileDetailPath ||
         isSavedProfileDetailPath;
 
+    const isProfileCarouselPath =
+        /^\/profile-carousel\/[^/]+\/?$/.test(location.pathname);
+
     /*
      * 탐색 화면은 페이지 내부에
      * 별도의 모바일 헤더가 있으므로
@@ -67,7 +70,8 @@ const MainLayout = () => {
         "/explore" ||
         isSettingsPath ||
         isMyProfileDetailPath ||
-        isProfileDetailPath;
+        isProfileDetailPath ||
+        isProfileCarouselPath;
 
     return (
         <>
@@ -89,7 +93,8 @@ const MainLayout = () => {
                 className={
                     isSettingsPath ||
                     isMyProfileDetailPath ||
-                    isProfileDetailPath
+                    isProfileDetailPath ||
+                    isProfileCarouselPath
                         ? styles.mobileHiddenBottomNavigation
                         : undefined
                 }
