@@ -17,7 +17,7 @@
     if (!normalizedUrl) {
         return "";
     }
-
+ 
     const isImageFileUrl = /\.(?:avif|gif|jpe?g|png|webp)(?:\?.*)?$/i.test(
         normalizedUrl,
     );
@@ -95,6 +95,46 @@
         .toLowerCase();
 
     return /frontend|backend|프론트|백엔드/.test(jobText);
+    };
+
+    const getRequiredFieldMessage = (data) => {
+    const isAffiliationMissing = !data.affiliationStatusId;
+    const isIntroductionMissing = !(data.introduction || "").trim();
+    const isStrengthMissing = !data.strength;
+
+    if (
+        isAffiliationMissing &&
+        isIntroductionMissing &&
+        isStrengthMissing
+    ) {
+        return "현 소속과 성향을 선택하고 한 줄 소개를 작성해주세요.";
+    }
+
+    if (isAffiliationMissing && isIntroductionMissing) {
+        return "현 소속을 선택하고 한 줄 소개를 작성해주세요.";
+    }
+
+    if (isAffiliationMissing && isStrengthMissing) {
+        return "현 소속과 성향을 선택해주세요.";
+    }
+
+    if (isIntroductionMissing && isStrengthMissing) {
+        return "성향을 선택하고 한 줄 소개를 작성해주세요.";
+    }
+
+    if (isAffiliationMissing) {
+        return "현 소속을 선택해주세요.";
+    }
+
+    if (isIntroductionMissing) {
+        return "한 줄 소개를 작성해주세요.";
+    }
+
+    if (isStrengthMissing) {
+        return "성향을 선택해주세요.";
+    }
+
+    return "";
     };
 
     const CardBasicStep = ({
@@ -212,6 +252,8 @@
         (data.introduction || "").trim() !== "" &&
         Boolean(data.strength);
 
+    const requiredFieldMessage = getRequiredFieldMessage(data);
+
     return (
         <OnboardingLayout
         showBackButton={true}
@@ -231,7 +273,7 @@
             <p className={`caption1 ${styles.description}`}>
                 {isEditMode
                 ? "기존 카드의 정보를 수정해주세요"
-                : "나를 소개하기 위해 기본적인 정보를 작성해보세요"}
+                : "카드에 꼭 들어갈 정보예요. *표시는 필수 항목이에요"}
             </p>
             </div>
 
@@ -294,7 +336,13 @@
 
             <div className={styles.field}>
                 <label className={`caption1 ${styles.label}`}>
-                저는 이런 사람이에요
+                성향
+                <span
+                    className={styles.requiredMark}
+                    aria-hidden="true"
+                >
+                    *
+                </span>
                 </label>
 
                 {data.strength ? (
@@ -329,7 +377,21 @@
             </div>
 
             <div className={styles.introductionField}>
+                <label
+                htmlFor="card-introduction"
+                className={`caption1 ${styles.label}`}
+                >
+                한 줄 소개
+                <span
+                    className={styles.requiredMark}
+                    aria-hidden="true"
+                >
+                    *
+                </span>
+                </label>
+
                 <textarea
+                id="card-introduction"
                 className={styles.textarea}
                 value={data.introduction || ""}
                 maxLength={250}
@@ -346,17 +408,12 @@
             </div>
             </div>
 
-            {submitError && (
+            {(submitError || requiredFieldMessage) && (
             <p
-                style={{
-                margin: "12px 0 0",
-
-                color: "#e5484d",
-
-                textAlign: "center",
-                }}
+                className={styles.validationMessage}
+                role={submitError ? "alert" : "status"}
             >
-                {submitError}
+                {submitError || requiredFieldMessage}
             </p>
             )}
 

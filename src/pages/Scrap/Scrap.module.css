@@ -316,8 +316,8 @@
         );
 }
 
-.cardSlider:hover::before,
-.cardSlider:hover::after {
+.cardSliderCanPrevious:hover::before,
+.cardSliderCanNext:hover::after {
     opacity: 1;
 }
 
