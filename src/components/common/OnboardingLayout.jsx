@@ -6,6 +6,7 @@
     showBackButton = true,
     showProgress = true,
     onBack,
+    onLogoClick,
     currentStep = 1,
     totalSteps = 1,
     }) => {
@@ -17,7 +18,10 @@
     return (
         <main className={styles.page}>
         <div className={styles.desktopHeader}>
-            <Header />
+            <Header
+            showActions={false}
+            onLogoClick={onLogoClick}
+            />
         </div>
 
         <div className={styles.inner}>

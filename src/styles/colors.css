@@ -1,8 +1,8 @@
-    :root {
-
+:root {
+    /* Grayscale */
     --black: #111017;
 
-    --gray-900: #1b1c2a;
+    --gray-900: #222435;
     --gray-800: #32374c;
     --gray-700: #4d536b;
     --gray-600: #676d82;
@@ -15,4 +15,21 @@
     --gray-50: #f9fafb;
 
     --white: #fdfeff;
-    }
+
+    /* Brand color_main */
+    --blue-500: #2d70dc;
+    --blue-400: #5397fa;
+    --blue-300: #7cb9f2;
+    --blue-200: #bde2ff;
+    --blue-100: #dfedfb;
+
+    /* Brand color_sub */
+    --y-300: #f2ebba;
+    --y-200: #f9f1b5;
+    --y-100: #faf5d0;
+
+    /* System color */
+    --alert-red: #f03a48;
+    --opacity-dark: rgb(135 142 161 / 12%);
+    --opacity-light: rgb(246 247 248 / 12%);
+}

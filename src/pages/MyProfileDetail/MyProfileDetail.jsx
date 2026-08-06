@@ -442,10 +442,6 @@
         return <p className={styles.completionValue}>{item.value}</p>;
     };
 
-    const completedCount = completionItems.filter(
-        (item) => item.completed,
-    ).length;
-
     const shareUrl = `${window.location.origin}/profile/${profile.id}`;
 
     const handleEdit = (section) => {
@@ -632,6 +628,15 @@
 
         <div className={styles.layout}>
             <aside className={styles.summaryCard}>
+            <button
+                type="button"
+                className={styles.mobileBackButton}
+                onClick={() => navigate("/profile")}
+                aria-label="내 프로필로 돌아가기"
+            >
+                ‹
+            </button>
+
             <div className={styles.menuArea}>
                 <button
                 type="button"
@@ -647,6 +652,14 @@
                 <div className={styles.profileMenu}>
                     <button type="button" onClick={() => handleEdit("profile")}>
                     수정하기
+                    </button>
+
+                    <button
+                    type="button"
+                    className={styles.mobileVisibilityMenuButton}
+                    onClick={handleOpenVisibility}
+                    >
+                    공개설정 변경
                     </button>
 
                     <button
@@ -735,47 +748,37 @@
             </aside>
 
             <article className={styles.completionCard}>
-            <div className={styles.completionHeader}>
-                <h1>세부 프로필 완성하기</h1>
-
-                <span>
-                {completedCount}/{completionItems.length} 완료
-                </span>
-            </div>
-
-            <div className={styles.completionList}>
+                <div className={styles.completionList}>
                 {completionItems.map((item) => (
-                <section key={item.key} className={styles.completionItem}>
+                    <section key={item.key} className={styles.completionItem}>
                     <div className={styles.completionItemContent}>
-                    <span className={styles.completionCategory}>
+                        <span className={styles.completionCategory}>
                         {item.category}
-                    </span>
+                        </span>
 
-                    {item.completed ? (
+                        {item.completed ? (
                         renderCompletedContent(item)
-                    ) : (
+                        ) : (
                         <>
-                        <strong>{item.title}</strong>
+                            <strong>{item.title}</strong>
 
-                        <p>{item.description}</p>
+                            <p>{item.description}</p>
                         </>
-                    )}
+                        )}
                     </div>
 
+                    {!item.completed && (
                     <button
-                    type="button"
-                    className={
-                        item.completed
-                        ? styles.completedButton
-                        : styles.configureButton
-                    }
-                    onClick={() => handleEdit(item.key)}
+                        type="button"
+                        className={styles.configureButton}
+                        onClick={() => handleEdit(item.key)}
                     >
-                    {item.completed ? "수정하기" : "설정하기"}
+                        설정하기
                     </button>
-                </section>
+                    )}
+                    </section>
                 ))}
-            </div>
+                </div>
             </article>
         </div>
 

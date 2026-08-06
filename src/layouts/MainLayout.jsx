@@ -40,6 +40,23 @@ const MainLayout = () => {
     const location =
         useLocation();
 
+    const isSettingsPath =
+        location.pathname === "/settings" ||
+        location.pathname.startsWith("/settings/");
+
+    const isMyProfileDetailPath =
+        /^\/my-profile\/[^/]+\/?$/.test(location.pathname);
+
+    const isOtherProfileDetailPath =
+        /^\/profile\/[^/]+\/?$/.test(location.pathname);
+
+    const isSavedProfileDetailPath =
+        /^\/saved\/[^/]+\/?$/.test(location.pathname);
+
+    const isProfileDetailPath =
+        isOtherProfileDetailPath ||
+        isSavedProfileDetailPath;
+
     /*
      * 탐색 화면은 페이지 내부에
      * 별도의 모바일 헤더가 있으므로
@@ -47,7 +64,10 @@ const MainLayout = () => {
      */
     const shouldHideMobileHeader =
         location.pathname ===
-        "/explore";
+        "/explore" ||
+        isSettingsPath ||
+        isMyProfileDetailPath ||
+        isProfileDetailPath;
 
     return (
         <>
@@ -65,7 +85,17 @@ const MainLayout = () => {
 
             <Outlet />
 
-            <BottomNavigation />
+            <div
+                className={
+                    isSettingsPath ||
+                    isMyProfileDetailPath ||
+                    isProfileDetailPath
+                        ? styles.mobileHiddenBottomNavigation
+                        : undefined
+                }
+            >
+                <BottomNavigation />
+            </div>
         </>
     );
 };

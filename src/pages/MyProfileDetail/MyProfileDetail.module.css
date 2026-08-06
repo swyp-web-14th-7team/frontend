@@ -4,8 +4,8 @@
     min-height: calc(100vh - 76px);
     padding-bottom: 96px;
     overflow-x: hidden;
-    color: #fdfeff;
-    background: #111017;
+    color: var(--white);
+    background: var(--black);
     box-sizing: border-box;
     }
 
@@ -25,7 +25,7 @@
         rgb(190 222 255 / 23%) 127px 151px,
         transparent 153px
         ),
-        linear-gradient(110deg, #579bf7 0%, #6aacf6 57%, #e6e8cf 100%);
+        linear-gradient(110deg, var(--blue-400) 0%, #6aacf6 57%, var(--y-100) 100%);
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -52,7 +52,7 @@
     align-items: flex-start;
     gap: 24px;
     border-radius: 8px;
-    background: #222435;
+    background: var(--gray-900);
     }
 
     .menuArea {
@@ -70,7 +70,7 @@
     place-items: center;
     border: 0;
     border-radius: 6px;
-    color: #ffffff;
+    color: var(--white);
     font-family: inherit;
     font-size: 18px;
     font-weight: 700;
@@ -82,7 +82,7 @@
 
     .moreButton:hover,
     .moreButton:focus-visible {
-    background: #34394f;
+    background: var(--gray-800);
     outline: none;
     }
 
@@ -95,9 +95,9 @@
     display: flex;
     flex-direction: column;
     gap: 2px;
-    border: 1px solid #565c73;
+    border: 1px solid var(--gray-600);
     border-radius: 7px;
-    background: #34394f;
+    background: var(--gray-800);
     box-shadow: 0 12px 28px rgb(0 0 0 / 32%);
     }
 
@@ -107,7 +107,7 @@
     padding: 0 10px;
     border: 0;
     border-radius: 5px;
-    color: #f5f6fa;
+    color: var(--gray-100);
     font-family: inherit;
     font-size: 12px;
     text-align: left;
@@ -116,11 +116,16 @@
     }
 
     .profileMenu button:hover {
-    background: #42485f;
+    background: var(--gray-700);
     }
 
     .deleteMenuButton {
-    color: #ff5967;
+    color: var(--alert-red);
+    }
+
+    .mobileBackButton,
+    .profileMenu .mobileVisibilityMenuButton {
+    display: none;
     }
 
     .profileBlock {
@@ -150,10 +155,10 @@
     .avatarPlaceholder {
     display: grid;
     place-items: center;
-    color: #4e75b2;
+    color: var(--blue-500);
     font-size: 22px;
     font-weight: 700;
-    background: #dbe8ff;
+    background: var(--blue-100);
     }
 
     .identity {
@@ -171,7 +176,7 @@
     }
 
     .name {
-    color: #fdfeff;
+    color: var(--white);
     font-size: 20px;
     font-weight: 700;
     line-height: 1.38;
@@ -181,7 +186,7 @@
     .job {
     min-width: 0;
     overflow: hidden;
-    color: #d7dae4;
+    color: var(--gray-300);
     font-size: 13px;
     font-weight: 500;
     line-height: 1.48;
@@ -192,7 +197,7 @@
     .affiliation {
     margin: 0;
     overflow: hidden;
-    color: #aeb3c2;
+    color: var(--gray-400);
     font-size: 13px;
     line-height: 1.48;
     text-overflow: ellipsis;
@@ -212,7 +217,7 @@
     align-items: center;
     gap: 8px;
     border-radius: 6px;
-    background: #32374c;
+    background: var(--gray-800);
     }
 
     .strengthIcon,
@@ -229,13 +234,13 @@
 
     .strengthPlaceholder {
     border-radius: 2px;
-    background: #454b63;
+    background: var(--gray-700);
     }
 
     .strengthText {
     min-width: 0;
     overflow: hidden;
-    color: #f9fafb;
+    color: var(--gray-50);
     font-size: 12px;
     font-weight: 600;
     line-height: 1.48;
@@ -270,21 +275,21 @@
     }
 
     .shareButton {
-    color: #181b29;
-    background: #afd8f8;
+    color: var(--gray-900);
+    background: var(--blue-200);
     }
 
     .visibilityButton {
-    color: #25293a;
-    background: #e4e7ec;
+    color: var(--gray-900);
+    background: var(--gray-200);
     }
 
     .shareButton:hover {
-    background: #c4e4fc;
+    background: var(--blue-200);
     }
 
     .visibilityButton:hover {
-    background: #f2f4f7;
+    background: var(--gray-100);
     }
 
     .shareMessage {
@@ -296,10 +301,10 @@
     margin: 0;
     padding: 7px 10px;
 
-    border: 1px solid rgb(255 255 255 / 12%);
+    border: 1px solid var(--opacity-light);
     border-radius: 6px;
 
-    color: #d9ecff;
+    color: var(--blue-100);
     font-size: 11px;
     line-height: 1.5;
 
@@ -309,30 +314,10 @@
 
     .completionCard {
     min-width: 0;
-    min-height: 840px;
     padding: 40px 44px;
 
     border-radius: 8px;
-    background: #222435;
-    }
-
-    .completionHeader {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    margin-bottom: 18px;
-    }
-
-    .completionHeader h1 {
-    margin: 0;
-    color: #ffffff;
-    font-size: 18px;
-    }
-
-    .completionHeader span {
-    color: #aeb3c2;
-    font-size: 12px;
+    background: var(--gray-900);
     }
 
     .completionList {
@@ -349,7 +334,7 @@
     justify-content: space-between;
     gap: 30px;
 
-    border-bottom: 3px solid #33384e;
+    border-bottom: 3px solid var(--gray-800);
     }
 
     .completionItem:last-child {
@@ -368,14 +353,14 @@
     .completionCategory {
     margin-bottom: 8px;
 
-    color: #8f96aa;
+    color: var(--gray-500);
     font-size: 11px;
     }
 
     .completionItem strong {
     margin-bottom: 5px;
 
-    color: #ffffff;
+    color: var(--white);
     font-size: 14px;
     line-height: 1.5;
     }
@@ -383,7 +368,7 @@
     .completionItem p {
     margin: 0;
 
-    color: #747a8e;
+    color: var(--gray-500);
     font-size: 12px;
     line-height: 1.6;
     white-space: pre-wrap;
@@ -393,7 +378,7 @@
     .completionValue {
     max-width: 100%;
 
-    color: #f0f1f4 !important;
+    color: var(--gray-150) !important;
     white-space: pre-wrap;
     word-break: keep-all;
     overflow-wrap: anywhere;
@@ -411,11 +396,11 @@
 
     border-radius: 6px;
 
-    color: #f4f5f8;
+    color: var(--gray-100);
     font-size: 12px;
     line-height: 1;
 
-    background: #34394f;
+    background: var(--gray-800);
     }
 
     .completionLinks {
@@ -433,7 +418,7 @@
     flex-direction: column;
     gap: 6px;
 
-    color: #aeb3c2;
+    color: var(--gray-400);
     font-size: 10px;
     text-decoration: none;
     }
@@ -446,14 +431,14 @@
     place-items: center;
     border-radius: 50%;
 
-    background: #34394f;
+    background: var(--gray-800);
     }
 
     .completionLinks svg {
     width: 18px;
     height: 18px;
 
-    color: #cbd0dc;
+    color: var(--gray-300);
     }
 
     .completionExperiences {
@@ -470,7 +455,7 @@
     padding: 14px;
 
     border-radius: 7px;
-    background: #34394f;
+    background: var(--gray-800);
     }
 
     .completionExperienceTitle {
@@ -484,11 +469,11 @@
 
     border-radius: 5px;
 
-    color: #fff2b9;
+    color: var(--y-200);
     font-size: 9px;
     font-weight: 700;
 
-    background: #555a6c;
+    background: var(--gray-600);
     }
 
     .completionExperience p {
@@ -497,7 +482,7 @@
     display: -webkit-box;
     overflow: hidden;
 
-    color: #b6bbc9;
+    color: var(--gray-400);
 
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
@@ -510,7 +495,7 @@
     align-items: center;
     gap: 4px;
 
-    color: #8f96aa;
+    color: var(--gray-500);
     font-size: 10px;
     text-decoration: none;
     }
@@ -526,17 +511,17 @@
     border: 0;
     border-radius: 6px;
 
-    color: #ffffff;
+    color: var(--white);
     font-family: inherit;
     font-size: 12px;
 
-    background: #4a5067;
+    background: var(--gray-700);
     cursor: pointer;
     }
 
     .completedButton {
-    color: #9dd4fb;
-    background: #34394f;
+    color: var(--blue-200);
+    background: var(--gray-800);
     }
 
     .configureButton:hover,
@@ -561,9 +546,9 @@
     border: 0;
     border-radius: 6px;
 
-    color: #ffffff;
+    color: var(--white);
     font-family: inherit;
-    background: #34394f;
+    background: var(--gray-800);
     cursor: pointer;
     }
 
@@ -574,8 +559,8 @@
     justify-content: center;
     flex-direction: column;
     gap: 20px;
-    color: #ffffff;
-    background: #111017;
+    color: var(--white);
+    background: var(--black);
     }
 
     .notFound p {
@@ -586,9 +571,9 @@
     padding: 10px 16px;
     border: 0;
     border-radius: 6px;
-    color: #171925;
+    color: var(--gray-900);
     font-family: inherit;
-    background: #afd8f8;
+    background: var(--blue-200);
     cursor: pointer;
     }
 
@@ -605,11 +590,15 @@
     border: 1px solid rgb(255 190 194 / 18%);
     border-radius: 7px;
 
-    color: #ffbec2;
+    color: var(--alert-red);
     font-size: 13px;
     line-height: 1.5;
 
-    background: #462932;
+    background: color-mix(
+        in srgb,
+        var(--alert-red) 22%,
+        var(--gray-900)
+    );
     box-shadow: 0 12px 28px rgb(0 0 0 / 30%);
     }
 
@@ -633,11 +622,11 @@
     width: min(440px, 100%);
     padding: 26px;
 
-    border: 1px solid #41465c;
+    border: 1px solid var(--gray-700);
     border-radius: 10px;
 
-    color: #ffffff;
-    background: #222536;
+    color: var(--white);
+    background: var(--gray-900);
 
     box-shadow: 0 28px 70px rgb(0 0 0 / 45%);
     box-sizing: border-box;
@@ -667,7 +656,7 @@
     border: 0;
     border-radius: 50%;
 
-    color: #ffffff;
+    color: var(--white);
     font-family: inherit;
     font-size: 24px;
     line-height: 1;
@@ -686,12 +675,12 @@
     }
 
     .settingRow + .settingRow {
-    border-top: 1px solid #373b4f;
+    border-top: 1px solid var(--gray-800);
     }
 
     .settingRow label,
     .settingRow > span {
-    color: #e1e3ea;
+    color: var(--gray-200);
     font-size: 13px;
     font-weight: 600;
     }
@@ -702,15 +691,15 @@
     height: 40px;
     padding: 0 34px 0 11px;
 
-    border: 1px solid #52586f;
+    border: 1px solid var(--gray-700);
     border-radius: 7px;
     outline: none;
 
-    color: #ffffff;
+    color: var(--white);
     font-family: inherit;
     font-size: 12px;
 
-    background-color: #34394f;
+    background-color: var(--gray-800);
     cursor: pointer;
     }
 
@@ -726,12 +715,12 @@
     border: 0;
     border-radius: 999px;
 
-    color: #c7cad4;
+    color: var(--gray-300);
     font-family: inherit;
     font-size: 9px;
     font-weight: 700;
 
-    background: #505568;
+    background: var(--gray-700);
     cursor: pointer;
     }
 
@@ -746,7 +735,7 @@
     flex-shrink: 0;
 
     border-radius: 50%;
-    background: #ffffff;
+    background: var(--white);
     box-shadow: 0 2px 7px rgb(0 0 0 / 20%);
     }
 
@@ -760,8 +749,8 @@
     }
 
     .toggleOn {
-    color: #234966;
-    background: #9fd6ff;
+    color: var(--gray-800);
+    background: var(--blue-200);
     }
 
     .saveButton {
@@ -772,12 +761,12 @@
     border: 0;
     border-radius: 7px;
 
-    color: #20364a;
+    color: var(--gray-800);
     font-family: inherit;
     font-size: 14px;
     font-weight: 700;
 
-    background: #afd8f8;
+    background: var(--blue-200);
     cursor: pointer;
     }
 
@@ -788,7 +777,7 @@
 
     .deleteModal {
     text-align: center;
-    background: #34394f;
+    background: var(--gray-800);
     }
 
     .deleteIcon {
@@ -801,12 +790,12 @@
 
     border-radius: 50%;
 
-    color: #242736;
+    color: var(--gray-900);
     font-size: 15px;
     font-weight: 700;
     line-height: 1;
 
-    background: #ff5360;
+    background: var(--alert-red);
     }
 
     .deleteModal h2 {
@@ -817,7 +806,7 @@
     .deleteModal p {
     margin: 0;
 
-    color: #c0c3cd;
+    color: var(--gray-300);
     font-size: 13px;
     line-height: 1.6;
     }
@@ -836,16 +825,16 @@
     border: 0;
     border-radius: 7px;
 
-    color: #283544;
+    color: var(--gray-800);
     font-family: inherit;
     font-weight: 700;
 
-    background: #eef1f5;
+    background: var(--gray-150);
     cursor: pointer;
     }
 
     .deleteActions button:last-child {
-    background: #afd8f8;
+    background: var(--blue-200);
     }
 
     .deleteActions button:disabled {
@@ -1012,5 +1001,215 @@
 
     .deleteActions {
         grid-template-columns: 1fr;
+    }
+    }
+
+    /* �� �꾨줈�� �곸꽭�� 紐⑤컮�� �꾩슜 �덉씠�꾩썐�낅땲��. */
+    @media (max-width: 767px) {
+    .page {
+        min-height: 100vh;
+        padding-bottom: 0;
+        background: var(--black);
+    }
+
+    .hero {
+        position: absolute;
+        z-index: 0;
+        inset: 0 0 auto;
+        height: 365px;
+        background-position: center;
+        background-size: cover;
+    }
+
+    .layout {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        display: block;
+    }
+
+    .summaryCard {
+        width: 100%;
+        min-height: 365px;
+        padding: 112px 20px 24px;
+        gap: 0;
+        border-radius: 0;
+        background: transparent;
+    }
+
+    .mobileBackButton {
+        position: absolute;
+        z-index: 7;
+        top: 20px;
+        left: 16px;
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        display: grid;
+        place-items: center;
+        border: 0;
+        color: var(--white);
+        font-family: inherit;
+        font-size: 38px;
+        font-weight: 300;
+        line-height: 1;
+        background: transparent;
+        cursor: pointer;
+    }
+
+    .menuArea {
+        top: 25px;
+        right: 17px;
+    }
+
+    .moreButton {
+        color: var(--white);
+        font-size: 17px;
+    }
+
+    .profileMenu {
+        top: 35px;
+        width: 140px;
+        padding: 7px;
+        gap: 3px;
+        border-color: var(--gray-700);
+        background: var(--gray-800);
+    }
+
+    .profileMenu button {
+        min-height: 42px;
+        padding: 0 10px;
+        font-size: 14px;
+    }
+
+    .profileMenu .mobileVisibilityMenuButton {
+        display: block;
+    }
+
+    .profileMenu .deleteMenuButton {
+        color: var(--alert-red);
+    }
+
+    .profileBlock {
+        min-height: 229px;
+        justify-content: flex-start;
+        gap: 18px;
+    }
+
+    .avatar,
+    .avatarPlaceholder {
+        width: 72px;
+        height: 72px;
+        flex-basis: 72px;
+    }
+
+    .avatarPlaceholder {
+        color: var(--blue-100);
+        background: var(--gray-700);
+    }
+
+    .identity {
+        margin-top: 6px;
+    }
+
+    .nameRow {
+        margin-bottom: 4px;
+        gap: 8px;
+    }
+
+    .name {
+        font-size: 22px;
+        line-height: 1.35;
+    }
+
+    .job {
+        color: var(--gray-100);
+        font-size: 14px;
+    }
+
+    .affiliation {
+        color: var(--gray-100);
+        font-size: 14px;
+    }
+
+    .strength {
+        height: 42px;
+        padding: 8px 12px;
+        background: var(--opacity-light);
+    }
+
+    .strengthText {
+        color: var(--white);
+        font-size: 13px;
+    }
+
+    .ownerActions {
+        display: none;
+    }
+
+    .completionCard {
+        width: 100%;
+        min-height: calc(100vh - 365px);
+        padding: 28px 20px 44px;
+        border-radius: 0;
+        background: var(--black);
+    }
+
+    .completionItem {
+        min-height: 132px;
+        padding: 24px 0;
+        align-items: center;
+        flex-direction: row;
+        gap: 14px;
+        border-bottom-color: var(--gray-800);
+    }
+
+    .completionCategory {
+        margin-bottom: 9px;
+        font-size: 12px;
+    }
+
+    .completionItem strong {
+        font-size: 14px;
+    }
+
+    .completionItem p {
+        font-size: 12px;
+    }
+
+    .configureButton,
+    .completedButton {
+        width: auto;
+        min-width: 82px;
+        height: 40px;
+        padding: 0 12px;
+        align-self: center;
+    }
+
+    .completionTags {
+        gap: 7px;
+    }
+
+    .completionTags span {
+        padding: 8px 10px;
+    }
+
+    .completionLinks {
+        width: 100%;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .completionLinkCircle {
+        width: 52px;
+        height: 52px;
+    }
+
+    .completionExperiences {
+        grid-template-columns: 1fr;
+    }
+
+    .backArea {
+        display: none;
     }
     }

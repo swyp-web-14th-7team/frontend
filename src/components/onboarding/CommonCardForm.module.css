@@ -8,6 +8,11 @@
     color: var(--gray-400);
     }
 
+    .requiredMark {
+    margin-left: 3px;
+    color: var(--alert-red);
+    }
+
     .affiliationRow {
     display: flex;
     gap: 8px;
@@ -31,11 +36,35 @@
     .count {
     margin-top: 6px;
     text-align: right;
-    color: #9CA3AF;
+    color: var(--gray-400);
     font-size: 12px;
     }
 
         .dropdownWrapper {
     width: 140px;
     flex-shrink: 0;
+    }
+
+    @media (max-width: 768px) {
+    .input {
+        height: 48px;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        background-color: var(--gray-700);
+    }
+
+    .input:focus {
+        border-color: var(--blue-300);
+    }
+
+    .affiliationDropdown > button {
+        height: 48px;
+        border-color: transparent;
+        background-color: var(--gray-700);
+    }
+
+    .affiliationDropdown > button:hover,
+    .affiliationDropdown > button:focus-visible {
+        border-color: var(--blue-300);
+    }
     }

@@ -28,8 +28,8 @@
     overflow: hidden;
 
     border-radius: 10px;
-    background-color: #222435;
-    color: #ffffff;
+    background-color: var(--gray-900);
+    color: var(--white);
 
     box-sizing: border-box;
 }
@@ -48,7 +48,7 @@
 .modalHeader h2 {
     margin: 0;
 
-    color: #ffffff;
+    color: var(--white);
 
     font-size: 20px;
     font-weight: 700;
@@ -58,7 +58,7 @@
 .modalHeader p {
     margin: 10px 0 0;
 
-    color: #8f96aa;
+    color: var(--gray-500);
 
     font-size: 13px;
 }
@@ -70,7 +70,7 @@
 
     border: 0;
     background: transparent;
-    color: #ffffff;
+    color: var(--white);
 
     font-size: 30px;
     line-height: 1;
@@ -88,12 +88,12 @@
 }
 
 .statusMessage {
-    color: #c8cede;
-    background-color: #303448;
+    color: var(--gray-300);
+    background-color: var(--gray-800);
 }
 
 .errorMessage {
-    color: #ffb4ad;
+    color: var(--alert-red);
     background-color: rgba(217, 45, 32, 0.16);
 }
 
@@ -128,7 +128,7 @@
 
 .messageLabel label,
 .messageLabel span {
-    color: #8f96aa;
+    color: var(--gray-500);
 
     font-size: 12px;
 }
@@ -144,8 +144,8 @@
     border-radius: 6px;
     outline: none;
 
-    background-color: #363b51;
-    color: #ffffff;
+    background-color: var(--gray-800);
+    color: var(--white);
 
     font-family: inherit;
     font-size: 13px;
@@ -155,11 +155,11 @@
 }
 
 .messageSection textarea:focus {
-    border-color: #afd8f8;
+    border-color: var(--blue-200);
 }
 
 .messageSection textarea::placeholder {
-    color: #777d91;
+    color: var(--gray-500);
 }
 
 .actions {
@@ -191,24 +191,24 @@
     width: 100%;
     margin-top: auto;
 
-    background-color: #afd8f8;
-    color: #171925;
+    background-color: var(--blue-200);
+    color: var(--gray-900);
 }
 
 .primaryButton:hover {
-    background-color: #c4e4fc;
+    background-color: var(--blue-200);
 }
 
 .primaryButton:disabled {
-    background-color: #596077;
-    color: #9298aa;
+    background-color: var(--gray-600);
+    color: var(--gray-500);
 
     cursor: not-allowed;
 }
 
 .secondaryButton {
-    background-color: #f1f4f8;
-    color: #171925;
+    background-color: var(--gray-100);
+    color: var(--gray-900);
 }
 
 .actions .primaryButton {

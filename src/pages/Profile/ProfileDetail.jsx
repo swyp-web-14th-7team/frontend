@@ -36,12 +36,20 @@ import {
     makeCardBackgroundUrl,
 } from "../../api/cardBackground";
 
+import {
+    getConnections,
+} from "../../api/connections";
+
 import usePublicProfile from "../../hooks/usePublicProfile";
 import useMyProfileCardIds from "../../hooks/useMyProfileCardIds";
 
 import {
     mapProfileCard,
 } from "../../utils/profileMapper";
+
+import {
+    isLoggedIn,
+} from "../../utils/auth";
 
 import styles from "./ProfileDetail.module.css";
 
@@ -150,6 +158,14 @@ const ProfileDetail = () => {
         setIsExchangeModalOpen,
     ] = useState(false);
 
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+    const [connectedProfileCardIds, setConnectedProfileCardIds] =
+        useState(() => new Set());
+
+    const [isConnectionsLoading, setIsConnectionsLoading] =
+        useState(() => isLoggedIn() && !connectionId);
+
    const {
     profile,
     isLoading,
@@ -241,6 +257,75 @@ const ProfileDetail = () => {
         };
     }, [connectionId, loadDrawers]);
 
+    useEffect(() => {
+        /*
+         * 보관함 경로에서는 connectionId만으로 판별할 수 있습니다.
+         * 공개 프로필 경로에서는 교환 완료 목록의 카드 ID와 비교합니다.
+         */
+        if (connectionId || !isLoggedIn()) {
+            return undefined;
+        }
+
+        const controller = new AbortController();
+
+        const loadConnectedProfileCardIds = async () => {
+            try {
+                const connectionData = await getConnections({
+                    page: 1,
+                    limit: 100,
+                    sort: "createdAt",
+                    order: "desc",
+                    signal: controller.signal,
+                });
+
+                if (controller.signal.aborted) {
+                    return;
+                }
+
+                const connections = getArrayData(
+                    connectionData?.data ?? connectionData,
+                );
+
+                const profileCardIds = connections
+                    .map(
+                        (connection) =>
+                            connection?.card?.id ??
+                            connection?.profileCard?.id ??
+                            connection?.profile?.id,
+                    )
+                    .filter(
+                        (id) => id !== null && id !== undefined,
+                    )
+                    .map(String);
+
+                setConnectedProfileCardIds(
+                    new Set(profileCardIds),
+                );
+            } catch (error) {
+                if (error?.name === "AbortError") {
+                    return;
+                }
+
+                console.error(
+                    "보관함 카드 확인 실패:",
+                    error,
+                );
+
+                setConnectedProfileCardIds(new Set());
+            } finally {
+                if (!controller.signal.aborted) {
+                    setIsConnectionsLoading(false);
+                }
+            }
+        };
+
+        void loadConnectedProfileCardIds();
+
+        return () => {
+            controller.abort();
+        };
+    }, [connectionId]);
+
     if (isLoading) {
         return (
             <main className={styles.notFound}>
@@ -292,6 +377,14 @@ const ProfileDetail = () => {
      */
     const isFromSavedList =
         Boolean(connectionId);
+
+    const isConnectedProfileCard =
+        isFromSavedList ||
+        connectedProfileCardIds.has(String(profile.id));
+
+    const isProfileActionLoading =
+        isMyProfileCardsLoading ||
+        (isLoggedIn() && !isFromSavedList && isConnectionsLoading);
 
     const interests = (profile.interests || [])
         .map((interest, index) => ({
@@ -353,6 +446,8 @@ const ProfileDetail = () => {
         if (isOwnProfileCard) {
             return;
         }
+
+        setIsMobileMenuOpen(false);
 
         const savedDrawerIds = drawers
             .filter(isProfileInDrawer)
@@ -518,6 +613,7 @@ const handleScrapSave = async () => {
             return;
         }
 
+        setIsMobileMenuOpen(false);
         setIsExchangeModalOpen(true);
     };
 
@@ -536,6 +632,10 @@ const handleScrapSave = async () => {
         window.alert(
             `${profile.name}님에게 카드 교환 요청을 보냈습니다.`,
         );
+    };
+
+    const handleMobileBack = () => {
+        navigate(-1);
     };
 
     return (
@@ -567,6 +667,58 @@ const handleScrapSave = async () => {
                             : ""
                     }`}
                 >
+                    <button
+                        type="button"
+                        className={styles.mobileBackButton}
+                        onClick={handleMobileBack}
+                        aria-label="이전 화면으로 돌아가기"
+                    >
+                        ‹
+                    </button>
+
+                    {!isConnectedProfileCard &&
+                        !isProfileActionLoading &&
+                        !isOwnProfileCard && (
+                            <div className={styles.mobileMenuArea}>
+                                <button
+                                    type="button"
+                                    className={styles.mobileMoreButton}
+                                    onClick={() =>
+                                        setIsMobileMenuOpen(
+                                            (current) => !current,
+                                        )
+                                    }
+                                    aria-label="프로필 메뉴"
+                                    aria-expanded={isMobileMenuOpen}
+                                >
+                                    •••
+                                </button>
+
+                                {isMobileMenuOpen && (
+                                    <div
+                                        className={styles.mobileProfileMenu}
+                                        role="menu"
+                                    >
+                                        <button
+                                            type="button"
+                                            onClick={handleOpenScrap}
+                                            role="menuitem"
+                                        >
+                                            스크랩하기
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            onClick={handleOpenExchangeModal}
+                                            role="menuitem"
+                                        >
+                                            카드 교환 요청
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
                     <div className={styles.profileBlock}>
                         {profile.profileImage ? (
                             <img
@@ -655,38 +807,36 @@ const handleScrapSave = async () => {
                       * 보관함에서 연 카드는 액션이 없으므로
                       * 빈 여백이 생기지 않도록 영역째 렌더링하지 않습니다.
                       */}
-                    {!isFromSavedList && (
+                    {!isConnectedProfileCard && !isProfileActionLoading && (
                         <div className={styles.summaryActions}>
-                            {!isMyProfileCardsLoading && (
-                                isOwnProfileCard ? (
-                                    <span
-                                        className={
-                                            styles.ownCardStatus
+                            {isOwnProfileCard ? (
+                                <span
+                                    className={
+                                        styles.ownCardStatus
+                                    }
+                                >
+                                    내 카드
+                                </span>
+                            ) : (
+                                <>
+                                    <button
+                                        type="button"
+                                        className={styles.exchangeButton}
+                                        onClick={
+                                            handleOpenExchangeModal
                                         }
                                     >
-                                        내 카드
-                                    </span>
-                                ) : (
-                                    <>
-                                        <button
-                                            type="button"
-                                            className={styles.exchangeButton}
-                                            onClick={
-                                                handleOpenExchangeModal
-                                            }
-                                        >
-                                            카드 교환 요청
-                                        </button>
+                                        카드 교환 요청
+                                    </button>
 
-                                        <button
-                                            type="button"
-                                            className={styles.scrapButton}
-                                            onClick={handleOpenScrap}
-                                        >
-                                            스크랩하기
-                                        </button>
-                                    </>
-                                )
+                                    <button
+                                        type="button"
+                                        className={styles.scrapButton}
+                                        onClick={handleOpenScrap}
+                                    >
+                                        스크랩하기
+                                    </button>
+                                </>
                             )}
                         </div>
                     )}

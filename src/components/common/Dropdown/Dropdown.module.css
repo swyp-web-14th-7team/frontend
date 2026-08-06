@@ -13,11 +13,11 @@
     justify-content: space-between;
     gap: 4px;
 
-    border: 1px solid #62677b;
+    border: 1px solid var(--gray-600);
     border-radius: 8px;
 
-    background-color: #4e5368;
-    color: #ffffff;
+    background-color: var(--gray-700);
+    color: var(--white);
 
     font-family: inherit;
     font-size: 13px;
@@ -29,7 +29,7 @@
 
     .trigger:hover,
     .triggerOpen {
-    border-color: #83899e;
+    border-color: var(--gray-500);
     }
 
     .triggerText {
@@ -63,10 +63,10 @@
     margin: 0;
     padding: 6px 0;
 
-    border: 1px solid #62677b;
+    border: 1px solid var(--gray-600);
     border-radius: 8px;
 
-    background-color: #34394d;
+    background-color: var(--gray-800);
 
     list-style: none;
     box-sizing: border-box;
@@ -80,7 +80,7 @@
 
     border: 0;
     background: transparent;
-    color: #ffffff;
+    color: var(--white);
 
     font-family: inherit;
     font-size: 13px;
@@ -90,9 +90,9 @@
     }
 
     .option:hover {
-    background-color: #454b61;
+    background-color: var(--gray-700);
     }
 
     .selectedOption {
-    background-color: #454b61;
+    background-color: var(--gray-700);
     }

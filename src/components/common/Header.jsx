@@ -26,9 +26,15 @@
     import scrapIcon from "../../assets/icons/icon_scrap.svg";
     import scrapActiveIcon from "../../assets/icons/icon_scrap_active.svg";
     import bellIcon from "../../assets/icons/알림.svg";
+    import bellActiveIcon from "../../assets/icons/icon_notification_active.svg";
     import settingIcon from "../../assets/icons/설정.svg";
+    import settingActiveIcon from "../../assets/icons/icon_setting_active.svg";
 
-    const Header = ({ showNav = false }) => {
+    const Header = ({
+    showNav = false,
+    showActions = true,
+    onLogoClick,
+    }) => {
     const navigate = useNavigate();
 
     const location = useLocation();
@@ -60,7 +66,22 @@
 
     const isScrapActive = location.pathname === "/scrap";
 
+    const isSettingsActive =
+        location.pathname === "/settings" ||
+        location.pathname.startsWith("/settings/");
+
+    const isProfileFormFlow =
+        location.pathname === "/onboarding" ||
+        /^\/my-profile\/[^/]+\/detail-edit\/?$/.test(location.pathname);
+
+    const shouldShowActions = showActions && !isProfileFormFlow;
+
     const handleLogoClick = () => {
+        if (onLogoClick) {
+        onLogoClick();
+        return;
+        }
+
         navigate("/explore");
     };
 
@@ -248,7 +269,7 @@
             </nav>
             )}
 
-            {isUserLoggedIn ? (
+            {shouldShowActions && (isUserLoggedIn ? (
             <nav className={styles.rightMenu}>
                 <NavLink
                 to="/scrap"
@@ -269,12 +290,17 @@
                     onClick={handleNotificationToggle}
                     aria-label="알림"
                     aria-expanded={isNotificationOpen}
+                    aria-pressed={isNotificationOpen}
                 >
                     {hasUnreadNotification && (
                     <span className={styles.notificationDot} />
                     )}
 
-                    <img src={bellIcon} alt="" className={styles.icon} />
+                    <img
+                    src={isNotificationOpen ? bellActiveIcon : bellIcon}
+                    alt=""
+                    className={styles.icon}
+                    />
                 </button>
 
                 {isNotificationOpen && (
@@ -292,8 +318,13 @@
                 className={styles.iconButton}
                 onClick={() => navigate("/settings")}
                 aria-label="설정"
+                aria-pressed={isSettingsActive}
                 >
-                <img src={settingIcon} alt="" className={styles.icon} />
+                <img
+                    src={isSettingsActive ? settingActiveIcon : settingIcon}
+                    alt=""
+                    className={styles.icon}
+                />
                 </button>
             </nav>
             ) : (
@@ -304,7 +335,7 @@
             >
                 로그인하기
             </button>
-            )}
+            ))}
         </header>
 
         <LoginModal

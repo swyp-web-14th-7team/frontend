@@ -45,6 +45,12 @@ const CommonCardForm = ({
                 className={`caption1 ${styles.label}`}
             >
                 현 소속
+                <span
+                    className={styles.requiredMark}
+                    aria-hidden="true"
+                >
+                    *
+                </span>
             </label>
 
             <div
@@ -58,6 +64,7 @@ const CommonCardForm = ({
                     }
                 >
                     <Dropdown
+                        className={styles.affiliationDropdown}
                         value={
                             data.affiliationType
                         }
@@ -88,7 +95,7 @@ const CommonCardForm = ({
                                 .value,
                         )
                     }
-                    placeholder="텍스트를 입력하세요"
+                    placeholder="학교명, 직장명 등을 입력해주세요"
                 />
 
                 <p

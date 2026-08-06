@@ -38,13 +38,13 @@
     .title {
     margin: 20px 0 0;
 
-    color: #ffffff;
+    color: var(--white);
     }
 
     .description {
     margin: 8px 0 0;
 
-    color: #8f92a3;
+    color: var(--gray-500);
     }
 
     @media (max-width: 767px) {

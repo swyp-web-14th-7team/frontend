@@ -198,11 +198,16 @@ const normalizeCard = (
             mappedCard.interests,
 
         experiences:
-            Array.isArray(
-                card?.experiences,
-            )
-                ? card.experiences
-                : [],
+            mappedCard.experiences,
+
+        representativeExperience:
+            mappedCard.representativeExperience,
+
+        representativeExperienceTitle:
+            mappedCard.representativeExperienceTitle,
+
+        representativeExperienceDescription:
+            mappedCard.representativeExperienceDescription,
 
         links:
             Array.isArray(

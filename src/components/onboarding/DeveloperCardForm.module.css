@@ -36,11 +36,11 @@
     align-items: center;
 
     border-radius: 999px;
-    background-color: var(--300, #d0d4dd);
-    color: var(--800, #32374c);
+    background-color: var(--300, var(--gray-300));
+    color: var(--800, var(--gray-800));
     }
 
-    /* 390px 모바일 */
+    /* 390px 錻��皿鐃緒申 */
     @media (max-width: 768px) {
     .label {
         margin-bottom: 8px;
@@ -49,7 +49,10 @@
     .addButton {
         height: 38px;
         padding: 0 14px;
+        border: 0;
+        border-radius: 8px;
         font-size: 13px;
+        background-color: var(--gray-700);
     }
 
     .selectedTagArea {

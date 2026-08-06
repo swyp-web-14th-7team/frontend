@@ -5,8 +5,8 @@
     display: grid;
     grid-template-columns: 264px minmax(0, 1fr);
 
-    color: #f9fafb;
-    background: #111017;
+    color: var(--gray-50);
+    background: var(--black);
 
     box-sizing: border-box;
     }
@@ -15,9 +15,9 @@
     min-height: calc(100vh - 76px);
     padding: 32px 16px;
 
-    border-right: 1px solid #343747;
+    border-right: 1px solid var(--gray-800);
 
-    background: #111017;
+    background: var(--black);
 
     box-sizing: border-box;
     }
@@ -33,7 +33,7 @@
 
     border: 0;
 
-    color: #f5f6fa;
+    color: var(--gray-100);
     background: transparent;
 
     font-family: inherit;
@@ -53,7 +53,7 @@
 
     .backButton:focus-visible {
     border-radius: 8px;
-    outline: 2px solid #afd8f8;
+    outline: 2px solid var(--blue-200);
     outline-offset: 2px;
     }
 
@@ -73,7 +73,7 @@
     border: 0;
     border-radius: 8px;
 
-    color: #d4d6df;
+    color: var(--gray-300);
     background: transparent;
 
     font-family: inherit;
@@ -85,39 +85,45 @@
     }
 
     .sideNav button:hover {
-    color: #ffffff;
-    background: #1b1e2c;
+    color: var(--white);
+    background: var(--gray-900);
     }
 
     .sideNav .activeSideItem {
-    color: #ffffff;
-    background: #25293b;
+    color: var(--white);
+    background: var(--gray-900);
     }
 
     .sideNav .logoutButton {
     margin-top: 8px;
-    color: #ff6b78;
+    color: var(--alert-red);
     }
 
     .sideNav .logoutButton:hover:not(:disabled) {
-    color: #ff8791;
+    color: var(--alert-red);
     background: rgba(255, 107, 120, 0.08);
     }
 
     .sideNav .logoutButton:disabled {
-    color: #b65b64;
+    color: var(--alert-red);
+    opacity: 0.55;
     cursor: wait;
     }
 
+    .mobileSettingsMenu,
+    .mobileSectionBackButton {
+    display: none;
+    }
+
     /* =========================
-    癰귣챶揆
+    占쎄퀗�쒙㎖�삳즵
     ========================= */
 
     .content {
     min-width: 0;
     padding: 60px 0 80px;
 
-    background: #111017;
+    background: var(--black);
 
     box-sizing: border-box;
     }
@@ -141,7 +147,7 @@
     .contentHeader h1 {
     margin: 0;
 
-    color: #f9fafb;
+    color: var(--gray-50);
 
     font-size: 24px;
     font-weight: 600;
@@ -152,7 +158,7 @@
     .contentHeader p {
     margin: 0;
 
-    color: #9297a8;
+    color: var(--gray-500);
 
     font-size: 14px;
     font-weight: 400;
@@ -160,7 +166,7 @@
     }
 
     /* =========================
-    疫꿸퀡�� 占쎈베�� 癰귨옙野껓옙
+    占썬꺁�뉛옙�쎌삕�좑옙 占쎌쥙�θ린醫묒삕�좑옙 占쎄퀗�э옙�낅눇�용낌��
     ========================= */
 
     .form {
@@ -170,7 +176,7 @@
     flex-direction: column;
     gap: 24px;
 
-    /* 疫꿸퀣�덌옙占� 占쎈뜄�롳쭖占� 占쎌뮄援� */
+    /* 占썬꺁�뉛옙節륁삕占쎈슣�뺧옙醫묒삕 占쎌쥙�ο옙袁ъ삕嚥〓끃異븝옙醫묒삕 占쎌쥙�⑵짆袁ｋ쨨�좑옙 */
     height: auto;
     min-height: 0;
     justify-content: flex-start;
@@ -193,7 +199,7 @@
     }
 
     .field label {
-    color: #9297a8;
+    color: var(--gray-500);
 
     font-size: 13px;
     line-height: 148%;
@@ -208,8 +214,8 @@
     border-radius: 8px;
     outline: none;
 
-    color: #f7f8fb;
-    background: #353a50;
+    color: var(--gray-50);
+    background: var(--gray-800);
 
     font-family: inherit;
     font-size: 14px;
@@ -218,12 +224,12 @@
     }
 
     .field input:focus {
-    border-color: #878fa1;
+    border-color: var(--gray-500);
     }
 
     .field input:disabled {
-    color: #73798d;
-    background: #353a50;
+    color: var(--gray-500);
+    background: var(--gray-800);
 
     opacity: 1;
     }
@@ -243,7 +249,7 @@
     }
 
     .linkHeader span {
-    color: #9297a8;
+    color: var(--gray-500);
 
     font-size: 13px;
     font-weight: 400;
@@ -280,8 +286,8 @@
     width: 7px;
     height: 7px;
 
-    border-right: 2px solid #d9dce5;
-    border-bottom: 2px solid #d9dce5;
+    border-right: 2px solid var(--gray-300);
+    border-bottom: 2px solid var(--gray-300);
 
     content: "";
     pointer-events: none;
@@ -308,18 +314,18 @@
     width: 100%;
     padding: 0 42px 0 16px;
 
-    border: 1px solid #62687e;
+    border: 1px solid var(--gray-600);
     outline: none;
 
-    color: #f7f8fb;
-    background: #353a50;
+    color: var(--gray-50);
+    background: var(--gray-800);
 
     appearance: none;
     cursor: pointer;
     }
 
     .linkTypeSelect:focus {
-    border-color: #878fa1;
+    border-color: var(--gray-500);
     }
 
     .linkInput {
@@ -334,8 +340,8 @@
 
     border: 0;
 
-    color: #f7f8fb;
-    background: #555b73;
+    color: var(--gray-50);
+    background: var(--gray-700);
 
     font-weight: 500;
     white-space: nowrap;
@@ -359,12 +365,12 @@
 
     align-self: flex-start;
 
-    background: #3f455d;
+    background: var(--gray-700);
     }
 
     .removeLinkButton:hover:not(:disabled),
     .addLinkButton:hover:not(:disabled) {
-    background: #626981;
+    background: var(--gray-600);
     }
 
     .removeLinkButton:disabled,
@@ -397,11 +403,11 @@
     align-items: center;
     justify-content: space-between;
 
-    border: 1px solid #62687e;
+    border: 1px solid var(--gray-600);
     border-radius: 8px;
 
-    color: #f5f6fa;
-    background: #353a50;
+    color: var(--gray-100);
+    background: var(--gray-800);
 
     font-family: inherit;
     font-size: 14px;
@@ -410,16 +416,16 @@
     }
 
     .jobSelectButtonOpen {
-    border-color: #878fa1;
-    background: #3b4057;
+    border-color: var(--gray-500);
+    background: var(--gray-800);
     }
 
     .selectChevron {
     width: 9px;
     height: 9px;
 
-    border-right: 2px solid #d9dce5;
-    border-bottom: 2px solid #d9dce5;
+    border-right: 2px solid var(--gray-300);
+    border-bottom: 2px solid var(--gray-300);
 
     transform: rotate(45deg) translateY(-2px);
     }
@@ -438,10 +444,10 @@
 
     overflow: hidden;
 
-    border: 1px solid #62687e;
+    border: 1px solid var(--gray-600);
     border-radius: 8px;
 
-    background: #353a50;
+    background: var(--gray-800);
     }
 
     .jobDropdown button {
@@ -454,7 +460,7 @@
 
     border: 0;
 
-    color: #dfe2ea;
+    color: var(--gray-200);
     background: transparent;
 
     font-family: inherit;
@@ -466,8 +472,8 @@
 
     .jobDropdown button:hover,
     .jobDropdown .selectedJobOption {
-    color: #ffffff;
-    background: #41465d;
+    color: var(--white);
+    background: var(--gray-700);
     }
 
     .submitButton {
@@ -478,8 +484,8 @@
     border: 0;
     border-radius: 8px;
 
-    color: #22364a;
-    background: #b4dcfa;
+    color: var(--gray-800);
+    background: var(--blue-200);
 
     font-family: inherit;
     font-size: 14px;
@@ -489,7 +495,7 @@
     }
 
     .submitButton:hover:not(:disabled) {
-    background: #c8e7ff;
+    background: var(--blue-200);
     }
 
     .submitButton:disabled {
@@ -498,7 +504,7 @@
     }
 
     /* =========================
-    占쏙옙 占쎈뗄猿� 疫꿸퀡以�
+    占쎌쥙猷욑옙占� 占쎌쥙�ο옙袁ㅻ쇊�좑옙 占썬꺁�뉛옙�쎈뭄�좑옙
     ========================= */
 
     .requestDateGroups {
@@ -518,7 +524,7 @@
     margin: 0 0 20px;
     padding-left: 16px;
 
-    color: #9297a8;
+    color: var(--gray-500);
 
     font-size: 14px;
     font-weight: 500;
@@ -554,11 +560,11 @@
     }
 
     .requestItem:hover {
-    background: #222435;
+    background: var(--gray-900);
     }
 
     .requestItemCancelable {
-    background: #222435;
+    background: var(--gray-900);
     }
 
     .requestProfile {
@@ -588,8 +594,8 @@
     display: grid;
     place-items: center;
 
-    color: #26384a;
-    background: #b4dcfa;
+    color: var(--gray-800);
+    background: var(--blue-200);
 
     font-size: 16px;
     font-weight: 700;
@@ -605,7 +611,7 @@
     }
 
     .requestStatus {
-    color: #c9cdd8;
+    color: var(--gray-300);
 
     font-size: 12px;
     font-weight: 400;
@@ -615,7 +621,7 @@
     .requestText strong {
     overflow: hidden;
 
-    color: #f9fafb;
+    color: var(--gray-50);
 
     font-size: 14px;
     font-weight: 600;
@@ -628,7 +634,7 @@
     .requestText p {
     margin: 0;
 
-    color: #9297a8;
+    color: var(--gray-500);
 
     font-size: 12px;
     line-height: 148%;
@@ -643,19 +649,19 @@
     }
 
     .status0 {
-    color: #dce0e9;
+    color: var(--gray-200);
     }
 
     .status1 {
-    color: #dce0e9;
+    color: var(--gray-200);
     }
 
     .status2 {
-    color: #dce0e9;
+    color: var(--gray-200);
     }
 
     .status3 {
-    color: #9096a8;
+    color: var(--gray-500);
     }
 
     .requestCancelButton {
@@ -668,8 +674,8 @@
     border: 0;
     border-radius: 8px;
 
-    color: #f4f5f8;
-    background: #555b73;
+    color: var(--gray-100);
+    background: var(--gray-700);
 
     font-family: inherit;
     font-size: 13px;
@@ -679,7 +685,7 @@
     }
 
     .requestCancelButton:hover:not(:disabled) {
-    background: #626981;
+    background: var(--gray-600);
     }
 
     .requestCancelButton:disabled {
@@ -695,10 +701,10 @@
     display: grid;
     place-items: center;
 
-    border: 1px dashed #343747;
+    border: 1px dashed var(--gray-800);
     border-radius: 12px;
 
-    color: #818697;
+    color: var(--gray-500);
 
     font-size: 14px;
     }
@@ -709,11 +715,11 @@
     }
 
     .statusText {
-    color: #9da1af;
+    color: var(--gray-500);
     }
 
     /* =========================
-    筌롫뗄�놅쭪占�
+    癲ル슢�ο옙袁ъ삕占쎈굞占쏙옙醫묒삕
     ========================= */
 
     .error,
@@ -730,7 +736,7 @@
     }
 
     .error {
-    color: #ffb9bd;
+    color: var(--alert-red);
     background: rgb(195 50 63 / 16%);
     }
 
@@ -740,7 +746,7 @@
     }
 
     /* =========================
-    �④쑴�� �울옙�깍옙
+    �좎뜦紐울옙�먯삕�좑옙 �좎럩�깍옙�뗭삕繹먮씮��
     ========================= */
 
     .dangerSection {
@@ -768,7 +774,7 @@
     .dangerSection p {
     margin: 7px 0 0;
 
-    color: #9da1af;
+    color: var(--gray-500);
 
     font-size: 13px;
     line-height: 150%;
@@ -780,11 +786,11 @@
 
     flex: 0 0 auto;
 
-    border: 1px solid #b74d58;
+    border: 1px solid var(--alert-red);
     border-radius: 7px;
 
-    color: #ffd8db;
-    background: #85333b;
+    color: var(--white);
+    background: var(--alert-red);
 
     font-family: inherit;
 
@@ -792,7 +798,7 @@
     }
 
     /* =========================
-    筌뤴뫀��
+    癲ル슢�꾤땟占썲뜝�숈삕
     ========================= */
 
     .modalBackdrop {
@@ -812,11 +818,11 @@
     width: min(420px, 100%);
     padding: 26px;
 
-    border: 1px solid #454a5f;
+    border: 1px solid var(--gray-700);
     border-radius: 10px;
 
-    color: #ffffff;
-    background: #34394f;
+    color: var(--white);
+    background: var(--gray-800);
 
     box-sizing: border-box;
     }
@@ -830,7 +836,7 @@
     .leaveModal p {
     margin: 0;
 
-    color: #c4c7d1;
+    color: var(--gray-300);
 
     font-size: 14px;
     }
@@ -856,37 +862,37 @@
     }
 
     .continueButton {
-    color: #303547;
-    background: #e1e4eb;
+    color: var(--gray-800);
+    background: var(--gray-200);
     }
 
     .discardButton {
-    color: #26384a;
-    background: #b4dcfa;
+    color: var(--gray-800);
+    background: var(--blue-200);
     }
 
     .modalActions .withdrawConfirmButton {
-    color: #ffffff;
-    background: #a43d47;
+    color: var(--white);
+    background: var(--alert-red);
     }
 
     .status0 {
     color: #f8d98d;
     }
 
-    /* status 1 = 椰꾧퀣�� */
+    /* status 1 = 癲꾧퀗�⑨옙節륁삕�좑옙 */
     .status1 {
-    color: #a2a6b4;
+    color: var(--gray-400);
     }
 
-    /* status 2 = 占쎌꼶�� */
+    /* status 2 = 占쎌쥙�⑴몭�곗삕�좑옙 */
     .status2 {
     color: #a9e7c5;
     }
 
-    /* status 3 = �띯뫁�� */
+    /* status 3 = �좎럥�싩땟怨살삕�좑옙 */
     .status3 {
-    color: #a2a6b4;
+    color: var(--gray-400);
     }
 
     .accountContent {
@@ -912,7 +918,7 @@
     }
 
     .accountInfo .field label {
-    color: #aeb2c1;
+    color: var(--gray-400);
     font-size: 13px;
     font-weight: 400;
     line-height: 20px;
@@ -926,11 +932,11 @@
     padding: 0 16px;
     border: 1px solid transparent;
     border-radius: 8px;
-    color: #fdfeff;
+    color: var(--white);
     font-family: Pretendard, sans-serif;
     font-size: 16px;
     font-weight: 400;
-    background: #353a50;
+    background: var(--gray-800);
     cursor: default;
     outline: none;
     }
@@ -945,7 +951,7 @@
     }
 
     .accountInfo .field .accountNameInput:focus {
-    border-color: #878fa1;
+    border-color: var(--gray-500);
     }
 
     .nameControlRow {
@@ -965,8 +971,8 @@
     border: 0;
     border-radius: 8px;
 
-    color: #22364a;
-    background: #b4dcfa;
+    color: var(--gray-800);
+    background: var(--blue-200);
 
     font-family: inherit;
     font-size: 14px;
@@ -976,7 +982,7 @@
     }
 
     .nameSubmitButton:hover:not(:disabled) {
-    background: #c8e7ff;
+    background: var(--blue-200);
     }
 
     .nameSubmitButton:disabled {
@@ -1035,7 +1041,7 @@
     }
 
     .accountInfo .field label {
-    color: #aeb2c1;
+    color: var(--gray-400);
     font-size: 13px;
     font-weight: 400;
     line-height: 20px;
@@ -1049,11 +1055,11 @@
     padding: 0 16px;
     border: 1px solid transparent;
     border-radius: 8px;
-    color: #fdfeff;
+    color: var(--white);
     font-family: Pretendard, sans-serif;
     font-size: 16px;
     font-weight: 400;
-    background: #353a50;
+    background: var(--gray-800);
     cursor: default;
     outline: none;
     }
@@ -1093,7 +1099,7 @@
     }
     }
     /* =========================
-    獄쏆꼷�놂옙占�
+    占쎄쑴猷뉒몭琉꾩삕占쎄램�뺧옙醫묒삕
     ========================= */
 
     @media (max-width: 1100px) {
@@ -1125,10 +1131,141 @@
     }
     }
 
-    @media (max-width: 680px) {
+    @media (max-width: 767px) {
     .page {
         display: block;
         min-height: 100vh;
+    }
+
+    .settingsIndexPage .sidebar,
+    .settingsIndexPage .content {
+        display: none;
+    }
+
+    .page:not(.settingsIndexPage) .sidebar {
+        display: none;
+    }
+
+    .page:not(.settingsIndexPage) .content {
+        padding: 0 24px 64px;
+    }
+
+    .page:not(.settingsIndexPage) .contentInner {
+        width: 100%;
+        margin: 0;
+    }
+
+    .settingsIndexPage .mobileSettingsMenu {
+        min-height: 100vh;
+        padding: 28px 24px 64px;
+
+        display: block;
+
+        color: var(--gray-100);
+        background: var(--black);
+
+        box-sizing: border-box;
+    }
+
+    .mobileBackButton,
+    .page:not(.settingsIndexPage) .mobileSectionBackButton {
+        width: 40px;
+        height: 40px;
+        padding: 0;
+
+        display: grid;
+        place-items: center;
+
+        border: 0;
+        background: transparent;
+        color: var(--white);
+
+        cursor: pointer;
+    }
+
+    .mobileBackButton {
+        margin: 0 0 42px -10px;
+    }
+
+    .page:not(.settingsIndexPage) .mobileSectionBackButton {
+        margin: 28px 0 42px 14px;
+    }
+
+    .mobileBackButton span,
+    .mobileSectionBackButton span {
+        font-size: 42px;
+        font-weight: 200;
+        line-height: 1;
+
+        transform: translateY(-2px);
+    }
+
+    .mobileBackButton:focus-visible,
+    .mobileSectionBackButton:focus-visible,
+    .mobileMenuItem:focus-visible,
+    .mobileLogoutButton:focus-visible {
+        border-radius: 6px;
+        outline: 2px solid var(--blue-200);
+        outline-offset: 3px;
+    }
+
+    .mobileMenuGroup + .mobileMenuGroup {
+        margin-top: 58px;
+    }
+
+    .mobileMenuGroup h2 {
+        margin: 0 0 22px;
+
+        color: var(--white);
+
+        font-size: 24px;
+        font-weight: 600;
+        line-height: 150%;
+    }
+
+    .mobileMenuItem,
+    .mobileLogoutButton {
+        width: 100%;
+        min-height: 52px;
+        padding: 0;
+
+        border: 0;
+        background: transparent;
+        color: var(--gray-200);
+
+        font-family: inherit;
+        font-size: 18px;
+        font-weight: 400;
+        text-align: left;
+
+        cursor: pointer;
+    }
+
+    .mobileMenuItem {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .mobileMenuChevron {
+        width: 12px;
+        height: 12px;
+        margin-right: 5px;
+
+        border-top: 2px solid var(--gray-100);
+        border-right: 2px solid var(--gray-100);
+
+        transform: rotate(45deg);
+    }
+
+    .mobileLogoutButton {
+        margin-top: 4px;
+        color: var(--alert-red);
+    }
+
+    .mobileLogoutButton:disabled {
+        opacity: 0.55;
+        cursor: wait;
     }
 
     .sidebar {
@@ -1136,7 +1273,7 @@
         padding: 20px 16px;
 
         border-right: 0;
-        border-bottom: 1px solid #343747;
+        border-bottom: 1px solid var(--gray-800);
     }
 
     .backButton {

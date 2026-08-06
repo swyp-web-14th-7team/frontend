@@ -7,8 +7,8 @@
 
     overflow-x: hidden;
 
-    background: #111017;
-    color: #fdfeff;
+    background: var(--black);
+    color: var(--white);
 
     box-sizing: border-box;
 }
@@ -26,9 +26,9 @@
         ),
         linear-gradient(
             110deg,
-            #579bf7 0%,
+            var(--blue-400) 0%,
             #6aacf6 57%,
-            #e6e8cf 100%
+            var(--y-100) 100%
         );
 
     background-position: center;
@@ -51,10 +51,12 @@
 }
 
 /* =========================
-   �쇱そ �꾨줈�� �⑤꼸
+   �좎럩�섓옙占� �좎럡�т빳�뚯삕�좑옙 �좎뜦維��쀯옙
 ========================= */
 
 .summaryCard {
+    position: relative;
+
     width: 328px;
     min-height: 438px;
     padding: 40px 24px 32px;
@@ -65,14 +67,24 @@
     gap: 36px;
 
     border-radius: 8px;
-    background: #222435;
+    background: var(--gray-900);
 
     box-sizing: border-box;
 }
 
+.mobileBackButton,
+.mobileMenuArea {
+    display: none;
+}
+
 /*
- * 보관함 상세에는 액션 버튼이 없습니다.
- * 고정 높이를 그대로 두면 카드 아래쪽에 빈 공간이 남습니다.
+<<<<<<< HEAD
+ * 癰귣떯占쏙옙占� 占쎄낯苑�옙癒�뮉 占썩돦�� 甕곌쑵�됵옙占� 占쎈냱�울옙�덈뼄.
+ * �⑥쥙�� 占쎈��좂몴占� 域밸챶占썸에占� 占쎈Ŧ�� 燁삳�諭� 占쎄쑬�믭쭫�뚮퓠 ��옙 �⑤벀而숋옙占� 占썩뫁�울옙�덈뼄.
+=======
+ * 蹂닿��� �곸꽭�먮뒗 �≪뀡 踰꾪듉�� �놁뒿�덈떎.
+ * 怨좎젙 �믪씠瑜� 洹몃�濡� �먮㈃ 移대뱶 �꾨옒履쎌뿉 鍮� 怨듦컙�� �⑥뒿�덈떎.
+>>>>>>> origin/develop
  */
 .summaryCardCompact {
     min-height: 0;
@@ -113,8 +125,8 @@
     align-items: center;
     justify-content: center;
 
-    background: #dbe8ff;
-    color: #4e75b2;
+    background: var(--blue-100);
+    color: var(--blue-500);
 
     font-size: 22px;
     font-weight: 700;
@@ -137,7 +149,7 @@
 }
 
 .name {
-    color: #fdfeff;
+    color: var(--white);
 
     font-size: 20px;
     font-weight: 700;
@@ -150,7 +162,7 @@
 
     overflow: hidden;
 
-    color: #d7dae4;
+    color: var(--gray-300);
 
     font-size: 13px;
     font-weight: 500;
@@ -165,7 +177,7 @@
 
     overflow: hidden;
 
-    color: #aeb3c2;
+    color: var(--gray-400);
 
     font-size: 13px;
     font-weight: 400;
@@ -190,7 +202,7 @@
     gap: 8px;
 
     border-radius: 6px;
-    background: #32374c;
+    background: var(--gray-800);
 
     box-sizing: border-box;
 }
@@ -210,7 +222,7 @@
 
 .strengthPlaceholder {
     border-radius: 2px;
-    background: #454b63;
+    background: var(--gray-700);
 }
 
 .strengthText {
@@ -218,7 +230,7 @@
 
     overflow: hidden;
 
-    color: #f9fafb;
+    color: var(--gray-50);
 
     font-size: 12px;
     font-weight: 600;
@@ -247,8 +259,8 @@
     justify-content: center;
 
     border-radius: 4px;
-    background: #303347;
-    color: #ffffff;
+    background: var(--gray-800);
+    color: var(--white);
 
     font-size: 14px;
     font-weight: 600;
@@ -279,21 +291,21 @@
 }
 
 .exchangeButton {
-    background: #afd8f8;
-    color: #181b29;
+    background: var(--blue-200);
+    color: var(--gray-900);
 }
 
 .scrapButton {
-    background: #e4e7ec;
-    color: #25293a;
+    background: var(--gray-200);
+    color: var(--gray-900);
 }
 
 .exchangeButton:hover {
-    background: #c4e4fc;
+    background: var(--blue-200);
 }
 
 .scrapButton:hover {
-    background: #f2f4f7;
+    background: var(--gray-100);
 }
 
 .exchangeButton:active,
@@ -303,12 +315,12 @@
 
 .exchangeButton:focus-visible,
 .scrapButton:focus-visible {
-    outline: 2px solid #ffffff;
+    outline: 2px solid var(--white);
     outline-offset: 2px;
 }
 
 /* =========================
-   �ㅻⅨ履� �곸꽭 �⑤꼸
+   �좎뜫�뉛옙�⑥��좑옙 �좎럡��땻占� �좎뜦維��쀯옙
 ========================= */
 
 .detailCard {
@@ -317,7 +329,7 @@
     padding: 48px 44px;
 
     border-radius: 8px;
-    background: #222435;
+    background: var(--gray-900);
 
     box-sizing: border-box;
 }
@@ -325,7 +337,7 @@
 .section {
     padding: 24px 0;
 
-    border-bottom: 3px solid #32374c;
+    border-bottom: 3px solid var(--gray-800);
 }
 
 .section:first-child {
@@ -340,7 +352,7 @@
 .sectionTitle {
     margin: 0 0 8px;
 
-    color: #8f95a6;
+    color: var(--gray-500);
 
     font-size: 14px;
     font-weight: 500;
@@ -351,7 +363,7 @@
 .introduction {
     margin: 0;
 
-    color: #f9fafb;
+    color: var(--gray-50);
 
     font-size: 16px;
     font-weight: 400;
@@ -364,7 +376,7 @@
 }
 
 /* =========================
-   愿��� 遺꾩빞 / �ㅽ궗
+   占쎌슱�쇿뜝�숈삕 占쎈툕�닻뜮占� / �좎뜫�뗦쾮占�
 ========================= */
 
 .tagList {
@@ -387,8 +399,8 @@
     overflow: hidden;
 
     border-radius: 8px;
-    background: #32374c;
-    color: #dce0eb;
+    background: var(--gray-800);
+    color: var(--gray-200);
 
     font-size: 14px;
     font-weight: 500;
@@ -401,7 +413,7 @@
 }
 
 /* =========================
-   留곹겕
+   嶺뚮씧�긷칰占�
 ========================= */
 
 .linkList {
@@ -423,7 +435,7 @@
     align-items: center;
     gap: 8px;
 
-    color: #858b9d;
+    color: var(--gray-500);
     text-decoration: none;
 }
 
@@ -436,8 +448,8 @@
     justify-content: center;
 
     border-radius: 50%;
-    background: #32374c;
-    color: #cbd0dc;
+    background: var(--gray-800);
+    color: var(--gray-300);
 
     transition:
         background-color 0.18s ease,
@@ -455,7 +467,7 @@
 
     overflow: hidden;
 
-    color: #777d8f;
+    color: var(--gray-500);
 
     font-size: 11px;
     font-weight: 400;
@@ -467,24 +479,24 @@
 }
 
 .linkItem:hover .linkCircle {
-    background: #444a62;
-    color: #ffffff;
+    background: var(--gray-700);
+    color: var(--white);
 
     transform: translateY(-2px);
 }
 
 .linkItem:hover .linkLabel {
-    color: #f9fafb;
+    color: var(--gray-50);
 }
 
 .linkItem:focus-visible {
     border-radius: 8px;
-    outline: 2px solid #afd8f8;
+    outline: 2px solid var(--blue-200);
     outline-offset: 5px;
 }
 
 /* =========================
-   寃쏀뿕
+   �롪퍔占썼굢占�
 ========================= */
 
 .experienceGrid {
@@ -504,7 +516,7 @@
     gap: 8px;
 
     border-radius: 8px;
-    background: #32374c;
+    background: var(--gray-800);
 
     box-sizing: border-box;
 
@@ -512,7 +524,7 @@
 }
 
 .experienceCard:hover {
-    background: #393f56;
+    background: var(--gray-800);
 }
 
 .experienceTitleRow {
@@ -535,8 +547,8 @@
     justify-content: center;
 
     border-radius: 6px;
-    background: #50566d;
-    color: #f2e7aa;
+    background: var(--gray-700);
+    color: var(--y-300);
 
     font-size: 11px;
     font-weight: 600;
@@ -548,7 +560,7 @@
 
     overflow: hidden;
 
-    color: #f9fafb;
+    color: var(--gray-50);
 
     font-size: 15px;
     font-weight: 600;
@@ -565,7 +577,7 @@
     display: -webkit-box;
     overflow: hidden;
 
-    color: #aeb3c2;
+    color: var(--gray-400);
 
     font-size: 13px;
     font-weight: 400;
@@ -584,7 +596,7 @@
 
     overflow: hidden;
 
-    color: #777e91;
+    color: var(--gray-500);
 
     font-size: 11px;
     font-weight: 400;
@@ -596,21 +608,21 @@
 }
 
 .experienceLink:hover {
-    color: #afd8f8;
+    color: var(--blue-200);
 }
 
 .emptyText,
 .emptyDrawerText {
     margin: 0;
 
-    color: #777d8f;
+    color: var(--gray-500);
 
     font-size: 13px;
     line-height: 160%;
 }
 
 /* =========================
-   �ㅽ겕�� 紐⑤떖
+   �좎뜫�뗥칰類㏃삕�좑옙 嶺뚮ㅄ維�占쏙옙
 ========================= */
 
 .modalBackdrop {
@@ -637,10 +649,10 @@
 
     overflow-y: auto;
 
-    border: 1px solid #41465c;
+    border: 1px solid var(--gray-700);
     border-radius: 12px;
-    background: #222435;
-    color: #ffffff;
+    background: var(--gray-900);
+    color: var(--white);
 
     box-sizing: border-box;
 }
@@ -656,7 +668,7 @@
 .modalHeader h2 {
     margin: 0;
 
-    color: #ffffff;
+    color: var(--white);
 
     font-size: 22px;
     font-weight: 700;
@@ -673,7 +685,7 @@
 
     border: 0;
     background: transparent;
-    color: #ffffff;
+    color: var(--white);
 
     font-family: inherit;
     font-size: 30px;
@@ -683,7 +695,7 @@
 }
 
 .closeButton:hover {
-    color: #afd8f8;
+    color: var(--blue-200);
 }
 
 .scrapSummary {
@@ -695,7 +707,7 @@
 }
 
 .scrapSummary > span {
-    color: #777d91;
+    color: var(--gray-500);
 
     font-size: 14px;
     font-weight: 600;
@@ -706,7 +718,7 @@
 
     border: 0;
     background: transparent;
-    color: #dce0eb;
+    color: var(--gray-200);
 
     font-family: inherit;
     font-size: 14px;
@@ -716,16 +728,16 @@
 }
 
 .addDrawerButton:hover {
-    color: #afd8f8;
+    color: var(--blue-200);
 }
 
 .addDrawerForm {
     margin-bottom: 18px;
     padding: 16px;
 
-    border: 1px solid #4b516b;
+    border: 1px solid var(--gray-700);
     border-radius: 8px;
-    background: #292c40;
+    background: var(--gray-800);
 }
 
 .addDrawerInputRow {
@@ -741,8 +753,8 @@
     border-radius: 6px;
     outline: none;
 
-    background: #363b51;
-    color: #ffffff;
+    background: var(--gray-800);
+    color: var(--white);
 
     font-family: inherit;
     font-size: 13px;
@@ -751,11 +763,11 @@
 }
 
 .addDrawerInputRow input::placeholder {
-    color: #777d91;
+    color: var(--gray-500);
 }
 
 .addDrawerInputRow input:focus {
-    border-color: #afd8f8;
+    border-color: var(--blue-200);
 }
 
 .addDrawerInputRow span {
@@ -763,7 +775,7 @@
     top: 50%;
     right: 12px;
 
-    color: #8f96aa;
+    color: var(--gray-500);
 
     font-size: 11px;
 
@@ -795,18 +807,18 @@
 }
 
 .cancelDrawerButton {
-    background: #363b51;
-    color: #dce0eb;
+    background: var(--gray-800);
+    color: var(--gray-200);
 }
 
 .createDrawerButton {
-    background: #afd8f8;
-    color: #171925;
+    background: var(--blue-200);
+    color: var(--gray-900);
 }
 
 .createDrawerButton:disabled {
-    background: #4b5065;
-    color: #858b9e;
+    background: var(--gray-700);
+    color: var(--gray-500);
 
     cursor: not-allowed;
 }
@@ -814,7 +826,7 @@
 .scrapError {
     margin: 12px 0;
 
-    color: #ff8c92;
+    color: var(--alert-red);
 
     font-size: 13px;
     line-height: 1.5;
@@ -840,7 +852,7 @@
 
     border: 0;
     background: transparent;
-    color: #ffffff;
+    color: var(--white);
 
     font-family: inherit;
     text-align: left;
@@ -853,7 +865,7 @@
 
     overflow: hidden;
 
-    color: #dce0eb;
+    color: var(--gray-200);
 
     font-size: 16px;
     font-weight: 500;
@@ -873,11 +885,11 @@
     align-items: center;
     justify-content: center;
 
-    border: 2px solid #ffffff;
+    border: 2px solid var(--white);
     border-radius: 50%;
 
     background: transparent;
-    color: #ffffff;
+    color: var(--white);
 
     font-size: 22px;
     line-height: 1;
@@ -886,8 +898,8 @@
 }
 
 .selectedStatusIcon {
-    background: #ffffff;
-    color: #222435;
+    background: var(--white);
+    color: var(--gray-900);
 
     font-size: 19px;
     font-weight: 700;
@@ -906,8 +918,8 @@
     border: 0;
     border-radius: 7px;
 
-    background: #afd8f8;
-    color: #171925;
+    background: var(--blue-200);
+    color: var(--gray-900);
 
     font-family: inherit;
     font-size: 15px;
@@ -917,7 +929,7 @@
 }
 
 .saveButton:hover {
-    background: #c4e4fc;
+    background: var(--blue-200);
 }
 
 .saveButton:disabled {
@@ -926,7 +938,7 @@
 }
 
 /* =========================
-   濡쒕뵫 / �ㅻ쪟
+   �β돦裕녽�억옙 / �좎뜫�뉛쭫占�
 ========================= */
 
 .notFound {
@@ -938,8 +950,8 @@
     justify-content: center;
     gap: 20px;
 
-    background: #111017;
-    color: #ffffff;
+    background: var(--black);
+    color: var(--white);
 }
 
 .notFound p {
@@ -952,15 +964,15 @@
     border: 0;
     border-radius: 6px;
 
-    background: #afd8f8;
-    color: #171925;
+    background: var(--blue-200);
+    color: var(--gray-900);
 
     font-family: inherit;
     cursor: pointer;
 }
 
 /* =========================
-   諛섏쓳��
+   �꾩룇瑗뤄옙�귥삕�좑옙
 ========================= */
 
 @media (max-width: 1100px) {
@@ -1064,8 +1076,13 @@
     }
 
     /*
-     * 세로 배치로 돌아오면 flex-basis가 높이에 적용되어
-     * 버튼이 찌그러지므로 고정 높이를 다시 쓰게 합니다.
+<<<<<<< HEAD
+     * 占쎈챶以� 獄쏄퀣�귝에占� 占쎈슣釉섓옙�삠늺 flex-basis揶쏉옙 占쎈��좑옙占� 占쎄낯�쒙옙�뤿선
+     * 甕곌쑵�됵옙占� 筌〓슡�뉛옙�占썼첋占썸에占� �⑥쥙�� 占쎈��좂몴占� 占썬끉�� 占쎄퀗苡� 占썩뫖�뀐옙占�.
+=======
+     * �몃줈 諛곗튂濡� �뚯븘�ㅻ㈃ flex-basis媛� �믪씠�� �곸슜�섏뼱
+     * 踰꾪듉�� 李뚭렇�ъ�誘�濡� 怨좎젙 �믪씠瑜� �ㅼ떆 �곌쾶 �⑸땲��.
+>>>>>>> origin/develop
      */
     .exchangeButton,
     .scrapButton {
@@ -1131,5 +1148,303 @@
     .saveButton {
         position: sticky;
         bottom: 0;
+    }
+}
+
+/* �먯깋�먯꽌 吏꾩엯�� �ㅻⅨ �ъ슜�� �꾨줈�꾩쓽 紐⑤컮�� �꾩슜 �덉씠�꾩썐 */
+@media (max-width: 767px) {
+    .page {
+        min-height: 100vh;
+        padding-bottom: 0;
+        background: var(--black);
+    }
+
+    .hero {
+        position: absolute;
+        z-index: 0;
+        inset: 0 0 auto;
+
+        height: 365px;
+
+        background-position: center;
+        background-size: cover;
+    }
+
+    .layout {
+        z-index: 2;
+
+        width: 100%;
+        margin: 0;
+        padding: 0;
+
+        display: block;
+    }
+
+    .summaryCard,
+    .summaryCardCompact {
+        width: 100%;
+        min-height: 365px;
+        padding: 112px 20px 24px;
+
+        gap: 0;
+
+        border-radius: 0;
+        background: transparent;
+    }
+
+    .mobileBackButton {
+        position: absolute;
+        z-index: 7;
+        top: 20px;
+        left: 16px;
+
+        width: 40px;
+        height: 40px;
+        padding: 0;
+
+        display: grid;
+        place-items: center;
+
+        border: 0;
+        background: transparent;
+        color: var(--white);
+
+        font-family: inherit;
+        font-size: 38px;
+        font-weight: 300;
+        line-height: 1;
+
+        cursor: pointer;
+    }
+
+    .mobileBackButton:focus-visible,
+    .mobileMoreButton:focus-visible,
+    .mobileProfileMenu button:focus-visible {
+        border-radius: 5px;
+        outline: 2px solid var(--blue-200);
+        outline-offset: 2px;
+    }
+
+    .mobileMenuArea {
+        position: absolute;
+        z-index: 8;
+        top: 25px;
+        right: 17px;
+
+        display: block;
+    }
+
+    .mobileMoreButton {
+        width: 34px;
+        height: 28px;
+        padding: 0;
+
+        display: grid;
+        place-items: center;
+
+        border: 0;
+        background: transparent;
+        color: var(--white);
+
+        font-family: inherit;
+        font-size: 17px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        line-height: 1;
+
+        cursor: pointer;
+    }
+
+    .mobileProfileMenu {
+        position: absolute;
+        top: 35px;
+        right: 0;
+
+        width: 140px;
+        padding: 7px;
+
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+
+        border: 1px solid var(--gray-700);
+        border-radius: 7px;
+        background: var(--gray-800);
+        box-shadow: 0 12px 28px rgb(0 0 0 / 32%);
+    }
+
+    .mobileProfileMenu button {
+        width: 100%;
+        min-height: 42px;
+        padding: 0 10px;
+
+        border: 0;
+        border-radius: 5px;
+        background: transparent;
+        color: var(--gray-100);
+
+        font-family: inherit;
+        font-size: 14px;
+        text-align: left;
+
+        cursor: pointer;
+    }
+
+    .mobileProfileMenu button:hover {
+        background: var(--gray-700);
+    }
+
+    .profileBlock {
+        min-height: 185px;
+
+        justify-content: flex-start;
+        gap: 18px;
+    }
+
+    .avatar,
+    .avatarPlaceholder {
+        width: 72px;
+        height: 72px;
+
+        flex-basis: 72px;
+    }
+
+    .avatarPlaceholder {
+        background: var(--gray-700);
+        color: var(--blue-100);
+    }
+
+    .identity {
+        margin-top: 6px;
+    }
+
+    .nameRow {
+        margin-bottom: 4px;
+        gap: 8px;
+    }
+
+    .name {
+        font-size: 22px;
+        line-height: 1.35;
+    }
+
+    .job,
+    .affiliation {
+        color: var(--gray-100);
+        font-size: 14px;
+    }
+
+    .strength {
+        height: 42px;
+        padding: 8px 12px;
+
+        background: var(--opacity-light);
+    }
+
+    .strengthText {
+        color: var(--white);
+        font-size: 13px;
+    }
+
+    .strengthEmpty {
+        display: none;
+    }
+
+    .summaryActions {
+        display: none;
+    }
+
+    .detailCard {
+        width: 100%;
+        min-height: calc(100vh - 365px);
+        padding: 0 0 44px;
+
+        border-radius: 0;
+        background: var(--black);
+    }
+
+    .section {
+        padding: 28px 20px;
+
+        border-bottom-color: var(--gray-800);
+    }
+
+    .section:first-child {
+        padding-top: 34px;
+    }
+
+    .section:last-child {
+        padding-bottom: 0;
+    }
+
+    .sectionTitle {
+        margin-bottom: 10px;
+
+        font-size: 12px;
+    }
+
+    .introduction {
+        color: var(--gray-50);
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .tagList {
+        gap: 7px;
+    }
+
+    .tag {
+        min-height: 36px;
+        padding: 7px 10px;
+
+        border-radius: 7px;
+
+        font-size: 13px;
+    }
+
+    .linkList {
+        min-height: 0;
+
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 20px 10px;
+    }
+
+    .linkItem {
+        width: 100%;
+    }
+
+    .linkCircle {
+        width: 54px;
+        height: 54px;
+    }
+
+    .linkIcon {
+        width: 24px;
+        height: 24px;
+    }
+
+    .experienceGrid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 10px;
+    }
+
+    .experienceCard {
+        min-height: 142px;
+        padding: 20px;
+    }
+
+    .modalBackdrop {
+        padding: 0;
+
+        align-items: flex-end;
+    }
+
+    .scrapModal {
+        width: 100%;
+        max-height: 82vh;
+        padding: 26px 20px 34px;
+
+        border-radius: 16px 16px 0 0;
     }
 }

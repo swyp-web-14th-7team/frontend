@@ -1,20 +1,17 @@
-    /* =========================
-    공통 스타일
-    ========================= */
 
     .horizontalCard,
     .completeCard,
     .detailCard {
     box-sizing: border-box;
     overflow: hidden;
-    color: #ffffff;
+    color: var(--white);
     }
 
     .job {
     width: 100%;
     margin: 0;
 
-    color: #f5f6f8;
+    color: var(--gray-100);
     font-size: 12px;
     font-weight: 500;
     line-height: 150%;
@@ -32,7 +29,7 @@
     .affiliation {
     margin: 4px 0 0;
 
-    color: #d5d8e0;
+    color: var(--gray-300);
     font-size: 12px;
     line-height: 150%;
 
@@ -57,8 +54,8 @@
     padding: 6px 10px;
 
     border-radius: 20px;
-    background-color: #555b71;
-    color: #ffffff;
+    background-color: var(--gray-600);
+    color: var(--white);
 
     font-size: 12px;
     line-height: 150%;
@@ -83,13 +80,13 @@
 
     .strengthIconPlaceholder {
     border-radius: 4px;
-    background-color: #313648;
+    background-color: var(--gray-800);
     }
 
     .strengthText {
     min-width: 0;
 
-    color: #ffffff;
+    color: var(--white);
     font-size: 14px;
     font-weight: 600;
     line-height: 150%;
@@ -99,9 +96,7 @@
     text-overflow: ellipsis;
     }
 
-    /* =========================
-    가로형 카드
-    ========================= */
+
 
     .horizontalCard {
     width: 210px;
@@ -114,18 +109,18 @@
     gap: 40px;
 
     border-radius: 8px;
-    background-color: #222435;
+    background-color: var(--gray-900);
 
     box-sizing: border-box;
     overflow: hidden;
-    color: #ffffff;
+    color: var(--white);
     }
 
     .horizontalCard .job {
     width: 100%;
     margin: 0;
 
-    color: #b8bdcf;
+    color: var(--gray-400);
     font-size: 12px;
     font-weight: 500;
     line-height: 18px;
@@ -175,7 +170,7 @@
     display: block;
     min-width: 0;
 
-    color: #ffffff;
+    color: var(--white);
     font-size: 18px;
     font-weight: 600;
     line-height: 25px;
@@ -189,7 +184,7 @@
     width: 100%;
     margin: 0;
 
-    color: #d5d8e0;
+    color: var(--gray-300);
     font-size: 12px;
     font-weight: 400;
     line-height: 18px;
@@ -223,13 +218,13 @@
 
     .horizontalCard .strengthIconPlaceholder {
     border-radius: 2px;
-    background-color: #313648;
+    background-color: var(--gray-800);
     }
 
     .horizontalCard .strengthText {
     min-width: 0;
 
-    color: #d5d8e0;
+    color: var(--gray-300);
     font-size: 14px;
     font-weight: 500;
     line-height: 21px;
@@ -256,8 +251,8 @@
     padding: 6px 10px;
 
     border-radius: 8px;
-    background-color: #3d435a;
-    color: #dfe2eb;
+    background-color: var(--gray-700);
+    color: var(--gray-200);
 
     font-size: 12px;
     font-weight: 400;
@@ -269,9 +264,7 @@
     flex-shrink: 1;
     }
 
-    /* =========================
-    온보딩 완료 카드
-    ========================= */
+
 
     .completeCard {
     width: 282px;
@@ -282,7 +275,7 @@
     flex-direction: column;
 
     border-radius: 16px;
-    background-color: #676d82;
+    background-color: var(--gray-600);
     }
 
     .completeProfileRow {
@@ -309,13 +302,13 @@
     }
 
     .completeAvatarPlaceholder {
-    background-color: #959cb3;
+    background-color: var(--gray-500);
     }
 
     .completeName {
     display: block;
 
-    color: #ffffff;
+    color: var(--white);
     font-size: 20px;
     font-weight: 600;
     line-height: 140%;
@@ -347,7 +340,7 @@
     .introductionLabel {
     margin: 0 0 8px;
 
-    color: #d5d8e0;
+    color: var(--gray-300);
     font-size: 11px;
     line-height: 150%;
     }
@@ -356,7 +349,7 @@
     height: 63px;
     margin: 0;
 
-    color: #ffffff;
+    color: var(--white);
     font-size: 14px;
     line-height: 150%;
 
@@ -396,7 +389,7 @@
     .strengthDescription {
     min-width: 0;
 
-    color: #d5d8e0;
+    color: var(--gray-300);
     font-size: 12px;
     line-height: 150%;
 
@@ -405,9 +398,7 @@
     text-overflow: ellipsis;
     }
 
-    /* =========================
-        탐색 프로필 카드
-    ========================= */
+
 
     .cardButton {
         width: 282px;
@@ -429,7 +420,7 @@
 
     .cardButton:focus-visible {
         outline: 2px solid
-            #b7ddff;
+            var(--blue-200);
         outline-offset: 4px;
     }
 
@@ -449,7 +440,7 @@
         background:
             radial-gradient(
                 circle at 100% 100%,
-                #fffed1 0%,
+                var(--y-100) 0%,
                 rgba(
                         255,
                         254,
@@ -468,11 +459,11 @@
             linear-gradient(
                 135deg,
                 #69adfb 0%,
-                #5298f5 25%,
+                var(--blue-400) 25%,
                 #438bf1 100%
             );
 
-        color: #ffffff;
+        color: var(--white);
 
         box-sizing: border-box;
         overflow: hidden;
@@ -566,8 +557,8 @@
         align-items: center;
         justify-content: center;
 
-        background-color: #ffffff;
-        color: #2d70cc;
+        background-color: var(--white);
+        color: var(--blue-500);
 
         font-size: 24px;
         font-weight: 700;
@@ -583,7 +574,7 @@
         display: block;
         width: 100%;
 
-        color: #ffffff;
+        color: var(--white);
 
         font-size: 20px;
         font-weight: 700;
@@ -634,8 +625,8 @@
 
         border-radius: 8px;
 
-        background-color: #2f75da;
-        color: #ffffff;
+        background-color: var(--blue-500);
+        color: var(--white);
 
         font-size: 12px;
         font-weight: 500;
@@ -714,7 +705,7 @@
         width: 100%;
         margin: 0;
 
-        color: #ffffff;
+        color: var(--white);
 
         font-size: 13px;
         font-weight: 600;
@@ -796,7 +787,7 @@
     .strengthText {
         min-width: 0;
 
-        color: #ffffff;
+        color: var(--white);
 
         font-size: 14px;
         font-weight: 600;
@@ -807,9 +798,6 @@
         text-overflow: ellipsis;
     }
 
-    /* =========================
-    상세형 카드
-    ========================= */
 
     .detailCard {
     width: 238px;
@@ -820,7 +808,7 @@
     flex-direction: column;
 
     border-radius: 10px;
-    background-color: #676d82;
+    background-color: var(--gray-600);
     }
 
     .detailProfileRow {
@@ -847,13 +835,13 @@
     }
 
     .detailAvatarPlaceholder {
-    background-color: #878ea1;
+    background-color: var(--gray-500);
     }
 
     .detailName {
     display: block;
 
-    color: #ffffff;
+    color: var(--white);
     font-size: 20px;
     font-weight: 600;
     line-height: 140%;
@@ -877,7 +865,7 @@
     .sectionLabel {
     margin: 0 0 8px;
 
-    color: #d5d8e0;
+    color: var(--gray-300);
     font-size: 11px;
     line-height: 150%;
     }
@@ -891,7 +879,7 @@
     gap: 10px;
 
     border-radius: 6px;
-    background-color: #565c72;
+    background-color: var(--gray-600);
 
     box-sizing: border-box;
     }
@@ -899,7 +887,7 @@
     .experienceTitle {
     flex-shrink: 0;
 
-    color: #ffffff;
+    color: var(--white);
     font-size: 13px;
     font-weight: 600;
     text-decoration: underline;
@@ -909,7 +897,7 @@
     min-width: 0;
     margin: 0;
 
-    color: #ffffff;
+    color: var(--white);
     font-size: 10px;
     line-height: 150%;
 
@@ -919,9 +907,6 @@
     -webkit-line-clamp: 2;
     }
 
-    /* =========================
-    공통 강점 영역
-    ========================= */
 
     .strengthRow {
     min-width: 0;
@@ -935,10 +920,6 @@
     margin-top: auto;
     padding-top: 16px;
     }
-
-    /* =========================
-    모바일 대응
-    ========================= */
 
     @media (max-width: 768px) {
     .horizontalCard {

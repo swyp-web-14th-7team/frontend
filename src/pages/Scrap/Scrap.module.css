@@ -9,8 +9,8 @@
     margin: 0 auto;
     padding: 60px 0;
 
-    background-color: #111017;
-    color: #fdfefe;
+    background-color: var(--black);
+    color: var(--white);
 
     box-sizing: border-box;
 }
@@ -29,7 +29,7 @@
     margin: 0;
     flex: 1;
 
-    color: #fdfefe;
+    color: var(--white);
     font-family:
         Pretendard,
         sans-serif;
@@ -47,8 +47,8 @@
     border: 0;
     border-radius: 8px;
 
-    background-color: #32374c;
-    color: #fdfefe;
+    background-color: var(--gray-800);
+    color: var(--white);
 
     font-family: inherit;
     font-size: 13px;
@@ -58,7 +58,7 @@
 }
 
 .manageButton:hover {
-    background-color: #41475e;
+    background-color: var(--gray-700);
 }
 
 .manageActions {
@@ -80,8 +80,8 @@
     border: 0;
     border-radius: 8px;
 
-    background-color: #32374c;
-    color: #fdfefe;
+    background-color: var(--gray-800);
+    color: var(--white);
 
     font-family: inherit;
     font-size: 13px;
@@ -97,15 +97,15 @@
 }
 
 .deleteSelectedButton:disabled {
-    color: #777d91;
-    background-color: #252838;
+    color: var(--gray-500);
+    background-color: var(--gray-900);
     cursor: not-allowed;
 }
 
 .deleteSelectedButton:not(
         :disabled
     ):hover {
-    background-color: #41475e;
+    background-color: var(--gray-700);
 }
 
 .doneButton {
@@ -114,7 +114,7 @@
 
     border: 0;
     background: transparent;
-    color: #b9dfff;
+    color: var(--blue-200);
 
     font-family: inherit;
     font-size: 13px;
@@ -124,7 +124,7 @@
 }
 
 .doneButton:hover {
-    color: #fdfefe;
+    color: var(--white);
 }
 
 .statusMessage,
@@ -142,12 +142,12 @@
 }
 
 .statusMessage {
-    color: #adb2c2;
-    background-color: #222435;
+    color: var(--gray-400);
+    background-color: var(--gray-900);
 }
 
 .errorMessage {
-    color: #ff8b96;
+    color: var(--alert-red);
     background-color:
         rgb(255 77 94 / 12%);
 }
@@ -198,7 +198,7 @@
 .drawerTitle h2 {
     margin: 0;
 
-    color: #fdfefe;
+    color: var(--white);
     font-size: 16px;
     font-weight: 600;
     line-height: 24px;
@@ -209,7 +209,7 @@
 }
 
 .drawerTitle span {
-    color: #aeb3c2;
+    color: var(--gray-400);
     font-size: 12px;
     line-height: 18px;
 }
@@ -225,7 +225,7 @@
 
     border: 0;
     background: transparent;
-    color: #fdfefe;
+    color: var(--white);
 
     cursor: pointer;
 }
@@ -236,7 +236,7 @@
 }
 
 .editNameButton:hover {
-    color: #b9dfff;
+    color: var(--blue-200);
 }
 
 .deleteDrawerButton {
@@ -245,7 +245,7 @@
 
     border: 0;
     background: transparent;
-    color: #ff4d5e;
+    color: var(--alert-red);
 
     font-family: inherit;
     font-size: 13px;
@@ -255,7 +255,7 @@
 }
 
 .deleteDrawerButton:hover {
-    color: #ff7a87;
+    color: var(--alert-red);
     text-decoration: underline;
 }
 
@@ -292,7 +292,7 @@
     background:
         linear-gradient(
             90deg,
-            #111017 0%,
+            var(--black) 0%,
             rgb(
                 17 16 23 / 76%
             )
@@ -307,7 +307,7 @@
     background:
         linear-gradient(
             270deg,
-            #111017 0%,
+            var(--black) 0%,
             rgb(
                 17 16 23 / 76%
             )
@@ -316,8 +316,8 @@
         );
 }
 
-.cardSlider:hover::before,
-.cardSlider:hover::after {
+.cardSliderCanPrevious:hover::before,
+.cardSliderCanNext:hover::after {
     opacity: 1;
 }
 
@@ -389,7 +389,7 @@
     > article,
 .cardItem:focus-visible
     > article {
-    border-color: #a7bdd2;
+    border-color: var(--blue-300);
 
     box-shadow:
         inset 0 0 10px
@@ -409,7 +409,7 @@
     > article,
 .selectedCard:focus-visible
     > article {
-    border-color: #b8d9f5;
+    border-color: var(--blue-200);
 
     box-shadow:
         inset 0 0 4px
@@ -442,7 +442,7 @@
 
     background-color:
         rgb(17 16 23 / 96%);
-    color: #fdfefe;
+    color: var(--white);
 
     opacity: 0;
     visibility: hidden;
@@ -485,7 +485,7 @@
 }
 
 .slideButton:hover {
-    background-color: #242736;
+    background-color: var(--gray-900);
 }
 
 .preview {
@@ -506,7 +506,7 @@
 .previewGuide {
     margin: 0;
 
-    color: #777d91;
+    color: var(--gray-500);
     font-size: 14px;
     line-height: 21px;
     text-align: center;
@@ -527,10 +527,10 @@
 
     border:
         1px dashed
-        #3d435a;
+        var(--gray-700);
     border-radius: 8px;
 
-    color: #777d91;
+    color: var(--gray-500);
     font-size: 13px;
 
     box-sizing: border-box;
@@ -548,8 +548,8 @@
     border: 0;
     border-radius: 8px;
 
-    background-color: #32374c;
-    color: #fdfefe;
+    background-color: var(--gray-800);
+    color: var(--white);
 
     font-family: inherit;
     font-size: 13px;
@@ -559,7 +559,7 @@
 }
 
 .createDrawerButton:hover {
-    background-color: #41475e;
+    background-color: var(--gray-700);
 }
 
 .modalBackdrop {
@@ -586,11 +586,11 @@
 
     border:
         1px solid
-        #3d4258;
+        var(--gray-800);
     border-radius: 8px;
 
-    background-color: #222435;
-    color: #fdfefe;
+    background-color: var(--gray-900);
+    color: var(--white);
 
     box-sizing: border-box;
 }
@@ -617,7 +617,7 @@
 
     border: 0;
     background: transparent;
-    color: #fdfefe;
+    color: var(--white);
 
     font-size: 24px;
     line-height: 1;
@@ -635,7 +635,7 @@
 
 .inputHeader label,
 .inputHeader span {
-    color: #9da3b6;
+    color: var(--gray-400);
     font-size: 12px;
 }
 
@@ -650,8 +650,8 @@
     border-radius: 6px;
     outline: none;
 
-    background-color: #34394f;
-    color: #fdfefe;
+    background-color: var(--gray-800);
+    color: var(--white);
 
     font-family: inherit;
     font-size: 13px;
@@ -660,11 +660,11 @@
 }
 
 .modal input::placeholder {
-    color: #73798d;
+    color: var(--gray-500);
 }
 
 .modal input:focus {
-    border-color: #9fcaf2;
+    border-color: var(--blue-300);
 }
 
 .submitButton {
@@ -675,8 +675,8 @@
     border: 0;
     border-radius: 6px;
 
-    background-color: #afd8f8;
-    color: #171925;
+    background-color: var(--blue-200);
+    color: var(--gray-900);
 
     font-family: inherit;
     font-size: 14px;
@@ -686,8 +686,8 @@
 }
 
 .submitButton:disabled {
-    background-color: #596077;
-    color: #9298aa;
+    background-color: var(--gray-600);
+    color: var(--gray-500);
 
     cursor: not-allowed;
 }

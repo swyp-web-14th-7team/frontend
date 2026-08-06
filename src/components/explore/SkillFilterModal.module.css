@@ -24,8 +24,8 @@
     border: 0;
     border-radius: 8px;
 
-    background-color: #222435;
-    color: #ffffff;
+    background-color: var(--gray-900);
+    color: var(--white);
 
     box-sizing: border-box;
     overflow: hidden;
@@ -42,7 +42,7 @@
 .title {
     margin: 0;
 
-    color: #ffffff;
+    color: var(--white);
     font-size: 16px;
     font-weight: 600;
     line-height: 150%;
@@ -55,7 +55,7 @@
 
     border: 0;
     background: transparent;
-    color: #ffffff;
+    color: var(--white);
 
     font-family: inherit;
     font-size: 24px;
@@ -78,7 +78,7 @@
 
     border: 0;
     border-radius: 8px;
-    background-color: #32374c;
+    background-color: var(--gray-800);
 
     box-sizing: border-box;
     flex-shrink: 0;
@@ -92,13 +92,13 @@
     outline: 0;
     background: transparent;
 
-    color: #ffffff;
+    color: var(--white);
     font-family: inherit;
     font-size: 14px;
 }
 
 .searchInput::placeholder {
-    color: #747a91;
+    color: var(--gray-500);
 }
 
 .searchInput::-webkit-search-cancel-button {
@@ -119,7 +119,7 @@
     margin: 16px 0 0;
     padding: 0 0 16px;
 
-    border-bottom: 1px solid #4b5065;
+    border-bottom: 1px solid var(--gray-700);
     background: transparent;
 
     flex-shrink: 0;
@@ -137,7 +137,7 @@
     margin: 0;
 }
 
-/* 태그 종류가 나오는 영역 */
+/* �쒓렇 醫낅쪟媛� �섏삤�� �곸뿭 */
 .scrollArea {
     order: 3;
 
@@ -164,7 +164,7 @@
 .sectionTitle {
     margin: 0 0 10px;
 
-    color: #9ba1b5;
+    color: var(--gray-500);
     font-size: 13px;
     font-weight: 600;
     line-height: 150%;
@@ -188,8 +188,8 @@
     border: 0;
     border-radius: 8px;
 
-    background-color: #353a51;
-    color: #ffffff;
+    background-color: var(--gray-800);
+    color: var(--white);
 
     font-family: inherit;
     font-size: 13px;
@@ -199,7 +199,7 @@
 }
 
 .itemButton:hover {
-    background-color: #42485f;
+    background-color: var(--gray-700);
 }
 
 .itemButton:disabled,
@@ -214,8 +214,8 @@
 
 .selectedItem,
 .selectedItem:hover {
-    background-color: #dfedff;
-    color: #23283b;
+    background-color: var(--blue-100);
+    color: var(--gray-900);
 }
 
 .itemRemoveIcon,
@@ -228,7 +228,7 @@
 .emptyMessage {
     margin: 20px 0;
 
-    color: #8f94a8;
+    color: var(--gray-500);
     font-size: 13px;
     text-align: center;
 }
@@ -239,8 +239,8 @@
     margin: auto -24px -24px;
     padding: 12px 24px 20px;
 
-    border-top: 1px solid #4b5065;
-    background-color: #222435;
+    border-top: 1px solid var(--gray-700);
+    background-color: var(--gray-900);
 
     flex-shrink: 0;
 }
@@ -252,7 +252,7 @@
 .selectedLabel {
     margin: 0 0 10px;
 
-    color: #ffffff;
+    color: var(--white);
     font-size: 13px;
     font-weight: 500;
     line-height: 150%;
@@ -286,8 +286,8 @@
     border: 0;
     border-radius: 8px;
 
-    background-color: #dfedff;
-    color: #23283b;
+    background-color: var(--blue-100);
+    color: var(--gray-900);
 
     font-family: inherit;
     font-size: 13px;
@@ -302,7 +302,7 @@
 .selectedEmpty {
     margin: 0;
 
-    color: #8f94a8;
+    color: var(--gray-500);
     font-size: 13px;
 }
 
@@ -329,13 +329,13 @@
 }
 
 .resetButton {
-    background-color: #e3e6eb;
-    color: #2a3044;
+    background-color: var(--gray-200);
+    color: var(--gray-800);
 }
 
 .applyButton {
-    background-color: #aed9fa;
-    color: #20263a;
+    background-color: var(--blue-200);
+    color: var(--gray-900);
 }
 
 .resetButton:hover,
@@ -409,7 +409,7 @@
         border: 0;
         border-radius: 18px 18px 0 0;
 
-        background-color: #25283b;
+        background-color: var(--gray-900);
     }
 
     .title {
@@ -433,7 +433,7 @@
         margin: 0 -20px;
         padding: 16px 20px calc(22px + env(safe-area-inset-bottom));
 
-        background-color: #25283b;
+        background-color: var(--gray-900);
     }
 
     .selectedList {

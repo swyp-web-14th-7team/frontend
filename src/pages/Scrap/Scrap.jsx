@@ -898,9 +898,15 @@ const Scrap = () => {
                                             .length >
                                         0 ? (
                                             <div
-                                                className={
-                                                    styles.cardSlider
-                                                }
+                                                className={`${styles.cardSlider} ${
+                                                    canPrevious
+                                                        ? styles.cardSliderCanPrevious
+                                                        : ""
+                                                } ${
+                                                    canNext
+                                                        ? styles.cardSliderCanNext
+                                                        : ""
+                                                }`}
                                             >
                                                 {canPrevious && (
                                                     <button
