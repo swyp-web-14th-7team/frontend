@@ -600,9 +600,19 @@ const Saved = () => {
     };
 
     const handleSkillApply = (
-        skills,
+        filterValue,
     ) => {
-        setSelectedSkills(skills);
+        const nextSkills = Array.isArray(
+            filterValue,
+        )
+            ? filterValue
+            : filterValue?.skills;
+
+        setSelectedSkills(
+            Array.isArray(nextSkills)
+                ? nextSkills
+                : [],
+        );
         setIsSkillModalOpen(false);
     };
 
