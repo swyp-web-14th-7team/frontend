@@ -1017,7 +1017,7 @@
         z-index: 0;
         inset: 0 0 auto;
         height: 365px;
-        background-position: center;
+        background-position: 30% center;
         background-size: cover;
     }
 
