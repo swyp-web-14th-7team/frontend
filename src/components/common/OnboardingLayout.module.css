@@ -80,7 +80,7 @@
     transition: width 0.3s ease;
     }
 
-    /* 占썬끇以덂첎占썸묾占� 甕곌쑵�됵옙占� 占쎈끏�� 占쎄쑬利� 占쎈뗀�� */
+    /* 뒤로가기 버튼이 없는 헤더 */
     .headerWithoutBack {
     gap: 0;
     }
