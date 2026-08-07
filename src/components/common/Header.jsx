@@ -316,8 +316,8 @@
                 <button
                 type="button"
                 className={styles.iconButton}
-                onClick={() => navigate("/settings")}
-                aria-label="설정"
+                onClick={() => navigate("/settings/requests")}
+                aria-label="요청 기록 관리"
                 aria-pressed={isSettingsActive}
                 >
                 <img

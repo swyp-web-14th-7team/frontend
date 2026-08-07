@@ -456,7 +456,7 @@
         return (
         <>
             <div className={styles.contentHeader}>
-            <h1>내 요청 기록</h1>
+            <h1>요청 기록 관리</h1>
             <p>내가 보낸 카드 교환 요청을 관리합니다.</p>
             </div>
 
@@ -657,7 +657,7 @@
                 className={styles.mobileMenuItem}
                 onClick={() => moveToPath("/settings/requests")}
             >
-                <span>내 요청 기록</span>
+                <span>요청 기록 관리</span>
                 <span className={styles.mobileMenuChevron} aria-hidden="true" />
             </button>
             </div>
@@ -712,7 +712,7 @@
                 }
                 onClick={() => moveToPath("/settings/requests")}
             >
-                내 요청 기록
+                요청 기록 관리
             </button>
 
             <button
