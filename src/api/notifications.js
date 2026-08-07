@@ -56,7 +56,7 @@
     ) => {
         if (!notificationId) {
             throw new Error(
-                "�쎌쓬 泥섎━�� �뚮┝ ID媛� �꾩슂�⑸땲��.",
+                "읽음 처리할 알림 ID가 필요합니다.",
             );
         }
 

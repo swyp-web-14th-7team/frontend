@@ -6,7 +6,8 @@
     display: block;
 }
 
-@media (max-width: 767px) {
+/* 모바일: 768px 이하 */
+@media (max-width: 768px) {
     .mobileHiddenHeader {
         display: none;
     }

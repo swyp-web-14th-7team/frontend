@@ -1004,8 +1004,8 @@
     }
     }
 
-    /* �� �꾨줈�� �곸꽭�� 紐⑤컮�� �꾩슜 �덉씠�꾩썐�낅땲��. */
-    @media (max-width: 767px) {
+    /* 내 프로필 상세는 모바일 전용 레이아웃입니다. (768px 이하) */
+    @media (max-width: 768px) {
     .page {
         min-height: 100vh;
         padding-bottom: 0;
