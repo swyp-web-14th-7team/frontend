@@ -47,7 +47,8 @@
     color: var(--gray-500);
     }
 
-    @media (max-width: 767px) {
+    /* 모바일: 768px 이하 */
+    @media (max-width: 768px) {
     .container {
         min-height: calc(100dvh - 120px);
 

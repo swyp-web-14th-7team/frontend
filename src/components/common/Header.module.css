@@ -75,7 +75,7 @@
     opacity: 0.8;
 }
 
-/* �꾩옱 �좏깮�� 硫붾돱 */
+/* 현재 선택된 메뉴 */
 .navItem.activeNav,
 .navItem.activeNav:visited {
     color: var(--white);
@@ -85,7 +85,7 @@
 .navItem.activeNav .navIcon {
     opacity: 1;
 
-    /* SVG �대� �됱긽�� �곗깋�쇰줈 蹂�寃� */
+    /* SVG 아이콘 색상을 흰색으로 변경 */
     filter:
         brightness(0)
         saturate(100%)
@@ -102,7 +102,7 @@
     gap: 20px;
 }
 
-/* �꾩씠肄섏쓣 �꾨Ⅴ�� �곸뿭�� 28px */
+/* 아이콘을 누르는 영역은 28px */
 .iconButton {
     position: relative;
 
@@ -121,7 +121,7 @@
     cursor: pointer;
 }
 
-/* �ㅼ젣 蹂댁씠�� �꾩씠肄섏� 24px */
+/* 실제 보이는 아이콘은 24px */
 .icon {
     display: block;
     width: 24px;
@@ -192,7 +192,8 @@
     outline-offset: 4px;
 }
 
-@media (max-width: 767px) {
+/* 모바일: 768px 이하 */
+@media (max-width: 768px) {
     .header {
         height: 88px;
         padding: 0 20px;

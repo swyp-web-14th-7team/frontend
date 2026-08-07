@@ -250,7 +250,8 @@
     cursor: not-allowed;
 }
 
-@media (max-width: 767px) {
+/* 모바일: 768px 이하 */
+@media (max-width: 768px) {
     .container {
         padding-top: 40px;
     }
