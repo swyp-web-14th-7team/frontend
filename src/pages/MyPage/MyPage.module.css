@@ -351,6 +351,20 @@
         rgb(255 255 255 / 30%);
 }
 
+/*
+ * 옆에 놓인 비공개 카드용 오버레이
+ *
+ * 카드를 눌러 중앙으로 옮기는 동작을 막지 않도록
+ * 포인터 이벤트를 통과시킵니다.
+ */
+.sidePrivateOverlay {
+    pointer-events: none;
+}
+
+.sidePrivateOverlay strong {
+    margin-bottom: 0;
+}
+
 .qrCard {
     position: relative;
     width: 282px;

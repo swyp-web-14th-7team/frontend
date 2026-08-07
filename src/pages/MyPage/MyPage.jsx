@@ -745,6 +745,24 @@ const MyPage = () => {
                         )
                     }
                 />
+
+                {/*
+                 * 비공개 카드는 중앙에 있을 때와 동일하게
+                 * 옆에서도 내용을 가려서 보여줍니다.
+                 *
+                 * 카드를 눌러 중앙으로 옮길 수 있어야 하므로
+                 * 오버레이는 클릭을 가로채지 않습니다.
+                 */}
+                {!profile.isActive && (
+                    <div
+                        className={`${styles.privateOverlay} ${styles.sidePrivateOverlay}`}
+                    >
+                        <strong>
+                            프로필이 비공개
+                            상태예요.
+                        </strong>
+                    </div>
+                )}
             </div>
         );
     };
