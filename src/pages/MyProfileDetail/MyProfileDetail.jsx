@@ -1,3 +1,4 @@
+
     import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
     import { useNavigate, useParams } from "react-router-dom";
@@ -14,9 +15,9 @@
 
     import { getPurposes } from "../../api/options";
 
-    import { makeCardBackgroundUrl } from "../../api/cardBackground";
-
     import { mapProfileCard } from "../../utils/profileMapper";
+
+    import profileDetailBackground from "../../assets/images/profile-detail-background.png";
 
     import styles from "./MyProfileDetail.module.css";
 
@@ -276,10 +277,6 @@
     const introduction = profile.description || profile.introduction || "";
 
     const affiliationText = getAffiliationText(profile);
-
-    const cardBackgroundUrl = makeCardBackgroundUrl(
-        profile.cardImageUrl || profile.cardImage,
-    );
 
     const strengthTitle =
         typeof profile.strength === "string"
@@ -610,19 +607,9 @@
         <main className={styles.page}>
         <div
             className={styles.hero}
-            style={
-            cardBackgroundUrl
-                ? {
-                    backgroundImage: `
-                                    linear-gradient(
-                                        rgba(56, 132, 236, 0.1),
-                                        rgba(224, 235, 218, 0.08)
-                                    ),
-                                    url("${cardBackgroundUrl}")
-                                `,
-                }
-                : undefined
-            }
+            style={{
+            backgroundImage: `url("${profileDetailBackground}")`,
+            }}
             aria-hidden="true"
         />
 

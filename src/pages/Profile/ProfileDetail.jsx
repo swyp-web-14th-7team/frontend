@@ -33,10 +33,6 @@ import {
 } from "../../api/collections";
 
 import {
-    makeCardBackgroundUrl,
-} from "../../api/cardBackground";
-
-import {
     getConnections,
 } from "../../api/connections";
 
@@ -50,6 +46,8 @@ import {
 import {
     isLoggedIn,
 } from "../../utils/auth";
+
+import profileDetailBackground from "../../assets/images/profile-detail-background.png";
 
 import styles from "./ProfileDetail.module.css";
 
@@ -429,12 +427,6 @@ const ProfileDetail = () => {
         )
         .join(" | ");
 
-    const cardBackgroundUrl =
-        makeCardBackgroundUrl(
-            profile.cardImageUrl ||
-                profile.cardImage,
-        );
-
     const isProfileInDrawer = (drawer) =>
         drawer.profiles?.some(
             (item) =>
@@ -642,20 +634,9 @@ const handleScrapSave = async () => {
         <main className={styles.page}>
             <div
                 className={styles.hero}
-                style={
-                    cardBackgroundUrl
-                        ? {
-                              backgroundImage: `
-                                  linear-gradient(
-                                      90deg,
-                                      rgba(79, 145, 247, 0.08),
-                                      rgba(226, 232, 213, 0.12)
-                                  ),
-                                  url("${cardBackgroundUrl}")
-                              `,
-                          }
-                        : undefined
-                }
+                style={{
+                    backgroundImage: `url("${profileDetailBackground}")`,
+                }}
                 aria-hidden="true"
             />
 
