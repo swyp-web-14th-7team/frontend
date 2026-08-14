@@ -329,20 +329,10 @@ const CardExchangeModal = ({
                         return;
                     }
 
-                    console.log(
-                        "내 카드 API 응답:",
-                        response,
-                    );
-
                     const rawCards =
                         extractCardItems(
                             response,
                         );
-
-                    console.log(
-                        "추출된 내 카드:",
-                        rawCards,
-                    );
 
                     const normalizedCards =
                         rawCards
@@ -354,11 +344,6 @@ const CardExchangeModal = ({
                             .map(
                                 normalizeCard,
                             );
-
-                    console.log(
-                        "화면용 내 카드:",
-                        normalizedCards,
-                    );
 
                     setCards(
                         normalizedCards,

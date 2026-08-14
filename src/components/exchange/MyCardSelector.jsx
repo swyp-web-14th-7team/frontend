@@ -158,15 +158,7 @@ const MyCardSelector = ({
                   )
             : [];
 
-    console.log(
-        "MyCardSelector 원본 cards:",
-        cards,
-    );
 
-    console.log(
-        "MyCardSelector 변환 cards:",
-        normalizedCards,
-    );
 
     const handleSelect = (
         cardId,
