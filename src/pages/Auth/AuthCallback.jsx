@@ -71,11 +71,6 @@ const AuthCallback = ({
                             },
                         );
 
-                    console.log(
-                        "로그인 API 응답:",
-                        loginData,
-                    );
-
                     if (
                         !loginData
                             ?.accessToken
@@ -91,11 +86,6 @@ const AuthCallback = ({
 
                     const myInfo =
                         await getMyInfo();
-
-                    console.log(
-                        "내 정보 조회 응답:",
-                        myInfo,
-                    );
 
                     const userName =
                         myInfo?.nickname ||

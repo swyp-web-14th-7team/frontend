@@ -614,10 +614,6 @@ const handleScrapSave = async () => {
     };
 
     const handleSendExchange = (requestData) => {
-        console.log(
-            "카드 교환 요청:",
-            requestData,
-        );
 
         setIsExchangeModalOpen(false);
 
