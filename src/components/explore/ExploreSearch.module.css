@@ -146,7 +146,7 @@
     text-align: left;
 }
 
-/* 占썬끋沅� 占쎌쥚源� 占쏙옙 占쎌눊�뉛쭕占� 占쎈뗄�꾬옙占� */
+
 .activeFilterButton {
     width: auto;
     min-width: 132px;
@@ -288,7 +288,7 @@
         width: 90px;
     }
 
-/* 占쏙옙 占쎈슣�썸�⑨옙 筌욊낫�붿쮯占썬끋沅� �⑤벏�� 占쎈맩湲� */
+
 .affiliationDropdown > button,
 .filterButton {
     border: 0;
@@ -302,7 +302,7 @@
     border: 1px solid var(--gray-500);
 }
 
-/* 占썬끋沅� 占쎄낯�� 占쎄쑴肉됵옙占� 占쎌늿�わ옙占� 占쎈맩湲� 占쎌쥙占� */
+
 .activeFilterButton {
     width: auto;
     min-width: 132px;

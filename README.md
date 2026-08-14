@@ -1,16 +1,30 @@
-# React + Vite
+# NODI
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+목적에 따라 여러 개의 프로필 카드를 만들고 공유할 수 있는 네트워킹 웹 서비스입니다. 사용자는 자신을 다양한 모습으로 표현하고, 다른 사용자의 프로필을 탐색하며 새로운 사람과 연결될 수 있습니다.
 
-Currently, two official plugins are available:
+## 주요 기능
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+* 소셜 로그인 및 온보딩
+* 직군별 프로필 카드 생성과 수정
+* 프로필 공개·비공개 설정
+* 사용자 검색 및 관심 분야·스킬 필터
+* 카드 교환 요청 및 알림
+* 프로필 스크랩과 보관함 관리
+* 반응형 웹 지원
 
-## React Compiler
+## 기술 스택
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+* React
+* JavaScript
+* Vite
+* CSS Modules
+* React Router
+* REST API
+* Git/GitHub
 
-## Expanding the ESLint configuration
+## 실행 방법
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+npm install
+npm run dev
+```
